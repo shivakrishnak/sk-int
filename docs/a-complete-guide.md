@@ -1,3 +1,11 @@
+---
+layout: default
+title: Interview Handbook
+nav_order: 1
+has_toc: true
+permalink: /
+---
+
 # STAFF FULLSTACK ENGINEER INTERVIEW HANDBOOK
 
 ## 12 YOE | Backend-Heavy | Java Microservices | Cloud-Native
