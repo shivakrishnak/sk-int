@@ -1,0 +1,24 @@
+title: Complete Mastery System
+description: A self-contained system for becoming an exceptional thinker, communicator, and professional.
+
+remote_theme: just-the-docs/just-the-docs
+
+plugins:
+  - jekyll-remote-theme
+
+url: https://shivakrishnak.github.io
+baseurl: /sk-pages
+
+search_enabled: true
+heading_anchors: true
+nav_sort: case_insensitive
+
+aux_links:
+  Repository: https://github.com/shivakrishnak/sk-pages
+
+aux_links_new_tab: true
+
+color_scheme: light
+
+back_to_top: true
+back_to_top_text: "Back to top"
