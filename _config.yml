@@ -7,14 +7,14 @@ plugins:
   - jekyll-remote-theme
 
 url: https://shivakrishnak.github.io
-baseurl: /sk-pages
+baseurl: /sk-int
 
 search_enabled: true
 heading_anchors: true
 nav_sort: case_insensitive
 
 aux_links:
-  Repository: https://github.com/shivakrishnak/sk-pages
+  Repository: https://github.com/shivakrishnak/sk-int
 
 aux_links_new_tab: true
 
