@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# pre-commit hook for southstar
+#
+# Enforces SK Interview content rules on staged docs/ files.
+#
+# INSTALL (one-time per clone):
+#   git config core.hooksPath .githooks
+#
+# What it does:
+#   1. Finds all staged docs/**/*.md files (added or modified)
+#   2. Runs scripts/validate.ps1 on those files only
+#   3. Blocks the commit if any ERROR-level rule is violated
+#
+# Bypass (emergency only):
+#   git commit --no-verify
+
+set -e
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E "^docs/.*\.md$" \
+  | grep -v "/index\.md$" \
+  || true)
+
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+echo ""
+echo "Running validate.ps1 on staged docs files..."
+
+TMPFILE=$(mktemp)
+echo "$STAGED" > "$TMPFILE"
+
+if command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -File "scripts/validate.ps1" -FileList "$TMPFILE"
+  STATUS=$?
+else
+  echo "WARNING: pwsh not found; skipping content validation."
+  STATUS=0
+fi
+
+rm -f "$TMPFILE"
+
+if [ $STATUS -ne 0 ]; then
+  echo ""
+  echo "Commit blocked: fix all ERROR violations before committing."
+  echo "Run manually to see all issues:"
+  echo "  pwsh -File scripts/validate.ps1"
+  exit 1
+fi
+
+exit 0
