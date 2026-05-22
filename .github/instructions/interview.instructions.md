@@ -1,6 +1,6 @@
 ---
 applyTo: "docs/**, spec/**, scripts/**"
-description: "Rules for generating and editing Interview Mastery Dictionary v1.0 content - 24 sections, keyword-batch generation, Q&A format"
+description: "Rules for generating and editing Technical Interview Dictionary v1.0 content - 15 sections (4.1-4.15), keyword-batch generation, Q&A format"
 ---
 
 > **Version Registry** - `SPEC_VERSION` = **1** | `SPEC_LABEL` = **v1.0**
@@ -8,7 +8,7 @@ description: "Rules for generating and editing Interview Mastery Dictionary v1.0
 # Interview Mastery Dictionary - Auto-Loaded Instructions
 
 > These instructions auto-attach when editing files under `docs/`,
-> `spec/`, or `scripts/`. Full generation spec: `spec/interview.md` (v1.0).
+> `spec/`, or `scripts/`. Full generation spec: `spec/interview_content_generator.md` (v1.0).
 > This file contains condensed generation rules sufficient for producing
 > content after reading the full spec once per session.
 
@@ -23,7 +23,7 @@ southstar/
       index.md
       {Topic} - {Subtopic}.md
   spec/                       Generation specs (excluded from build)
-    interview.md              Master generation spec v1.0
+    interview_content_generator.md  Master generation spec v1.0
     topics_registry.md        Topic registry
     README.md
   scripts/                    Automation (excluded from build)
@@ -101,7 +101,7 @@ southstar/
 
 ## Quality Constitution (Non-Negotiable)
 
-Full spec: `spec/interview.md` Section 5.
+Full spec: `spec/interview_content_generator.md` Section 6.
 Every keyword MUST pass ALL eight quality tests before output.
 
 ### Eight Quality Tests
@@ -155,7 +155,7 @@ Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off,
 
 ### Final Gate
 
-*"Would an experienced engineer say 'Damn - this is genuinely excellent'?"*
+_"Would an experienced engineer say 'Damn - this is genuinely excellent'?"_
 If uncertain: rewrite.
 
 ## File Frontmatter Format (optional in MkDocs)
@@ -166,10 +166,10 @@ Frontmatter is **optional**. When used, the supported keys are:
 
 ```yaml
 ---
-title: "Topic - Subtopic"            # Optional - overrides first H1
-description: "One-line summary"      # Optional - meta description
-tags: [tag1, tag2]                   # Optional - shown via material/tags
-hide: [navigation, toc]              # Optional - per-page UI controls
+title: "Topic - Subtopic" # Optional - overrides first H1
+description: "One-line summary" # Optional - meta description
+tags: [tag1, tag2] # Optional - shown via material/tags
+hide: [navigation, toc] # Optional - per-page UI controls
 ---
 ```
 
@@ -179,7 +179,7 @@ hide: [navigation, toc]              # Optional - per-page UI controls
 ---
 topic: Java
 subtopic: Collections
-keywords:                            # Required - drives generation
+keywords: # Required - drives generation
   - Keyword One
   - Keyword Two
 difficulty_range: easy | medium | hard
@@ -263,7 +263,7 @@ A topic missing any level is INCOMPLETE. Always verify before generating.
 ## Condensed Generation Reference
 
 > This section contains all rules needed to generate content after
-> reading `spec/interview.md` once. It replaces the need to re-read
+> reading `spec/interview_content_generator.md` once. It replaces the need to re-read
 > the full spec for every keyword.
 
 ### Voice
@@ -442,5 +442,5 @@ All other sections (1-10, 12-14, 16-19) are always required.
 - Reference earlier keywords by name, don't re-explain
 - Ensure Interview Deep-Dive Qs are unique across keywords in same file
 
-> Full spec with teaching philosophy, validation checklists, and
-> skeleton: `spec/interview.md`
+> Full spec with entry structure, validation checklists, and
+> skeleton: `spec/interview_content_generator.md`

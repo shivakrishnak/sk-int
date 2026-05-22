@@ -65,8 +65,8 @@ level band produces more than 5 keywords, split into multiple files.
    entire file - previous keywords are irrelevant context.
 3. **No spec re-reads mid-file**: the interview instructions (auto-loaded
    for `docs/`, `spec/`, `scripts/` edits) contain all generation rules.
-   Do NOT re-read `spec/interview.md` after the first keyword in a session.
-4. **Single-pass generation**: produce all 19 sections for each keyword
+   Do NOT re-read `spec/interview_content_generator.md` after the first keyword in a session.
+4. **Single-pass generation**: produce all 15 sections for each keyword
    in one continuous output. Never split across multiple tool calls.
 
 ### Why keyword-batch (not file-level)
@@ -108,7 +108,7 @@ content that a Staff/Principal engineer would respect and learn from.
 7. **Decision** - reader knows when to use or avoid
 8. **Scale** - 10x/100x/1000x behavior covered
 
-Full spec: `spec/interview.md` Section 5.
+Full spec: `spec/interview_content_generator.md` Section 6.
 
 ### Code Example Requirements (Non-Negotiable)
 
@@ -147,8 +147,8 @@ Every explanation: (1) Intuition, (2) Mechanism, (3) Trade-off,
 
 ### Final Gate
 
-*"Would an experienced engineer say 'Damn - this is genuinely
-excellent'?"* If uncertain: rewrite. Masterclass = target.
+_"Would an experienced engineer say 'Damn - this is genuinely
+excellent'?"_ If uncertain: rewrite. Masterclass = target.
 
 ### Content Depth Requirements
 
@@ -186,11 +186,11 @@ excellent'?"* If uncertain: rewrite. Masterclass = target.
 
 ## Spec Files (read before generating)
 
-| File                  | Purpose                                   | When to read                                   |
-| --------------------- | ----------------------------------------- | ---------------------------------------------- |
-| `spec/interview.md`   | Master generation spec v1.0 (24 sections) | ONCE per session - first keyword only          |
-| `spec/topics_registry.md`      | Topic-to-folder mapping + level coverage  | When checking existing topics / new topic mode |
-| `docs/index.md`       | Navigation root with all topics           | ALWAYS - to understand current structure       |
+| File                                  | Purpose                                   | When to read                                   |
+| ------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
+| `spec/interview_content_generator.md` | Master generation spec v1.0 (15 sections) | ONCE per session - first keyword only          |
+| `spec/topics_registry.md`             | Topic-to-folder mapping + level coverage  | When checking existing topics / new topic mode |
+| `docs/index.md`                       | Navigation root with all topics           | ALWAYS - to understand current structure       |
 
 > **After reading the full spec once**, use the condensed generation
 > rules in `.github/instructions/interview.instructions.md` (auto-loaded
@@ -275,7 +275,7 @@ Analyze the user's input to determine the workflow mode:
 Trigger: user names a topic like Angular, Docker, SQL that has no folder
 in `docs/`
 
-1. Read `spec/interview.md` (full spec)
+1. Read `spec/interview_content_generator.md` (full spec)
 2. Read `spec/topics_registry.md` (topic registry + level-coverage rubric)
 3. Scan `docs/` folder to confirm topic does not exist
 4. Analyze where this topic belongs (determine logical grouping)
@@ -314,7 +314,7 @@ in `docs/`
 Trigger: user names a subtopic like "React hooks" where the parent topic
 (React) already exists as a folder in `docs/`
 
-1. Read `spec/interview.md` (full spec)
+1. Read `spec/interview_content_generator.md` (full spec)
 2. Read `spec/topics_registry.md` (topic registry + level coverage rubric)
 3. Scan `docs/{topic}/` to see existing subtopic files
 4. Generate keyword list for the new subtopic
@@ -333,7 +333,7 @@ Trigger: user names a subtopic like "React hooks" where the parent topic
 Trigger: user provides a description, job description, or feature list
 like "Strong SQL skills and experience with relational databases..."
 
-1. Read `spec/interview.md` (full spec)
+1. Read `spec/interview_content_generator.md` (full spec)
 2. Read `spec/topics_registry.md` (topic registry + level coverage rubric)
 3. Read `docs/index.md` to understand existing coverage
 4. Analyze the description to extract:
@@ -392,12 +392,12 @@ When used, content files SHOULD have:
 
 ```yaml
 ---
-title: "{Topic} - {Subtopic}"   # optional - overrides first H1
-description: "{one-line}"       # optional - SEO/meta
-tags: [interview, {topic}]      # optional - Material tag pages
-topic: {Topic}                  # project key
-subtopic: {Subtopic}            # project key
-keywords:                       # required when frontmatter is present
+title: "{Topic} - {Subtopic}" # optional - overrides first H1
+description: "{one-line}" # optional - SEO/meta
+tags: [interview, { topic }] # optional - Material tag pages
+topic: { Topic } # project key
+subtopic: { Subtopic } # project key
+keywords: # required when frontmatter is present
   - Keyword One
   - Keyword Two
 difficulty_range: easy|medium|hard
@@ -414,7 +414,7 @@ When used, `docs/{topic}/index.md` SHOULD have:
 ---
 title: "{Topic Name}"
 description: "Interview coverage for {Topic}"
-tags: [interview, {topic}]
+tags: [interview, { topic }]
 ---
 ```
 
@@ -497,7 +497,7 @@ Only stop when:
 
 ## Constraints
 
-- NEVER skip reading `spec/interview.md` before generating the FIRST
+- NEVER skip reading `spec/interview_content_generator.md` before generating the FIRST
   keyword in a session (subsequent keywords use condensed rules)
 - Generate **1-3 keywords per batch** (see Generation Strategy for sizing)
 - For files with existing [FILL:...] or [TODO:] stubs: detect unfilled

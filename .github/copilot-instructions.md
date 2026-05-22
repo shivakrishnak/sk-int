@@ -21,7 +21,7 @@ southstar/
       {Topic} - {Subtopic}.md Content files (3-5 keywords each)
 
   spec/                       Generation specs (excluded from build)
-    interview.md              Master generation spec v1.0
+    interview_content_generator.md  Master generation spec v1.0
     topics_registry.md        Topic-to-folder mapping + level coverage
     README.md                 Contributor entry point
 
@@ -51,12 +51,12 @@ southstar/
 
 ## How Instructions Load
 
-| Context                                          | What loads automatically                            |
-| ------------------------------------------------ | --------------------------------------------------- |
-| Any interaction                                  | This file (lean overview + shared rules)            |
-| Editing `docs/**`, `spec/**`, `scripts/**` files | + `.github/instructions/interview.instructions.md`  |
-| Using `/interview` agent                         | Agent instructions + reads spec on demand           |
-| Using `@fill-content` / `@generate-entries` / `@scaffold` | Prompt-specific instructions + agent tools |
+| Context                                                   | What loads automatically                           |
+| --------------------------------------------------------- | -------------------------------------------------- |
+| Any interaction                                           | This file (lean overview + shared rules)           |
+| Editing `docs/**`, `spec/**`, `scripts/**` files          | + `.github/instructions/interview.instructions.md` |
+| Using `/interview` agent                                  | Agent instructions + reads spec on demand          |
+| Using `@fill-content` / `@generate-entries` / `@scaffold` | Prompt-specific instructions + agent tools         |
 
 ## Shared Rules
 
@@ -119,7 +119,7 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 ## Content Quality Constitution (Non-Negotiable)
 
 Every keyword entry MUST pass the Quality Constitution.
-Full details in `spec/interview.md` Section 5.
+Full details in `spec/interview_content_generator.md` Section 6.
 
 ### Eight Quality Tests (ALL must pass)
 
@@ -172,15 +172,15 @@ Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off,
 
 ### Final Gate
 
-Before outputting: *"Would an experienced engineer say 'Damn - this is
-genuinely excellent'?"* If uncertain: rewrite. Masterclass = target.
+Before outputting: _"Would an experienced engineer say 'Damn - this is
+genuinely excellent'?"_ If uncertain: rewrite. Masterclass = target.
 
 ## Quick Reference
 
 | Item               | Location                                         |
 | ------------------ | ------------------------------------------------ |
-| Full spec          | `spec/interview.md`                              |
-| Topic registry     | `spec/topics_registry.md`                                 |
+| Full spec          | `spec/interview_content_generator.md`            |
+| Topic registry     | `spec/topics_registry.md`                        |
 | Scaffold generator | `scripts/scaffold_topic.py`                      |
 | Topic generator    | `scripts/generate_topics.ps1`                    |
 | Content generator  | `scripts/generate_content.ps1`                   |
@@ -191,13 +191,14 @@ genuinely excellent'?"* If uncertain: rewrite. Masterclass = target.
 
 ## Default Behaviour
 
-- When asked to work on interview content: read `spec/interview.md` for the
+- When asked to work on interview content: read `spec/interview_content_generator.md` for the
   full v1.0 spec (ONCE per session, first keyword only). Subsequent
   keywords use the condensed rules in
   `.github/instructions/interview.instructions.md` (auto-loaded)
-- When generating a NEW topic from scratch: read `spec/topics_registry.md` for the
-  level-coverage framework, then generate keywords covering L0-L6 + META
+- When generating a NEW topic from scratch: read `spec/topics_generator.md` for the
+  full keyword generation spec (34 rules, 31 checks), and `spec/topics_registry.md` for
+  the level-coverage framework, then generate keywords covering L0-L6 + META
 - When asked to generate/create/upgrade entries, apply all rules
   automatically without confirmation
 - When editing files under `docs/`, `spec/`, or `scripts/`, the interview
-  instructions auto-load with the 19-section structure and Q&A rules
+  instructions auto-load with the 15-section structure and Q&A rules

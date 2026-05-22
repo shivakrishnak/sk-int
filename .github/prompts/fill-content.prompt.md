@@ -38,7 +38,7 @@ Interview-ready like a FAANG bar raiser.
 ## Quality Constitution (Non-Negotiable)
 
 Every keyword MUST pass ALL eight quality tests.
-Full spec: `spec/interview.md` Section 5.
+Full spec: `spec/interview_content_generator.md` Section 6.
 
 **Eight Tests (all must pass):**
 

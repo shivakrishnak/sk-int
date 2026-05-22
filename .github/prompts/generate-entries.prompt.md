@@ -42,7 +42,7 @@ If all keywords are complete, stop - nothing to generate.
 For the FIRST keyword in this session, read the full spec:
 
 ```
-spec/interview.md
+spec/interview_content_generator.md
 ```
 
 For all subsequent keywords, use the condensed generation rules in
@@ -105,7 +105,7 @@ Use UTF-8 without BOM.
 ## Quality Constitution (Non-Negotiable)
 
 Every keyword MUST pass ALL eight quality tests.
-Full spec: `spec/interview.md` Section 5.
+Full spec: `spec/interview_content_generator.md` Section 6.
 
 **Voice:** Precise like Josh Bloch. Clear like Martin Fowler. Intuitive like
 Feynman. Production-scarred like a senior systems architect.

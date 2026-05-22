@@ -1,6 +1,6 @@
 # Contributing to SK Interview
 
-Thanks for your interest. This repo houses an interview-focused technical reference; every keyword entry must reach **masterclass quality** (see `spec/interview.md` Section 5). This guide explains how to add content cleanly.
+Thanks for your interest. This repo houses an interview-focused technical reference; every keyword entry must reach **masterclass quality** (see `spec/interview_content_generator.md` Section 6). This guide explains how to add content cleanly.
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ pwsh -File scripts/generate_topics.ps1 -Topic "Angular"
 pwsh -File scripts/generate_content.ps1 -Mode topic -Topic "Angular"
 ```
 
-See [spec/topics_registry.md](spec/topics_registry.md) for the topic registry and [spec/interview.md](spec/interview.md) for the full generation spec.
+See [spec/topics_registry.md](spec/topics_registry.md) for the topic registry and [spec/interview_content_generator.md](spec/interview_content_generator.md) for the full generation spec.
 
 ## Style rules (enforced)
 
