@@ -520,6 +520,22 @@ and how to compose them separates competent Java developers.
 > tests integers in a tight loop, `IntPredicate` is significantly
 > faster than `Predicate<Integer>`.
 
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about the four core
+functional interfaces - let me cover Predicate, Function,
+Consumer, and Supplier and when each applies."
+
+**(2) First principles:** "Each interface captures one
+operation shape: test (boolean return), transform (different
+return type), consume (void return), or produce (no input).
+Composition methods chain them without nesting lambdas."
+
+**(3) Bridge:** "Think of four appliances: Predicate is a
+scale (yes/no answer), Function is a blender (one form in,
+another out), Consumer is a bin (accepts, returns nothing),
+Supplier is a tap (produces on demand, needs no input)."
+
 ---
 
 ### 📘 Concept Explanation
@@ -910,6 +926,22 @@ Use them when the lambda does nothing but call a method.
 > object. `String::toUpperCase` as a `Function<String, String>` means
 > "call toUpperCase on the String argument." This is the form that looks
 > most like a static reference but behaves differently.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about the four kinds of
+method references - let me walk through static, bound,
+unbound, and constructor forms."
+
+**(2) First principles:** "A method reference is a lambda
+that calls exactly one existing method. The four kinds
+differ in where the target comes from: the class, a captured
+instance, the first argument, or new."
+
+**(3) Bridge:** "Method references are speed-dial shortcuts:
+static = direct dial, bound = saved contact (specific
+person), unbound = job title (whoever holds the role),
+constructor = new-hire template."
 
 ---
 
@@ -1522,6 +1554,24 @@ the design intent.
 > The canonical correct use: return type of a method that may not
 > find a value. `findFirst()`, `repository.findById(id)`, any lookup
 > that may have no result.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about Optional - let me
+walk through the return-type use case and the three places
+you must never use it."
+
+**(2) First principles:** "Optional makes absence part of
+the type signature. The caller cannot ignore a missing value
+
+- they must call orElse, orElseThrow, or ifPresent. The
+  constraint: return type only, never field, parameter, or
+  collection."
+
+**(3) Bridge:** "Optional is a box that may be empty.
+Returning Optional says 'check before unwrapping.' Storing
+Optional in a field is like keeping an empty gift box in a
+drawer - overhead without information."
 
 ---
 

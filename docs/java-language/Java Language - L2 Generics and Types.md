@@ -566,6 +566,22 @@ mid-to-senior Java interview and most candidates get PECS backwards.
 > (super). This is why the method works with any compatible types,
 > not just the exact same parameterization.
 
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about PECS and wildcards -
+let me cover when to use extends versus super and why
+neither allows both."
+
+**(2) First principles:** "A wildcard is an unknown type within
+a bound. Extends means unknown subtype - reading as T is
+safe, writing is not. Super means unknown supertype -
+writing T is safe, reading yields only Object."
+
+**(3) Bridge:** "PECS names the collection's role: a vending
+machine produces snacks (? extends - you read from it).
+A bin consumes cans (? super - you write into it). Choose
+the bound that names what the collection does."
+
 ---
 
 ### 📘 Concept Explanation
@@ -985,6 +1001,22 @@ is frequently tested at mid-to-senior level.
 > are faster and more memory-efficient than their HashMap/HashSet
 > counterparts for enum keys.
 
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about Java enums - let me
+cover why they are classes, per-constant methods, and
+EnumMap performance."
+
+**(2) First principles:** "An enum is a fixed set of
+named singletons. Each constant is an object that can hold
+state and implement abstract methods. The compiler rejects
+any constant that omits a required method body."
+
+**(3) Bridge:** "An enum with abstract methods is like a
+sports team where each position has a required playbook.
+Adding a new player without their playbook is rejected at
+signing time, not during the game."
+
 ---
 
 ### 📘 Concept Explanation
@@ -1368,6 +1400,22 @@ trick question that reveals depth.
 > millions of integers, this creates significant GC pressure. JMH
 > profiling commonly shows autoboxing-heavy code spending 30-40% of
 > CPU on allocation and GC.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about autoboxing and the
+Integer cache - let me walk through the compiler translation
+and the equality trap."
+
+**(2) First principles:** "The compiler inserts
+Integer.valueOf() wherever an object is needed. The JVM
+caches instances from -128 to 127. Outside that range new
+objects are created, so == compares references not values."
+
+**(3) Bridge:** "The Integer cache is like a coin tray:
+small coins are reused from the tray. A large-value bill
+always comes from the vault as a new note. Never compare
+bills with ==. Always use .equals()."
 
 ---
 
@@ -1789,6 +1837,21 @@ increasingly common in Java interviews.
 > types. These limits ensure the inferred type is always unambiguous.
 > The intent: use var when the type is obvious from context (especially
 > for long generic types); use explicit types when they add clarity.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about Java type inference -
+let me cover diamond, var, and target typing for lambdas."
+
+**(2) First principles:** "Type inference is the compiler
+deducing the static type so you don't write it twice. The
+type is fixed and checked at compile time - only the source
+omits it. var requires an initializer so the type is clear."
+
+**(3) Bridge:** "var is like a self-labeling box: you fill
+it once, the box labels itself, and the label never changes.
+You wrote the contents once, not the contents plus a
+matching label."
 
 ---
 
