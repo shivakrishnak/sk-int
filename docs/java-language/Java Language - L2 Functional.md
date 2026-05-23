@@ -42,12 +42,15 @@ feature and appear in every mid-to-senior interview.
 > cause outer-reference memory leaks than anonymous classes.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about lambda syntax and capture rules -
+
+**(1) Restate:** "You are asking about lambda syntax and capture rules -
 let me walk through the fundamentals."
-(2) First principles: "A lambda is a function that can close over
+
+**(2) First principles:** "A lambda is a function that can close over
 its surrounding scope. The effectively-final rule is the capture
 constraint."
-(3) Bridge: "A lambda is like a recipe card - it captures the
+
+**(3) Bridge:** "A lambda is like a recipe card - it captures the
 ingredient list at writing time. You cannot change the
 ingredients after the card is written."
 
@@ -473,7 +476,6 @@ content-immutable.
 
 Add-Content is not needed here since this was created via create_file. Now append keywords 2+.
 
-
 ---
 
 ---
@@ -493,12 +495,14 @@ and how to compose them separates competent Java developers.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > The four core functional interfaces: Predicate<T> tests a T and
 > returns boolean. Function<T,R> transforms T to R. Consumer<T>
 > consumes T and returns void. Supplier<T> produces T with no input.
 > Each has compose/andThen methods for building pipelines.
 
 **3 minutes (Senior):**
+
 > The standard functional interfaces exist so that library code can
 > interoperate without everyone defining their own interfaces. If
 > Spring needs a condition, it accepts `Predicate<T>`. If you need
@@ -531,12 +535,12 @@ Supplier<T>:            () -> T (no input, produces value)
 
 **Variations**
 
-| Base | Bivariant | Primitive |
-|------|-----------|-----------|
-| Predicate<T> | BiPredicate<T,U> | IntPredicate, LongPredicate, DoublePredicate |
+| Base          | Bivariant         | Primitive                                          |
+| ------------- | ----------------- | -------------------------------------------------- |
+| Predicate<T>  | BiPredicate<T,U>  | IntPredicate, LongPredicate, DoublePredicate       |
 | Function<T,R> | BiFunction<T,U,R> | IntFunction<R>, ToIntFunction<T>, IntUnaryOperator |
-| Consumer<T> | BiConsumer<T,U> | IntConsumer, LongConsumer, DoubleConsumer |
-| Supplier<T> | - | IntSupplier, LongSupplier, DoubleSupplier |
+| Consumer<T>   | BiConsumer<T,U>   | IntConsumer, LongConsumer, DoubleConsumer          |
+| Supplier<T>   | -                 | IntSupplier, LongSupplier, DoubleSupplier          |
 
 **Special Cases**
 
@@ -565,6 +569,7 @@ Function<String, String> reverse = upper.compose(trim); // trim first, then uppe
 **When to Define Custom Functional Interfaces**
 
 Define a custom `@FunctionalInterface` when:
+
 - The standard ones do not fit (different checked exceptions, etc.)
 - You want a more descriptive name for domain clarity
 - The method signature does not match any standard interface
@@ -683,13 +688,13 @@ code or tight processing loops, use primitives."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Consumer and Runnable are the same" | Consumer<T> takes a T argument. Runnable takes nothing. Both return void, but different arity. | Wrong interface in API design |
-| 2 | "Function.compose and andThen are the same" | `f.andThen(g)` = g(f(x)). `f.compose(g)` = f(g(x)). Opposite order. | Incorrect transformation order |
-| 3 | "Predicate.and() doesn't short-circuit" | Predicate.and() uses `&&` internally - it short-circuits. If the first predicate returns false, the second is not evaluated. | Expecting the second predicate to always run |
-| 4 | "These interfaces only work with streams" | They work anywhere a lambda is accepted - configuration, testing, initialization, condition evaluation. | Underusing composition outside of streams |
-| 5 | "Custom functional interface is always better for clarity" | The standard interfaces are recognized by the whole ecosystem. Custom interfaces break composability with standard library methods. | Isolated vocabulary that doesn't compose with Java/library code |
+| #   | Misconception                                              | Reality                                                                                                                             | Danger                                                          |
+| --- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1   | "Consumer and Runnable are the same"                       | Consumer<T> takes a T argument. Runnable takes nothing. Both return void, but different arity.                                      | Wrong interface in API design                                   |
+| 2   | "Function.compose and andThen are the same"                | `f.andThen(g)` = g(f(x)). `f.compose(g)` = f(g(x)). Opposite order.                                                                 | Incorrect transformation order                                  |
+| 3   | "Predicate.and() doesn't short-circuit"                    | Predicate.and() uses `&&` internally - it short-circuits. If the first predicate returns false, the second is not evaluated.        | Expecting the second predicate to always run                    |
+| 4   | "These interfaces only work with streams"                  | They work anywhere a lambda is accepted - configuration, testing, initialization, condition evaluation.                             | Underusing composition outside of streams                       |
+| 5   | "Custom functional interface is always better for clarity" | The standard interfaces are recognized by the whole ecosystem. Custom interfaces break composability with standard library methods. | Isolated vocabulary that doesn't compose with Java/library code |
 
 ---
 
@@ -697,12 +702,13 @@ code or tight processing loops, use primitives."
 
 **FM1 - Function composition in wrong order**
 
-*Symptom:* Transformation result is incorrect - operations appear
+_Symptom:_ Transformation result is incorrect - operations appear
 to run in reverse.
 
-*Root Cause:* `compose` vs `andThen` confusion.
+_Root Cause:_ `compose` vs `andThen` confusion.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```java
 Function<String, String> f = String::trim;
 Function<String, String> g = String::toUpperCase;
@@ -714,19 +720,20 @@ Function<String, String> g = String::toUpperCase;
 assert f.andThen(g).apply("  hello  ").equals("HELLO");
 ```
 
-*Fix:* Use `andThen` for left-to-right (input -> step1 -> step2)
+_Fix:_ Use `andThen` for left-to-right (input -> step1 -> step2)
 which matches the reading order.
 
 **FM2 - Side effects in Function instead of Consumer**
 
-*Symptom:* Stream map() call has side effects (logging, mutating
+_Symptom:_ Stream map() call has side effects (logging, mutating
 state) which makes the stream behavior unpredictable with parallel
 streams.
 
-*Root Cause:* `map()` in streams should be used with pure Functions.
+_Root Cause:_ `map()` in streams should be used with pure Functions.
 Side effects belong in `forEach()` with Consumer.
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD: side effect in map
 List<String> result = items.stream()
@@ -744,15 +751,15 @@ List<String> result = items.stream()
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Name the four interfaces + their signatures |
-| 15 minutes | Add compose/andThen order + Supplier lazy init |
-| 30 minutes | Add primitive variants + composition pipeline example |
-| Under pressure | "Predicate=test, Function=transform, Consumer=side-effect, Supplier=produce" |
+| Preparation time | Recommended approach                                                         |
+| ---------------- | ---------------------------------------------------------------------------- |
+| 5 minutes        | Name the four interfaces + their signatures                                  |
+| 15 minutes       | Add compose/andThen order + Supplier lazy init                               |
+| 30 minutes       | Add primitive variants + composition pipeline example                        |
+| Under pressure   | "Predicate=test, Function=transform, Consumer=side-effect, Supplier=produce" |
 
 **[JUNIOR] Q1 - Conceptual**
-*What are the four core functional interfaces and when do you use each?*
+_What are the four core functional interfaces and when do you use each?_
 
 ```java
 Predicate<T>:  T -> boolean   // use for filtering/testing
@@ -762,26 +769,29 @@ Supplier<T>:   () -> T         // use for lazy init, default values
 ```
 
 Practical examples:
+
 - `Predicate`: `user -> user.isActive()` in stream `.filter()`
 - `Function`: `String::length` in stream `.map()`
 - `Consumer`: `System.out::println` in stream `.forEach()`
 - `Supplier`: `() -> new ArrayList<>()` in `computeIfAbsent()`
 
-*What separates good from great:* Immediately showing practical
+_What separates good from great:_ Immediately showing practical
 use cases, not just the abstract definitions.
 
 ---
 
 **[SENIOR] Q2 - Trade-off**
-*When do you define a custom functional interface vs using the
-standard ones?*
+_When do you define a custom functional interface vs using the
+standard ones?_
 
 Use standard interfaces when:
+
 - The signature matches (T->boolean, T->R, T->void, ()->T)
 - The method doesn't throw checked exceptions
 - Composability with standard library methods is valuable
 
 Define custom when:
+
 - The method throws a checked exception (standard interfaces don't)
 - The domain name adds significant clarity beyond "Function"
 - You need self-documenting method names that appear in stack traces
@@ -801,13 +811,13 @@ interface PricingStrategy {
 }
 ```
 
-*What separates good from great:* The checked exception case - it
+_What separates good from great:_ The checked exception case - it
 is the most common legitimate reason for a custom interface.
 
 ---
 
 **[STAFF] Q3 - Architecture**
-*How do you design a processing pipeline using functional interfaces?*
+_How do you design a processing pipeline using functional interfaces?_
 
 A validation and transformation pipeline:
 
@@ -856,10 +866,9 @@ Each dependency is injected as a functional interface - the processor
 is testable with mock implementations. Adding a new step is adding
 a new parameter. The composition is visible in the `process` method.
 
-*What separates good from great:* Injecting functional interfaces
+_What separates good from great:_ Injecting functional interfaces
 as constructor parameters for testability - this is the functional
 equivalent of the Strategy pattern.
-
 
 ---
 
@@ -879,12 +888,14 @@ Use them when the lambda does nothing but call a method.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Method references have four forms: `Class::staticMethod` (static),
 > `instance::method` (bound instance), `Class::method` (unbound -
 > method called on the first parameter), and `Class::new` (constructor).
 > They are syntactic sugar for lambdas that only call a single method.
 
 **3 minutes (Senior):**
+
 > Method references make code more readable when the lambda body is
 > exactly "call this method on the parameter" or "call this static
 > method". The four kinds cover all cases:
@@ -906,16 +917,17 @@ Use them when the lambda does nothing but call a method.
 
 **The Four Kinds**
 
-| Kind | Syntax | Equivalent Lambda | Example |
-|------|--------|------------------|---------|
-| Static | `Class::staticMethod` | `x -> Class.staticMethod(x)` | `Integer::parseInt` |
-| Bound instance | `obj::method` | `x -> obj.method(x)` | `System.out::println` |
+| Kind             | Syntax                  | Equivalent Lambda                 | Example               |
+| ---------------- | ----------------------- | --------------------------------- | --------------------- |
+| Static           | `Class::staticMethod`   | `x -> Class.staticMethod(x)`      | `Integer::parseInt`   |
+| Bound instance   | `obj::method`           | `x -> obj.method(x)`              | `System.out::println` |
 | Unbound instance | `Class::instanceMethod` | `(obj, args) -> obj.method(args)` | `String::toUpperCase` |
-| Constructor | `Class::new` | `args -> new Class(args)` | `ArrayList::new` |
+| Constructor      | `Class::new`            | `args -> new Class(args)`         | `ArrayList::new`      |
 
 **When the Unbound Form is Ambiguous**
 
 `Integer::toString` could be:
+
 - Static: `Integer.toString(int)` - takes an int, returns String
 - Unbound instance: `Integer::toString()` - called on the Integer argument
 
@@ -926,6 +938,7 @@ wins.
 **When to Use Method References**
 
 Use method reference when the lambda is just calling a method:
+
 ```java
 // YES - just calling a method
 .map(String::toUpperCase)  // clear
@@ -1024,25 +1037,25 @@ object instance at the time of the expression."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Unbound Class::method is the same as static" | Unbound: method called on the first argument. Static: method called directly. `String::toUpperCase` receives a String and calls toUpperCase on it. | Wrong mental model of how the argument is used |
-| 2 | "Method references are more performant than lambdas" | Both compile to invokedynamic. Performance difference is negligible or zero. | Forcing method references for performance reasons |
-| 3 | "Constructor reference creates one object shared by all calls" | `Class::new` creates a new object on every `get()` call. It is a factory, not a singleton. | Unexpected multiple object creation |
-| 4 | "Method references can only be used in streams" | Method references work wherever a functional interface is expected - callbacks, comparators, configuration. | Underusing them outside of stream operations |
+| #   | Misconception                                                  | Reality                                                                                                                                            | Danger                                            |
+| --- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| 1   | "Unbound Class::method is the same as static"                  | Unbound: method called on the first argument. Static: method called directly. `String::toUpperCase` receives a String and calls toUpperCase on it. | Wrong mental model of how the argument is used    |
+| 2   | "Method references are more performant than lambdas"           | Both compile to invokedynamic. Performance difference is negligible or zero.                                                                       | Forcing method references for performance reasons |
+| 3   | "Constructor reference creates one object shared by all calls" | `Class::new` creates a new object on every `get()` call. It is a factory, not a singleton.                                                         | Unexpected multiple object creation               |
+| 4   | "Method references can only be used in streams"                | Method references work wherever a functional interface is expected - callbacks, comparators, configuration.                                        | Underusing them outside of stream operations      |
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Name the four kinds + example of each |
-| 15 minutes | Add unbound vs static distinction + readability guideline |
-| Under pressure | "Static, bound instance, unbound instance, constructor" |
+| Preparation time | Recommended approach                                      |
+| ---------------- | --------------------------------------------------------- |
+| 5 minutes        | Name the four kinds + example of each                     |
+| 15 minutes       | Add unbound vs static distinction + readability guideline |
+| Under pressure   | "Static, bound instance, unbound instance, constructor"   |
 
 **[JUNIOR] Q1 - Conceptual**
-*What are the four kinds of method references?*
+_What are the four kinds of method references?_
 
 1. **Static**: `Integer::parseInt` - calls `Integer.parseInt(x)`
 2. **Bound instance**: `System.out::println` - calls `System.out.println(x)`
@@ -1053,20 +1066,22 @@ The key to remembering: (1) and (2) identify the actual object/class
 to call. (3) calls the method on the lambda's argument. (4) creates
 a new instance.
 
-*What separates good from great:* Giving the equivalent lambda for
+_What separates good from great:_ Giving the equivalent lambda for
 each kind immediately.
 
 ---
 
 **[MID] Q2 - Trade-off**
-*When should you use a method reference vs a lambda?*
+_When should you use a method reference vs a lambda?_
 
 Use method reference when the lambda body is exactly one method call
 with no modifications:
+
 - `s -> s.toUpperCase()` -> `String::toUpperCase`
 - `x -> log(x)` -> `this::log`
 
 Use lambda when there is additional logic:
+
 - `s -> s.toUpperCase() + "!"` - not possible with method reference
 - `x -> x > 0 && x < 100` - not a method call
 
@@ -1075,9 +1090,8 @@ is self-explanatory. If the method name is opaque (like `process`),
 keeping the lambda with a meaningful variable name (`item -> process(item)`)
 may be clearer.
 
-*What separates good from great:* The guideline about opaque method
+_What separates good from great:_ The guideline about opaque method
 names - not all method references improve clarity.
-
 
 ---
 
@@ -1098,6 +1112,7 @@ the lazy evaluation model is a frequent deep-dive topic.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > A Stream is a lazy pipeline. Intermediate operations (filter, map,
 > flatMap) are lazy - they define what to do but do nothing. When
 > a terminal operation (collect, count, forEach) is called, the
@@ -1105,6 +1120,7 @@ the lazy evaluation model is a frequent deep-dive topic.
 > before the next element starts (depth-first, not breadth-first).
 
 **3 minutes (Senior):**
+
 > The laziness is the key design property of Streams. Without it,
 > every intermediate step would create an intermediate collection -
 > wasteful for filtering a million elements to three. With laziness,
@@ -1126,13 +1142,16 @@ the lazy evaluation model is a frequent deep-dive topic.
 > be lazy, and parallel streams can silently lose ordering guarantees.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about how Streams work - let me explain
-    lazy evaluation and the pipeline model."
-(2) First principles: "A pipeline is a series of transforms applied
-    to each element. Lazy means we define the transforms before
-    processing any data."
-(3) Bridge: "A Stream pipeline is like an assembly line that doesn't
-    start until an order arrives."
+
+**(1) Restate:** "You are asking about how Streams work - let me explain
+lazy evaluation and the pipeline model."
+
+**(2) First principles:** "A pipeline is a series of transforms applied
+to each element. Lazy means we define the transforms before
+processing any data."
+
+**(3) Bridge:** "A Stream pipeline is like an assembly line that doesn't
+start until an order arrives."
 
 ---
 
@@ -1204,13 +1223,13 @@ works correctly.
 
 **Stream vs Collection**
 
-| Aspect | Stream | Collection |
-|--------|--------|------------|
-| Traversal | Once (consumed) | Multiple times |
-| Size | Can be infinite | Must be finite |
-| Execution | Lazy | Eager |
-| Mutation | No mutation | Mutable |
-| Purpose | Computation pipeline | Data storage |
+| Aspect    | Stream               | Collection     |
+| --------- | -------------------- | -------------- |
+| Traversal | Once (consumed)      | Multiple times |
+| Size      | Can be infinite      | Must be finite |
+| Execution | Lazy                 | Eager          |
+| Mutation  | No mutation          | Mutable        |
+| Purpose   | Computation pipeline | Data storage   |
 
 ---
 
@@ -1308,13 +1327,13 @@ exceeds the benefit. Profile before parallelizing."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Streams can be reused" | Streams are consumed after the terminal operation. Calling any operation on a consumed stream throws IllegalStateException. | Runtime exception when trying to chain two terminal operations |
-| 2 | "All elements are filtered first, then mapped" | Streams are depth-first: each element goes through the full pipeline before the next element starts. | Incorrect mental model; leads to wrong performance expectations |
-| 3 | "sorted() is lazy like filter()" | sorted() is stateful - it must see all elements before emitting any. It buffers all elements. | Assuming sorted() short-circuits with limit() |
-| 4 | "parallel() always makes streams faster" | Parallel streams have overhead from task splitting and merging. Beneficial only for CPU-intensive, large-dataset operations. | Slower performance from parallel on small or IO-bound streams |
-| 5 | "stream.count() is O(1) for List" | For most List implementations, count() iterates the stream. It is NOT using list.size(). Use list.size() directly for O(1). | Unnecessary O(n) traversal |
+| #   | Misconception                                  | Reality                                                                                                                      | Danger                                                          |
+| --- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1   | "Streams can be reused"                        | Streams are consumed after the terminal operation. Calling any operation on a consumed stream throws IllegalStateException.  | Runtime exception when trying to chain two terminal operations  |
+| 2   | "All elements are filtered first, then mapped" | Streams are depth-first: each element goes through the full pipeline before the next element starts.                         | Incorrect mental model; leads to wrong performance expectations |
+| 3   | "sorted() is lazy like filter()"               | sorted() is stateful - it must see all elements before emitting any. It buffers all elements.                                | Assuming sorted() short-circuits with limit()                   |
+| 4   | "parallel() always makes streams faster"       | Parallel streams have overhead from task splitting and merging. Beneficial only for CPU-intensive, large-dataset operations. | Slower performance from parallel on small or IO-bound streams   |
+| 5   | "stream.count() is O(1) for List"              | For most List implementations, count() iterates the stream. It is NOT using list.size(). Use list.size() directly for O(1).  | Unnecessary O(n) traversal                                      |
 
 ---
 
@@ -1322,12 +1341,13 @@ exceeds the benefit. Profile before parallelizing."
 
 **FM1 - IllegalStateException from reused stream**
 
-*Symptom:* `IllegalStateException: stream has already been operated upon or closed`
+_Symptom:_ `IllegalStateException: stream has already been operated upon or closed`
 
-*Root Cause:* A terminal operation was called twice on the same stream,
+_Root Cause:_ A terminal operation was called twice on the same stream,
 or the stream was stored in a variable and used after consumption.
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD
 Stream<User> stream = users.stream().filter(User::isActive);
@@ -1346,27 +1366,27 @@ List<User> list = streamSup.get().toList();
 
 **FM2 - Incorrect anyMatch vs count() > 0**
 
-*Symptom:* Slow "exists" check on large streams.
+_Symptom:_ Slow "exists" check on large streams.
 
-*Root Cause:* Using `count() > 0` instead of `anyMatch()`. count()
+_Root Cause:_ Using `count() > 0` instead of `anyMatch()`. count()
 processes all elements even after a match is found.
 
-*Fix:* Replace `stream.filter(pred).count() > 0` with
+_Fix:_ Replace `stream.filter(pred).count() > 0` with
 `stream.anyMatch(pred)`.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Know lazy execution + terminal triggers + single-use rule |
-| 15 minutes | Add depth-first traversal + short-circuit operations |
-| 30 minutes | Add stateful vs stateless + parallel pitfalls |
-| Under pressure | "Lazy until terminal; depth-first; single-use" |
+| Preparation time | Recommended approach                                      |
+| ---------------- | --------------------------------------------------------- |
+| 5 minutes        | Know lazy execution + terminal triggers + single-use rule |
+| 15 minutes       | Add depth-first traversal + short-circuit operations      |
+| 30 minutes       | Add stateful vs stateless + parallel pitfalls             |
+| Under pressure   | "Lazy until terminal; depth-first; single-use"            |
 
 **[JUNIOR] Q1 - Conceptual**
-*What does "lazy evaluation" mean for Java Streams?*
+_What does "lazy evaluation" mean for Java Streams?_
 
 Intermediate operations (filter, map, flatMap) are lazy - calling
 them does not process any elements. They only define what to do.
@@ -1383,25 +1403,28 @@ List<String> result = pipeline.toList();
 ```
 
 Benefits:
+
 - No intermediate collections for each step
 - Short-circuit terminals (limit, findFirst) can stop early
 - Enables infinite streams that terminate with limit()
 
-*What separates good from great:* Immediately connecting laziness
+_What separates good from great:_ Immediately connecting laziness
 to the short-circuit benefit and infinite stream support.
 
 ---
 
 **[SENIOR] Q2 - Trade-off**
-*When should you use parallel streams? What are the risks?*
+_When should you use parallel streams? What are the risks?_
 
 Parallel is beneficial when:
+
 - The dataset is large (> 10,000 elements typically)
 - Operations are CPU-intensive and stateless
 - The source splits well (arrays, ArrayLists - yes; LinkedLists - no)
 - No shared mutable state is modified
 
 Risks:
+
 1. **Wrong thread pool**: parallel streams use `ForkJoinPool.commonPool()`.
    If the application is already using this pool for other work,
    parallel streams compete with that work.
@@ -1419,13 +1442,13 @@ Risks:
 
 Measurement: JMH benchmark before declaring parallel faster.
 
-*What separates good from great:* The thread pool competition issue -
+_What separates good from great:_ The thread pool competition issue -
 parallel streams sharing the common pool with framework tasks.
 
 ---
 
 **[STAFF] Q3 - Production**
-*Describe a production issue caused by incorrect Stream use.*
+_Describe a production issue caused by incorrect Stream use._
 
 A reporting service generated monthly summaries by streaming
 transaction records through several transformations. The stream
@@ -1452,10 +1475,9 @@ Fix: change to accept a `Supplier<Stream<Transaction>>` or recreate
 the stream from the source at each method call. Never store a stream
 in a field.
 
-*What separates good from great:* Noting that the test coverage did
+_What separates good from great:_ Noting that the test coverage did
 not catch this because test isolation (new instance per test) masks
 the bug.
-
 
 ---
 
@@ -1477,12 +1499,14 @@ the design intent.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Optional is a return type that explicitly signals "this method might
 > return nothing." It eliminates null return surprises by making absence
 > visible in the signature. Rule: use Optional only as a return type.
 > Never use it as a field type, method parameter, or collection element.
 
 **3 minutes (Senior):**
+
 > Optional's value is informational - it communicates "caller, you must
 > handle the absence case." Without Optional, a null return is invisible
 > until it throws NPE. With Optional, the compiler forces the caller
@@ -1668,13 +1692,13 @@ without boxing."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Optional eliminates NPE" | Optional itself can be null if misused (e.g., Optional field). The reference to Optional can be null. | False sense of null safety |
-| 2 | "orElse and orElseGet are equivalent" | orElse computes the argument always. orElseGet evaluates the Supplier only if empty. | Unnecessary work when orElse's argument is expensive |
-| 3 | "Optional.get() is safe if isPresent() was true before" | Thread-safe if the Optional is local. But calling isPresent() then get() is anti-pattern - use orElseThrow() or map() instead. | Verbose code; encourages null-style thinking with Optional |
-| 4 | "Optional works well as a JPA entity field" | JPA requires serializable fields. Optional is not Serializable. Optional fields break JPA and Hibernate. | Mapping/Serialization errors at runtime |
-| 5 | "Optional should replace every nullable reference" | Optional is for return types where absence is a valid, documented outcome. Not for defensive coding of internal nulls. | Over-engineered code with Optional<String> parameters everywhere |
+| #   | Misconception                                           | Reality                                                                                                                        | Danger                                                           |
+| --- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| 1   | "Optional eliminates NPE"                               | Optional itself can be null if misused (e.g., Optional field). The reference to Optional can be null.                          | False sense of null safety                                       |
+| 2   | "orElse and orElseGet are equivalent"                   | orElse computes the argument always. orElseGet evaluates the Supplier only if empty.                                           | Unnecessary work when orElse's argument is expensive             |
+| 3   | "Optional.get() is safe if isPresent() was true before" | Thread-safe if the Optional is local. But calling isPresent() then get() is anti-pattern - use orElseThrow() or map() instead. | Verbose code; encourages null-style thinking with Optional       |
+| 4   | "Optional works well as a JPA entity field"             | JPA requires serializable fields. Optional is not Serializable. Optional fields break JPA and Hibernate.                       | Mapping/Serialization errors at runtime                          |
+| 5   | "Optional should replace every nullable reference"      | Optional is for return types where absence is a valid, documented outcome. Not for defensive coding of internal nulls.         | Over-engineered code with Optional<String> parameters everywhere |
 
 ---
 
@@ -1682,24 +1706,25 @@ without boxing."
 
 **FM1 - NPE from null Optional field**
 
-*Symptom:* NPE at `field.isPresent()` - the Optional itself is null.
+_Symptom:_ NPE at `field.isPresent()` - the Optional itself is null.
 
-*Root Cause:* Optional field was never initialized or was set to null
+_Root Cause:_ Optional field was never initialized or was set to null
 (not to `Optional.empty()`).
 
-*Fix:* Initialize Optional fields to `Optional.empty()` if you
+_Fix:_ Initialize Optional fields to `Optional.empty()` if you
 must have them as fields. Better: remove Optional from fields entirely
 and return Optional from accessors.
 
 **FM2 - orElse computing expensive default unnecessarily**
 
-*Symptom:* Performance profiler shows expensive computation (DB query,
+_Symptom:_ Performance profiler shows expensive computation (DB query,
 object construction) running even when Optional is present.
 
-*Root Cause:* `orElse(expensiveCompute())` - Java evaluates method
+_Root Cause:_ `orElse(expensiveCompute())` - Java evaluates method
 arguments before passing them.
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD: repository.findDefault() called even when opt is present
 User user = opt.orElse(repository.findDefault());
@@ -1712,37 +1737,39 @@ User user = opt.orElseGet(repository::findDefault);
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | When to use + three wrong uses (field, param, collection) |
-| 15 minutes | Add orElse vs orElseGet + functional chain examples |
-| 30 minutes | Add JPA field issue + performance implications |
-| Under pressure | "Return type only; never field/param/collection; orElseGet for expensive defaults" |
+| Preparation time | Recommended approach                                                               |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| 5 minutes        | When to use + three wrong uses (field, param, collection)                          |
+| 15 minutes       | Add orElse vs orElseGet + functional chain examples                                |
+| 30 minutes       | Add JPA field issue + performance implications                                     |
+| Under pressure   | "Return type only; never field/param/collection; orElseGet for expensive defaults" |
 
 **[JUNIOR] Q1 - Conceptual**
-*When should you return Optional from a method?*
+_When should you return Optional from a method?_
 
 Return Optional when the method legitimately may have no result -
 the absence is a normal, expected outcome, not an error.
 
 Good candidates:
+
 - `findById(id)` - the record may not exist
 - `findFirst()` - the collection may be empty
 - `getConfigValue("key")` - the key may not be configured
 
 Do NOT return Optional when:
+
 - The method always returns a value (use the value directly)
 - The absence indicates an error (use an exception)
 - The method is a factory that creates the value (always returns something)
 
-*What separates good from great:* The last point - "absence as error
+_What separates good from great:_ The last point - "absence as error
 means exception, not Optional." Optional is for legitimate absent-value,
 not error signaling.
 
 ---
 
 **[MID] Q2 - Trade-off**
-*What is wrong with using Optional as a method parameter?*
+_What is wrong with using Optional as a method parameter?_
 
 Two problems:
 
@@ -1755,6 +1782,7 @@ Two problems:
    (not `Optional.empty()`). Then `opt.isPresent()` throws NPE.
 
 Better alternatives:
+
 - Overloaded methods: `process()` and `process(User user)`
 - Nullable parameter with `@Nullable` annotation
 - Builder pattern for optional configuration
@@ -1768,13 +1796,13 @@ void send(String message) { ... }
 void send(String message, User user) { ... }
 ```
 
-*What separates good from great:* Proposing the overloaded method
+_What separates good from great:_ Proposing the overloaded method
 alternative, not just criticizing Optional parameters.
 
 ---
 
 **[SENIOR] Q3 - Production**
-*How do you handle Optional with JPA/Hibernate?*
+_How do you handle Optional with JPA/Hibernate?_
 
 JPA repository methods return `Optional<Entity>` for single-entity
 lookups (Spring Data JPA supports this natively):
@@ -1791,6 +1819,7 @@ User user = userRepository.findById(id)
 ```
 
 JPA entity fields should NOT be Optional:
+
 ```java
 @Entity
 class User {
@@ -1809,7 +1838,7 @@ Java nullable types (String, Integer, etc.) - not Optional. JPA
 sets fields directly via reflection; Optional wrapping interferes
 with dirty checking.
 
-*What separates good from great:* Knowing that Spring Data JPA
+_What separates good from great:_ Knowing that Spring Data JPA
 repository methods CAN return Optional (they are not JPA fields) -
 the prohibition is specifically for entity fields.
 
@@ -1817,14 +1846,14 @@ the prohibition is specifically for entity fields.
 
 ### ⚖️ Comparison Table
 
-| Null check pattern | Verbosity | Safety | Functional? | Recommended? |
-|--------------------|-----------|--------|-------------|--------------|
-| `if (x != null)` | Low | No (easy to forget) | No | Only in legacy |
-| Optional return | Medium | Yes (forced by type) | Yes | Yes - return type |
-| Optional field | High | No (Optional itself can be null) | N/A | Never |
-| Optional parameter | Medium | No (null ambiguity) | Partial | Never |
-| `@Nullable` annotation | Low | Tool-checked | No | For params |
-| Exception on absence | Low | Yes | N/A | When absence = error |
+| Null check pattern     | Verbosity | Safety                           | Functional? | Recommended?         |
+| ---------------------- | --------- | -------------------------------- | ----------- | -------------------- |
+| `if (x != null)`       | Low       | No (easy to forget)              | No          | Only in legacy       |
+| Optional return        | Medium    | Yes (forced by type)             | Yes         | Yes - return type    |
+| Optional field         | High      | No (Optional itself can be null) | N/A         | Never                |
+| Optional parameter     | Medium    | No (null ambiguity)              | Partial     | Never                |
+| `@Nullable` annotation | Low       | Tool-checked                     | No          | For params           |
+| Exception on absence   | Low       | Yes                              | N/A         | When absence = error |
 
 **Deciding factor:** Return Optional from methods where absence is
 a documented valid outcome. Use null internally within a class.

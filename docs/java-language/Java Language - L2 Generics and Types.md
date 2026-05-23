@@ -40,11 +40,14 @@ and the bounds/wildcards questions separate junior from senior.
 > reason for nearly every "unchecked cast" warning you will ever see.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about generics - let me cover the core
+
+**(1) Restate:** "You are asking about generics - let me cover the core
 purpose, bounds, and the type erasure tradeoff."
-(2) First principles: "Without generics, a collection is an object bag.
+
+**(2) First principles:** "Without generics, a collection is an object bag.
 With generics, the compiler enforces what goes in and what comes out."
-(3) Bridge: "Generics are like a typed container in a warehouse -
+
+**(3) Bridge:** "Generics are like a typed container in a warehouse -
 the label says only apples go in, and you get apples back out,
 no inspection required."
 
@@ -518,7 +521,6 @@ _What separates good from great:_ Explaining the Java social contract
 for interacting with legacy code only. Wildcards are for method
 signatures that need to accept a range of generic types.
 
-
 ---
 
 ---
@@ -538,6 +540,7 @@ mid-to-senior Java interview and most candidates get PECS backwards.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Wildcards let generic methods accept a range of parameterized types.
 > PECS: Producer Extends, Consumer Super. If you are reading from a
 > collection (it produces values), use `? extends T`. If you are
@@ -545,6 +548,7 @@ mid-to-senior Java interview and most candidates get PECS backwards.
 > you need both, use a concrete type parameter.
 
 **3 minutes (Senior):**
+
 > The wildcard restrictions exist because of type safety. `List<? extends Number>`
 > means "a list of some specific Number subtype, but we don't know which."
 > Because we don't know the exact subtype, we cannot add anything -
@@ -571,6 +575,7 @@ mid-to-senior Java interview and most candidates get PECS backwards.
 Means "a list of some unknown type." You can read elements as Object.
 You cannot add anything (except null). Use when the code is truly
 type-agnostic:
+
 ```java
 void printSize(List<?> list) {
     System.out.println(list.size());  // does not need to know element type
@@ -580,6 +585,7 @@ void printSize(List<?> list) {
 **Upper Bounded Wildcard `<? extends T>`**
 
 Means "a list of T or a subtype of T." Covariant.
+
 - CAN read elements as T
 - CANNOT add elements (type of subtype is unknown)
 
@@ -596,6 +602,7 @@ double sumNumbers(List<? extends Number> list) {
 **Lower Bounded Wildcard `<? super T>`**
 
 Means "a list of T or a supertype of T." Contravariant.
+
 - CAN add T values (T is a subtype of the actual element type)
 - READ returns Object (actual element type unknown - might be supertype)
 
@@ -612,6 +619,7 @@ void addNumbers(List<? super Integer> list) {
 **PECS Applied**
 
 The `Collections.copy` signature demonstrates PECS perfectly:
+
 ```java
 public static <T> void copy(
     List<? super T> dest,    // Consumer: we write T into it (super)
@@ -621,12 +629,12 @@ public static <T> void copy(
 
 **When to use which:**
 
-| Need | Wildcard | Reason |
-|------|----------|--------|
-| Read values as T | `<? extends T>` | Any subtype is readable as T |
-| Write T values | `<? super T>` | Any supertype accepts T |
-| Both read and write | `<T>` (type parameter) | Need the exact type |
-| Don't care about element type | `<?>` | Truly type-agnostic |
+| Need                          | Wildcard               | Reason                       |
+| ----------------------------- | ---------------------- | ---------------------------- |
+| Read values as T              | `<? extends T>`        | Any subtype is readable as T |
+| Write T values                | `<? super T>`          | Any supertype accepts T      |
+| Both read and write           | `<T>` (type parameter) | Need the exact type          |
+| Don't care about element type | `<?>`                  | Truly type-agnostic          |
 
 **Mental Model**
 
@@ -746,13 +754,13 @@ everywhere."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "I can add to a ? extends list" | Cannot add to `? extends T` - the exact subtype is unknown, so no element (except null) is guaranteed safe. | Compile error that looks confusing |
-| 2 | "I get back a T from a ? super T list" | Reads from `? super T` return Object - the actual type could be any supertype of T. | ClassCastException when trying to use the read value as T |
-| 3 | "PECS is hard to remember" | Mnemonic: PE = producing (reading out) uses extends. CS = consuming (writing in) uses super. | Wildcard applied backwards - unexpected compile errors or overly restrictive API |
-| 4 | "Unbounded <?> is the same as <Object>" | `List<?>` is unknown-type, not `List<Object>`. `List<Object>` accepts anything. `List<?>` accepts no additions (except null). | Unexpected compiler restrictions |
-| 5 | "Lower bounds work on type parameters too" | `<T super Foo>` does not compile. Lower bounds only work in wildcards (`? super Foo`). Upper bounds work in both. | Compile error when attempting `<T super Foo>` |
+| #   | Misconception                              | Reality                                                                                                                       | Danger                                                                           |
+| --- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1   | "I can add to a ? extends list"            | Cannot add to `? extends T` - the exact subtype is unknown, so no element (except null) is guaranteed safe.                   | Compile error that looks confusing                                               |
+| 2   | "I get back a T from a ? super T list"     | Reads from `? super T` return Object - the actual type could be any supertype of T.                                           | ClassCastException when trying to use the read value as T                        |
+| 3   | "PECS is hard to remember"                 | Mnemonic: PE = producing (reading out) uses extends. CS = consuming (writing in) uses super.                                  | Wildcard applied backwards - unexpected compile errors or overly restrictive API |
+| 4   | "Unbounded <?> is the same as <Object>"    | `List<?>` is unknown-type, not `List<Object>`. `List<Object>` accepts anything. `List<?>` accepts no additions (except null). | Unexpected compiler restrictions                                                 |
+| 5   | "Lower bounds work on type parameters too" | `<T super Foo>` does not compile. Lower bounds only work in wildcards (`? super Foo`). Upper bounds work in both.             | Compile error when attempting `<T super Foo>`                                    |
 
 ---
 
@@ -760,13 +768,14 @@ everywhere."
 
 **FM1 - API too restrictive due to missing wildcard**
 
-*Symptom:* Users of your library must cast or create adapter objects
+_Symptom:_ Users of your library must cast or create adapter objects
 to call your method. They report "this method does not accept my list."
 
-*Root Cause:* Method parameter uses exact type instead of bounded
+_Root Cause:_ Method parameter uses exact type instead of bounded
 wildcard.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```java
 // Test: can the method accept subtypes?
 void testFlexibility() {
@@ -778,17 +787,18 @@ void testFlexibility() {
 }
 ```
 
-*Fix:* Change `List<T>` to `List<? extends T>` for read-only access,
+_Fix:_ Change `List<T>` to `List<? extends T>` for read-only access,
 or `List<? super T>` for write-only access.
 
 **FM2 - `? extends` wildcard blocks needed mutation**
 
-*Symptom:* Method needs to both read and write to a collection but
+_Symptom:_ Method needs to both read and write to a collection but
 `? extends` is blocking adds.
 
-*Root Cause:* Using a wildcard when a type parameter is needed.
+_Root Cause:_ Using a wildcard when a type parameter is needed.
 
-*Fix:* Use a concrete type parameter instead of a wildcard:
+_Fix:_ Use a concrete type parameter instead of a wildcard:
+
 ```java
 // WRONG for read+write
 void addAndSum(List<? extends Number> list) {
@@ -806,15 +816,15 @@ void addAndSum(List<? extends Number> list) {
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Memorize PECS mnemonic + why each wildcard restricts one operation |
-| 15 minutes | Add Collections.copy example + covariance/contravariance framing |
-| 30 minutes | Add Comparator contravariance + API design implications |
-| Under pressure | "Extends = read only; super = write only; both = type parameter" |
+| Preparation time | Recommended approach                                               |
+| ---------------- | ------------------------------------------------------------------ |
+| 5 minutes        | Memorize PECS mnemonic + why each wildcard restricts one operation |
+| 15 minutes       | Add Collections.copy example + covariance/contravariance framing   |
+| 30 minutes       | Add Comparator contravariance + API design implications            |
+| Under pressure   | "Extends = read only; super = write only; both = type parameter"   |
 
 **[MID] Q1 - Conceptual**
-*What is the PECS rule and why does it exist?*
+_What is the PECS rule and why does it exist?_
 
 PECS: **P**roducer **E**xtends, **C**onsumer **S**uper.
 
@@ -831,19 +841,20 @@ can safely read as Number because any subtype IS-A Number.
 supertype is unknown - you might get a Number or an Object. You can
 safely add T because T IS-A everything in `? super T`.
 
-*What separates good from great:* The WHY - not just the rule but
+_What separates good from great:_ The WHY - not just the rule but
 the type safety reason behind each restriction.
 
 ---
 
 **[SENIOR] Q2 - Production**
-*Where in the Java standard library does PECS appear? Walk through
-the reasoning.*
+_Where in the Java standard library does PECS appear? Walk through
+the reasoning._
 
 `Collections.sort(List<T> list, Comparator<? super T> c)`:
 
 The comparator is a consumer of T values. It takes two T values and
 returns an ordering. By using `? super T`, the API accepts:
+
 - `Comparator<T>` (exact match)
 - `Comparator<Supertype of T>` (if a parent comparator exists)
 
@@ -859,16 +870,17 @@ This allows copying from `List<Integer>` into `List<Number>` - the
 source is a producer of Integer, the destination is a consumer of
 Number (and Number super Integer).
 
-*What separates good from great:* The copy example where `src` and
+_What separates good from great:_ The copy example where `src` and
 `dest` have different wildcard bounds - showing how PECS enables
 flexible cross-type operations.
 
 ---
 
 **[STAFF] Q3 - Architecture**
-*How would you design a generic pipeline API using PECS principles?*
+_How would you design a generic pipeline API using PECS principles?_
 
 A data processing pipeline where stages can be connected:
+
 ```java
 interface Stage<I, O> {
     O process(I input);
@@ -910,25 +922,24 @@ The Function type `Function<? super T, ? extends R>` is the canonical
 PECS application for transformation: accepts T (or supertype) as input,
 produces R (or subtype) as output. This matches Java's `Stream.map`.
 
-*What separates good from great:* The Function parameter design -
+_What separates good from great:_ The Function parameter design -
 showing that PECS applies to function types too, not just collections.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Wildcard | Read | Write | Use when |
-|----------|------|-------|----------|
-| `<T>` type parameter | Yes, as T | Yes, T values | Need both read and write |
-| `<? extends T>` | Yes, as T | No (except null) | Read-only: producing T values |
-| `<? super T>` | Only as Object | Yes, T values | Write-only: consuming T values |
-| `<?>` unbounded | Only as Object | No (except null) | Type-agnostic operations |
+| Wildcard             | Read           | Write            | Use when                       |
+| -------------------- | -------------- | ---------------- | ------------------------------ |
+| `<T>` type parameter | Yes, as T      | Yes, T values    | Need both read and write       |
+| `<? extends T>`      | Yes, as T      | No (except null) | Read-only: producing T values  |
+| `<? super T>`        | Only as Object | Yes, T values    | Write-only: consuming T values |
+| `<?>` unbounded      | Only as Object | No (except null) | Type-agnostic operations       |
 
 **Deciding factor:** Apply PECS at API design time to maximize
 flexibility. Use the most restrictive wildcard that satisfies the
 method's actual operations. Wildcards in return types are usually
 wrong - return a concrete type so callers can use the value.
-
 
 ---
 
@@ -949,6 +960,7 @@ is frequently tested at mid-to-senior level.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Java enums are type-safe named constants implemented as classes.
 > Each constant is a singleton instance. Enums can have fields,
 > constructors, and methods. Per-constant method bodies let each
@@ -957,6 +969,7 @@ is frequently tested at mid-to-senior level.
 > enum keys.
 
 **3 minutes (Senior):**
+
 > The power of Java enums beyond simple constants is the ability
 > to embed behavior. A common pattern is the strategy-per-constant:
 > define an abstract method in the enum, and each constant provides
@@ -1048,6 +1061,7 @@ EnumSet<DayOfWeek> weekend = EnumSet.complementOf(workdays);
 **When to Use Enum for State Machines**
 
 Enums are ideal when:
+
 - The state space is closed and known at compile time
 - Transitions have associated logic
 - You need compile-time exhaustiveness for switch expressions
@@ -1157,13 +1171,13 @@ stores names not ordinals - that is the correct default."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Enums cannot have methods" | Enums are classes - they can have fields, constructors, methods, and per-constant behavior. | Missing the strategy-per-constant pattern |
-| 2 | "enum.ordinal() is stable for persistence" | Ordinal reflects insertion order. Adding a constant changes all subsequent ordinals. | Data corruption in persisted enum ordinals |
-| 3 | "EnumMap is just a regular HashMap" | EnumMap uses an array indexed by ordinal - no hashing, O(1) guaranteed, smaller footprint. | Using HashMap<Enum, V> unnecessarily |
-| 4 | "switch on enums without default is incomplete" | Java 14+ switch expressions require exhaustiveness - all constants must be covered (default replaces the compiler-exhaustiveness check if added). | Using default when you want exhaustiveness warning for new constants |
-| 5 | "Enums can extend other classes" | Enums implicitly extend java.lang.Enum - cannot extend another class. Can implement interfaces. | Attempt to use inheritance with enums |
+| #   | Misconception                                   | Reality                                                                                                                                           | Danger                                                               |
+| --- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1   | "Enums cannot have methods"                     | Enums are classes - they can have fields, constructors, methods, and per-constant behavior.                                                       | Missing the strategy-per-constant pattern                            |
+| 2   | "enum.ordinal() is stable for persistence"      | Ordinal reflects insertion order. Adding a constant changes all subsequent ordinals.                                                              | Data corruption in persisted enum ordinals                           |
+| 3   | "EnumMap is just a regular HashMap"             | EnumMap uses an array indexed by ordinal - no hashing, O(1) guaranteed, smaller footprint.                                                        | Using HashMap<Enum, V> unnecessarily                                 |
+| 4   | "switch on enums without default is incomplete" | Java 14+ switch expressions require exhaustiveness - all constants must be covered (default replaces the compiler-exhaustiveness check if added). | Using default when you want exhaustiveness warning for new constants |
+| 5   | "Enums can extend other classes"                | Enums implicitly extend java.lang.Enum - cannot extend another class. Can implement interfaces.                                                   | Attempt to use inheritance with enums                                |
 
 ---
 
@@ -1171,39 +1185,40 @@ stores names not ordinals - that is the correct default."
 
 **FM1 - Ordinal shift after adding enum constant**
 
-*Symptom:* Database shows wrong status for orders after a deployment.
+_Symptom:_ Database shows wrong status for orders after a deployment.
 Old ordinals now map to different constants.
 
-*Root Cause:* Constants were added in the middle of the enum
+_Root Cause:_ Constants were added in the middle of the enum
 declaration. `ordinal()` values shifted. Persistence layer was using
 ordinals.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Check JPA mapping
 grep -rn "EnumType.ORDINAL\|ordinal()" src/ --include="*.java"
 # Any result is a risk
 ```
 
-*Fix:* Migrate to `EnumType.STRING` in JPA. Write a migration to
+_Fix:_ Migrate to `EnumType.STRING` in JPA. Write a migration to
 update stored ordinal values to names.
 
-*Prevention:* Project-wide rule: always use `EnumType.STRING` in
+_Prevention:_ Project-wide rule: always use `EnumType.STRING` in
 JPA. Never use `ordinal()` in any persistence or serialization code.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Know: enums are classes, per-constant methods, EnumMap/Set |
-| 15 minutes | Add state machine pattern + ordinal persistence trap |
-| 30 minutes | Add EnumSet bitmask internals + JPA enumType recommendation |
-| Under pressure | "Enums are singletons with optional per-constant behavior" |
+| Preparation time | Recommended approach                                        |
+| ---------------- | ----------------------------------------------------------- |
+| 5 minutes        | Know: enums are classes, per-constant methods, EnumMap/Set  |
+| 15 minutes       | Add state machine pattern + ordinal persistence trap        |
+| 30 minutes       | Add EnumSet bitmask internals + JPA enumType recommendation |
+| Under pressure   | "Enums are singletons with optional per-constant behavior"  |
 
 **[MID] Q1 - Conceptual**
-*How do per-constant abstract methods work in enums?*
+_How do per-constant abstract methods work in enums?_
 
 Each enum constant can have its own class body. If the enum declares
 an abstract method, each constant must provide an implementation.
@@ -1228,23 +1243,25 @@ enum Discount {
 This pattern makes the enum an extensible strategy set. Adding a new
 constant forces the implementer to define its behavior.
 
-*What separates good from great:* Comparing this to a switch statement -
+_What separates good from great:_ Comparing this to a switch statement -
 the enum approach cannot "forget" a case; the switch approach has
 no compiler enforcement.
 
 ---
 
 **[SENIOR] Q2 - Trade-off**
-*When would you use an enum state machine vs a proper state
-machine library?*
+_When would you use an enum state machine vs a proper state
+machine library?_
 
 Use enum state machine when:
+
 - States are few (less than ~10)
 - Transitions are deterministic and synchronous
 - Business rules for state transitions are stable
 - The codebase is small and the state machine is localized
 
 Use a state machine library (Spring StateMachine, Squirrel) when:
+
 - States are many with complex transitions
 - Transitions have guards, actions, and entry/exit behaviors
 - Audit trail of transitions is required
@@ -1256,22 +1273,24 @@ bloats the enum class. If each constant has 5-10 methods, the enum
 file becomes unmaintainable. At that point, extracting to a proper
 state machine pattern is warranted.
 
-*What separates good from great:* The maintainability threshold -
+_What separates good from great:_ The maintainability threshold -
 knowing when the enum approach becomes a liability.
 
 ---
 
 **[STAFF] Q3 - Production**
-*Describe a production issue involving enum ordinals.*
+_Describe a production issue involving enum ordinals._
 
 An order management system stored order status as `@Enumerated(EnumType.ORDINAL)`
 in the database. The enum was:
+
 ```
 PENDING(0), PROCESSING(1), SHIPPED(2), DELIVERED(3)
 ```
 
 A new requirement added `AWAITING_PAYMENT` between PENDING and
 PROCESSING. After the deployment:
+
 - Orders previously PROCESSING (ordinal 1) were now read as
   AWAITING_PAYMENT (ordinal 1)
 - Orders previously SHIPPED (ordinal 2) were read as PROCESSING
@@ -1283,26 +1302,25 @@ for 45 minutes on the production table.
 The permanent fix: switch to `EnumType.STRING` and add a
 `@Column(length=20)` annotation for the string column.
 
-*What separates good from great:* Noting that the production migration
+_What separates good from great:_ Noting that the production migration
 risk was the expensive part - not the code change itself.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Aspect | Integer constants | Enum | Enum with methods |
-|--------|-----------------|------|-------------------|
-| Type safety | None | Full | Full |
-| Behavior per constant | No | No | Yes (abstract methods) |
-| Compile exhaustiveness | No | switch expressions | Method implementation |
-| Persistence safety | Stable (manual) | Risk with ordinal | Risk with ordinal |
-| Memory | int primitive | Singleton objects | Singleton objects + vtable |
-| EnumMap eligible | No | Yes | Yes |
+| Aspect                 | Integer constants | Enum               | Enum with methods          |
+| ---------------------- | ----------------- | ------------------ | -------------------------- |
+| Type safety            | None              | Full               | Full                       |
+| Behavior per constant  | No                | No                 | Yes (abstract methods)     |
+| Compile exhaustiveness | No                | switch expressions | Method implementation      |
+| Persistence safety     | Stable (manual)   | Risk with ordinal  | Risk with ordinal          |
+| Memory                 | int primitive     | Singleton objects  | Singleton objects + vtable |
+| EnumMap eligible       | No                | Yes                | Yes                        |
 
 **Deciding factor:** Use enums for any closed set of named values.
 Add per-constant methods when behavior differs by constant. Use
 EnumMap/EnumSet when collecting enum-keyed data.
-
 
 ---
 
@@ -1324,6 +1342,7 @@ trick question that reveals depth.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Autoboxing converts `int` to `Integer` automatically. Unboxing does
 > the reverse. The Integer cache pools instances from -128 to 127 -
 > so `Integer.valueOf(127) == Integer.valueOf(127)` is true but
@@ -1331,6 +1350,7 @@ trick question that reveals depth.
 > use `.equals()` for Integer comparison, never `==`.
 
 **3 minutes (Senior):**
+
 > Autoboxing was introduced in Java 5 to reduce the friction of using
 > primitives with collections (which only hold objects). The compiler
 > translates `Integer i = 42` into `Integer i = Integer.valueOf(42)`.
@@ -1356,6 +1376,7 @@ trick question that reveals depth.
 **What Autoboxing Does**
 
 The compiler translates these automatically:
+
 ```
 int -> Integer:    Integer i = 42; → Integer i = Integer.valueOf(42);
 Integer -> int:    int i = integer; → int i = integer.intValue();
@@ -1387,15 +1408,15 @@ c.equals(d);        // true - same value
 
 **All Wrapper Caches**
 
-| Wrapper | Cache range |
-|---------|-------------|
-| Integer | -128 to 127 (configurable upper) |
-| Long | -128 to 127 |
-| Short | -128 to 127 |
-| Byte | -128 to 127 (entire range) |
-| Character | '\u0000' to '\u007F' (0-127) |
-| Boolean | TRUE and FALSE (always cached) |
-| Float, Double | No cache |
+| Wrapper       | Cache range                      |
+| ------------- | -------------------------------- |
+| Integer       | -128 to 127 (configurable upper) |
+| Long          | -128 to 127                      |
+| Short         | -128 to 127                      |
+| Byte          | -128 to 127 (entire range)       |
+| Character     | '\u0000' to '\u007F' (0-127)     |
+| Boolean       | TRUE and FALSE (always cached)   |
+| Float, Double | No cache                         |
 
 **NullPointerException from Unboxing**
 
@@ -1470,14 +1491,14 @@ if (Objects.equals(a, b)) {  // null-safe value comparison
 // Performance: primitives vs boxed in hot path
 // BAD: boxing in tight loop
 long sumBoxed(List<Integer> values) {
-    Long sum = 0L;  // boxed accumulator - boxes on every += 
+    Long sum = 0L;  // boxed accumulator - boxes on every +=
     for (Integer v : values) {
         sum += v;   // unbox v, add, rebox sum -> allocation per iter
     }
     return sum;
 }
 
-// GOOD: primitive accumulator  
+// GOOD: primitive accumulator
 long sumPrimitive(List<Integer> values) {
     long sum = 0L;  // primitive - no boxing
     for (Integer v : values) {
@@ -1530,13 +1551,13 @@ pipeline."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Integer == Integer always works" | Only for -128 to 127 (cached range). Outside this range, == compares references. | Correct tests (small values) masking production bug (large values) |
-| 2 | "Autoboxing is free (no cost)" | Every autobox allocates a heap object for out-of-cache values. In tight loops, this is measurable GC pressure. | Performance degradation in hot paths |
-| 3 | "NPE cannot come from int access" | `int n = map.get(key)` unboxes the Integer return. If the key is missing, get() returns null, and unboxing null throws NPE. | Confusing NPEs that look like they occur at int operations |
-| 4 | "The cache range is exactly -128 to 127 always" | The upper bound is configurable via -XX:AutoBoxCacheMax. In some JVMs with custom settings, the range is larger. | Relying on cache behavior in tests that will fail on different JVMs |
-| 5 | "Long, Short, Byte have no caching" | All integer wrapper types cache -128 to 127. Boolean caches TRUE and FALSE. Only Float and Double have no cache. | Assuming Double and Long behave differently from Integer |
+| #   | Misconception                                   | Reality                                                                                                                     | Danger                                                              |
+| --- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 1   | "Integer == Integer always works"               | Only for -128 to 127 (cached range). Outside this range, == compares references.                                            | Correct tests (small values) masking production bug (large values)  |
+| 2   | "Autoboxing is free (no cost)"                  | Every autobox allocates a heap object for out-of-cache values. In tight loops, this is measurable GC pressure.              | Performance degradation in hot paths                                |
+| 3   | "NPE cannot come from int access"               | `int n = map.get(key)` unboxes the Integer return. If the key is missing, get() returns null, and unboxing null throws NPE. | Confusing NPEs that look like they occur at int operations          |
+| 4   | "The cache range is exactly -128 to 127 always" | The upper bound is configurable via -XX:AutoBoxCacheMax. In some JVMs with custom settings, the range is larger.            | Relying on cache behavior in tests that will fail on different JVMs |
+| 5   | "Long, Short, Byte have no caching"             | All integer wrapper types cache -128 to 127. Boolean caches TRUE and FALSE. Only Float and Double have no cache.            | Assuming Double and Long behave differently from Integer            |
 
 ---
 
@@ -1544,20 +1565,22 @@ pipeline."
 
 **FM1 - NullPointerException from unboxing map result**
 
-*Symptom:* NPE at a line that reads: `int count = counts.get(key)`.
+_Symptom:_ NPE at a line that reads: `int count = counts.get(key)`.
 The stack trace seems wrong - it is not a null dereference.
 
-*Root Cause:* `Map.get()` returns null if the key is absent.
+_Root Cause:_ `Map.get()` returns null if the key is absent.
 Unboxing null Integer to int throws NPE.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Find potential unboxing NPE sites
 grep -rn "int .* = .*\.get\|long .* = .*\.get" src/ --include="*.java"
 # Each result needs null check before unboxing
 ```
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD
 int count = counts.get("key");  // NPE if key absent
@@ -1569,17 +1592,18 @@ Integer raw = counts.get("key");
 int count = raw != null ? raw : 0;
 ```
 
-*Prevention:* Never unbox a Map.get() result without null check
+_Prevention:_ Never unbox a Map.get() result without null check
 or getOrDefault().
 
 **FM2 - Boxed accumulator GC pressure under load**
 
-*Symptom:* High GC throughput, short GC pauses under load, profiler
+_Symptom:_ High GC throughput, short GC pauses under load, profiler
 shows many short-lived Integer/Long objects in young gen.
 
-*Root Cause:* Boxed accumulator in aggregate computation loop.
+_Root Cause:_ Boxed accumulator in aggregate computation loop.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # JVM flags to observe allocation pressure
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -jar app.jar
@@ -1590,21 +1614,21 @@ asprof -e alloc -d 30 -f flamegraph.html <pid>
 # Look for Integer.valueOf or Long.valueOf in hot path
 ```
 
-*Fix:* Change boxed accumulator to primitive type.
+_Fix:_ Change boxed accumulator to primitive type.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Memorize cache range + equals vs == rule |
-| 15 minutes | Add unboxing NPE trap + performance implications |
-| 30 minutes | Add JMH benchmark framing + getOrDefault pattern |
-| Under pressure | "Cache: -128 to 127. Use equals(). Unboxing null = NPE." |
+| Preparation time | Recommended approach                                     |
+| ---------------- | -------------------------------------------------------- |
+| 5 minutes        | Memorize cache range + equals vs == rule                 |
+| 15 minutes       | Add unboxing NPE trap + performance implications         |
+| 30 minutes       | Add JMH benchmark framing + getOrDefault pattern         |
+| Under pressure   | "Cache: -128 to 127. Use equals(). Unboxing null = NPE." |
 
 **[JUNIOR] Q1 - Conceptual**
-*What is the Integer cache, and why can it cause bugs?*
+_What is the Integer cache, and why can it cause bugs?_
 
 Java caches Integer objects for values -128 to 127. When you call
 `Integer.valueOf(50)`, you always get back the same object. When
@@ -1628,15 +1652,15 @@ a == b;      // false (not cached - different objects)
 a.equals(b); // true
 ```
 
-*What separates good from great:* Noting that this bug hides in tests
+_What separates good from great:_ Noting that this bug hides in tests
 because test data often uses small values that happen to be in the
 cache range.
 
 ---
 
 **[MID] Q2 - Debugging**
-*You have code that compares Integer values with == and it works
-in tests but fails in production. What is happening?*
+_You have code that compares Integer values with == and it works
+in tests but fails in production. What is happening?_
 
 The Integer cache trap. The code uses `==` to compare Integer
 objects. In tests, the Integer values happen to fall in the -128
@@ -1648,6 +1672,7 @@ For those, `==` compares different object references and returns
 false - even though the values are logically equal.
 
 Diagnosis:
+
 1. Find all `==` comparisons involving Integer/Long/Short variables
 2. Verify the test values are small (within cache range)
 3. Verify production values can be outside that range
@@ -1656,14 +1681,14 @@ Fix: replace all `integer1 == integer2` with `integer1.equals(integer2)`
 or unbox to primitives first: `int1 == int2` where int1/int2 are
 the `.intValue()` of each.
 
-*What separates good from great:* Explaining why tests pass - they
+_What separates good from great:_ Explaining why tests pass - they
 typically use IDs or counts that start at 1 and are small enough
 to be cached.
 
 ---
 
 **[SENIOR] Q3 - Production**
-*How do you profile and fix autoboxing-related GC pressure?*
+_How do you profile and fix autoboxing-related GC pressure?_
 
 Three-step process:
 
@@ -1678,6 +1703,7 @@ asprof -e alloc -d 60 -f alloc-flamegraph.html <pid>
 
 2. **Measure the impact**: run JMH benchmarks comparing boxed and
    primitive versions:
+
 ```java
 @Benchmark
 public long boxedSum(BenchmarkState state) {
@@ -1699,7 +1725,7 @@ public long primitiveSum(BenchmarkState state) {
    use `HashMap<Integer, V>` with `getOrDefault` to avoid boxing
    during lookups.
 
-*What separates good from great:* Starting with profiling before
+_What separates good from great:_ Starting with profiling before
 optimizing - knowing where autoboxing actually costs vs where it
 is irrelevant.
 
@@ -1707,19 +1733,18 @@ is irrelevant.
 
 ### ⚖️ Comparison Table
 
-| Type | Memory | GC pressure | Null handling | Collection eligible |
-|------|--------|-------------|---------------|---------------------|
-| `int` | 4 bytes | None | No (cannot be null) | No |
-| `Integer` | 16 bytes (object header + int) | Yes (out of cache) | Yes | Yes |
-| Cached Integer (-128..127) | 0 (reuse) | None | Yes | Yes |
-| `long` | 8 bytes | None | No | No |
-| `Long` | 24 bytes | Yes (out of cache) | Yes | Yes |
+| Type                       | Memory                         | GC pressure        | Null handling       | Collection eligible |
+| -------------------------- | ------------------------------ | ------------------ | ------------------- | ------------------- |
+| `int`                      | 4 bytes                        | None               | No (cannot be null) | No                  |
+| `Integer`                  | 16 bytes (object header + int) | Yes (out of cache) | Yes                 | Yes                 |
+| Cached Integer (-128..127) | 0 (reuse)                      | None               | Yes                 | Yes                 |
+| `long`                     | 8 bytes                        | None               | No                  | No                  |
+| `Long`                     | 24 bytes                       | Yes (out of cache) | Yes                 | Yes                 |
 
 **Deciding factor:** Use primitives everywhere performance matters.
 Use boxed types when nullability is needed, or when collections
 require object types. Use `getOrDefault` to avoid unboxing NPE on
 map lookups.
-
 
 ---
 
@@ -1740,6 +1765,7 @@ increasingly common in Java interviews.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Java infers types in three contexts: the diamond operator lets you
 > skip repeating generic type arguments in constructors, var infers
 > the type of local variables from the right-hand side, and target
@@ -1747,14 +1773,16 @@ increasingly common in Java interviews.
 > inference - the static type is still fixed, just written once.
 
 **3 minutes (Senior):**
+
 > The diamond operator (`<>`) was Java 7's first inference step:
 > `new ArrayList<>()` infers `ArrayList<String>` from the declaration
 > type. It saved repeating the same type parameter twice.
 >
 > `var` (Java 10) goes further: `var list = new ArrayList<String>()`
+>
 > - the variable type is inferred from the initializer. The variable
-> still has a static type; it is not dynamic like Python. The IDE knows
-> the type; the JVM knows the type; only the source code omits it.
+>   still has a static type; it is not dynamic like Python. The IDE knows
+>   the type; the JVM knows the type; only the source code omits it.
 >
 > The `var` limits are explicit by design: no uninitialized var,
 > no null initializer, no use in fields, method parameters, or return
@@ -1769,11 +1797,13 @@ increasingly common in Java interviews.
 **Diamond Operator**
 
 Before Java 7:
+
 ```java
 Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
 ```
 
 With diamond (Java 7+):
+
 ```java
 Map<String, List<Integer>> map = new HashMap<>();
 // Compiler infers HashMap<String, List<Integer>> from the LHS type
@@ -1785,6 +1815,7 @@ it for anonymous classes when the inferred type is denotable.
 **`var` for Local Variables**
 
 Rules:
+
 - Must be initialized in the same statement
 - Initializer cannot be null
 - Cannot be used in fields, method parameters, return types
@@ -1813,12 +1844,14 @@ Comparator<String> c = (String a, String b) -> a.compareTo(b);
 **When `var` Improves vs Hurts Readability**
 
 Improves:
+
 - Long generic types: `var entries = map.entrySet()` vs
   `Set<Map.Entry<String, List<Integer>>> entries = map.entrySet()`
 - Local loop variables: `for (var entry : map.entrySet())`
 - Chained builder calls where the type is obvious
 
 Hurts:
+
 - Method return calls where the type is not obvious:
   `var result = process(input)` - what is result?
 - Primitive containers where precision matters:
@@ -1916,13 +1949,13 @@ warnings."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "var is dynamic typing like Python/JS" | var is static inference - the type is fixed at compile time and cannot change. It is just omitted from source code. | Misunderstanding the type safety guarantees |
-| 2 | "var can be null-initialized" | `var x = null` is a compile error - the type cannot be inferred from null. | Surprising compile error |
-| 3 | "Diamond <> can replace all type parameters" | Diamond cannot be used where the type cannot be inferred (e.g., some complex anonymous class scenarios, raw types). | Confusing error when diamond is rejected |
-| 4 | "var makes code less safe" | var does not reduce type safety - the variable still has a specific inferred type. The compiler enforces it the same way. | Avoiding var based on a false safety concern |
-| 5 | "var can be used in method parameters" | var is only for local variables. Method parameters, fields, and return types require explicit types. | Compile error when attempting var parameter |
+| #   | Misconception                                | Reality                                                                                                                   | Danger                                       |
+| --- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 1   | "var is dynamic typing like Python/JS"       | var is static inference - the type is fixed at compile time and cannot change. It is just omitted from source code.       | Misunderstanding the type safety guarantees  |
+| 2   | "var can be null-initialized"                | `var x = null` is a compile error - the type cannot be inferred from null.                                                | Surprising compile error                     |
+| 3   | "Diamond <> can replace all type parameters" | Diamond cannot be used where the type cannot be inferred (e.g., some complex anonymous class scenarios, raw types).       | Confusing error when diamond is rejected     |
+| 4   | "var makes code less safe"                   | var does not reduce type safety - the variable still has a specific inferred type. The compiler enforces it the same way. | Avoiding var based on a false safety concern |
+| 5   | "var can be used in method parameters"       | var is only for local variables. Method parameters, fields, and return types require explicit types.                      | Compile error when attempting var parameter  |
 
 ---
 
@@ -1930,12 +1963,13 @@ warnings."
 
 **FM1 - var with raw type**
 
-*Symptom:* Unchecked warning: "uses unchecked or unsafe operations."
+_Symptom:_ Unchecked warning: "uses unchecked or unsafe operations."
 
-*Root Cause:* `var list = new ArrayList()` infers raw `ArrayList`,
+_Root Cause:_ `var list = new ArrayList()` infers raw `ArrayList`,
 not a parameterized type.
 
-*Fix:* Always include the type parameter with var:
+_Fix:_ Always include the type parameter with var:
+
 ```java
 var list = new ArrayList<String>();   // correct - ArrayList<String>
 var list = new ArrayList();           // raw type - avoid
@@ -1943,27 +1977,27 @@ var list = new ArrayList();           // raw type - avoid
 
 **FM2 - Diamond on method call with ambiguous return**
 
-*Symptom:* Compile error: "cannot infer type arguments."
+_Symptom:_ Compile error: "cannot infer type arguments."
 
-*Root Cause:* Diamond (`<>`) can only be used in `new` expressions.
+_Root Cause:_ Diamond (`<>`) can only be used in `new` expressions.
 It cannot infer types for method return values or cast expressions.
 
-*Fix:* Use `var` for method return assignments, or provide explicit
+_Fix:_ Use `var` for method return assignments, or provide explicit
 type parameters.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Know: diamond = constructor inference, var = local variable inference |
-| 15 minutes | Add var limits + readability guidance |
-| 30 minutes | Add target typing for lambdas + var with raw type trap |
-| Under pressure | "var is compile-time static inference - the type is fixed, just written once" |
+| Preparation time | Recommended approach                                                          |
+| ---------------- | ----------------------------------------------------------------------------- |
+| 5 minutes        | Know: diamond = constructor inference, var = local variable inference         |
+| 15 minutes       | Add var limits + readability guidance                                         |
+| 30 minutes       | Add target typing for lambdas + var with raw type trap                        |
+| Under pressure   | "var is compile-time static inference - the type is fixed, just written once" |
 
 **[JUNIOR] Q1 - Conceptual**
-*What does `var` actually do in Java?*
+_What does `var` actually do in Java?_
 
 `var` tells the compiler to infer the variable's type from the
 initializer expression. The compiler determines the exact type at
@@ -1986,21 +2020,23 @@ x = "hello";  // COMPILE ERROR - x was inferred as int
 
 Limits: local variables only, must be initialized, cannot be null.
 
-*What separates good from great:* Immediately clarifying that var
+_What separates good from great:_ Immediately clarifying that var
 is static - not dynamic like JavaScript let/var.
 
 ---
 
 **[MID] Q2 - Trade-off**
-*When should you use var vs explicit types? What is the guideline?*
+_When should you use var vs explicit types? What is the guideline?_
 
 Use var when the type is obvious from the right-hand side or does
 not add informational value:
+
 - Constructor calls: `var map = new HashMap<String, Integer>()`
 - Iterator variables: `for (var entry : map.entrySet())`
 - Long parameterized types where repetition is noise
 
 Use explicit types when the type is the documentation:
+
 - Method return values with opaque names: `List<User> users = getUsers()`
   is more readable than `var users = getUsers()`
 - Any case where a reviewer would need to look up the return type
@@ -2011,13 +2047,13 @@ Use explicit types when the type is the documentation:
 The test: ask "if I remove the IDE hover, would a reader know the
 type?" If yes, var is fine. If no, use the explicit type.
 
-*What separates good from great:* The specific "IDE hover test" -
+_What separates good from great:_ The specific "IDE hover test" -
 a concrete guideline rather than a vague "use your judgment."
 
 ---
 
 **[SENIOR] Q3 - Production**
-*How has var affected code review and maintainability in practice?*
+_How has var affected code review and maintainability in practice?_
 
 In my experience, var reduces noise in method bodies where the type
 is already visible on the right-hand side. The most impactful use
@@ -2050,21 +2086,21 @@ Code review guideline I apply: var is fine for local temporaries
 within a method. Anything that crosses a method boundary (parameter,
 return type) must be explicit.
 
-*What separates good from great:* A specific example with before/after
+_What separates good from great:_ A specific example with before/after
 showing where var helps vs the note about silent adaptation.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Feature | Diamond <> | var | Target typing |
-|---------|-----------|-----|---------------|
-| Context | Generic constructor | Local variable | Lambda/method ref parameter |
-| Inferred from | Declaration type (LHS) | Initializer (RHS) | Functional interface context |
-| Available since | Java 7 | Java 10 | Java 8 |
-| Scope | new expressions only | Local variables only | Lambda expressions |
-| Changes static type? | No - still explicit on LHS | No - inferred but fixed | No - inferred but fixed |
-| Return type inference? | No | No | No |
+| Feature                | Diamond <>                 | var                     | Target typing                |
+| ---------------------- | -------------------------- | ----------------------- | ---------------------------- |
+| Context                | Generic constructor        | Local variable          | Lambda/method ref parameter  |
+| Inferred from          | Declaration type (LHS)     | Initializer (RHS)       | Functional interface context |
+| Available since        | Java 7                     | Java 10                 | Java 8                       |
+| Scope                  | new expressions only       | Local variables only    | Lambda expressions           |
+| Changes static type?   | No - still explicit on LHS | No - inferred but fixed | No - inferred but fixed      |
+| Return type inference? | No                         | No                      | No                           |
 
 **Deciding factor:** Use inference where it reduces noise without
 obscuring intent. Explicit types are never wrong; inference is

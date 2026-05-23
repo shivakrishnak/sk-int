@@ -68,13 +68,15 @@ anywhere. The JVM is the portability layer; GC is the safety layer."
 
 **Blank Mind Recovery:**
 
-1. Restate: "You are asking why Java was designed the way it was -
-   let me think through what problem it was solving."
-2. First principles: "In 1991 you had C++ - fast but
-   platform-specific and memory-unsafe. What constraints force
-   a new language design?"
-3. Bridge: "This is the same as why Docker was invented - 'Write
-   Once, Run Anywhere' but for containers instead of code."
+**(1) Restate:** "You are asking why Java was designed the way it was -
+let me think through what problem it was solving."
+
+**(2) First principles:** "In 1991 you had C++ - fast but
+platform-specific and memory-unsafe. What constraints force
+a new language design?"
+
+**(3) Bridge:** "This is the same as why Docker was invented - 'Write
+Once, Run Anywhere' but for containers instead of code."
 
 ---
 
@@ -1215,16 +1217,16 @@ Spring Boot fits relative to Jakarta EE.
 > or Payara.
 
 **Framework:** EDITIONS (SE/EE/ME) -> HISTORY (Sun -> Oracle ->
-Eclipse Foundation) -> NAMESPACE MIGRATION (javax.* -> jakarta.*)
+Eclipse Foundation) -> NAMESPACE MIGRATION (javax._ -> jakarta._)
 -> WHERE SPRING FITS (alternative on SE, not EE, but SB 3 depends
 on Jakarta EE 10 implementations)
 
-*Adapting up:* MicroProfile bridges Jakarta EE and cloud-native:
+_Adapting up:_ MicroProfile bridges Jakarta EE and cloud-native:
 it adds Health, Metrics, OpenAPI, and JWT to Jakarta EE without
 a heavyweight server. Quarkus and Helidon implement MicroProfile
 and are the cloud-native Jakarta EE story.
 
-*Adapting down:* "SE is the language core. Jakarta EE adds
+_Adapting down:_ "SE is the language core. Jakarta EE adds
 server-side APIs. Spring Boot is an alternative that gives similar
 capabilities without requiring an application server."
 
@@ -1334,7 +1336,7 @@ many Spring Boot teams finally upgraded Java versions.
 > migrating from Spring Boot 2 to 3 required updating all
 > related dependencies.
 
-*Push deeper:* The `javax.*` to `jakarta.*` change was
+_Push deeper:_ The `javax.*` to `jakarta.*` change was
 binary-incompatible. Mixing old `javax.servlet-api` and new
 `jakarta.servlet-api` in the same project causes
 `ClassNotFoundException` at startup. This explains every strange
@@ -1362,7 +1364,7 @@ error during Spring Boot 3 migrations.
 > Quarkus dominate; for enterprise monoliths with full EE feature
 > usage, Jakarta EE application servers remain common.
 
-*Push deeper:* Spring Boot 2 reached end-of-life in November 2023
+_Push deeper:_ Spring Boot 2 reached end-of-life in November 2023
 with no further security patches from Pivotal. For internet-facing
 services still on SB 2, this is the non-negotiable migration
 trigger - not features. Leading with security lifecycle is the
@@ -1372,12 +1374,12 @@ argument that moves organizations.
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Spring Boot IS Jakarta EE" | Spring Boot is an alternative framework. It uses Jakarta EE implementations (Tomcat, Hibernate) internally but provides its own programming model. It is NOT a Jakarta EE certified implementation. | Wrong expectations about API compatibility and application server deployment |
-| 2 | "The javax to jakarta rename was cosmetic" | It was binary-incompatible. An EE 8 JAR (javax.*) cannot be mixed with EE 9+ APIs (jakarta.*). Every framework had to release new major versions simultaneously. | ClassNotFoundException when mixing EE 8 and EE 9+ artifacts |
-| 3 | "Java ME is Android" | Android uses a separate runtime (ART) and class library (android.*). It is NOT Java ME and is not portable to Java ME devices. | Incorrect architectural assumptions when discussing mobile Java |
-| 4 | "Jakarta EE application servers are dead" | WildFly, Payara, TomEE, and IBM Liberty are actively maintained. Jakarta EE 10 (2022) added a Cloud Native Core Profile. For enterprise monoliths requiring full EE compliance, application servers remain relevant. | Inappropriate recommendations for contractually regulated environments |
+| #   | Misconception                              | Reality                                                                                                                                                                                                              | Why It Matters                                                               |
+| --- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1   | "Spring Boot IS Jakarta EE"                | Spring Boot is an alternative framework. It uses Jakarta EE implementations (Tomcat, Hibernate) internally but provides its own programming model. It is NOT a Jakarta EE certified implementation.                  | Wrong expectations about API compatibility and application server deployment |
+| 2   | "The javax to jakarta rename was cosmetic" | It was binary-incompatible. An EE 8 JAR (javax._) cannot be mixed with EE 9+ APIs (jakarta._). Every framework had to release new major versions simultaneously.                                                     | ClassNotFoundException when mixing EE 8 and EE 9+ artifacts                  |
+| 3   | "Java ME is Android"                       | Android uses a separate runtime (ART) and class library (android.\*). It is NOT Java ME and is not portable to Java ME devices.                                                                                      | Incorrect architectural assumptions when discussing mobile Java              |
+| 4   | "Jakarta EE application servers are dead"  | WildFly, Payara, TomEE, and IBM Liberty are actively maintained. Jakarta EE 10 (2022) added a Cloud Native Core Profile. For enterprise monoliths requiring full EE compliance, application servers remain relevant. | Inappropriate recommendations for contractually regulated environments       |
 
 ---
 
@@ -1408,10 +1410,9 @@ argument that moves organizations.
 - **Root Cause:** A bundled library still uses old `javax.*`
   namespace that the EE 9+ container does not provide
 - **Diagnostic:**
-  Scan WAR for javax.* imports:
-  `unzip -p app.war WEB-INF/lib/*.jar |
-   grep -l "javax\.persistence"`
-  Or: `jdeps --jdk-internals lib.jar`
+  Scan WAR for javax._ imports:
+  `unzip -p app.war WEB-INF/lib/_.jar |
+  grep -l "javax\.persistence"`Or:`jdeps --jdk-internals lib.jar`
 - **Fix:** Find the `jakarta.*` compatible version of the
   offending library; update `pom.xml`; verify with dependency:tree
 - **Prevention:** ArchUnit or Checkstyle rule rejecting
@@ -1440,23 +1441,23 @@ argument that moves organizations.
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: name editions + differences | 30-45 seconds |
-| Mid: explain javax to jakarta migration | 2 minutes |
-| Senior: Spring Boot vs Jakarta EE decision | 3-4 minutes |
-| Staff: MicroProfile + cloud-native EE strategy | 5 minutes |
-| Blank mind recovery | "SE = core; EE = server APIs; renamed to Jakarta EE; javax.* became jakarta.* in 2020..." |
+| Signal                                         | Time Guidance                                                                             |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Junior: name editions + differences            | 30-45 seconds                                                                             |
+| Mid: explain javax to jakarta migration        | 2 minutes                                                                                 |
+| Senior: Spring Boot vs Jakarta EE decision     | 3-4 minutes                                                                               |
+| Staff: MicroProfile + cloud-native EE strategy | 5 minutes                                                                                 |
+| Blank mind recovery                            | "SE = core; EE = server APIs; renamed to Jakarta EE; javax._ became jakarta._ in 2020..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"What is the difference between Java SE and Java EE?"*
+_"What is the difference between Java SE and Java EE?"_
 
-*Why they ask:* Baseline vocabulary - can the candidate distinguish
+_Why they ask:_ Baseline vocabulary - can the candidate distinguish
 the language from the enterprise platform?
 
-*Likely follow-up:* "What is Jakarta EE and how does it relate to
+_Likely follow-up:_ "What is Jakarta EE and how does it relate to
 Java EE?"
 
 **Answer:**
@@ -1478,12 +1479,13 @@ renamed it Jakarta EE. In Jakarta EE 9 (2020), the package
 namespace changed from `javax.*` to `jakarta.*`. So
 `javax.persistence.EntityManager` is now
 `jakarta.persistence.EntityManager`. This was binary-incompatible
+
 - not cosmetic.
 
 For practical purposes: Spring Boot microservices use Java SE.
 Application server deployments use Jakarta EE.
 
-*What separates good from great:* Knowing that the `javax.*` to
+_What separates good from great:_ Knowing that the `javax.*` to
 `jakarta.*` change was binary-incompatible and required every
 enterprise framework to release coordinated new major versions.
 Not just "it was renamed."
@@ -1491,12 +1493,12 @@ Not just "it was renamed."
 ---
 
 **Q2 [JUNIOR] - CONCEPTUAL**
-*"Where does Spring Boot fit relative to Jakarta EE?"*
+_"Where does Spring Boot fit relative to Jakarta EE?"_
 
-*Why they ask:* Tests whether the candidate understands the Java
+_Why they ask:_ Tests whether the candidate understands the Java
 enterprise landscape or conflates Spring with EE.
 
-*Likely follow-up:* "What changed when Spring Boot 3 was released?"
+_Likely follow-up:_ "What changed when Spring Boot 3 was released?"
 
 **Answer:**
 Spring Boot is NOT Jakarta EE. They are alternatives for building
@@ -1520,21 +1522,21 @@ auditing every dependency - any library still using
 `javax.servlet.*` causes a `ClassNotFoundException` on the new
 Tomcat 10.
 
-*What separates good from great:* Explaining Spring Boot 3 as a
+_What separates good from great:_ Explaining Spring Boot 3 as a
 namespace compatibility migration requiring ecosystem-wide
 dependency updates, not just a version bump.
 
 ---
 
 **Q3 [MID] - MECHANISM**
-*"What was the impact of the javax.* to jakarta.* namespace change
-and how do you diagnose conflicts?"*
+_"What was the impact of the javax._ to jakarta._ namespace change
+and how do you diagnose conflicts?"_
 
-*Why they ask:* Tests awareness of the most significant
+_Why they ask:_ Tests awareness of the most significant
 ecosystem-wide breaking change in Java enterprise history.
 
-*Likely follow-up:* "How would you prevent namespace conflicts in
-a new project?"*
+_Likely follow-up:_ "How would you prevent namespace conflicts in
+a new project?"\*
 
 **Answer:**
 The `javax.*` to `jakarta.*` change in Jakarta EE 9 (2020) was
@@ -1545,11 +1547,13 @@ binary-incompatible. Every package that was `javax.servlet`,
 Any class file compiled against `javax.*` APIs cannot run in a
 Jakarta EE 9+ container providing only `jakarta.*`. Every major
 framework had to release new versions:
-- Spring Boot 3 (jakarta.*) vs Spring Boot 2 (javax.*)
-- Hibernate 6 (jakarta.*) vs Hibernate 5 (javax.*)
-- Jersey 3 (jakarta.*) vs Jersey 2 (javax.*)
+
+- Spring Boot 3 (jakarta._) vs Spring Boot 2 (javax._)
+- Hibernate 6 (jakarta._) vs Hibernate 5 (javax._)
+- Jersey 3 (jakarta._) vs Jersey 2 (javax._)
 
 Diagnosing a namespace conflict:
+
 1. `mvn dependency:tree | grep servlet` - seeing both
    `javax.servlet-api` AND `jakarta.servlet-api` is the red flag
 2. `ClassNotFoundException: javax.servlet.Servlet` on a Jakarta
@@ -1559,7 +1563,7 @@ Diagnosing a namespace conflict:
 4. Prevention: Maven Enforcer banned dependency rule for
    `javax.servlet:javax.servlet-api` in Spring Boot 3 projects
 
-*What separates good from great:* The specific Maven dependency
+_What separates good from great:_ The specific Maven dependency
 tree diagnostic. "Both `javax.servlet-api` and `jakarta.servlet-api`
 in the dependency tree" is the smell that reveals someone who has
 actually debugged this in production.
@@ -1567,13 +1571,13 @@ actually debugged this in production.
 ---
 
 **Q4 [MID] - COMPARISON**
-*"When would you choose a Jakarta EE application server over
-Spring Boot?"*
+_"When would you choose a Jakarta EE application server over
+Spring Boot?"_
 
-*Why they ask:* Tests architectural judgment - both are valid for
+_Why they ask:_ Tests architectural judgment - both are valid for
 different contexts.
 
-*Likely follow-up:* "What is MicroProfile?"
+_Likely follow-up:_ "What is MicroProfile?"
 
 **Answer:**
 Choose Jakarta EE application server when: deploying to enterprise
@@ -1601,20 +1605,20 @@ or Quarkus. Legacy monoliths on WildFly and Liberty are maintained
 but rarely created new. The line is blurring as Spring Boot 3
 adopted the `jakarta.*` namespace.
 
-*What separates good from great:* Naming MicroProfile and Quarkus
+_What separates good from great:_ Naming MicroProfile and Quarkus
 as the cloud-native EE story. Knowing Quarkus is a credible
 alternative to Spring Boot for teams that want EE API compatibility.
 
 ---
 
 **Q5 [SENIOR] - PRODUCTION**
-*"How do you manage Jakarta EE version alignment across a multi-
-module Maven project to prevent namespace conflicts?"*
+_"How do you manage Jakarta EE version alignment across a multi-
+module Maven project to prevent namespace conflicts?"_
 
-*Why they ask:* Tests operational discipline around Java enterprise
+_Why they ask:_ Tests operational discipline around Java enterprise
 dependency management.
 
-*Likely follow-up:* "How do you enforce this in CI/CD?"*
+_Likely follow-up:_ "How do you enforce this in CI/CD?"\*
 
 **Answer:**
 The core practice: use the Jakarta EE BOM to pin all EE dependencies
@@ -1646,13 +1650,14 @@ transitively - `spring-boot-starter-web` pulls in Tomcat 10
 (Jakarta Servlet 6) automatically.
 
 CI/CD enforcement:
+
 1. Maven Enforcer banned dependency: block `javax.servlet-api`
    in Spring Boot 3 projects
 2. `mvn dependency:analyze` to detect undeclared transitive deps
 3. ArchUnit or Checkstyle rule rejecting `import javax.` in
    new source code; fail the build on violation
 
-*What separates good from great:* The specific
+_What separates good from great:_ The specific
 `jakarta.platform:jakarta.jakartaee-bom` artifact coordinates and
 the CI/CD enforcement pattern. Generic "use the BOM" is obvious;
 the specific artifact and enforcement mechanism signals operational
@@ -1661,13 +1666,13 @@ maturity.
 ---
 
 **Q6 [SENIOR] - DEBUGGING**
-*"A Spring Boot 3 migration works locally but fails in staging.
-How do you diagnose it?"*
+_"A Spring Boot 3 migration works locally but fails in staging.
+How do you diagnose it?"_
 
-*Why they ask:* Tests systematic debugging of classpath issues
+_Why they ask:_ Tests systematic debugging of classpath issues
 common in EE migration scenarios.
 
-*Likely follow-up:* "What is the most common source of Hibernate 6
+_Likely follow-up:_ "What is the most common source of Hibernate 6
 breakage after Spring Boot 3 migration?"
 
 **Answer:**
@@ -1696,21 +1701,21 @@ or `FilterChainProxy` errors. Root cause: `WebSecurityConfigurerAdapter`
 was removed in Spring 6. Security config must be rewritten using
 `SecurityFilterChain` beans.
 
-*What separates good from great:* Starting with the first exception
+_What separates good from great:_ Starting with the first exception
 rather than guessing. The three-root-cause framework and specific
 diagnostic commands show systematic production debugging experience.
 
 ---
 
 **Q7 [STAFF] - ARCHITECTURE**
-*"How would you advise migrating from Spring Boot 2 + Java 11 to
-Spring Boot 3 + Java 21?"*
+_"How would you advise migrating from Spring Boot 2 + Java 11 to
+Spring Boot 3 + Java 21?"_
 
-*Why they ask:* Tests strategic advisory ability - migration is a
+_Why they ask:_ Tests strategic advisory ability - migration is a
 cost-benefit decision, not just a technical task.
 
-*Likely follow-up:* "What is the risk of staying on Spring Boot 2
-long-term?"*
+_Likely follow-up:_ "What is the risk of staying on Spring Boot 2
+long-term?"\*
 
 **Answer:**
 I frame this migration across three concerns: security lifecycle,
@@ -1730,6 +1735,7 @@ back to blocking sequential code with equal or better throughput.
 Worth measuring in staging before committing.
 
 Migration cost estimation:
+
 - Simple CRUD service: 2-4 weeks (dependency updates, testing)
 - Complex Hibernate mappings: 4-8 weeks (ORM behavior validation)
 - Custom Spring Security configuration: 2-4 additional weeks
@@ -1739,6 +1745,7 @@ Migration cost estimation:
   wait 3-6 months for the ecosystem to catch up
 
 Migration order (non-negotiable):
+
 1. Dependency audit - identify all `javax.*` users
 2. Update framework dependencies to `jakarta.*` versions
 3. Upgrade JVM version (11 to 17 or 21)
@@ -1749,7 +1756,7 @@ Doing steps 4 and 5 simultaneously with the namespace migration
 is the most common source of extended migration timelines and
 hard-to-diagnose failures.
 
-*What separates good from great:* Leading with security lifecycle
+_What separates good from great:_ Leading with security lifecycle
 (Spring Boot 2 end-of-life) rather than features. "SB 2 has no
 security patches" is the argument that moves organizations. The
 migration order that separates namespace migration from feature
@@ -1757,12 +1764,12 @@ adoption is the discipline that keeps migrations predictable.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | Namespace mechanics, classpath conflict diagnosis, BOM management, Hibernate 6 behavior. |
-| Hiring Manager | Migration risk, cost estimation, Spring Boot 2 security EOL as migration driver. |
-| Bar Raiser | Spring vs Jakarta EE tradeoffs, MicroProfile and Quarkus as the cloud-native EE story. |
-| Peer Engineer | "The javax to jakarta change cost us two weeks of dependency auditing. Hibernate 6 naming strategy hit us harder than the rename." |
+| Interviewer Type | Emphasis                                                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | Namespace mechanics, classpath conflict diagnosis, BOM management, Hibernate 6 behavior.                                           |
+| Hiring Manager   | Migration risk, cost estimation, Spring Boot 2 security EOL as migration driver.                                                   |
+| Bar Raiser       | Spring vs Jakarta EE tradeoffs, MicroProfile and Quarkus as the cloud-native EE story.                                             |
+| Peer Engineer    | "The javax to jakarta change cost us two weeks of dependency auditing. Hibernate 6 naming strategy hit us harder than the rename." |
 
 ---
 
@@ -1828,14 +1835,14 @@ a static language; signals awareness of language governance.
 Valhalla, Panama) -> WHAT THIS MEANS FOR PRODUCTION (preview
 features, LTS timing, dependency on ecosystem catching up)
 
-*Adapting up:* The JEP process gives developers early access to
+_Adapting up:_ The JEP process gives developers early access to
 evaluate features via `--enable-preview`. A staff engineer tracks
 the JEP pipeline to anticipate what will finalize in the next LTS
 (Java 25) and plan migrations. Current watched JEPs: Valhalla
 value types (JEP 401), structured concurrency (JEP 462), string
 templates finalization.
 
-*Adapting down:* "New Java features go through a proposal and
+_Adapting down:_ "New Java features go through a proposal and
 preview phase before becoming permanent. That is why virtual
 threads were available to try in Java 19 but only 'final' in
 Java 21."
@@ -1957,7 +1964,7 @@ compatibility constraints with generics type erasure.
 > expressiveness), Loom (concurrency), Valhalla (value types), and
 > Panama (native interop).
 
-*Push deeper:* Explain why Valhalla is taking so long - value types
+_Push deeper:_ Explain why Valhalla is taking so long - value types
 require changes to how generics work, and generics use type erasure
 for backward compatibility. Retrofitting value types without
 breaking existing code is extraordinarily complex.
@@ -1987,7 +1994,7 @@ breaking existing code is extraordinarily complex.
 > preview rounds before finalization, with minor API adjustments
 > based on feedback.
 
-*Push deeper:* The Project Valhalla delay illustrates the
+_Push deeper:_ The Project Valhalla delay illustrates the
 governance tension: value types need to interact with generics,
 but generics use type erasure for backward compatibility. The JEP
 process requires that the solution be backward-compatible with all
@@ -1998,12 +2005,12 @@ change in one release; Java cannot.
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Preview features are safe to use in production" | Preview features can change API before finalization. Code compiled with --enable-preview may not compile on the next Java release if the API changed. Never use --enable-preview in production release builds. | Production breakage on minor Java version update |
-| 2 | "JEPs and JSRs are the same thing" | JEPs govern JDK language/VM changes (OpenJDK project). JSRs govern Java API specifications (JCP formal process). Jakarta EE uses JSRs; JDK language features use JEPs. | Confusion about where to track Java language changes vs. enterprise API changes |
-| 3 | "If a JEP is 'Integrated' it is finalized" | Integrated means the code is merged into the JDK repository. It can still enter the release as a preview (not finalized) or be shipped as an incubator module. Check the JEP status page, not just the repo. | Using incubator APIs that change between releases |
-| 4 | "Valhalla is almost done" | Project Valhalla has been active since 2014. Value types are complex because they must be backward-compatible with type erasure in generics. "Almost done" has been said since 2018. | Setting wrong expectations for when primitive generics will be available for production use |
+| #   | Misconception                                    | Reality                                                                                                                                                                                                        | Why It Matters                                                                              |
+| --- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1   | "Preview features are safe to use in production" | Preview features can change API before finalization. Code compiled with --enable-preview may not compile on the next Java release if the API changed. Never use --enable-preview in production release builds. | Production breakage on minor Java version update                                            |
+| 2   | "JEPs and JSRs are the same thing"               | JEPs govern JDK language/VM changes (OpenJDK project). JSRs govern Java API specifications (JCP formal process). Jakarta EE uses JSRs; JDK language features use JEPs.                                         | Confusion about where to track Java language changes vs. enterprise API changes             |
+| 3   | "If a JEP is 'Integrated' it is finalized"       | Integrated means the code is merged into the JDK repository. It can still enter the release as a preview (not finalized) or be shipped as an incubator module. Check the JEP status page, not just the repo.   | Using incubator APIs that change between releases                                           |
+| 4   | "Valhalla is almost done"                        | Project Valhalla has been active since 2014. Value types are complex because they must be backward-compatible with type erasure in generics. "Almost done" has been said since 2018.                           | Setting wrong expectations for when primitive generics will be available for production use |
 
 ---
 
@@ -2049,7 +2056,7 @@ change in one release; Java cannot.
   are versioned separately from JDK and Jakarta EE versions
 - **Diagnostic:** Check server admin console for implemented
   specification versions; compare to the `jakarta.persistence:
-  jakarta.persistence-api` version in pom.xml
+jakarta.persistence-api` version in pom.xml
 - **Fix:** Align the persistence or CDI API version in pom.xml
   with the specification version the production server implements
 - **Prevention:** Run integration tests against the actual target
@@ -2059,24 +2066,24 @@ change in one release; Java cannot.
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: describe JEP and preview feature | 30-45 seconds |
-| Mid: explain the four OpenJDK projects | 2 minutes |
-| Senior: preview feature lifecycle and Valhalla delay | 3-4 minutes |
-| Staff: JEP tracking for LTS planning | 5 minutes |
-| Blank mind recovery | "Java features go through JEPs, often with a preview phase first. The four big projects are Amber, Loom, Valhalla, Panama..." |
+| Signal                                               | Time Guidance                                                                                                                 |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Junior: describe JEP and preview feature             | 30-45 seconds                                                                                                                 |
+| Mid: explain the four OpenJDK projects               | 2 minutes                                                                                                                     |
+| Senior: preview feature lifecycle and Valhalla delay | 3-4 minutes                                                                                                                   |
+| Staff: JEP tracking for LTS planning                 | 5 minutes                                                                                                                     |
+| Blank mind recovery                                  | "Java features go through JEPs, often with a preview phase first. The four big projects are Amber, Loom, Valhalla, Panama..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"What is a preview feature in Java and should you use them in
-production?"*
+_"What is a preview feature in Java and should you use them in
+production?"_
 
-*Why they ask:* Tests awareness of the language development model
+_Why they ask:_ Tests awareness of the language development model
 and production discipline.
 
-*Likely follow-up:* "How do you enable preview features and what
+_Likely follow-up:_ "How do you enable preview features and what
 happens if you deploy preview code to a JVM without that flag?"
 
 **Answer:**
@@ -2102,7 +2109,7 @@ modifications. Use preview features for evaluation on non-LTS
 releases; wait for finalization in an LTS before adopting in
 production services.
 
-*What separates good from great:* Knowing that both compilation
+_What separates good from great:_ Knowing that both compilation
 AND runtime require `--enable-preview` - not just compilation.
 And knowing WHY preview features exist (to collect feedback before
 permanent commitment) rather than treating them as "beta features."
@@ -2110,13 +2117,13 @@ permanent commitment) rather than treating them as "beta features."
 ---
 
 **Q2 [MID] - CONCEPTUAL**
-*"What are the OpenJDK Projects and what does each one aim to
-deliver?"*
+_"What are the OpenJDK Projects and what does each one aim to
+deliver?"_
 
-*Why they ask:* Tests whether the candidate tracks Java's roadmap
+_Why they ask:_ Tests whether the candidate tracks Java's roadmap
 or just consumes finalized features.
 
-*Likely follow-up:* "Why has Project Valhalla taken over 10 years?"
+_Likely follow-up:_ "Why has Project Valhalla taken over 10 years?"
 
 **Answer:**
 The four active OpenJDK projects define Java's evolution roadmap.
@@ -2147,7 +2154,7 @@ Memory API (final in Java 22) replaces JNI for calling native code,
 and the Vector API (incubator, multiple releases) exposes CPU SIMD
 instructions for data-parallel workloads.
 
-*What separates good from great:* Explaining WHY Valhalla is hard
+_What separates good from great:_ Explaining WHY Valhalla is hard
 (type erasure in generics prevents straightforward value type
 introduction) rather than just saying "it takes a long time."
 Understanding the constraint is the staff-level signal.
@@ -2155,14 +2162,14 @@ Understanding the constraint is the staff-level signal.
 ---
 
 **Q3 [MID] - TRADE-OFF**
-*"Why do some Java features take years to finalize while others
-land quickly?"*
+_"Why do some Java features take years to finalize while others
+land quickly?"_
 
-*Why they ask:* Tests understanding of the constraints that govern
+_Why they ask:_ Tests understanding of the constraints that govern
 Java evolution speed.
 
-*Likely follow-up:* "What would make Java evolution faster? What
-is the cost of that speed?"*
+_Likely follow-up:_ "What would make Java evolution faster? What
+is the cost of that speed?"\*
 
 **Answer:**
 Java feature velocity is governed by three constraints: backward
@@ -2179,6 +2186,7 @@ every Java library ever compiled.
 
 Ecosystem coordination adds lead time. A new language feature
 lands in the JDK first, but the ecosystem must follow:
+
 - IDE support (IntelliJ, Eclipse)
 - Build tool support (Maven, Gradle)
 - Framework support (Spring, Hibernate)
@@ -2193,7 +2201,7 @@ Making Java evolution faster is possible (Kotlin breaks APIs freely
 between major versions) but at the cost of ecosystem fragmentation
 and migration burden. Java optimizes for stability over velocity.
 
-*What separates good from great:* Naming the SPECIFIC interaction
+_What separates good from great:_ Naming the SPECIFIC interaction
 between value types and type erasure as the Valhalla bottleneck.
 "Backward compatibility makes it hard" is obvious; "value types
 need to specialize generics, but generics use type erasure for
@@ -2203,13 +2211,13 @@ conflict" is staff-level analysis.
 ---
 
 **Q4 [SENIOR] - PRODUCTION**
-*"How do you track the Java roadmap to make architecture decisions
-ahead of LTS releases?"*
+_"How do you track the Java roadmap to make architecture decisions
+ahead of LTS releases?"_
 
-*Why they ask:* Tests whether the candidate plans proactively or
+_Why they ask:_ Tests whether the candidate plans proactively or
 reacts to completed releases.
 
-*Likely follow-up:* "What features are you watching for Java 25?"
+_Likely follow-up:_ "What features are you watching for Java 25?"
 
 **Answer:**
 I track the Java roadmap through three sources: the JEP index
@@ -2220,6 +2228,7 @@ aggregates news from the Java team.
 For LTS planning: identify JEPs in "Targeted" or "Integrated"
 state for releases 3-4 before the next LTS. For Java 25 (2025
 LTS target), the features to evaluate now:
+
 - Structured concurrency (JEP 462): complement to virtual threads;
   evaluate whether it simplifies existing concurrent code
 - String templates finalization (currently preview): evaluate for
@@ -2228,6 +2237,7 @@ LTS target), the features to evaluate now:
   not adopt until final LTS
 
 The evaluation process for each preview feature:
+
 1. Enable on a non-production environment with non-LTS Java
 2. Rewrite one representative service component using the feature
 3. Measure: code clarity, performance impact, test coverage change
@@ -2239,7 +2249,7 @@ change the threading model for web services. Teams on Java 21 LTS
 should be evaluating now whether reactive frameworks are still
 justified for their workloads.
 
-*What separates good from great:* Having a specific evaluation
+_What separates good from great:_ Having a specific evaluation
 process and naming the features targeted for the next LTS with
 rationale. "I watch the JEP index" is too vague; "structured
 concurrency builds on virtual threads and I am evaluating whether
@@ -2248,12 +2258,12 @@ it simplifies our async error handling" is staff-level engagement.
 ---
 
 **Q5 [SENIOR] - DEBUGGING**
-*"A build that used --enable-preview on Java 21 fails on Java 22.
-How do you diagnose and fix it?"*
+_"A build that used --enable-preview on Java 21 fails on Java 22.
+How do you diagnose and fix it?"_
 
-*Why they ask:* Tests practical awareness of preview feature risks.
+_Why they ask:_ Tests practical awareness of preview feature risks.
 
-*Likely follow-up:* "How do you prevent this in the future?"
+_Likely follow-up:_ "How do you prevent this in the future?"
 
 **Answer:**
 Preview feature compilation failures between Java releases happen
@@ -2262,6 +2272,7 @@ This is expected and documented behavior - preview features CAN
 change.
 
 Diagnosis:
+
 1. Check the exact compilation error. "Cannot find symbol" or
    "method not found" errors point to specific API changes.
 2. Read the JEP change log between Java 21 and Java 22 for the
@@ -2279,6 +2290,7 @@ but sometimes requires architectural adjustment if the design
 fundamentally changed.
 
 Prevention:
+
 1. Never use `--enable-preview` in production release build
    profiles - this should have been blocked at the CI/CD level
 2. Add Maven Enforcer: fail the build if `--enable-preview` is
@@ -2286,7 +2298,7 @@ Prevention:
 3. Treat preview features as a separate experimental branch;
    merge to main only when finalized
 
-*What separates good from great:* Knowing WHERE to find the
+_What separates good from great:_ Knowing WHERE to find the
 API change log (the JEP change log and JDK release notes) rather
 than guessing at the cause. The Prevention section that includes
 the CI/CD enforcement mechanism shows operational maturity.
@@ -2294,14 +2306,14 @@ the CI/CD enforcement mechanism shows operational maturity.
 ---
 
 **Q6 [STAFF] - ARCHITECTURE**
-*"How does understanding the JEP process change how you plan
-long-term technical architecture?"*
+_"How does understanding the JEP process change how you plan
+long-term technical architecture?"_
 
-*Why they ask:* Pure staff-level question - using language roadmap
+_Why they ask:_ Pure staff-level question - using language roadmap
 as an architecture input.
 
-*Likely follow-up:* "How do you balance adopting new Java features
-early vs. waiting for stability?"*
+_Likely follow-up:_ "How do you balance adopting new Java features
+early vs. waiting for stability?"\*
 
 **Answer:**
 The JEP process changes architecture planning in three ways.
@@ -2339,7 +2351,7 @@ and had a migration plan ready when Java 21 LTS landed. The team
 migrated two reactive WebFlux services to virtual threads within
 3 months of Java 21 release.
 
-*What separates good from great:* A concrete example of using the
+_What separates good from great:_ A concrete example of using the
 JEP process as a planning input, not just knowing the process
 abstractly. The virtual threads evaluation story with specific
 numbers shows the candidate has actually done this, not just read
@@ -2348,14 +2360,14 @@ about it.
 ---
 
 **Q7 [STAFF] - TRADE-OFF**
-*"What features in the current JEP pipeline represent the highest
-architectural impact and why?"*
+_"What features in the current JEP pipeline represent the highest
+architectural impact and why?"_
 
-*Why they ask:* Tests current awareness of Java evolution with
+_Why they ask:_ Tests current awareness of Java evolution with
 genuine opinions.
 
-*Likely follow-up:* "When would you recommend adopting structured
-concurrency over raw virtual threads?"*
+_Likely follow-up:_ "When would you recommend adopting structured
+concurrency over raw virtual threads?"\*
 
 **Answer:**
 Three JEPs in the current pipeline represent the highest
@@ -2393,7 +2405,7 @@ into multiple concurrent subtasks where partial failure semantics
 matter. The structured scope makes failure handling explicit and
 correct by construction.
 
-*What separates good from great:* Having a specific, reasoned
+_What separates good from great:_ Having a specific, reasoned
 opinion on each feature's architectural impact with a concrete
 use case. Generic "these are interesting features" is junior
 thinking. "String templates enable compile-time SQL injection
@@ -2403,12 +2415,12 @@ language awareness.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | JEP states, preview feature mechanics, specific project features (Amber/Loom/Valhalla). |
-| Hiring Manager | Roadmap planning, when to adopt features, risk of staying on old Java versions. |
-| Bar Raiser | Valhalla constraints (type erasure vs. value types), backward compatibility cost to evolution speed. |
-| Peer Engineer | "I tracked Loom for 2 years before adopting. Structured concurrency makes virtual threads actually composable." |
+| Interviewer Type | Emphasis                                                                                                        |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | JEP states, preview feature mechanics, specific project features (Amber/Loom/Valhalla).                         |
+| Hiring Manager   | Roadmap planning, when to adopt features, risk of staying on old Java versions.                                 |
+| Bar Raiser       | Valhalla constraints (type erasure vs. value types), backward compatibility cost to evolution speed.            |
+| Peer Engineer    | "I tracked Loom for 2 years before adopting. Structured concurrency makes virtual threads actually composable." |
 
 ---
 
@@ -2479,14 +2491,14 @@ Scala: functional + powerful type system; Groovy: dynamic + scripting)
 -> DECISION FRAMEWORK (team expertise, ecosystem fit, type safety
 requirements, Java interop needs)
 
-*Adapting up:* The language ecosystem decision affects hiring and
+_Adapting up:_ The language ecosystem decision affects hiring and
 maintenance for 5-10 years. Kotlin engineers are widely available.
 Scala engineers with idiomatic Scala expertise (not "Java written
 in Scala") are significantly scarcer and more expensive. A team
 that adopts Scala and loses its Scala expert has a serious
 maintenance problem.
 
-*Adapting down:* "Kotlin, Scala, and Groovy all run on the JVM.
+_Adapting down:_ "Kotlin, Scala, and Groovy all run on the JVM.
 Kotlin is the most practical Java alternative. Scala is more
 powerful but harder to learn. Groovy is for scripting."
 
@@ -2623,7 +2635,7 @@ Choose Java when:
 > Spock testing framework. For a new JVM service, Kotlin is the
 > most commonly chosen Java alternative today.
 
-*Push deeper:* Explain Kotlin's null safety model: `String?` vs
+_Push deeper:_ Explain Kotlin's null safety model: `String?` vs
 `String` at the type level. An `NPE` from Kotlin code (as opposed
 to calling Java from Kotlin) requires the explicit `!!` operator,
 which is a deliberate developer choice. This makes NPEs auditable
@@ -2650,7 +2662,7 @@ rather than accidental.
 > behavior. Language choice is about developer productivity and
 > correctness guarantees, not runtime performance.
 
-*Push deeper:* Kotlin Multiplatform (KMP) adds a dimension to the
+_Push deeper:_ Kotlin Multiplatform (KMP) adds a dimension to the
 language choice that pure JVM languages lack: KMP allows shared
 business logic between JVM, iOS, Android, and JavaScript targets.
 For organizations building mobile and backend together, KMP
@@ -2660,12 +2672,12 @@ changes the economic calculus significantly.
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Kotlin is just Java with Scala features" | Kotlin is a distinct language designed for pragmatic Java interop and null safety first. It does not have Scala's type system depth (no higher-kinded types, no type classes natively). Kotlin Coroutines are different from Scala Future/ZIO. | Conflating the two leads to wrong expectations about what each can express |
-| 2 | "Scala is slower than Java" | Idiomatic Scala compiles to identical JVM bytecode. The JIT compiler treats them equally. Poorly written Scala (excessive boxing, unnecessary allocations) can be slow - but so can poorly written Java. | Rejecting Scala for performance reasons without benchmarking the actual compiled code |
-| 3 | "Groovy is just Python for Java" | Groovy is a JVM language with optional static typing. Unlike Python, it can compile to static JVM bytecode with @CompileStatic. Groovy closures are first-class JVM objects, not Python's lambdas. | Treating Groovy as unsuitable for non-scripting use cases (Spock testing framework is production-grade) |
-| 4 | "Adding Kotlin to a Java codebase requires rewriting Java" | Kotlin has genuine bidirectional Java interop. You can start with a single Kotlin file calling existing Java classes. Gradual adoption file by file is the most common migration pattern. | Unnecessary resistance to adopting Kotlin due to perceived rewrite cost |
+| #   | Misconception                                              | Reality                                                                                                                                                                                                                                        | Why It Matters                                                                                          |
+| --- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | "Kotlin is just Java with Scala features"                  | Kotlin is a distinct language designed for pragmatic Java interop and null safety first. It does not have Scala's type system depth (no higher-kinded types, no type classes natively). Kotlin Coroutines are different from Scala Future/ZIO. | Conflating the two leads to wrong expectations about what each can express                              |
+| 2   | "Scala is slower than Java"                                | Idiomatic Scala compiles to identical JVM bytecode. The JIT compiler treats them equally. Poorly written Scala (excessive boxing, unnecessary allocations) can be slow - but so can poorly written Java.                                       | Rejecting Scala for performance reasons without benchmarking the actual compiled code                   |
+| 3   | "Groovy is just Python for Java"                           | Groovy is a JVM language with optional static typing. Unlike Python, it can compile to static JVM bytecode with @CompileStatic. Groovy closures are first-class JVM objects, not Python's lambdas.                                             | Treating Groovy as unsuitable for non-scripting use cases (Spock testing framework is production-grade) |
+| 4   | "Adding Kotlin to a Java codebase requires rewriting Java" | Kotlin has genuine bidirectional Java interop. You can start with a single Kotlin file calling existing Java classes. Gradual adoption file by file is the most common migration pattern.                                                      | Unnecessary resistance to adopting Kotlin due to perceived rewrite cost                                 |
 
 ---
 
@@ -2731,23 +2743,23 @@ changes the economic calculus significantly.
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: describe Kotlin vs Java differences | 30-45 seconds |
-| Mid: language selection decision framework | 2-3 minutes |
-| Senior: Kotlin-Java interop failure modes | 3-4 minutes |
-| Staff: organizational cost of language diversity | 5 minutes |
-| Blank mind recovery | "All compile to JVM bytecode. Kotlin is the pragmatic Java alternative. Scala is the powerful functional option. Groovy is for scripting..." |
+| Signal                                           | Time Guidance                                                                                                                                |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Junior: describe Kotlin vs Java differences      | 30-45 seconds                                                                                                                                |
+| Mid: language selection decision framework       | 2-3 minutes                                                                                                                                  |
+| Senior: Kotlin-Java interop failure modes        | 3-4 minutes                                                                                                                                  |
+| Staff: organizational cost of language diversity | 5 minutes                                                                                                                                    |
+| Blank mind recovery                              | "All compile to JVM bytecode. Kotlin is the pragmatic Java alternative. Scala is the powerful functional option. Groovy is for scripting..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"What is the difference between Kotlin and Java?"*
+_"What is the difference between Kotlin and Java?"_
 
-*Why they ask:* Baseline - tests whether the candidate has worked
+_Why they ask:_ Baseline - tests whether the candidate has worked
 with or studied modern JVM alternatives.
 
-*Likely follow-up:* "Can Kotlin call Java libraries?"
+_Likely follow-up:_ "Can Kotlin call Java libraries?"
 
 **Answer:**
 Kotlin is a statically typed JVM language developed by JetBrains.
@@ -2771,7 +2783,7 @@ Google announced Kotlin as the preferred Android language in 2017.
 Since then, it has grown significantly for server-side JVM work
 with frameworks like Ktor and Spring with Kotlin support.
 
-*What separates good from great:* Mentioning the bidirectional
+_What separates good from great:_ Mentioning the bidirectional
 Java interop - "you can adopt Kotlin in one file without rewriting
 the rest of the project." This shows understanding of practical
 adoption, not just language syntax.
@@ -2779,13 +2791,13 @@ adoption, not just language syntax.
 ---
 
 **Q2 [MID] - COMPARISON**
-*"When would you choose Scala over Kotlin for a new JVM service?"*
+_"When would you choose Scala over Kotlin for a new JVM service?"_
 
-*Why they ask:* Tests architectural judgment about language
+_Why they ask:_ Tests architectural judgment about language
 selection with awareness of trade-offs.
 
-*Likely follow-up:* "What is the organizational risk of choosing
-Scala?"*
+_Likely follow-up:_ "What is the organizational risk of choosing
+Scala?"\*
 
 **Answer:**
 Scala over Kotlin is the right choice in three scenarios.
@@ -2819,7 +2831,7 @@ My framework: default to Kotlin unless there is a specific Scala
 ecosystem dependency (Spark) or a type-level correctness requirement
 that Kotlin cannot address.
 
-*What separates good from great:* Naming the hiring/maintenance
+_What separates good from great:_ Naming the hiring/maintenance
 risk explicitly. Many candidates describe what Scala can do;
 staff-level thinking includes what happens when the Scala expert
 leaves.
@@ -2827,13 +2839,13 @@ leaves.
 ---
 
 **Q3 [MID] - MECHANISM**
-*"How does Kotlin's null safety work at the JVM level?"*
+_"How does Kotlin's null safety work at the JVM level?"_
 
-*Why they ask:* Tests understanding of Kotlin's null safety
+_Why they ask:_ Tests understanding of Kotlin's null safety
 mechanism and its limits.
 
-*Likely follow-up:* "What is a platform type in Kotlin and why
-does it exist?"*
+_Likely follow-up:_ "What is a platform type in Kotlin and why
+does it exist?"\*
 
 **Answer:**
 Kotlin's null safety is a compile-time guarantee enforced by the
@@ -2852,17 +2864,18 @@ are compile-time constructs that generate null checks in bytecode.
 
 Platform types arise when calling Java code. Java APIs without
 null annotations are typed as `String!` (platform type) in Kotlin
+
 - the `!` means "unknown nullability, no guarantee." The compiler
-cannot enforce null contracts for platform types. If you call
-`list.get(0)` and the Java list returns `null`, Kotlin cannot warn
-you unless the Java API declares `@Nullable`.
+  cannot enforce null contracts for platform types. If you call
+  `list.get(0)` and the Java list returns `null`, Kotlin cannot warn
+  you unless the Java API declares `@Nullable`.
 
 The practical consequence: `!!` (non-null assertion) is safe only
 when you have verified the Java API contract. Using `!!` on a
 platform type without verification is reintroducing the Java-level
 NPE risk into Kotlin code.
 
-*What separates good from great:* Explaining platform types and
+_What separates good from great:_ Explaining platform types and
 the `!` notation - not just "Kotlin prevents NPE." Understanding
 where the null safety guarantee ends (at Java interop boundaries)
 shows production Kotlin experience.
@@ -2870,14 +2883,14 @@ shows production Kotlin experience.
 ---
 
 **Q4 [SENIOR] - TRADE-OFF**
-*"What are the organizational costs of introducing a non-Java JVM
-language into a Java-fluent team?"*
+_"What are the organizational costs of introducing a non-Java JVM
+language into a Java-fluent team?"_
 
-*Why they ask:* Tests thinking about organizational impact, not
+_Why they ask:_ Tests thinking about organizational impact, not
 just technical merit.
 
-*Likely follow-up:* "How would you manage the transition if the
-team decided to adopt Kotlin?"*
+_Likely follow-up:_ "How would you manage the transition if the
+team decided to adopt Kotlin?"\*
 
 **Answer:**
 Introducing a non-Java JVM language has five organizational costs
@@ -2908,6 +2921,7 @@ Scala support. Some tools generate false positives or miss
 Kotlin-specific patterns.
 
 Management approach for Kotlin adoption:
+
 1. Start with test code (lowest risk, immediate safety benefits)
 2. Expand to new utility classes (not core business logic)
 3. Set a style guide for Kotlin usage (use data classes, extension
@@ -2916,7 +2930,7 @@ Management approach for Kotlin adoption:
 5. Do NOT convert existing working Java classes to Kotlin for
    "modernization" - only convert when there is a clear benefit
 
-*What separates good from great:* The structured adoption plan,
+_What separates good from great:_ The structured adoption plan,
 especially "start with test code" and "do NOT convert working Java
 for modernization." These are the lessons from teams that have done
 the adoption. Jumping straight to converting production code is
@@ -2925,14 +2939,14 @@ the most common mistake.
 ---
 
 **Q5 [SENIOR] - PRODUCTION**
-*"How do you profile and debug a Kotlin or Scala service in
-production? What changes from Java?"*
+_"How do you profile and debug a Kotlin or Scala service in
+production? What changes from Java?"_
 
-*Why they ask:* Tests whether the candidate understands that JVM
+_Why they ask:_ Tests whether the candidate understands that JVM
 performance tooling applies equally to all JVM languages.
 
-*Likely follow-up:* "Are there Kotlin or Scala-specific profiling
-concerns?"*
+_Likely follow-up:_ "Are there Kotlin or Scala-specific profiling
+concerns?"\*
 
 **Answer:**
 Profiling and debugging a Kotlin or Scala service in production
@@ -2941,12 +2955,14 @@ JFR, async-profiler, heap dumps, jstack, jcmd. The JVM does not
 know which JVM language produced the bytecode.
 
 The standard JVM diagnostics apply:
+
 - `jcmd <pid> JFR.start` for flight recording
 - `async-profiler -d 30 -f profile.html <pid>` for CPU profiling
 - `jmap -dump:format=b,file=heap.hprof <pid>` for heap analysis
 - `jstack <pid>` for thread dump
 
 Kotlin-specific considerations:
+
 1. Stack traces include Kotlin internal frames (coroutine frames,
    lambda wrappers). These are verbose but accurate. The Kotlin
    compiler inserts `$lambda` frames for lambda expressions.
@@ -2959,6 +2975,7 @@ Kotlin-specific considerations:
    objects. This is expected but worth confirming with profiling.
 
 Scala-specific considerations:
+
 1. Implicit resolution can produce unexpected method dispatch;
    compiler flag `-Xlog-implicits` (Scala 2) shows implicit
    lookups during compilation to identify unexpected behavior.
@@ -2966,7 +2983,7 @@ Scala-specific considerations:
    thread pool saturation requires checking the specific
    ExecutionContext configuration.
 
-*What separates good from great:* Knowing that JFR and async-
+_What separates good from great:_ Knowing that JFR and async-
 profiler apply directly to Kotlin/Scala, then naming the language-
 specific nuance (Kotlin coroutine debug agent). Most candidates
 know general JVM profiling; the coroutine debug agent detail shows
@@ -2975,14 +2992,14 @@ real Kotlin production experience.
 ---
 
 **Q6 [STAFF] - ARCHITECTURE**
-*"A team wants to migrate a large Java microservice to Kotlin.
-How would you plan and execute this migration?"*
+_"A team wants to migrate a large Java microservice to Kotlin.
+How would you plan and execute this migration?"_
 
-*Why they ask:* Tests structured thinking about a real migration
+_Why they ask:_ Tests structured thinking about a real migration
 that many teams attempt and many do badly.
 
-*Likely follow-up:* "What are the highest-risk parts of the
-migration?"*
+_Likely follow-up:_ "What are the highest-risk parts of the
+migration?"\*
 
 **Answer:**
 A Java-to-Kotlin migration should be incremental and strategic,
@@ -3014,6 +3031,7 @@ specifically from Kotlin features (data classes, extension
 functions on sealed hierarchies).
 
 Highest-risk conversion areas:
+
 1. Classes with complex Java generics: Kotlin's generics have use-
    site variance (`out`/`in`) vs Java's wildcards. The mapping is
    non-trivial for complex generic hierarchies.
@@ -3024,7 +3042,7 @@ Highest-risk conversion areas:
    uses `object`. The semantics differ in ways that affect
    Spring singleton bean behavior if the class is a Spring component.
 
-*What separates good from great:* The "test layer first" sequencing
+_What separates good from great:_ The "test layer first" sequencing
 and the specific high-risk areas (generics, reflection, singletons).
 The insight that you should NOT convert working Java for
 modernization - only convert when there is a specific reason - is
@@ -3034,14 +3052,14 @@ that never finish.
 ---
 
 **Q7 [STAFF] - TRADE-OFF**
-*"How do you evaluate whether Kotlin Multiplatform is worth
-adopting for a team building mobile and backend?"*
+_"How do you evaluate whether Kotlin Multiplatform is worth
+adopting for a team building mobile and backend?"_
 
-*Why they ask:* Tests awareness of Kotlin's evolving role beyond
+_Why they ask:_ Tests awareness of Kotlin's evolving role beyond
 server-side JVM.
 
-*Likely follow-up:* "What are the current limitations of KMP that
-would affect your decision?"*
+_Likely follow-up:_ "What are the current limitations of KMP that
+would affect your decision?"\*
 
 **Answer:**
 Kotlin Multiplatform (KMP) allows sharing Kotlin code between JVM,
@@ -3053,6 +3071,7 @@ Evaluation framework: the ROI of KMP depends on the amount of
 genuinely shareable logic.
 
 High ROI scenarios:
+
 - Domain models (entities, value objects, validation logic) that
   must behave identically on mobile and backend
 - Data transformation and business rule logic (discount calculations,
@@ -3060,6 +3079,7 @@ High ROI scenarios:
 - Protocol buffer / JSON serialization schemas used across targets
 
 Low ROI scenarios:
+
 - UI code (never shared in KMP - each platform uses native UI)
 - Platform-specific networking (KMP provides Ktor as a common
   client, but platform networking behavior differs)
@@ -3068,6 +3088,7 @@ Low ROI scenarios:
   improving but not complete in 2025)
 
 Current limitations (2025):
+
 1. Kotlin/Native compilation is significantly slower than JVM
    compilation; affects build times in CI/CD
 2. Kotlin/Native memory model changed in Kotlin 1.7; some
@@ -3078,6 +3099,7 @@ Current limitations (2025):
    as Java-Kotlin interop
 
 Recommendation framework:
+
 - If 30%+ of the codebase is genuinely shareable domain logic:
   KMP ROI is positive. Start with a proof-of-concept shared module.
 - If the team lacks iOS native expertise: defer KMP until the iOS
@@ -3085,7 +3107,7 @@ Recommendation framework:
 - If the team already uses Kotlin on Android and backend: KMP
   adds incremental complexity, not a language learning curve.
 
-*What separates good from great:* Having specific percentages and
+_What separates good from great:_ Having specific percentages and
 concrete examples of what IS and IS NOT shareable. Generic "KMP
 reduces code duplication" is obvious. "30%+ shareable domain logic"
 and naming the specific limitations (Swift interop, Kotlin/Native
@@ -3093,9 +3115,9 @@ build speed) shows someone who has evaluated KMP seriously.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | JVM bytecode interop, null safety mechanism, platform types, Scala type system depth. |
-| Hiring Manager | Organizational cost of language diversity, hiring risk for Scala, Kotlin adoption ROI. |
-| Bar Raiser | Language selection decision framework, Kotlin Multiplatform evaluation, why you default to Java. |
-| Peer Engineer | "We adopted Kotlin in tests first. Six months later, all new code is Kotlin. We never converted old Java." |
+| Interviewer Type | Emphasis                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | JVM bytecode interop, null safety mechanism, platform types, Scala type system depth.                      |
+| Hiring Manager   | Organizational cost of language diversity, hiring risk for Scala, Kotlin adoption ROI.                     |
+| Bar Raiser       | Language selection decision framework, Kotlin Multiplatform evaluation, why you default to Java.           |
+| Peer Engineer    | "We adopted Kotlin in tests first. Six months later, all new code is Kotlin. We never converted old Java." |

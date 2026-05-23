@@ -50,12 +50,15 @@ _Adapting down:_ focus on "interface = contract you must fulfill,
 abstract class = parent that does some work for you."
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about when to choose each - let me think
+
+**(1) Restate:** "You are asking about when to choose each - let me think
 about what problem each one solves."
-(2) First principles: "From first principles, Java has single inheritance
+
+**(2) First principles:** "From first principles, Java has single inheritance
 of implementation but multiple inheritance of type. That constraint
 drives most of the decision."
-(3) Bridge: "This is similar to the difference between a job description
+
+**(3) Bridge:** "This is similar to the difference between a job description
 (interface) and a base employee record (abstract class) - one is what
 you do, the other is what you are."
 
@@ -987,13 +990,16 @@ _Adapting down:_ focus on "overriding changes behavior for the subtype
 only" and the basic override rules.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about how Java handles method override
+
+**(1) Restate:** "You are asking about how Java handles method override
 dispatch and the diamond inheritance issue - let me work through
 the rules."
-(2) First principles: "From first principles, polymorphism requires
+
+**(2) First principles:** "From first principles, polymorphism requires
 that the actual behavior depends on the runtime type, not the
 reference type. Java implements this through vtable dispatch."
-(3) Bridge: "This is similar to an employee updating a company policy
+
+**(3) Bridge:** "This is similar to an employee updating a company policy
 for their department - the general rule still applies everywhere
 else, but their department follows the override."
 
@@ -1814,7 +1820,6 @@ type), static methods or overloading apply.
 4. Is @Transactional or AOP involved?
    -> Method must be non-private, non-final, on an interface-backed bean
 
-
 ---
 
 ---
@@ -1833,6 +1838,7 @@ are one of the most common Java production bugs.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Every Java class inherits six methods from Object: equals, hashCode,
 > toString, clone, getClass, and finalize. The most important contract:
 > if two objects are equal (equals returns true), they MUST have the
@@ -1840,6 +1846,7 @@ are one of the most common Java production bugs.
 > HashMap, HashSet, and every hash-based structure silently.
 
 **3 minutes (Senior):**
+
 > The equals/hashCode contract is the most dangerous implicit contract
 > in Java because violations are silent at compile time and often
 > silent at runtime until production load exposes them. The rule is
@@ -1859,12 +1866,15 @@ are one of the most common Java production bugs.
 > instead of clone.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about the methods every Java class
-    inherits from Object - let me work through the important ones."
-(2) First principles: "From first principles, every Java class needs
-    identity comparison, debugging output, and copy semantics."
-(3) Bridge: "equals and hashCode are like a person's name and SSN -
-    same person means both match; different SSN means different person."
+
+**(1) Restate:** "You are asking about the methods every Java class
+inherits from Object - let me work through the important ones."
+
+**(2) First principles:** "From first principles, every Java class needs
+identity comparison, debugging output, and copy semantics."
+
+**(3) Bridge:** "equals and hashCode are like a person's name and SSN -
+same person means both match; different SSN means different person."
 
 ---
 
@@ -1904,6 +1914,7 @@ contract that every class either inherits or overrides.
 **The equals/hashCode Contract (exact)**
 
 From the Java Language Specification:
+
 - **Reflexive**: `x.equals(x)` is true
 - **Symmetric**: `x.equals(y)` implies `y.equals(x)`
 - **Transitive**: `x.equals(y)` and `y.equals(z)` implies `x.equals(z)`
@@ -1911,6 +1922,7 @@ From the Java Language Specification:
 - **Null-safe**: `x.equals(null)` returns false
 
 The hashCode contract:
+
 - `x.equals(y)` implies `x.hashCode() == y.hashCode()`
 - The reverse is NOT required (hash collisions are allowed)
 - hashCode must be consistent across calls if equals-relevant
@@ -2087,13 +2099,13 @@ Java 14+ records, the canonical constructor gives you a safe copy."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "If hashCode is equal, objects are equal" | Hash codes can collide. Equal hashCode is necessary but not sufficient for equality. | Incorrectly using hashCode for equality checks |
-| 2 | "I only need to override equals, not hashCode" | The contract requires both. HashMap/HashSet will lose or misplace objects if hashCode is inconsistent with equals. | Silent data loss in collections |
-| 3 | "Cloneable makes clone() safe" | Cloneable is a marker interface - it only enables the JVM to allow Object.clone(). It says nothing about correctness, depth, or thread safety. | Shared mutable state between original and clone |
-| 4 | "toString is just for debugging, not important" | toString output appears in logs, exception messages, and monitoring dashboards. Unreadable output makes production diagnosis dramatically harder. | Hours lost debugging "SomeService@3a1f5f43" in a stack trace |
-| 5 | "finalize() is a reliable cleanup mechanism" | finalize is called by the GC, not deterministically. It may never be called. It was deprecated in Java 9 and should never be used. Use try-with-resources or Cleaner instead. | Resource leaks masked by finalize appearing to work in tests |
+| #   | Misconception                                   | Reality                                                                                                                                                                       | Danger                                                       |
+| --- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 1   | "If hashCode is equal, objects are equal"       | Hash codes can collide. Equal hashCode is necessary but not sufficient for equality.                                                                                          | Incorrectly using hashCode for equality checks               |
+| 2   | "I only need to override equals, not hashCode"  | The contract requires both. HashMap/HashSet will lose or misplace objects if hashCode is inconsistent with equals.                                                            | Silent data loss in collections                              |
+| 3   | "Cloneable makes clone() safe"                  | Cloneable is a marker interface - it only enables the JVM to allow Object.clone(). It says nothing about correctness, depth, or thread safety.                                | Shared mutable state between original and clone              |
+| 4   | "toString is just for debugging, not important" | toString output appears in logs, exception messages, and monitoring dashboards. Unreadable output makes production diagnosis dramatically harder.                             | Hours lost debugging "SomeService@3a1f5f43" in a stack trace |
+| 5   | "finalize() is a reliable cleanup mechanism"    | finalize is called by the GC, not deterministically. It may never be called. It was deprecated in Java 9 and should never be used. Use try-with-resources or Cleaner instead. | Resource leaks masked by finalize appearing to work in tests |
 
 ---
 
@@ -2101,14 +2113,15 @@ Java 14+ records, the canonical constructor gives you a safe copy."
 
 **FM1 - Objects lost in HashMap after mutation**
 
-*Symptom:* `map.get(key)` returns null even though the key was
+_Symptom:_ `map.get(key)` returns null even though the key was
 previously inserted. `map.containsKey(key)` returns false.
 
-*Root Cause:* A field used in hashCode was mutated after the object
+_Root Cause:_ A field used in hashCode was mutated after the object
 was added to the map. The object is still in the map but filed under
 the old bucket - the new hash points to an empty bucket.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Add this assertion in tests for mutable map keys
 @Test void keyNotMutatedAfterInsertion() {
@@ -2126,22 +2139,23 @@ the old bucket - the new hash points to an empty bucket.
 }
 ```
 
-*Fix:* Either use immutable objects as map keys, or ensure hashCode
+_Fix:_ Either use immutable objects as map keys, or ensure hashCode
 fields are never mutated after insertion.
 
-*Prevention:* Make all fields participating in equals/hashCode final.
+_Prevention:_ Make all fields participating in equals/hashCode final.
 Use Records for value objects.
 
 **FM2 - equals/hashCode inconsistency found only under load**
 
-*Symptom:* Cache miss rate near 100% in production; tests pass in
+_Symptom:_ Cache miss rate near 100% in production; tests pass in
 development.
 
-*Root Cause:* equals overridden without hashCode. Tests use same
+_Root Cause:_ equals overridden without hashCode. Tests use same
 instance for both put and get (same reference -> same hash). Production
 creates new instances for get that happen to be equal.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Quick detection via reflection in tests
 @Test void hashCodeOverriddenWithEquals() throws Exception {
@@ -2158,32 +2172,33 @@ creates new instances for get that happen to be equal.
 }
 ```
 
-*Fix:* Always override hashCode when overriding equals. Use Records
+_Fix:_ Always override hashCode when overriding equals. Use Records
 for value types.
 
-*Prevention:* SpotBugs/PMD rule HE_EQUALS_NO_HASHCODE flags this
+_Prevention:_ SpotBugs/PMD rule HE_EQUALS_NO_HASHCODE flags this
 at build time.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Memorize the equals/hashCode contract: equal => same hash |
-| 15 minutes | Add the mutation trap + toString importance |
-| 30 minutes | Add clone alternatives + finalize deprecation reasons |
-| Under pressure | "Override both together, use same fields, Objects.hash()" |
+| Preparation time | Recommended approach                                      |
+| ---------------- | --------------------------------------------------------- |
+| 5 minutes        | Memorize the equals/hashCode contract: equal => same hash |
+| 15 minutes       | Add the mutation trap + toString importance               |
+| 30 minutes       | Add clone alternatives + finalize deprecation reasons     |
+| Under pressure   | "Override both together, use same fields, Objects.hash()" |
 
 **[JUNIOR] Q1 - Conceptual**
-*What is the equals/hashCode contract in Java?*
+_What is the equals/hashCode contract in Java?_
 
-*Why they ask:* This is one of the most frequently tested Java
+_Why they ask:_ This is one of the most frequently tested Java
 fundamentals.
 
-*Likely follow-up:* "What happens if you only override equals?"
+_Likely follow-up:_ "What happens if you only override equals?"
 
 The contract has two parts:
+
 1. If `a.equals(b)` returns true, then `a.hashCode() == b.hashCode()`
    MUST be true.
 2. The reverse is NOT required: objects with equal hash codes may or
@@ -2192,6 +2207,7 @@ The contract has two parts:
 If you only override equals, the default hashCode (based on object
 address) means two "equal" objects will almost always have different
 hash codes. When used as HashMap keys:
+
 - `map.put(new Key("x"), "value")` - stored in bucket for address hash
 - `map.get(new Key("x"))` - looks in bucket for new object's address
 - Different buckets -> returns null despite logical equality
@@ -2199,16 +2215,16 @@ hash codes. When used as HashMap keys:
 Always use `@Override` on both methods together. Use `Objects.hash()`
 for hashCode, `Objects.equals()` for null-safe field comparison.
 
-*What separates good from great:* Explaining WHY the contract is
+_What separates good from great:_ Explaining WHY the contract is
 asymmetric - hash collisions are acceptable (multiple keys in one
 bucket), but missing keys are not (equal keys in different buckets).
 
 ---
 
 **[MID] Q2 - Hands-on**
-*Write a correct equals/hashCode implementation for a value object.*
+_Write a correct equals/hashCode implementation for a value object._
 
-*Why they ask:* Tests ability to write the boilerplate correctly.
+_Why they ask:_ Tests ability to write the boilerplate correctly.
 
 ```java
 record Point(int x, int y) {
@@ -2243,20 +2259,21 @@ class ManualPoint {
 }
 ```
 
-*What separates good from great:* Immediately suggesting Records
+_What separates good from great:_ Immediately suggesting Records
 as the canonical solution for value objects (Java 14+), and only
 showing the manual version when specifically asked.
 
 ---
 
 **[MID] Q3 - Trade-off**
-*When should you include a field in equals/hashCode vs exclude it?*
+_When should you include a field in equals/hashCode vs exclude it?_
 
-*Why they ask:* Tests depth of understanding of the contract.
+_Why they ask:_ Tests depth of understanding of the contract.
 
-*Likely follow-up:* "What about mutable fields?"
+_Likely follow-up:_ "What about mutable fields?"
 
 Rules:
+
 - **Include**: fields that define the logical identity of the object.
   For a `User`, that is `id`. For a `Point`, that is `x` and `y`.
 - **Exclude**: computed/derived fields (they are derived from included
@@ -2271,13 +2288,13 @@ Mutable fields: if the object will ever be used as a map key, do NOT
 include mutable fields. The safest rule: only final fields in
 equals/hashCode, or use Records which enforce immutability.
 
-*What separates good from great:* The mutable field trap - why it
+_What separates good from great:_ The mutable field trap - why it
 causes silent data loss in maps.
 
 ---
 
 **[SENIOR] Q4 - Production**
-*Describe a production issue caused by an equals or hashCode bug.*
+_Describe a production issue caused by an equals or hashCode bug._
 
 The most impactful equals/hashCode bug I have personally seen was in
 a session cache for a high-traffic web application.
@@ -2307,15 +2324,15 @@ The fix: add `@Override public int hashCode()` using the same fields
 as equals. The cache hit rate recovered to 82% within minutes of
 deployment.
 
-*What separates good from great:* The observation that tests using
+_What separates good from great:_ The observation that tests using
 same-instance for put/get will NOT catch this bug - the failure mode
 only appears when two separately-constructed equal objects are used.
 
 ---
 
 **[SENIOR] Q5 - Debugging**
-*How do you verify that your equals/hashCode implementation is correct
-in a test?*
+_How do you verify that your equals/hashCode implementation is correct
+in a test?_
 
 A complete correctness test covers the five contracts:
 
@@ -2353,15 +2370,15 @@ void equalsHashCodeContract() {
 }
 ```
 
-*What separates good from great:* The HashMap round-trip test at
+_What separates good from great:_ The HashMap round-trip test at
 the end - this is the only test that catches the "missing hashCode"
 bug.
 
 ---
 
 **[STAFF] Q6 - Architecture**
-*How do Records eliminate the equals/hashCode problem, and what
-are their limitations?*
+_How do Records eliminate the equals/hashCode problem, and what
+are their limitations?_
 
 Records (Java 16 stable) auto-generate correct equals, hashCode,
 and toString from their components:
@@ -2382,6 +2399,7 @@ record ProductId(String sku, String warehouse) {
 ```
 
 Limitations:
+
 - Records are **implicitly final** - cannot be extended
 - All components are **implicitly final** - no mutation
 - Cannot extend another class (can implement interfaces)
@@ -2389,17 +2407,18 @@ Limitations:
   no-arg constructor, and non-final fields)
 
 For JPA entities, the correct approach is:
+
 - Never use mutable JPA entities as map keys
 - Use the entity ID for equals/hashCode only (not the full state)
 - Consider surrogate keys managed by the persistence layer
 
-*What separates good from great:* Knowing the JPA entity limitation
+_What separates good from great:_ Knowing the JPA entity limitation
 and the correct equals/hashCode strategy for entities (ID-only).
 
 ---
 
 **[STAFF] Q7 - Behavioral**
-*How do you enforce equals/hashCode correctness as a team standard?*
+_How do you enforce equals/hashCode correctness as a team standard?_
 
 Automated enforcement has three layers:
 
@@ -2430,7 +2449,7 @@ Automated enforcement has three layers:
 The highest-leverage change: migrate value objects to Records.
 Eliminates the entire class of bugs.
 
-*What separates good from great:* The three-layer approach - static
+_What separates good from great:_ The three-layer approach - static
 analysis is automation, code review is culture, test base class is
 documentation. All three are needed because each catches different
 failure modes.
@@ -2439,18 +2458,17 @@ failure modes.
 
 ### ⚖️ Comparison Table
 
-| Method | Default behavior | When to override | Override with |
-|--------|-----------------|------------------|---------------|
-| equals | Reference identity (==) | Value types, domain objects with identity fields | Objects.equals per field, same fields as hashCode |
-| hashCode | Address-based (JVM impl) | Whenever equals is overridden | Objects.hash(same fields as equals) |
-| toString | ClassName@hex | Always for non-trivial classes | Include name, key fields |
-| clone | Shallow field copy | Rarely - prefer copy constructor | Implement Cloneable, deep copy manually |
-| getClass | Returns Class<T> | Never (final) | N/A |
-| finalize | GC callback | Never (deprecated) | Use try-with-resources |
+| Method   | Default behavior         | When to override                                 | Override with                                     |
+| -------- | ------------------------ | ------------------------------------------------ | ------------------------------------------------- |
+| equals   | Reference identity (==)  | Value types, domain objects with identity fields | Objects.equals per field, same fields as hashCode |
+| hashCode | Address-based (JVM impl) | Whenever equals is overridden                    | Objects.hash(same fields as equals)               |
+| toString | ClassName@hex            | Always for non-trivial classes                   | Include name, key fields                          |
+| clone    | Shallow field copy       | Rarely - prefer copy constructor                 | Implement Cloneable, deep copy manually           |
+| getClass | Returns Class<T>         | Never (final)                                    | N/A                                               |
+| finalize | GC callback              | Never (deprecated)                               | Use try-with-resources                            |
 
 **Deciding factor:** Override equals+hashCode together when logical
 value equality matters. Override toString always. Avoid clone.
-
 
 ---
 
@@ -2471,6 +2489,7 @@ syntax recall.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Java has four access modifiers: private (class only), package-private
 > (no modifier, same package), protected (subclasses + same package),
 > and public (everywhere). Encapsulation means hiding implementation
@@ -2478,6 +2497,7 @@ syntax recall.
 > use the most restrictive access that still works.
 
 **3 minutes (Senior):**
+
 > Access modifiers enforce encapsulation at the compiler level. They
 > express intent: this method is an implementation detail, not part
 > of the public contract. The narrower the access, the more freely
@@ -2512,18 +2532,19 @@ a fence between "public contract" and "private implementation."
 
 **The Four Access Levels**
 
-| Modifier | Class | Package | Subclass | World |
-|----------|-------|---------|----------|-------|
-| `private` | Yes | No | No | No |
-| (none) | Yes | Yes | No | No |
-| `protected` | Yes | Yes | Yes | No |
-| `public` | Yes | Yes | Yes | Yes |
+| Modifier    | Class | Package | Subclass | World |
+| ----------- | ----- | ------- | -------- | ----- |
+| `private`   | Yes   | No      | No       | No    |
+| (none)      | Yes   | Yes     | No       | No    |
+| `protected` | Yes   | Yes     | Yes      | No    |
+| `public`    | Yes   | Yes     | Yes      | Yes   |
 
-*Note:* protected grants package access too, not subclass-only.
+_Note:_ protected grants package access too, not subclass-only.
 
 **Class-Level Modifiers**
 
 For top-level classes: only `public` or package-private (no modifier).
+
 - `public`: visible to all
 - no modifier: visible only within the package
 
@@ -2715,13 +2736,13 @@ access modifiers alone."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "protected means subclass only" | protected = subclass + same package. Any class in the same package can access protected members. | Unintended package-level exposure in libraries |
-| 2 | "Getters/setters = encapsulation" | Getters and setters are NOT encapsulation - they just move the field access. Real encapsulation exposes behavior, not data. | `getBalance()` + `setBalance()` is just a public field with extra steps |
-| 3 | "Private fields are accessible via reflection" | Technically true (with reflection and `setAccessible(true)`), but this bypasses encapsulation deliberately. Security manager can restrict it. | Assuming private is "secure" - it is an API contract, not a security wall |
-| 4 | "Package-private is the safest for internal APIs" | Package-private is invisible from outside the package but visible to all classes inside it - including tests in the same package. | Test classes in same package inadvertently exercising package-private API |
-| 5 | "Adding a getter breaks encapsulation" | A getter that returns an immutable type (or a defensive copy) is fine. Returning a mutable collection reference breaks encapsulation. | `getItems()` returning the internal `List` directly - callers mutate it |
+| #   | Misconception                                     | Reality                                                                                                                                       | Danger                                                                    |
+| --- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 1   | "protected means subclass only"                   | protected = subclass + same package. Any class in the same package can access protected members.                                              | Unintended package-level exposure in libraries                            |
+| 2   | "Getters/setters = encapsulation"                 | Getters and setters are NOT encapsulation - they just move the field access. Real encapsulation exposes behavior, not data.                   | `getBalance()` + `setBalance()` is just a public field with extra steps   |
+| 3   | "Private fields are accessible via reflection"    | Technically true (with reflection and `setAccessible(true)`), but this bypasses encapsulation deliberately. Security manager can restrict it. | Assuming private is "secure" - it is an API contract, not a security wall |
+| 4   | "Package-private is the safest for internal APIs" | Package-private is invisible from outside the package but visible to all classes inside it - including tests in the same package.             | Test classes in same package inadvertently exercising package-private API |
+| 5   | "Adding a getter breaks encapsulation"            | A getter that returns an immutable type (or a defensive copy) is fine. Returning a mutable collection reference breaks encapsulation.         | `getItems()` returning the internal `List` directly - callers mutate it   |
 
 ---
 
@@ -2729,20 +2750,22 @@ access modifiers alone."
 
 **FM1 - Getter returns mutable collection - state corrupted by caller**
 
-*Symptom:* Object state changes without any of its methods being
+_Symptom:_ Object state changes without any of its methods being
 called. Seemingly random mutations.
 
-*Root Cause:* `getItems()` returns the internal list reference
+_Root Cause:_ `getItems()` returns the internal list reference
 directly. Callers mutate the list and the object's state changes.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # In code review - look for getters returning mutable types
 grep -n "public List\|public Map\|public Set" src/ -r |
   grep -v "unmodifiable\|List.of\|copyOf\|Collections.unmodifiable"
 ```
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD
 public List<String> getItems() { return items; }
@@ -2765,20 +2788,21 @@ public List<String> getItems() {
 > later mutated, but costs O(n). Choose based on whether the caller
 > might hold the reference longer than the object.
 
-*Prevention:* Return immutable types from getters. Use `List.of()`,
+_Prevention:_ Return immutable types from getters. Use `List.of()`,
 `Map.of()`, `Set.of()` for constructing immutable collections.
 
 **FM2 - Spring bean's protected method not proxied correctly**
 
-*Symptom:* `@Transactional` or `@Cacheable` on a protected method
+_Symptom:_ `@Transactional` or `@Cacheable` on a protected method
 does not apply. The annotation is silently ignored.
 
-*Root Cause:* CGLIB proxies can proxy protected methods, but JDK
+_Root Cause:_ CGLIB proxies can proxy protected methods, but JDK
 dynamic proxies cannot - they only work through interfaces with
 public methods. If the Spring bean is proxy-backed via interface
 (JDK proxy), protected methods on the concrete class are bypassed.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Check proxy type at startup
 grep "Creating proxy\|CGLIB\|JdkDynamic" application.log
@@ -2787,30 +2811,30 @@ applicationContext.getBean(MyService.class).getClass().getName()
 # If it contains "CGLIB" -> cglib proxy; if original class -> not proxied
 ```
 
-*Fix:* Either expose the method as public and back it with an
+_Fix:_ Either expose the method as public and back it with an
 interface, or ensure `proxyTargetClass=true` in Spring config to
 force CGLIB for all beans.
 
-*Prevention:* Spring AOP annotations (`@Transactional`, `@Cacheable`)
+_Prevention:_ Spring AOP annotations (`@Transactional`, `@Cacheable`)
 only reliably work on `public` methods. Treat this as a rule.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Memorize the four access levels + protected-is-also-package trap |
-| 15 minutes | Add mutable getter anti-pattern + module system context |
-| 30 minutes | Add CGLIB proxy behavior + encapsulation at module level |
-| Under pressure | "Private, package, protected (subclass+package), public - use most restrictive" |
+| Preparation time | Recommended approach                                                            |
+| ---------------- | ------------------------------------------------------------------------------- |
+| 5 minutes        | Memorize the four access levels + protected-is-also-package trap                |
+| 15 minutes       | Add mutable getter anti-pattern + module system context                         |
+| 30 minutes       | Add CGLIB proxy behavior + encapsulation at module level                        |
+| Under pressure   | "Private, package, protected (subclass+package), public - use most restrictive" |
 
 **[JUNIOR] Q1 - Conceptual**
-*What is the difference between protected and package-private in Java?*
+_What is the difference between protected and package-private in Java?_
 
-*Why they ask:* This is one of the most confused access levels.
+_Why they ask:_ This is one of the most confused access levels.
 
-*Likely follow-up:* "When would you use each one?"
+_Likely follow-up:_ "When would you use each one?"
 
 Package-private (no modifier): visible to all classes in the same
 package. Not visible to subclasses in other packages.
@@ -2843,37 +2867,43 @@ a package (like internal test helpers or factory collaborators).
 Use protected for the Template Method pattern - methods the parent
 calls but subclasses implement.
 
-*What separates good from great:* Noting that protected grants
+_What separates good from great:_ Noting that protected grants
 package access too - often a surprise.
 
 ---
 
 **[MID] Q2 - Trade-off**
-*What is the difference between a getter that returns a mutable
-collection and one that returns an immutable view?*
+_What is the difference between a getter that returns a mutable
+collection and one that returns an immutable view?_
 
 Returning a mutable reference:
+
 ```java
 public List<Order> getOrders() { return orders; }  // BAD
 ```
+
 Callers can add, remove, or clear the list. The object's orders
 collection changes without going through any controlled method.
 
 Returning unmodifiable view:
+
 ```java
 public List<Order> getOrders() {
     return Collections.unmodifiableList(orders);  // O(1) wrap
 }
 ```
+
 Callers cannot mutate. Mutations to the original list ARE reflected
 in the view (it is a view, not a copy).
 
 Returning immutable copy:
+
 ```java
 public List<Order> getOrders() {
     return List.copyOf(orders);  // O(n) copy, truly immutable
 }
 ```
+
 Callers cannot mutate. The original can change without affecting
 the returned list.
 
@@ -2881,21 +2911,22 @@ Decision: unmodifiable view when the caller only needs to read and
 will not hold the reference long. Immutable copy when you need to
 defend against the original changing after the call returns.
 
-*What separates good from great:* Explaining that "unmodifiable" and
+_What separates good from great:_ Explaining that "unmodifiable" and
 "immutable" are different - the view can still change if the original
 changes.
 
 ---
 
 **[SENIOR] Q3 - Production**
-*How does the Java module system (JPMS) change encapsulation compared
-to access modifiers alone?*
+_How does the Java module system (JPMS) change encapsulation compared
+to access modifiers alone?_
 
 Before Java 9, package-private gave package-level encapsulation but
 nothing stronger. Reflection could always bypass it with
 `setAccessible(true)`. Any code in the same package had access.
 
 JPMS (`module-info.java`) adds a layer above packages:
+
 - `exports com.example.api` - makes the package visible to other
   modules
 - Without `exports`, the package is entirely invisible to other
@@ -2913,14 +2944,14 @@ implementation packages that no consumer can accidentally depend on.
 Before JPMS, internal APIs like `sun.misc.Unsafe` leaked widely
 because there was no runtime enforcement.
 
-*What separates good from great:* Explaining the difference between
+_What separates good from great:_ Explaining the difference between
 `exports` (accessible) and `opens` (accessible + reflectable).
 
 ---
 
 **[SENIOR] Q4 - Behavioral**
-*Describe a code review where you had to explain encapsulation
-to the team.*
+_Describe a code review where you had to explain encapsulation
+to the team._
 
 **Situation:** A PR added a new service class with a `public List<Rule>
 getRules()` method returning the internal rules list directly. The
@@ -2931,6 +2962,7 @@ class accumulated business rules during processing.
 **Action:** I asked the PR author: "What happens if a caller does
 `getRules().clear()`?" They had not considered it. I showed the
 test case:
+
 ```java
 RuleProcessor processor = new RuleProcessor(config);
 processor.getRules().clear();  // silently empties the internal list
@@ -2949,34 +2981,34 @@ change the method to `getRuleCount()` if callers only need the size.
 always use `List.copyOf` or `Collections.unmodifiableList`. The PR
 author added this to our team's code review checklist.
 
-*What separates good from great:* Writing the test case that shows
+_What separates good from great:_ Writing the test case that shows
 the exact failure - making the abstract principle concrete.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Access Level | Modifier | Same Class | Same Package | Subclass | Anywhere |
-|---|---|---|---|---|---|
-| Private | `private` | Yes | No | No | No |
-| Package-private | (none) | Yes | Yes | No | No |
-| Protected | `protected` | Yes | Yes | Yes* | No |
-| Public | `public` | Yes | Yes | Yes | Yes |
+| Access Level    | Modifier    | Same Class | Same Package | Subclass | Anywhere |
+| --------------- | ----------- | ---------- | ------------ | -------- | -------- |
+| Private         | `private`   | Yes        | No           | No       | No       |
+| Package-private | (none)      | Yes        | Yes          | No       | No       |
+| Protected       | `protected` | Yes        | Yes          | Yes\*    | No       |
+| Public          | `public`    | Yes        | Yes          | Yes      | Yes      |
 
-*Protected is accessible to subclasses only outside the package;
+\*Protected is accessible to subclasses only outside the package;
 inside the package it is accessible to all classes.
 
 **Encapsulation strength (strongest to weakest):**
+
 1. Module-private (no `exports` in `module-info.java`)
 2. Package-private (no modifier)
 3. Private
 4. Protected
 5. Public
 
-*Wait - why is module-private stronger than private?* Because
+_Wait - why is module-private stronger than private?_ Because
 private is bypassed by reflection; module boundaries block reflection
 unless explicitly opened.
-
 
 ---
 
@@ -2997,6 +3029,7 @@ senior candidates.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Java has four nested class types: static nested (no enclosing
 > reference), member inner (implicit outer reference), local (defined
 > in a method), and anonymous (inline class expression). The key rule:
@@ -3005,6 +3038,7 @@ senior candidates.
 > a classic memory leak pattern.
 
 **3 minutes (Senior):**
+
 > The distinction between static nested and member inner is subtle
 > but has real production consequences. A static nested class is just
 > a regular class that happens to be declared inside another for
@@ -3027,14 +3061,17 @@ senior candidates.
 > field - they are not implicitly captured.
 
 **Blank Mind Recovery:**
-(1) Restate: "You are asking about the different ways to define
-    a class inside another class - let me walk through the four types."
-(2) First principles: "From first principles, a class defined inside
-    another either needs to access the outer instance or it doesn't.
-    Static nested = doesn't. Non-static = does."
-(3) Bridge: "A non-static inner class is like an employee who keeps
-    a business card for their company - even if the company closes,
-    someone who has the employee's card still has the company reference."
+
+**(1) Restate:** "You are asking about the different ways to define
+a class inside another class - let me walk through the four types."
+
+**(2) First principles:** "From first principles, a class defined inside
+another either needs to access the outer instance or it doesn't.
+Static nested = doesn't. Non-static = does."
+
+**(3) Bridge:** "A non-static inner class is like an employee who keeps
+a business card for their company - even if the company closes,
+someone who has the employee's card still has the company reference."
 
 ---
 
@@ -3265,13 +3302,13 @@ in a nested class, it must be static nested."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Anonymous classes are always replaced by lambdas" | Lambdas only work for functional interfaces (single abstract method). Anonymous classes are still needed for abstract classes or multi-method interfaces. | Using lambda where anonymous class is needed -> compile error |
-| 2 | "Static nested class cannot access outer class members" | Static nested class can access private static members of the outer class. It cannot access instance members without an explicit outer instance reference. | Confusion about what "static" means for a nested class |
-| 3 | "Local classes are rarely used and unimportant" | Local classes capture effectively-final local variables. They are rare but understanding them explains why effectively-final matters. | Not understanding the effectively-final rule and why Java enforces it |
-| 4 | "Lambdas always capture the outer this" | Lambdas capture `this` only if the lambda body references `this` or an instance field. If the body only uses local variables and parameters, no outer reference is captured. | Assuming lambdas have the same leak risk as anonymous classes |
-| 5 | "Non-static inner classes should be avoided entirely" | They are appropriate for tight coupling with the outer class (like iterator implementations). The problem is misuse in callback patterns. | Blanket avoidance; missing legitimate use cases like iterators |
+| #   | Misconception                                           | Reality                                                                                                                                                                      | Danger                                                                |
+| --- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 1   | "Anonymous classes are always replaced by lambdas"      | Lambdas only work for functional interfaces (single abstract method). Anonymous classes are still needed for abstract classes or multi-method interfaces.                    | Using lambda where anonymous class is needed -> compile error         |
+| 2   | "Static nested class cannot access outer class members" | Static nested class can access private static members of the outer class. It cannot access instance members without an explicit outer instance reference.                    | Confusion about what "static" means for a nested class                |
+| 3   | "Local classes are rarely used and unimportant"         | Local classes capture effectively-final local variables. They are rare but understanding them explains why effectively-final matters.                                        | Not understanding the effectively-final rule and why Java enforces it |
+| 4   | "Lambdas always capture the outer this"                 | Lambdas capture `this` only if the lambda body references `this` or an instance field. If the body only uses local variables and parameters, no outer reference is captured. | Assuming lambdas have the same leak risk as anonymous classes         |
+| 5   | "Non-static inner classes should be avoided entirely"   | They are appropriate for tight coupling with the outer class (like iterator implementations). The problem is misuse in callback patterns.                                    | Blanket avoidance; missing legitimate use cases like iterators        |
 
 ---
 
@@ -3279,13 +3316,14 @@ in a nested class, it must be static nested."
 
 **FM1 - Memory leak via non-static inner class listener**
 
-*Symptom:* `OutOfMemoryError` or growing heap; heap dump shows many
+_Symptom:_ `OutOfMemoryError` or growing heap; heap dump shows many
 retained instances of a class that should have been freed.
 
-*Root Cause:* Non-static inner class (or anonymous class) registered
+_Root Cause:_ Non-static inner class (or anonymous class) registered
 as a listener prevents the outer object from being GC'd.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```bash
 # Take heap dump and analyze retained objects
 jmap -dump:format=b,file=heap.hprof <pid>
@@ -3305,25 +3343,26 @@ jmap -histo <pid> | grep '\$[0-9]'
 > Eclipse MAT's "Leak Suspects" report often directly names the
 > retained path through the inner class.
 
-*Fix:* Convert to static nested class or lambda (without `this`
+_Fix:_ Convert to static nested class or lambda (without `this`
 capture). Also ensure proper deregistration of listeners when
 the outer object is no longer needed.
 
-*Prevention:* Code review rule: any Runnable, Callable, EventListener,
+_Prevention:_ Code review rule: any Runnable, Callable, EventListener,
 or callback inner class must be static or lambda.
 
 **FM2 - Effectively-final local variable captured incorrectly**
 
-*Symptom:* Compile error: "local variable may not have been
+_Symptom:_ Compile error: "local variable may not have been
 initialized" or "local variables referenced from a lambda expression
 must be final or effectively final."
 
-*Root Cause:* Attempting to use a local variable that is reassigned
+_Root Cause:_ Attempting to use a local variable that is reassigned
 in a lambda or anonymous class.
 
-*Diagnostic:* This is a compile error - the symptom is clear.
+_Diagnostic:_ This is a compile error - the symptom is clear.
 
-*Fix:*
+_Fix:_
+
 ```java
 // BAD - not effectively final
 String prefix = "user-";
@@ -3351,18 +3390,18 @@ List<String> ids = users.stream()
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Know the four types + static vs non-static distinction |
-| 15 minutes | Add the memory leak pattern + lambda difference |
-| 30 minutes | Add Builder pattern + effectively-final rule |
-| Under pressure | "Static = no outer ref, non-static = holds outer ref, lambda = selective capture" |
+| Preparation time | Recommended approach                                                              |
+| ---------------- | --------------------------------------------------------------------------------- |
+| 5 minutes        | Know the four types + static vs non-static distinction                            |
+| 15 minutes       | Add the memory leak pattern + lambda difference                                   |
+| 30 minutes       | Add Builder pattern + effectively-final rule                                      |
+| Under pressure   | "Static = no outer ref, non-static = holds outer ref, lambda = selective capture" |
 
 **[JUNIOR] Q1 - Conceptual**
-*What is the difference between a static nested class and a non-static
-member inner class?*
+_What is the difference between a static nested class and a non-static
+member inner class?_
 
-*Why they ask:* Tests understanding of the outer reference issue.
+_Why they ask:_ Tests understanding of the outer reference issue.
 
 A static nested class has no relationship to any instance of the
 outer class. It is accessed as `Outer.Inner` and can be instantiated
@@ -3399,14 +3438,14 @@ Outer o = new Outer();
 Outer.Member m = o.new Member();        // needs outer instance
 ```
 
-*What separates good from great:* Immediately connecting this to
+_What separates good from great:_ Immediately connecting this to
 the memory leak risk.
 
 ---
 
 **[MID] Q2 - Debugging**
-*You have a suspected memory leak involving an event listener.
-How do you diagnose whether a non-static inner class is the cause?*
+_You have a suspected memory leak involving an event listener.
+How do you diagnose whether a non-static inner class is the cause?_
 
 Step-by-step diagnosis:
 
@@ -3430,17 +3469,18 @@ The fix: find where the `OuterClass$1` is registered and either
 switch to a static listener, add deregistration logic, or use
 weak references.
 
-*What separates good from great:* Knowing that anonymous inner classes
+_What separates good from great:_ Knowing that anonymous inner classes
 are named `OuterClass$N` in the heap dump - this is the thing to
 search for.
 
 ---
 
 **[SENIOR] Q3 - Production**
-*When is it appropriate to use a non-static inner class vs switching
-to a static nested class?*
+_When is it appropriate to use a non-static inner class vs switching
+to a static nested class?_
 
 Non-static inner classes are appropriate when:
+
 1. The inner class is tightly coupled to one specific instance of the
    outer class and the lifetime is bounded to that outer instance.
    Example: an iterator that iterates over the outer collection.
@@ -3452,6 +3492,7 @@ Non-static inner classes are appropriate when:
    method on the outer class (not stored long-term externally).
 
 Switch to static nested when:
+
 - The inner class will be stored in external registries, caches,
   or collections that may outlive the outer instance.
 - The inner class does not actually use the outer instance fields.
@@ -3461,7 +3502,7 @@ Switch to static nested when:
 The heuristic: if you would not feel comfortable passing the inner
 class instance to an external library, it should be static.
 
-*What separates good from great:* The iterator example - `ArrayList`'s
+_What separates good from great:_ The iterator example - `ArrayList`'s
 internal `Itr` class is non-static and holds an outer reference,
 which is fine because iterators are always short-lived and discarded
 before the list.
@@ -3469,39 +3510,41 @@ before the list.
 ---
 
 **[SENIOR] Q4 - Trade-off**
-*Lambdas vs anonymous classes for callback patterns - when does each
-apply?*
+_Lambdas vs anonymous classes for callback patterns - when does each
+apply?_
 
-| Aspect | Lambda | Anonymous Class |
-|--------|--------|-----------------|
-| Interface type | Must be functional (1 SAM) | Any interface or abstract class |
-| Outer capture | Only if needed | Always captures outer this |
-| Syntax | Concise | Verbose |
-| State | Stateless or effectively-final captures | Can have fields |
-| Multiple methods | Not possible | Possible |
-| Abstract classes | Not possible | Possible |
+| Aspect           | Lambda                                  | Anonymous Class                 |
+| ---------------- | --------------------------------------- | ------------------------------- |
+| Interface type   | Must be functional (1 SAM)              | Any interface or abstract class |
+| Outer capture    | Only if needed                          | Always captures outer this      |
+| Syntax           | Concise                                 | Verbose                         |
+| State            | Stateless or effectively-final captures | Can have fields                 |
+| Multiple methods | Not possible                            | Possible                        |
+| Abstract classes | Not possible                            | Possible                        |
 
 Use lambda when:
+
 - The interface is functional (single abstract method)
 - You want minimal outer reference capture
 - The callback is simple and stateless
 
 Use anonymous class when:
+
 - The type has more than one abstract method
 - The type is an abstract class (not an interface)
 - You need instance fields in the anonymous class (stateful callback)
 
 Post-Java 8, the default is lambda. Anonymous classes are the exception.
 
-*What separates good from great:* Explaining that lambdas are NOT
+_What separates good from great:_ Explaining that lambdas are NOT
 always safe from outer reference capture - a lambda body that
 references `this.field` does capture the outer `this`.
 
 ---
 
 **[STAFF] Q5 - Behavioral**
-*Tell me about a memory leak you debugged that involved inner classes
-or callbacks.*
+_Tell me about a memory leak you debugged that involved inner classes
+or callbacks._
 
 **Situation:** A monitoring service accumulated `AlertController`
 objects in memory. Each controller processed one alert and should
@@ -3516,6 +3559,7 @@ GC-thrashing.
 was: `AlertRegistry -> List -> AlertProcessor$1 -> AlertController`.
 
 The `AlertProcessor$1` was an anonymous class implementing a callback:
+
 ```java
 class AlertController {
     private AlertDetails details; // large object
@@ -3541,6 +3585,6 @@ deregistration on alert completion.
 
 **Result:** Memory stabilized at a flat 15% heap usage across 72h.
 
-*What separates good from great:* The two-part fix - structural
+_What separates good from great:_ The two-part fix - structural
 (static class) and behavioral (deregister). The structural fix alone
 would still leak if deregistration was not added.
