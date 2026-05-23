@@ -17,13 +17,13 @@ generations, serialization security, reflection cost, exception design.
 
 | File                                                                                            | Level | Keywords | Status  |
 | ----------------------------------------------------------------------------------------------- | ----- | -------- | ------- |
-| [Java Core - L0 Orientation](Java%20Core%20-%20L0%20Orientation.md)                             | L0    | 4        | planned |
-| [Java Core - L1 Foundations](Java%20Core%20-%20L1%20Foundations.md)                             | L1    | 5        | planned |
-| [Java Core - L2 Collections](Java%20Core%20-%20L2%20Collections.md)                             | L2    | 5        | planned |
-| [Java Core - L2 Collections Advanced](Java%20Core%20-%20L2%20Collections%20Advanced.md)         | L2    | 5        | planned |
-| [Java Core - L3 Internals](Java%20Core%20-%20L3%20Internals.md)                                 | L3    | 5        | planned |
-| [Java Core - L4 Security and Reflection](Java%20Core%20-%20L4%20Security%20and%20Reflection.md) | L4    | 4        | planned |
-| [Java Core - META Patterns](Java%20Core%20-%20META%20Patterns.md)                               | META  | 3        | planned |
+| Java Core - L0 Orientation                             | L0    | 4        | planned |
+| Java Core - L1 Foundations                             | L1    | 5        | planned |
+| Java Core - L2 Collections                             | L2    | 5        | planned |
+| Java Core - L2 Collections Advanced         | L2    | 5        | planned |
+| Java Core - L3 Internals                                 | L3    | 5        | planned |
+| Java Core - L4 Security and Reflection | L4    | 4        | planned |
+| Java Core - META Patterns                               | META  | 3        | planned |
 
 **Total: 31 keywords, 7 files**
 

@@ -25,9 +25,9 @@ compatibility reasoning.
 | [Java Language - L2 Functional](Java%20Language%20-%20L2%20Functional.md)                     | L2    | 5        | complete |
 | [Java Language - L3 Type System Depth](Java%20Language%20-%20L3%20Type%20System%20Depth.md)   | L3    | 5        | complete |
 | [Java Language - L3 Modern Java](Java%20Language%20-%20L3%20Modern%20Java.md)                 | L3    | 5        | planned  |
-| [Java Language - L4 Language Internals](Java%20Language%20-%20L4%20Language%20Internals.md)   | L4    | 4        | planned  |
-| [Java Language - L5 Architecture](Java%20Language%20-%20L5%20Architecture.md)                 | L5    | 3        | planned  |
-| [Java Language - META Patterns](Java%20Language%20-%20META%20Patterns.md)                     | META  | 3        | planned  |
+| Java Language - L4 Language Internals   | L4    | 4        | planned  |
+| Java Language - L5 Architecture                 | L5    | 3        | planned  |
+| Java Language - META Patterns                     | META  | 3        | planned  |
 
 **Total: 46 keywords, 10 files**
 

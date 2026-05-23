@@ -19,11 +19,11 @@ performance testing.
 
 | File                                                                                                      | Level   | Keywords | Status  |
 | --------------------------------------------------------------------------------------------------------- | ------- | -------- | ------- |
-| [Java Performance - L0 Orientation](Java%20Performance%20-%20L0%20Orientation.md)                         | L0      | 4        | planned |
-| [Java Performance - L2 Profiling](Java%20Performance%20-%20L2%20Profiling.md)                             | L2      | 5        | planned |
-| [Java Performance - L3 GC Tuning](Java%20Performance%20-%20L3%20GC%20Tuning.md)                           | L3      | 5        | planned |
-| [Java Performance - L4 Advanced Diagnostics](Java%20Performance%20-%20L4%20Advanced%20Diagnostics.md)     | L4      | 5        | planned |
-| [Java Performance - L5 Architecture and META](Java%20Performance%20-%20L5%20Architecture%20and%20META.md) | L5+META | 4        | planned |
+| Java Performance - L0 Orientation                         | L0      | 4        | planned |
+| Java Performance - L2 Profiling                             | L2      | 5        | planned |
+| Java Performance - L3 GC Tuning                           | L3      | 5        | planned |
+| Java Performance - L4 Advanced Diagnostics     | L4      | 5        | planned |
+| Java Performance - L5 Architecture and META | L5+META | 4        | planned |
 
 **Total: 23 keywords, 5 files**
 

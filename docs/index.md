@@ -17,10 +17,10 @@ a distinct interview area a senior engineer can spend 45+ minutes on.
 
 | Topic                                 | Folder            | Keywords | Status  |
 | ------------------------------------- | ----------------- | -------- | ------- |
-| [Java Language](java-language/)       | java-language/    | 46       | planned |
-| [Java Core APIs](java-core/)          | java-core/        | 31       | planned |
-| [Java JVM](java-jvm/)                 | java-jvm/         | 39       | planned |
-| [Java Concurrency](java-concurrency/) | java-concurrency/ | 40       | planned |
-| [Java Performance](java-performance/) | java-performance/ | 23       | planned |
+| [Java Language](java-language/index.md)       | java-language/    | 46       | planned |
+| [Java Core APIs](java-core/index.md)          | java-core/        | 31       | planned |
+| [Java JVM](java-jvm/index.md)                 | java-jvm/         | 39       | planned |
+| [Java Concurrency](java-concurrency/index.md) | java-concurrency/ | 40       | planned |
+| [Java Performance](java-performance/index.md) | java-performance/ | 23       | planned |
 
 **Total: 179 keywords across 40 files**

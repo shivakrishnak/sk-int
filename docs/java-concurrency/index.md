@@ -18,15 +18,15 @@ async composition, concurrent collection internals, virtual threads.
 
 | File                                                                                                      | Level | Keywords | Status  |
 | --------------------------------------------------------------------------------------------------------- | ----- | -------- | ------- |
-| [Java Concurrency - L0 Orientation](Java%20Concurrency%20-%20L0%20Orientation.md)                         | L0    | 4        | planned |
-| [Java Concurrency - L1 Foundations](Java%20Concurrency%20-%20L1%20Foundations.md)                         | L1    | 5        | planned |
-| [Java Concurrency - L2 Thread Coordination](Java%20Concurrency%20-%20L2%20Thread%20Coordination.md)       | L2    | 5        | planned |
-| [Java Concurrency - L2 Executors](Java%20Concurrency%20-%20L2%20Executors.md)                             | L2    | 5        | planned |
-| [Java Concurrency - L3 Lock API](Java%20Concurrency%20-%20L3%20Lock%20API.md)                             | L3    | 5        | planned |
-| [Java Concurrency - L3 Concurrent Collections](Java%20Concurrency%20-%20L3%20Concurrent%20Collections.md) | L3    | 5        | planned |
-| [Java Concurrency - L4 Diagnostics](Java%20Concurrency%20-%20L4%20Diagnostics.md)                         | L4    | 4        | planned |
-| [Java Concurrency - L4 Virtual Threads](Java%20Concurrency%20-%20L4%20Virtual%20Threads.md)               | L4    | 4        | planned |
-| [Java Concurrency - META Patterns](Java%20Concurrency%20-%20META%20Patterns.md)                           | META  | 3        | planned |
+| Java Concurrency - L0 Orientation                         | L0    | 4        | planned |
+| Java Concurrency - L1 Foundations                         | L1    | 5        | planned |
+| Java Concurrency - L2 Thread Coordination       | L2    | 5        | planned |
+| Java Concurrency - L2 Executors                             | L2    | 5        | planned |
+| Java Concurrency - L3 Lock API                             | L3    | 5        | planned |
+| Java Concurrency - L3 Concurrent Collections | L3    | 5        | planned |
+| Java Concurrency - L4 Diagnostics                         | L4    | 4        | planned |
+| Java Concurrency - L4 Virtual Threads               | L4    | 4        | planned |
+| Java Concurrency - META Patterns                           | META  | 3        | planned |
 
 **Total: 40 keywords, 9 files**
 

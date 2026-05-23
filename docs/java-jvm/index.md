@@ -17,15 +17,15 @@ algorithm trade-offs, JIT optimization, bytecode, JPMS, JMM.
 
 | File                                                                          | Level   | Keywords | Status  |
 | ----------------------------------------------------------------------------- | ------- | -------- | ------- |
-| [Java JVM - L0 Orientation](Java%20JVM%20-%20L0%20Orientation.md)             | L0      | 4        | planned |
-| [Java JVM - L1 Foundations](Java%20JVM%20-%20L1%20Foundations.md)             | L1      | 5        | planned |
-| [Java JVM - L2 Memory Model](Java%20JVM%20-%20L2%20Memory%20Model.md)         | L2      | 5        | planned |
-| [Java JVM - L3 Class Loading](Java%20JVM%20-%20L3%20Class%20Loading.md)       | L3      | 5        | planned |
-| [Java JVM - L3 GC Foundations](Java%20JVM%20-%20L3%20GC%20Foundations.md)     | L3      | 4        | planned |
-| [Java JVM - L4 GC Algorithms](Java%20JVM%20-%20L4%20GC%20Algorithms.md)       | L4      | 5        | planned |
-| [Java JVM - L4 JIT Compilation](Java%20JVM%20-%20L4%20JIT%20Compilation.md)   | L4      | 4        | planned |
-| [Java JVM - L5 Architecture](Java%20JVM%20-%20L5%20Architecture.md)           | L5      | 3        | planned |
-| [Java JVM - L6 Theory and META](Java%20JVM%20-%20L6%20Theory%20and%20META.md) | L6+META | 4        | planned |
+| Java JVM - L0 Orientation             | L0      | 4        | planned |
+| Java JVM - L1 Foundations             | L1      | 5        | planned |
+| Java JVM - L2 Memory Model         | L2      | 5        | planned |
+| Java JVM - L3 Class Loading       | L3      | 5        | planned |
+| Java JVM - L3 GC Foundations     | L3      | 4        | planned |
+| Java JVM - L4 GC Algorithms       | L4      | 5        | planned |
+| Java JVM - L4 JIT Compilation   | L4      | 4        | planned |
+| Java JVM - L5 Architecture           | L5      | 3        | planned |
+| Java JVM - L6 Theory and META | L6+META | 4        | planned |
 
 **Total: 39 keywords, 9 files**
 

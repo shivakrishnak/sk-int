@@ -14,6 +14,16 @@
   - .github/copilot-instructions.md (workspace shared rules)
   - /memories/repo/content-generation.md (learned from sessions)
   - SPEC_VERSION = 1 (interview_content_generator.md)
+  - northstar/_config/file_validation_rules.ps1 (ported: NO_SECRETS, BOLD_LABEL_NO_BLANK,
+    QRC_BORDER_BROKEN, HIGH_REPETITION, github_pat_ secret pattern;
+    LineNumber bug fix for Select-String on piped arrays;
+    R12 difficulty detection fix: 'difficulty.*medium' -> 'Interview Weight.*medium';
+    R12 inter-keyword bleed fix: reset $keywordDifficulty at each H1 separator)
+
+  Known validator bug (fixed here):
+  Do NOT use Select-String.LineNumber on piped string arrays - it always
+  returns 1. Use a for-loop with explicit index to get correct 1-based line
+  numbers. (Documented in northstar validator.)
 #>
 
 Set-StrictMode -Version Latest
@@ -33,16 +43,18 @@ function Test-NoBOM {
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RULE R02 - No em dashes
+# NOTE: Select-String.LineNumber is always 1 when piping a string array.
+# Use a for-loop for correct 1-based line numbers.
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-NoEmDash {
   param([string]$FilePath, [string[]]$Lines)
-  $hits = $Lines | Select-String -Pattern '—' -SimpleMatch
-  if ($hits) {
-    return ($hits | ForEach-Object {
-      "R02 EM-DASH: line $($_.LineNumber): $($_.Line.Trim())"
-    })
+  $errs = @()
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match "\u2014") {
+      $errs += "R02 EM-DASH: line $($i+1): $($Lines[$i].Trim())"
+    }
   }
-  return @()
+  return $errs
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -50,13 +62,13 @@ function Test-NoEmDash {
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-NoStubMarkers {
   param([string[]]$Lines)
-  $hits = $Lines | Select-String -Pattern '\[TODO:|^\[FILL:' -SimpleMatch
-  if ($hits) {
-    return ($hits | ForEach-Object {
-      "R03 STUB: line $($_.LineNumber): unfilled marker: $($_.Line.Trim())"
-    })
+  $errs = @()
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match '\[TODO:|\[FILL:') {
+      $errs += "R03 STUB: line $($i+1): unfilled marker: $($Lines[$i].Trim())"
+    }
   }
-  return @()
+  return $errs
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -87,14 +99,14 @@ function Test-FrontmatterVersion {
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-NoFillContentRef {
   param([string[]]$Lines)
-  $hits = $Lines | Select-String -Pattern '@fill-content|fill-content\.prompt' -SimpleMatch
-  if ($hits) {
-    return ($hits | ForEach-Object {
-      "R05 STALE-REF: line $($_.LineNumber): '@fill-content' no longer " +
-      "exists - use '@generate-entries' instead: $($_.Line.Trim())"
-    })
+  $errs = @()
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match '@fill-content|fill-content\.prompt') {
+      $errs += "R05 STALE-REF: line $($i+1): '@fill-content' no longer " +
+               "exists - use '@generate-entries' instead: $($Lines[$i].Trim())"
+    }
   }
-  return @()
+  return $errs
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -261,8 +273,14 @@ function Test-BadBeforeGood {
 # ─────────────────────────────────────────────────────────────────────────────
 # RULE R12 - Interview Deep-Dive minimum question count
 # Files with Interview Deep-Dive section must have enough questions.
-# Counts lines matching "^[0-9]+\." or "^\*\*Q[0-9]" in Deep-Dive sections.
+# Counts lines starting with **[LEVEL] (e.g. **[JUNIOR] Q1 - ...)
 # Minimum: 7 (easy), 9 (medium), 12 (hard) - checked per-section.
+#
+# Bug fix: old detection used 'difficulty.*medium' but actual format is
+# '**Interview Weight:** medium'. Now detects 'Interview Weight.*medium'
+# or 'Interview Weight.*hard' / 'Interview Weight.*easy'.
+# Also resets $keywordDifficulty = 'easy' at each new H1 (keyword separator)
+# so difficulty from kw1 does not bleed into kw2.
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-DeepDiveQuestionCount {
   param([string[]]$Lines, [string]$FilePath)
@@ -272,9 +290,13 @@ function Test-DeepDiveQuestionCount {
   $inDeepDive = $false
   $qCount = 0
   $sectionStart = 0
-  $keywordDifficulty = 'easy'  # default
+  $keywordDifficulty = 'easy'  # default; reset at each H1 separator
   for ($i = 0; $i -lt $Lines.Count; $i++) {
     $line = $Lines[$i]
+    # Reset difficulty at each new keyword (H1 separator)
+    if ($line -match '^# ') {
+      $keywordDifficulty = 'easy'
+    }
     if ($line -match '^### 🎯 Interview Deep-Dive') {
       $inDeepDive = $true
       $qCount = 0
@@ -282,8 +304,7 @@ function Test-DeepDiveQuestionCount {
       continue
     }
     if ($inDeepDive) {
-      # End of section = next H3 that is not part of Deep-Dive,
-      # or next H1/H2, or end of file
+      # End of section = next ### or H1/H2, or end of file
       if ($line -match '^### ' -or $line -match '^## ' -or $line -match '^# ') {
         # Evaluate count
         $minQ = if ($keywordDifficulty -eq 'hard') { 12 }
@@ -295,15 +316,31 @@ function Test-DeepDiveQuestionCount {
         }
         $inDeepDive = $false
       }
-      # Count question lines - look for **Q or numbered bold questions
+      # Count question lines: **[LEVEL] Q... format
       if ($line -match '^\*\*\[' -or $line -match '^\d+\.\s+\*\*\[') {
         $qCount++
       }
     }
-    # Detect difficulty from surrounding context
-    if ($line -match 'difficulty.*hard|★★★') { $keywordDifficulty = 'hard' }
-    elseif ($line -match 'difficulty.*medium|★★☆') { $keywordDifficulty = 'medium' }
-    elseif ($line -match 'difficulty.*easy|★☆☆') { $keywordDifficulty = 'easy' }
+    # Detect difficulty from 'Interview Weight:' line (actual content format)
+    # or from legacy 'difficulty:' frontmatter pattern.
+    # Priority: hard > medium > easy (checked in order)
+    if ($line -match 'Interview Weight.*\bhard\b|difficulty.*hard|★★★') {
+      $keywordDifficulty = 'hard'
+    } elseif ($line -match 'Interview Weight.*\bmedium\b|difficulty.*medium|★★☆') {
+      $keywordDifficulty = 'medium'
+    } elseif ($line -match 'Interview Weight.*\beasy\b|difficulty.*easy|★☆☆') {
+      $keywordDifficulty = 'easy'
+    }
+  }
+  # Flush final section if file ended inside Deep-Dive
+  if ($inDeepDive) {
+    $minQ = if ($keywordDifficulty -eq 'hard') { 12 }
+            elseif ($keywordDifficulty -eq 'medium') { 9 }
+            else { 7 }
+    if ($qCount -lt $minQ) {
+      $errs += "R12 DEEP-DIVE-QS: Interview Deep-Dive at line $sectionStart " +
+               "has $qCount questions (min $minQ for $keywordDifficulty)"
+    }
   }
   return $errs
 }
@@ -315,14 +352,14 @@ function Test-DeepDiveQuestionCount {
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-NoNineteenSections {
   param([string[]]$Lines)
-  $hits = $Lines | Select-String -Pattern '19 sections?|19-section' -SimpleMatch
-  if ($hits) {
-    return ($hits | ForEach-Object {
-      "R13 STALE-LANG: line $($_.LineNumber): '19 sections' is wrong - " +
-      "use '8 Option C sections': $($_.Line.Trim())"
-    })
+  $errs = @()
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match '19 sections?|19-section') {
+      $errs += "R13 STALE-LANG: line $($i+1): '19 sections' is wrong - " +
+               "use '8 Option C sections': $($Lines[$i].Trim())"
+    }
   }
-  return @()
+  return $errs
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -343,13 +380,182 @@ function Test-NoOldFileNaming {
     # The old pattern was a STANDALONE Foundations.md combining L0+L1
   )
   foreach ($pattern in $oldPatterns) {
-    $hits = $Lines | Select-String -Pattern $pattern
-    if ($hits) {
-      $errs += ($hits | ForEach-Object {
-        "R14 OLD-NAMING: line $($_.LineNumber): stale file name pattern " +
-        "'$pattern' - use L0/L1/L5/META naming: $($_.Line.Trim())"
-      })
+    for ($i = 0; $i -lt $Lines.Count; $i++) {
+      if ($Lines[$i] -match $pattern) {
+        $errs += "R14 OLD-NAMING: line $($i+1): stale file name pattern " +
+                 "'$pattern' - use L0/L1/L5/META naming: $($Lines[$i].Trim())"
+      }
     }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R15 - Consecutive bold-label lines must be separated by a blank line
+# Ported from northstar BOLD_LABEL_NO_BLANK rule.
+# Spec: "Bold-label lines (**LABEL:** value) must each be separated by a blank
+# line." MkDocs merges consecutive paragraph lines without blank separator.
+# IMPORTANT: check body[$i-1] directly (NOT a prevTrimmed variable) - two
+# bold-labels separated by a blank line must NOT fire.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-BoldLabelBlankSeparator {
+  param([string[]]$Lines)
+  $errs = @()
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    $cur  = $Lines[$i].Trim()
+    $prev = $Lines[$i - 1].Trim()
+    if ($cur  -match '^\*\*[A-Za-z][^*]+:\*\*' -and
+        $prev -match '^\*\*[A-Za-z][^*]+:\*\*') {
+      $errs += "R15 BOLD-LABEL: line $($i+1): consecutive **LABEL:** lines " +
+               "with no blank separator. MkDocs merges them: $cur"
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R16 - No real-looking secret strings
+# Ported from northstar NO_SECRETS rule.
+# GitHub secret scanning blocks git push on files matching known secret patterns
+# even in educational/example code. Checked inside AND outside code fences.
+# Safe placeholders (break scanner regex):
+#   AKIA_YOUR_KEY_EXAMPLE   sk_live_YOUR_KEY_HERE
+#   ghp_YOUR_GITHUB_TOKEN   AIza_YOUR_GOOGLE_API_KEY
+# Real case: northstar SEC-046 had AKIAIOSFODNN7EXAMPLE (AWS docs example)
+# which matched the AWS scanner pattern and blocked git push.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-NoSecrets {
+  param([string[]]$Lines)
+  $errs = @()
+  $secretPatterns = @(
+    @{ re = 'AKIA[A-Z0-9]{16,}';              name = 'AWS Access Key ID (AKIA...)' },
+    @{ re = 'sk_live_[0-9a-zA-Z]{24,}';       name = 'Stripe live key (sk_live_...)' },
+    @{ re = 'ghp_[a-zA-Z0-9]{36,}';           name = 'GitHub PAT (ghp_...)' },
+    @{ re = 'github_pat_[a-zA-Z0-9_]{82,}';   name = 'GitHub fine-grained PAT' },
+    @{ re = 'AIza[0-9A-Za-z_-]{35}';          name = 'Google API key (AIza...)' }
+  )
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    foreach ($sp in $secretPatterns) {
+      if ($Lines[$i] -cmatch $sp.re) {
+        $snippet = $Lines[$i].Trim()
+        $errs += "R16 SECRET: line $($i+1): $($sp.name) pattern detected - " +
+                 "replace with safe placeholder (e.g. AKIA_YOUR_KEY_EXAMPLE): " +
+                 "$($snippet.Substring(0,[Math]::Min(60,$snippet.Length)))"
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R17 - QRC box-drawing characters form proper closed boxes
+# Ported from northstar QRC_BORDER_BROKEN rule.
+# ASCII Quick Reference Card boxes use ┌┐└┘├┤│. Malformed boxes render
+# as broken visual garbage in MkDocs and are nearly impossible to read.
+#
+# IMPORTANT FALSE-POSITIVE GUARD:
+# ASCII file-tree diagrams use ├── and └── (tree branches) which look like
+# box chars but are NOT QRC borders. Only enter box-detection mode when a
+# valid top border ┌...┐ is found. ├ and └ checks ONLY apply inside a real box.
+#
+# Checks:
+#   ┌...┐  top border - activates box detection; must end with ┐
+#   └...┘  bottom border - closes box detection; must end with ┘
+#   ├...┤  divider row - only inside box; must end with ┤
+#   │...│  content lines - only inside box; must start AND end with │
+#   Every ┌ must have a matching └ before end of fence
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-QrcBorderIntegrity {
+  param([string[]]$Lines)
+  $errs = @()
+  $inBoxArt  = $false
+  $boxOpenLine = -1
+  $inFence   = $false
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    $line    = $Lines[$i]
+    $trimmed = $line.Trim()
+    $lineNum = $i + 1
+    # Track code fences - boxes can appear inside or outside fences
+    if ($line -match '^\s*```') { $inFence = -not $inFence }
+    if ($line -match '^\u250c' -and $line -match '\u2510$') {
+      # ┌...┐ valid top border
+      if ($inBoxArt) {
+        $errs += "R17 QRC-BOX: line ${lineNum}: new \u250c opened before " +
+                 "previous box at line $boxOpenLine was closed with └"
+      }
+      $inBoxArt    = $true
+      $boxOpenLine = $lineNum
+    } elseif ($line -match '^\u250c' -and $line -notmatch '\u2510$') {
+      # ┌ without matching ┐
+      if ($inBoxArt) {
+        $errs += "R17 QRC-BOX: line ${lineNum}: \u250c border does not end with \u2510: " +
+                 "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
+      }
+      # else: likely a tree root line outside a box - ignore
+    } elseif ($inBoxArt -and $line -match '^\u2514') {
+      # └ bottom border - only inside confirmed box
+      if ($line -notmatch '\u2518$') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: \u2514 border does not end with \u2518: " +
+                 "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
+      }
+      $inBoxArt    = $false
+      $boxOpenLine = -1
+    } elseif ($inBoxArt -and $line -match '^\u251c') {
+      # ├ divider - only inside confirmed box
+      if ($line -notmatch '\u2524$') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: \u251c divider does not end with \u2524: " +
+                 "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
+      }
+    } elseif ($inBoxArt) {
+      # Content row must start and end with │ (allow blank rows)
+      if ($trimmed -ne '' -and $line -notmatch '^\u2502') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: line inside box does not " +
+                 "start with \u2502: $($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
+        $inBoxArt = $false  # reset to avoid cascade
+      } elseif ($line -match '^\u2502' -and $line -notmatch '\u2502$') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: box content line starts " +
+                 "with │ but does not end with │: " +
+                 "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
+      }
+    }
+  }
+  # Unclosed box at end of file
+  if ($inBoxArt) {
+    $errs += "R17 QRC-BOX: box opened at line $boxOpenLine was never " +
+             "closed with └...┘"
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R18 - No verbatim paragraph duplication within a file
+# Ported from northstar HIGH_REPETITION rule (v6.0 opt-in; always-on here).
+# Detects 50+ character lines that appear verbatim 2+ times in the same file.
+# Real causes: copy-paste of boilerplate between keywords; accidental duplicate
+# section rendering. One error per file to avoid flooding.
+# Exclusions: code fence lines, short lines, separator lines (---)
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-NoDuplicateLines {
+  param([string[]]$Lines, [string]$FilePath)
+  if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
+  $errs = @()
+  $inFence = $false
+  $seen    = [System.Collections.Generic.Dictionary[string,int]]::new(
+               [System.StringComparer]::Ordinal)
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    $line = $Lines[$i]
+    if ($line -match '^\s*```') { $inFence = -not $inFence; continue }
+    if ($inFence) { continue }
+    $key = $line.Trim()
+    # Only prose lines: length >= 50, not a heading, HR, or blank
+    if ($key.Length -lt 50) { continue }
+    if ($key -match '^#|^---|^\*\*\[|^>') { continue }
+    if ($seen.ContainsKey($key)) {
+      $errs += "R18 DUPLICATE: line $($i+1): verbatim duplicate of line " +
+               "$($seen[$key]+1): $($key.Substring(0,[Math]::Min(60,$key.Length)))..."
+      break  # one warning per file is enough
+    }
+    $seen[$key] = $i
   }
   return $errs
 }
@@ -373,6 +579,10 @@ function Invoke-FileValidation {
   $errs += Test-DualDiagramFormat  -Lines $lines
   $errs += Test-BadBeforeGood      -Lines $lines
   $errs += Test-DeepDiveQuestionCount -Lines $lines -FilePath $FilePath
+  $errs += Test-BoldLabelBlankSeparator -Lines $lines
+  $errs += Test-NoSecrets              -Lines $lines
+  $errs += Test-QrcBorderIntegrity     -Lines $lines
+  $errs += Test-NoDuplicateLines       -Lines $lines -FilePath $FilePath
   # Spec/instruction files only:
   if ($FilePath -match '\.(github|spec)\\') {
     $errs += Test-NoNineteenSections -Lines $lines
@@ -402,4 +612,6 @@ Export-ModuleMember -Function Invoke-FileValidation, Test-NoBOM,
   Test-NoFillContentRef, Test-CodeLineLength, Test-AsciiDiagramWidth,
   Test-H3PrecededByHR, Test-CodeWalkthrough, Test-DualDiagramFormat,
   Test-BadBeforeGood, Test-DeepDiveQuestionCount,
+  Test-BoldLabelBlankSeparator, Test-NoSecrets,
+  Test-QrcBorderIntegrity, Test-NoDuplicateLines,
   Test-NoNineteenSections, Test-NoOldFileNaming
