@@ -4,19 +4,22 @@
   Validate staged or specified docs/*.md files against the SK Interview rules.
 
 .DESCRIPTION
-  Stub validator invoked by the pre-commit hook and by CI.
-  Currently performs a smoke check: file exists, starts at byte 0,
-  is UTF-8 (no BOM), and contains no em dashes.
-
-  TODO (planned checks - mirror legacy file_validation_rules.ps1):
-    - YAML frontmatter presence and required fields (when used)
-    - Line length: max 70 chars for code, max 59 for ASCII diagrams
-    - DUAL diagram format (ASCII + Mermaid)
-    - BAD-before-GOOD pattern in code examples
-    - Bold-label lines separated by blank lines
-    - Interview Deep-Dive minimum question count (7/9/12)
-    - No "[TODO:" or "[FILL:" markers in completed files
-    - All `# KEYWORD` headings match `keywords:` list (if frontmatter)
+  Validator invoked by the pre-commit hook and by CI.
+  Rule definitions live in scripts/file_validation_rules.ps1 (14 rules):
+    R01 No BOM
+    R02 No em dashes
+    R03 No [TODO:/[FILL: stub markers in completed files
+    R04 frontmatter version: 1 (not 3 - historical bug, now enforced)
+    R05 No @fill-content refs (prompt deleted; use @generate-entries)
+    R06 Code lines max 70 chars
+    R07 ASCII diagram lines max 59 chars
+    R08 Every ### heading preceded by ---
+    R09 Code walkthrough after every code block
+    R10 DUAL diagram format (ASCII block before every mermaid block)
+    R11 BAD pattern before GOOD in code examples
+    R12 Interview Deep-Dive min question count (7/9/12 by difficulty)
+    R13 No '19 sections' language in spec files (correct: 8 Option C)
+    R14 No old file naming patterns in spec files
 
 .PARAMETER FileList
   Path to a text file containing one staged file path per line. Used by
@@ -64,27 +67,20 @@ if (-not $files -or $files.Count -eq 0) {
 Write-Host "validate.ps1: checking $($files.Count) file(s)..." `
   -ForegroundColor Cyan
 
+# Load rule functions
+$rulesScript = Join-Path $PSScriptRoot 'file_validation_rules.ps1'
+if (-not (Test-Path $rulesScript)) {
+  Write-Host "ERROR: file_validation_rules.ps1 not found at $rulesScript" `
+    -ForegroundColor Red
+  exit 1
+}
+. $rulesScript
+
 foreach ($file in $files) {
-  $errors = @()
-
-  # BOM check
-  $bytes = [System.IO.File]::ReadAllBytes($file)
-  if ($bytes.Length -ge 3 -and
-      $bytes[0] -eq 0xEF -and
-      $bytes[1] -eq 0xBB -and
-      $bytes[2] -eq 0xBF) {
-    $errors += 'UTF-8 BOM detected (file must start without BOM)'
-  }
-
-  # Em-dash check
-  $content = [System.IO.File]::ReadAllText($file)
-  if ($content -match [char]0x2014) {
-    $errors += 'Em dash (U+2014) found - use regular hyphens only'
-  }
-
-  if ($errors.Count -gt 0) {
+  $errs = Invoke-FileValidation -FilePath $file
+  if ($errs.Count -gt 0) {
     Write-Host "FAIL: $file" -ForegroundColor Red
-    foreach ($e in $errors) { Write-Host "  - $e" }
+    $errs | ForEach-Object { Write-Host "  - $_" }
     $exitCode = 1
   }
 }

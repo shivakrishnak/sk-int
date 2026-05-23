@@ -6,12 +6,12 @@ This folder is the authoritative source for the **Technical Interview Mastery** 
 
 ## Spec Files
 
-| File                                                             | Purpose                                                                                                                       |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [interview_content_generator.md](interview_content_generator.md) | Master generation spec — 18 sections per keyword (4.1–4.18), seniority calibration, spoken answer templates, recall schedules |
-| [topics_generator.md](topics_generator.md)                       | Category keyword list generator — 37 rules, 33 checks, 9 knowledge levels (PRE, L0–L6, META), 5 invocation modes              |
-| [topics_registry.md](topics_registry.md)                         | Topic-to-folder mapping, level-coverage rubric, file organisation rules, Java/Java Concurrency planning references            |
-| [README.md](README.md)                                           | This file                                                                                                                     |
+| File                                                             | Purpose                                                                                                                                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [interview_content_generator.md](interview_content_generator.md) | Master generation spec — 9 sections per keyword (4.1–4.10, 5 mandatory + 4 conditional), seniority calibration, spoken answer templates, self-validation checklist |
+| [topics_generator.md](topics_generator.md)                       | Category keyword list generator — 37 rules, 33 checks, 9 knowledge levels (PRE, L0–L6, META), 5 invocation modes                                                   |
+| [topics_registry.md](topics_registry.md)                         | Topic-to-folder mapping, level-coverage rubric, file organisation rules, Java/Java Concurrency planning references                                                 |
+| [README.md](README.md)                                           | This file                                                                                                                                                          |
 
 ---
 
@@ -20,13 +20,13 @@ This folder is the authoritative source for the **Technical Interview Mastery** 
 ```
 topics_generator.md          interview_content_generator.md        docs/
 ─────────────────────   →    ──────────────────────────────   →    ──────
-Keyword list per level       18-section entry per keyword           Published site
-(PRE, L0–L6, META)           (definition → recall schedule)         (MkDocs Material)
+Keyword list per level       9-section entry per keyword            Published site
+(PRE, L0–L6, META)           (5 mandatory + 4 conditional)          (MkDocs Material)
 ```
 
 **Step 1** — Generate keyword list using `topics_generator.md`
 **Step 2** — Generate entry content using `interview_content_generator.md`
-**Step 3** — Practice using Section 4.17 (Elite Learning Loop) and Section 4.18 (Recall Schedule)
+**Step 3** — Practice using the entry's Questions & Spoken Answers (4.6), Field Q&A (4.8), and Diagram (4.10) sections
 
 ---
 
@@ -72,22 +72,22 @@ Generate technical interview entry for:
   Seniority:        senior, staff
 ```
 
-Each entry follows the 18-section structure (4.1–4.18). Output to `docs/{topic-name}/{Topic} - L{N} {Subtopic}.md`.
+Each entry follows the 9-section structure (4.1–4.10). Output to `docs/{topic-name}/{Topic} - L{N} {Subtopic}.md`.
 
 ### Step 3 — Practice the entry
 
 Use the entry's own sections:
 
-- **Section 4.17** (Elite Learning Loop) — 8-step recall cycle
-- **Section 4.18** (Deliberate Recall Schedule) — Day 1/3/7/14/30/60 sessions
-- **Section 4.16** (Spoken Answer Templates) — speak aloud, timed
+- **Section 4.6** (Questions & Spoken Answers) — speak the 🗣️ templates aloud, timed
+- **Section 4.8** (Field Q&A) — simulate production failure and candidate mistake drills
+- **Section 4.10** (Diagram) — draw from memory, then verify against the ASCII + Mermaid
 
 ---
 
 ## When to Read What
 
 - **First time contributing**: start with [../CONTRIBUTING.md](../CONTRIBUTING.md), then [topics_registry.md](topics_registry.md) for the coverage map and file organisation rules.
-- **Generating a new keyword**: read `interview_content_generator.md` Section 4 (18-section structure) and Section 6 (Content Quality Rules + Self-Validation Checklist).
+- **Generating a new keyword**: read `interview_content_generator.md` Section 4 (9-section structure, 4.1–4.10) and Section 6 (Content Quality Rules + Self-Validation Checklist).
 - **Adding a new topic category**: read `topics_generator.md` (37 rules, 9 levels) and `topics_registry.md` (level-coverage rubric, one-per-file pattern).
 - **Planning interview prep**: use `topics_generator.md` ROADMAP mode with your role, time budget, and weak areas.
 - **Debugging frontmatter or build errors**: read the Pre-Commit Frontmatter Verification section in `.github/agents/interview.agent.md`.
@@ -120,7 +120,7 @@ Use the entry's own sections:
 1. Check `topics_registry.md` — is the topic already planned?
 2. Run `topics_generator.md` in REGISTRY mode to generate the keyword list (PRE through L6 + META).
 3. Create stub files: one file per level, placed in `docs/{topic-name}/`. Use the level-per-file naming pattern. Respect content-capacity limits per level.
-4. Generate full 18-section entries using `interview_content_generator.md` for each keyword stub.
+4. Generate full entries (9-section structure) using `interview_content_generator.md` for each keyword stub.
 5. Update `spec/topics_registry.md` with the new category, its code, tier, and file plan.
 6. Update `docs/index.md` and the tier `index.md` to add navigation links.
 

@@ -28,9 +28,13 @@ This file is the **single source of truth** for the keyword generation rubric an
 
 > No topics yet. Add a row here when you create a topic folder under `docs/`.
 
-| Topic | Folder | Status | Description |
-| ----- | ------ | ------ | ----------- |
-|       |        |        |             |
+| Topic            | Folder                 | Status  | Description                                                                        |
+| ---------------- | ---------------------- | ------- | ---------------------------------------------------------------------------------- |
+| Java Language    | docs/java-language/    | planned | Language spec: types, OOP, generics, lambdas, modern Java (8-21) - 46 kw, 10 files |
+| Java Core APIs   | docs/java-core/        | planned | Platform APIs: collections, I/O, NIO, serialization, reflection - 31 kw, 7 files   |
+| Java JVM         | docs/java-jvm/         | planned | VM internals: class loading, GC, JIT, bytecode, memory model - 39 kw, 9 files      |
+| Java Concurrency | docs/java-concurrency/ | planned | Threads, locks, executors, CompletableFuture, virtual threads - 40 kw, 9 files     |
+| Java Performance | docs/java-performance/ | planned | JFR, async-profiler, GC tuning, heap analysis, JVM flags - 23 kw, 5 files          |
 
 ---
 

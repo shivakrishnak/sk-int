@@ -26,26 +26,30 @@ level band produces more than 5 keywords, split into multiple files.
 
 ### Workflow Per File
 
-1. **Read frontmatter**: extract the `keywords:` list and `difficulty_range:`
-2. **Detect progress**: scan file for `# KEYWORD NAME` headings that have
-   real content below them (not `[TODO:]` or `[FILL:]` stubs). Identify
-   which keywords are already complete vs still pending.
-3. **Pick next batch**: select unfilled keywords based on difficulty:
+1. **Read index.md**: open `{topic}/index.md` → `## Keyword Registry` → find
+   the sub-section for the target file → extract the keyword list and
+   per-keyword status (pending/draft/complete).
+2. **Detect progress**: keywords with status `draft` or `complete` in the
+   Registry are already done. Only generate for `pending` keywords.
+3. **Pick next batch**: select pending keywords based on difficulty:
    - hard keywords: **1 keyword per batch**
    - medium keywords: **2 keywords per batch**
    - easy keywords: **3 keywords per batch**
-4. **Generate**: produce complete 19-section content for ALL keywords in
-   the batch in a single output block (all sections per keyword, then
-   next keyword). Never generate section-by-section.
-5. **Write**: append generated content to the file after the last completed
-   keyword (or after frontmatter if this is the first keyword). Use
-   double horizontal rules (`---` then `---`) between keywords.
-6. **Report**: `Completed keyword N of M: [name]` - then auto-continue
-7. **Repeat** steps 3-6 until all keywords in the file are complete
-8. **Verify content**: grep for `[TODO:` and `[FILL:` to confirm zero stubs remain
-9. **Verify frontmatter**: when frontmatter is used, run Pre-Commit
-   Frontmatter Verification to confirm required fields are present
-   and correct (see Pre-Commit Frontmatter Verification section)
+4. **Generate**: produce complete Option C content for ALL keywords in
+   the batch in a single output block. Sections per keyword:
+   - Always: Model Answer, Concept Explanation, Answers by Seniority,
+     Common Misconceptions, Failure Modes and Diagnosis, Interview Deep-Dive
+   - If programmatic: Code Example
+   - If ★★☆+: Comparison Table
+     See Content Structure table in interview.instructions.md for section
+     headings, rules, and CGR section references.
+5. **Write**: create the target file if missing, then append generated
+   content. Use double horizontal rules (`---` then `---`) between keywords.
+6. **Update index.md**: change completed keyword statuses from `pending`
+   to `draft`; update the Files table Status column to `in-progress` or
+   `complete` as appropriate.
+7. **Report**: `Completed keyword N of M: [name]` - then auto-continue
+8. **Repeat** steps 3-7 until all keywords in the file are complete
 
 ### Batch Completion Per File
 
@@ -57,16 +61,16 @@ level band produces more than 5 keywords, split into multiple files.
 
 ### Performance Rules (token/call optimization)
 
-1. **Scaffold upfront**: create file with frontmatter + all `# KEYWORD`
-   title lines (no content) before filling. This eliminates guessing
-   append points.
+1. **Index.md first**: read only the `## Keyword Registry` sub-section
+   for the target file from `{topic}/index.md`. This is the ONLY source
+   of truth for the keyword list and status. Do NOT create stub files.
 2. **Append-only reads**: when filling a keyword, read only the last
-   30 lines of the file to find the anchor text. Do NOT re-read the
-   entire file - previous keywords are irrelevant context.
+   30 lines of the target file to find the anchor point. Do NOT re-read
+   the entire file - previous keywords are irrelevant context.
 3. **No spec re-reads mid-file**: the interview instructions (auto-loaded
    for `docs/`, `spec/`, `scripts/` edits) contain all generation rules.
    Do NOT re-read `spec/interview_content_generator.md` after the first keyword in a session.
-4. **Single-pass generation**: produce all 15 sections for each keyword
+4. **Single-pass generation**: produce all sections for each keyword
    in one continuous output. Never split across multiple tool calls.
 
 ### Why keyword-batch (not file-level)
@@ -75,114 +79,33 @@ level band produces more than 5 keywords, split into multiple files.
 - **No timeouts**: each batch completes well within model output limits
 - **Resume-safe**: if interrupted, next invocation picks up from the
   next unfilled keyword (step 2 detects progress automatically)
-- **No scaffold needed for content**: reads keywords from frontmatter,
-  generates content directly
+- **No scaffold files**: reads keywords from `{topic}/index.md` Keyword
+  Registry, creates content files directly on first write
 
 ### Handling existing files
 
-- **New files** (frontmatter only): generate keywords in order, appending
-- **Files with [TODO:]/[FILL:] stubs**: read file, identify unfilled
-  keywords, replace stub content for next batch, write file
-- **Partially complete files**: detect completed keywords by checking
-  for real content under `# KEYWORD NAME` headings, skip them
+- **New files** (not yet created): read keyword list from index.md
+  Keyword Registry, create file on first write with content already present
+- **Partially complete files**: check index.md Keyword Registry status
+  columns - `draft`/`complete` = skip, `pending` = generate next batch
+- **Legacy stub files** (frontmatter-only): treat the same as new files;
+  overwrite with first keyword content, continue appending from there
 
 ### Quality is identical
 
-Every keyword still gets all 19 sections, full Interview Deep-Dive
+Every keyword gets all Option C sections, full Interview Deep-Dive
 with proper question counts (7/9/12), BAD-before-GOOD code, and all
 formatting rules. The only change is batch size, not depth.
 
-## Quality Standard - MASTERCLASS (non-negotiable)
+## Quality Standard
 
-Every keyword entry must be masterclass-level interview preparation -
-content that a Staff/Principal engineer would respect and learn from.
-
-### Quality Constitution - Eight Tests (ALL must pass)
-
-1. **Search Again?** - reader never needs to look elsewhere
-2. **Feynman** - smart beginner understands without confusion
-3. **Senior Engineer** - senior still learns something useful
-4. **Staff Engineer** - staff/principal respects this explanation
-5. **Production Reality** - reader can diagnose real issues after reading
-6. **Retention** - reader remembers this next month
-7. **Decision** - reader knows when to use or avoid
-8. **Scale** - 10x/100x/1000x behavior covered
-
-Full spec: `spec/interview_content_generator.md` Section 6.
-
-### Code Example Requirements (Non-Negotiable)
-
-Every concept with code must choose from these categories.
-Choose based on concept complexity (minimum 2-3 categories):
-
-1. Recognition Example - identify the pattern in existing code
-2. Wrong vs Right Example - **MANDATORY** (BAD before GOOD, always)
-3. Production Example - real-world, not toy
-4. Failure Example - **MANDATORY** - what breaks, symptoms, fix
-5. Debugging Example - diagnostic commands, log analysis
-6. Scale Example - what changes under load
-7. Trade-off Example - gain vs sacrifice in code
-8. Internal Mechanism Example - how it works underneath
-9. System Interaction Example - cross-component behavior
-10. Testing/Verification Example - prove correctness
-
-Goal: the reader understands why, when, failure, scale,
-debugging, and trade-offs - not just the API.
-
-### 10-Point Writing Standard
-
-Every explanation: (1) Intuition, (2) Mechanism, (3) Trade-off,
-(4) Failure, (5) Diagnosis, (6) Scale, (7) Decision, (8) Memory,
-(9) Transfer, (10) Reality
-
-### Forbidden Patterns
-
-- Generic textbook definitions only
-- Syntax-only or toy code examples
-- Vague advice ("it depends") without specifics
-- Fabricated benchmarks or performance numbers
-- Surface-level explanations that skip WHY
-- "Best practice" claims without reasoning
-- Walls of prose / repetition across sections
-
-### Final Gate
-
-_"Would an experienced engineer say 'Damn - this is genuinely
-excellent'?"_ If uncertain: rewrite. Masterclass = target.
-
-### Content Depth Requirements
-
-- **TL;DR**: Precise, zero-jargon, max 25 words. A senior should nod.
-- **Problem section**: Real-world pain, not textbook scenarios. Name
-  actual systems, actual failures, actual scale numbers.
-- **First Principles**: True invariants, not surface observations.
-  Derive the design from constraints, not describe features.
-- **Five Levels**: Each level must meaningfully deepen understanding.
-  Level 4 (senior/staff) must include production war stories, JFR/JMX
-  diagnostics, and cross-system reasoning. Level 5 (distinguished)
-  must include cross-domain pattern recognition and redesign thinking.
-- **How It Works**: ASCII diagrams with <- HERE markers. Show the
-  mechanism, not just the API. Include memory layout, CPU interactions,
-  or protocol sequences where relevant.
-- **Code Examples**: Production-realistic, not toy examples. BAD code
-  must be code someone would actually write. GOOD code must be code
-  you would ship. Include error handling where relevant.
-- **Interview Deep-Dive**: CAPSTONE section. Full answers that would
-  pass a FAANG bar raiser. See Interview Deep-Dive Rules below.
-- **Failure Modes**: Real diagnostic commands (jstack, JFR, async-profiler).
-  Real symptoms. Real fixes. Not generic "check the logs."
-
-### Quality Anti-Patterns (NEVER do these)
-
-- Generic placeholder text ("consider using X for better performance")
-- Textbook definitions without production context
-- Toy code examples (counter++, hello world)
-- Vague failure modes ("it might cause issues")
-- Interview answers that are bullet-point summaries instead of
-  structured narrative with code and diagnostics
-- Shallow "Level 5" content that repeats Level 4 with bigger words
-- Missing diagnostic commands in failure modes
-- Empty or trivial "Surprising Truth" that is actually well-known
+> All quality rules are in `.github/instructions/interview.instructions.md`
+> (auto-loaded for `docs/`, `spec/`, `scripts/` edits) and apply in full:
+> Quality Constitution (8 tests), Code Example Requirements (10 categories),
+> 10-Point Writing Standard, Forbidden Patterns, Final Gate, and Voice.
+>
+> Every keyword must be masterclass-level - content that a Staff/Principal
+> engineer would respect and a candidate could speak aloud confidently.
 
 ## Spec Files (read before generating)
 
@@ -223,21 +146,20 @@ when a level has more than 5 keywords.
 
 ### File Organization by Level
 
-Group keywords into files by level bands:
+Group keywords into files using the level-band naming convention:
 
-| File Pattern                             | Levels        | Purpose                       |
-| ---------------------------------------- | ------------- | ----------------------------- |
-| `{Topic} - Foundations.md`               | L0 + L1       | Orientation + foundational    |
-| `{Topic} - Getting Started.md`           | L1 (overflow) | Setup + first steps (if >5)   |
-| `{Topic} - {Subtopic}.md`                | L2 + L3       | Working knowledge + decisions |
-| `{Topic} - {Subtopic}.md`                | L3 + L4       | Deep internals + production   |
-| `{Topic} - Architecture and Strategy.md` | L5+L6+META    | Strategy + theory + patterns  |
+| File Pattern                   | Level(s) | Keywords |
+| ------------------------------ | -------- | -------- |
+| `{Topic} - L0 Orientation.md`  | L0       | 3-5      |
+| `{Topic} - L1 Foundations.md`  | L1       | 4-6      |
+| `{Topic} - L2 {Subtopic}.md`   | L2       | up to 5  |
+| `{Topic} - L3 {Subtopic}.md`   | L3       | up to 5  |
+| `{Topic} - L4 {Subtopic}.md`   | L4       | up to 5  |
+| `{Topic} - L5 Architecture.md` | L5       | 3-5      |
+| `{Topic} - L6 Theory.md`       | L6       | 2-3      |
+| `{Topic} - META Patterns.md`   | META     | 2-3      |
 
-This ensures every topic has:
-
-- A **Foundations** file for beginners and context
-- Core **working files** for practitioners (L2-L4)
-- An **Architecture** file for strategic/theoretical depth
+Split any level with more than 5 keywords into multiple files.
 
 ### Level Coverage Verification (after keyword generation)
 
@@ -282,9 +204,13 @@ in `docs/`
 5. Generate keyword list using the inline level-coverage rubric:
    - Cover ALL knowledge levels: L0 through L6 + META
    - Group keywords into subtopic files (3-5 keywords per file, max 5)
-   - Include a `{Topic} - Foundations.md` file (L0+L1 keywords, max 5)
-   - Include a `{Topic} - Architecture and Strategy.md` file (L5+L6+META)
-   - Name other files: `{Topic} - {Subtopic}.md` (L2-L4 keywords)
+   - Create `{Topic} - L0 Orientation.md` (L0 keywords, 3-5)
+   - Create `{Topic} - L1 Foundations.md` (L1 keywords, 4-6)
+   - Create `{Topic} - L2 {Subtopic}.md` through `{Topic} - L4 {Subtopic}.md`
+     for working/intermediate/expert keywords (up to 5 per file, split by subtopic)
+   - Create `{Topic} - L5 Architecture.md` (L5 keywords, 3-5)
+   - Create `{Topic} - L6 Theory.md` and `{Topic} - META Patterns.md`
+     (combine into one file if either level has fewer than 3 keywords)
    - Verify level coverage using the Level Coverage Framework above
 6. **Run Keyword Cross-Verification** (see section below)
 7. Create the topic folder: `docs/{topic-name}/` (lowercase, hyphens)
@@ -298,11 +224,12 @@ in `docs/`
    ---
    ```
 
-9. Create subtopic files with frontmatter listing keywords (no scaffold
-   needed - just YAML frontmatter with `keywords:` list and a heading)
+9. Register all keywords in `{topic}/index.md` Keyword Registry section
+   (one sub-section per file with a keyword table - see Section 3.11
+   of `spec/topics_generator.md`). Do NOT create separate stub files.
 10. Generate content using keyword-batch strategy (see Generation Strategy)
-    - Process each file: read keywords from frontmatter, generate 1-3
-      at a time, append to file, auto-continue until file complete
+    - Process each file: read keywords from index.md Registry, generate
+      1-3 at a time, create/append to file, auto-continue until file complete
     - Then move to next file
 11. Update `docs/index.md` navigation table with new topic row
 12. Update `spec/topics_registry.md` "Active Topics" table
@@ -402,7 +329,7 @@ keywords: # required when frontmatter is present
   - Keyword Two
 difficulty_range: easy|medium|hard
 status: in-progress|complete
-version: 3
+version: 1
 ---
 ```
 
@@ -451,7 +378,7 @@ Get-ChildItem -Path docs -Recurse -Filter *.md |
 3. **Title must be quoted** if it contains `: ` (colon + space)
 4. **`status`** must be `complete` when all keywords are filled,
    `in-progress` when stubs remain
-5. **`version`** must be `3` (current spec version)
+5. **`version`** must be `1` (matches SPEC_VERSION constant)
 6. **File must start at byte 0** with `---` (no BOM, no whitespace)
 7. **`keywords` list** must match the actual `# KEYWORD NAME`
    headings in the file content
@@ -500,9 +427,10 @@ Only stop when:
 - NEVER skip reading `spec/interview_content_generator.md` before generating the FIRST
   keyword in a session (subsequent keywords use condensed rules)
 - Generate **1-3 keywords per batch** (see Generation Strategy for sizing)
-- For files with existing [FILL:...] or [TODO:] stubs: detect unfilled
-  keywords, generate content for next batch, write to file
-- ALWAYS follow the 19-section structure in exact order for every keyword
+- ALWAYS read `{topic}/index.md` Keyword Registry first to get the
+  keyword list for any target file. Never use stub file frontmatter.
+- NEVER create empty stub files - content is generated on first write
+- ALWAYS follow the Option C section structure in exact order for every keyword
 - ALWAYS use BAD-before-GOOD code pattern in examples
 - ALWAYS include complete, detailed answers for every interview question
   (see Interview Deep-Dive Rules in auto-loaded instructions)
@@ -510,7 +438,7 @@ Only stop when:
 - Folder naming: lowercase with hyphens (e.g., `java-concurrency/`)
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
-- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
+- Diagrams: DUAL format (ASCII first, then Mermaid below). All standard Mermaid types supported; common: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - No em dashes anywhere - use regular hyphens only
 - YAML frontmatter (when used) starts at byte 0 with `---`
@@ -559,11 +487,13 @@ Use scaffold only to preview file structure before generating:
 When a file already contains [FILL:...] or [TODO:] stubs, or has some
 keywords completed and others pending:
 
-1. **Read the file** - extract frontmatter keywords list
+1. **Read `{topic}/index.md`** - extract the keyword list and status
+   from the Keyword Registry for this file. If no index.md exists,
+   fall back to the file's own frontmatter `keywords:` field.
 2. **Detect completed keywords**: scan for `# KEYWORD NAME` headings
    that have real content (not just stubs) below them
 3. **Identify next unfilled keywords** - pick 1-3 based on difficulty
-4. **Generate complete 19-section content** for the batch
+4. **Generate complete Option C content** for the batch
 5. **Write to file**: replace stub sections or append after last
    completed keyword
 6. **Auto-continue** to next batch until all keywords are complete

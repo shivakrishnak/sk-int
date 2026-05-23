@@ -38,7 +38,6 @@ southstar/
     instructions/
       interview.instructions.md   Auto-attaches under docs/, spec/, scripts/
     prompts/
-      fill-content.prompt.md         @fill-content
       generate-entries.prompt.md     @generate-entries
       scaffold.prompt.md             @scaffold
     workflows/
@@ -51,12 +50,12 @@ southstar/
 
 ## How Instructions Load
 
-| Context                                                   | What loads automatically                           |
-| --------------------------------------------------------- | -------------------------------------------------- |
-| Any interaction                                           | This file (lean overview + shared rules)           |
-| Editing `docs/**`, `spec/**`, `scripts/**` files          | + `.github/instructions/interview.instructions.md` |
-| Using `/interview` agent                                  | Agent instructions + reads spec on demand          |
-| Using `@fill-content` / `@generate-entries` / `@scaffold` | Prompt-specific instructions + agent tools         |
+| Context                                          | What loads automatically                           |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Any interaction                                  | This file (lean overview + shared rules)           |
+| Editing `docs/**`, `spec/**`, `scripts/**` files | + `.github/instructions/interview.instructions.md` |
+| Using `/interview` agent                         | Agent instructions + reads spec on demand          |
+| Using `@generate-entries` / `@scaffold`          | Prompt-specific instructions + agent tools         |
 
 ## Shared Rules
 

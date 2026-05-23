@@ -1,6 +1,6 @@
 ---
 applyTo: "docs/**, spec/**, scripts/**"
-description: "Rules for generating and editing Technical Interview Dictionary v1.0 content - 15 sections (4.1-4.15), keyword-batch generation, Q&A format"
+description: "Rules for generating and editing Interview Mastery Dictionary v1.0 content - Option C hybrid format (8 sections), keyword-batch generation, Q&A format"
 ---
 
 > **Version Registry** - `SPEC_VERSION` = **1** | `SPEC_LABEL` = **v1.0**
@@ -38,50 +38,63 @@ southstar/
 | Prompt              | Purpose                                       |
 | ------------------- | --------------------------------------------- |
 | `@generate-entries` | Generate keyword content (keyword-batch mode) |
-| `@fill-content`     | Fill stubs or generate next keywords          |
 | `@scaffold`         | Run scaffold generator (optional)             |
 
-## Content Structure - 19 Sections per Keyword
+## Content Structure - Option C Hybrid (8 Sections per Keyword)
 
-1. Title (`# KEYWORD NAME`)
-2. TL;DR (one sentence, 25 words max)
-3. The Problem This Solves (World Without It / Breaking Point / Evolution)
-4. Textbook Definition
-5. Understand It in 30 Seconds (One line / One analogy / One insight)
-6. First Principles (Invariants / Trade-offs / Essential vs Accidental)
-7. Mental Model / Analogy (blockquote + mapping + breakdown)
-8. Gradual Depth - Five Levels (Anyone / Junior / Mid / Senior / Distinguished + Senior-to-Staff Leap)
-9. How It Works (summarized but complete mechanism)
-10. Complete Picture - End-to-End Flow (normal + failure + scale)
-11. Code Example (CONDITIONAL - BAD then GOOD, production-grade)
-12. Quick Reference Card (11 fields + 3 things + interview one-liner)
-13. Mastery Checklist (5 indicators: EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
-14. The Surprising Truth (one counterintuitive fact)
-15. Comparison Table (CONDITIONAL - 2+ alternatives + Rapid Decision Tree)
-16. Common Misconceptions (min 4 rows, danger-ordered)
-17. Failure Modes and Diagnosis (min 3 modes with real diagnostic commands)
-18. Interview Deep-Dive (CAPSTONE - scaled by difficulty)
-19. Related Keywords (prerequisites / builds-on / alternatives)
+Every keyword generates these sections in this order.
+Full rules for each section are in the Condensed Generation Reference below.
 
-## Interview Deep-Dive Rules (Critical)
+| #   | Heading                              | Required           | Source Rules                |
+| --- | ------------------------------------ | ------------------ | --------------------------- |
+| 1   | `# Keyword Name` + Interview Weight  | Always             | -                           |
+| 2   | `### 🎯 Model Answer`                | Always             | CGR §5, §8                  |
+| 3   | `### 📘 Concept Explanation`         | Always             | CGR §3, §4, §6, §7, §9, §10 |
+| 4   | `### 💻 Code Example`                | If programmatic    | CGR §11                     |
+| 5   | `### 🎓 Answers by Seniority`        | Always             | CGR §8                      |
+| 6   | `### ⚠️ Common Misconceptions`       | Always             | CGR §16                     |
+| 7   | `### 🚨 Failure Modes and Diagnosis` | Always             | CGR §17                     |
+| 8   | `### 🎯 Interview Deep-Dive`         | Always (CAPSTONE)  | CGR §18                     |
+| 9   | `### ⚖️ Comparison Table`            | ★★☆ and above only | CGR §15                     |
 
-- **Minimum scales by difficulty:** easy=7, medium=9, hard=12
-- Every question MUST have a **complete, detailed answer** (200-500 words)
-- **Tag each question** with: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
-- **End every answer** with `*What separates good from great:*`
-- **Add `*Likely follow-up:*`** after each `*Why they ask:*`
-- **Include timing guidelines table** at section start
-- **At least 1 DEBUGGING + 1 TRADE-OFF question per keyword** (mandatory)
-- **At least 1 BEHAVIORAL question for medium/hard keywords**
-- Must cover at least 5 of 9 question categories
+**Section order is fixed.** Do not reorder or skip mandatory sections.
+
+> **CGR-to-Option-C mapping:**
+>
+> - CGR §§3,4,6,7,9,10 (Problem, Definition, First Principles, Mental
+>   Model, How It Works, End-to-End Flow) -> Option C **§3 Concept Explanation**
+> - CGR §5 (Understand in 30s) -> Option C **§2 Model Answer** (TL;DR + insight)
+> - CGR §8 (Five Levels) -> Option C **§5 Answers by Seniority**
+> - CGR §11 (Code Example) -> Option C **§4 Code Example** (conditional)
+> - CGR §15 (Comparison Table) -> Option C **§9 Comparison Table** (conditional)
+> - CGR §§16,17,18 -> Option C **§§6,7,8** directly
+> - CGR §§12,13,14,19 (Quick Ref, Checklist, Surprising Truth, Related KW)
+>   are absorbed into the nearest relevant Option C section or omitted.
+
+## Interview Deep-Dive Section Rules (Section 8 - CAPSTONE)
+
+- **Min questions by difficulty:** easy=7, medium=9, hard=12 (no cap)
+- Tag each question: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
+- Per question: question → `*Why they ask:*` → `*Likely follow-up:*`
+- Per answer: 200-500 words, complete structured spoken answer
+- End every answer: `*What separates good from great:*`
+- Include **timing guidelines table** at section start (5-row)
+- Include **interviewer type adaptation table** at section end
+- Cover ≥5 of 9 categories: CONCEPTUAL, DEBUGGING, ARCHITECTURE,
+  TRADE-OFF, PRODUCTION, HANDS-ON, SYSTEM DESIGN, COMPARISON, BEHAVIORAL
+- Mandatory per keyword: 1 DEBUGGING + 1 TRADE-OFF question
+- Mandatory for ★★☆+: 1 BEHAVIORAL question (STAR format)
+- Question order: foundational → advanced → expert
+- No duplicate questions across keywords in the same file
 
 ## Formatting Rules
 
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
 - Diagrams: DUAL format - ASCII block first, then equivalent Mermaid block
-  immediately below. Types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`,
-  `classDiagram`, `erDiagram`, `mindmap`
+  immediately below. All standard Mermaid types supported; common types:
+  `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`,
+  `erDiagram`, `mindmap`, `timeline`, `xychart-beta`, `gantt`, `gitGraph`
 - Paragraphs: max 5 sentences
 - BAD pattern before GOOD pattern in all code examples
 - Every `###` heading preceded by `---` with blank lines
@@ -90,6 +103,10 @@ southstar/
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - Use `# Keyword Name` as keyword separators within content files
   (MkDocs renders the first H1 as the page title)
+- Every code block followed by `> **Code walkthrough:**` (3-6 sentences:
+  what it shows, key mechanism, why it matters, what breaks, takeaway)
+- Every diagram followed by `> **Diagram walkthrough:**` (3-5 sentences).
+  For DUAL blocks, one shared walkthrough after the Mermaid block is sufficient
 
 ## Encoding Rules
 
@@ -179,7 +196,7 @@ hide: [navigation, toc] # Optional - per-page UI controls
 ---
 topic: Java
 subtopic: Collections
-keywords: # Required - drives generation
+keywords: # Informational - authoritative source is {topic}/index.md Registry
   - Keyword One
   - Keyword Two
 difficulty_range: easy | medium | hard
@@ -194,7 +211,7 @@ version: 1
 - `title` quoted if it contains `: ` (colon + space)
 - `keywords` list of 3-5 items, must match `# KEYWORD` headings in file
 - `status` is `complete` when all keywords filled, else `in-progress`
-- `version` always `3`
+- `version` always `1` - matches SPEC_VERSION constant
 
 ### Batch Commit Rules (Non-Negotiable)
 
@@ -211,8 +228,8 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 ## Scaffold Workflow (optional)
 
 Scaffolding is no longer required for content generation. The agent
-reads keywords from frontmatter and generates content directly.
-Use scaffold only to preview file structure:
+reads keywords from `{topic}/index.md` Keyword Registry and generates
+content directly. Use scaffold only to preview file structure:
 
 1. **Scaffold (optional):** `& "$env:USERPROFILE\.local\bin\python3.14.exe" scripts/scaffold_topic.py <topic>`
 2. **Generate content:** Use `@generate-entries` prompt or `/interview` agent
@@ -223,6 +240,67 @@ Use scaffold only to preview file structure:
 **Existing topic:** `Generate interview mastery content: Topic: Java, File: Java - Collections.md`
 
 **New topic:** `Create new interview mastery topic: Angular` (checks registry, generates keywords, creates files)
+
+## Folder Opportunity Analysis (Mandatory Before Creating Any Topic)
+
+Before creating a topic folder, analyze whether the topic contains
+distinct sub-domains that each deserve their own folder. Never squeeze
+multiple distinct sub-domains into one folder.
+
+### Analysis Questions
+
+1. **Does the topic have >= 2 natural sub-domains?**
+   - If yes: create one folder per sub-domain
+   - If no: one folder is correct
+2. **Would keywords from different sub-domains confuse a reader?**
+   - "JVM GC tuning" and "Java collections API" are different mental
+     spaces; they belong in different folders
+3. **Can the sub-domain stand alone as an interview topic?**
+   - If an interviewer can spend 45 min asking only about this
+     sub-domain, it deserves its own folder
+
+### Java as the Canonical Reference
+
+| Folder              | Sub-domain                                          |
+| ------------------- | --------------------------------------------------- |
+| `java-language/`    | Language spec: types, OOP, generics, lambdas,       |
+|                     | modern features (records, sealed, pattern matching) |
+| `java-core/`        | Platform APIs: collections, I/O, NIO, exceptions,   |
+|                     | serialization, reflection, annotations              |
+| `java-jvm/`         | VM internals: class loading, GC algorithms, JIT,    |
+|                     | bytecode, memory model, JPMS                        |
+| `java-concurrency/` | Concurrency: threads, locks, executors,             |
+|                     | CompletableFuture, virtual threads (Loom)           |
+| `java-performance/` | Diagnostics: JFR, async-profiler, heap dumps,       |
+|                     | GC log analysis, JVM flag tuning                    |
+
+### Canonical Groupings by Domain
+
+| Domain      | Natural sub-domain folders                          |
+| ----------- | --------------------------------------------------- |
+| Language    | syntax/types + core-APIs + VM + concurrency + perf  |
+| Framework   | core + advanced + internals + testing + production  |
+| Database    | SQL + indexing + transactions + ORM + performance   |
+| Cloud/Infra | compute + networking + storage + security + monitor |
+
+### Never Mix in One Folder
+
+- Language features + VM internals (different mental models)
+- Core APIs + performance diagnostics (different expertise)
+- Concurrency primitives + async frameworks (different abstraction)
+- Business logic patterns + infrastructure concerns
+
+### Pre-Creation Checklist
+
+Before creating `docs/{topic}/`:
+
+- [ ] Is this a single coherent sub-domain?
+- [ ] Have I checked if a parent or sibling folder already exists?
+- [ ] Would an interviewer treat this as a standalone interview area?
+- [ ] Is the folder name specific enough? (never just `java/`)
+- [ ] Have I run the Level Coverage verification for this sub-domain?
+
+---
 
 ## Folder/File Rules
 
@@ -252,9 +330,14 @@ level has more than 5 keywords.
 
 **File structure per topic:**
 
-- `{Topic} - Foundations.md` for L0 + L1 keywords (max 5)
-- Core working files for L2-L4 keywords (5 each)
-- `{Topic} - Architecture and Strategy.md` for L5 + L6 + META (max 5)
+- `{Topic} - L0 Orientation.md` for L0 keywords (up to 5)
+- `{Topic} - L1 Foundations.md` for L1 keywords (up to 5)
+- `{Topic} - L2 {Subtopic}.md` for L2 keywords (5 per file, split by subtopic)
+- `{Topic} - L3 {Subtopic}.md` for L3 keywords (5 per file, split by subtopic)
+- `{Topic} - L4 {Subtopic}.md` for L4 keywords (5 per file, split by subtopic)
+- `{Topic} - L5 Architecture.md` for L5 keywords (3-5)
+- `{Topic} - L6 Theory.md` for L6 keywords (3+), or combine with META if each level < 3
+- `{Topic} - META Patterns.md` for META keywords (3-5)
 
 A topic missing any level is INCOMPLETE. Always verify before generating.
 
@@ -285,6 +368,12 @@ Between keywords in a file, use double horizontal rules:
 ```
 
 ### Section-by-Section Rules
+
+> **Content rules, not output headings.** The 19 items below define
+> what to include _inside_ each Option C section - they are not H3
+> headings to generate. The only output headings are the 8 (or 9)
+> listed in the Option C table above. Use these rules as a checklist
+> for the _content_ of each Option C section.
 
 **1. Title** - `# KEYWORD NAME` (H1, plain name, no ID prefix)
 
@@ -398,12 +487,14 @@ Between keywords in a file, use double horizontal rules:
 
 ### Conditional Section Decision Table
 
-| Section              | Include when...                    |
-| -------------------- | ---------------------------------- |
-| 11. Code Example     | Concept has programmatic interface |
-| 15. Comparison Table | 2+ named alternatives exist        |
+| Option C Section    | Include when...                          |
+| ------------------- | ---------------------------------------- |
+| 4. Code Example     | Concept has a programmatic interface     |
+| 9. Comparison Table | Difficulty ★★☆ or above, 2+ alternatives |
 
-All other sections (1-10, 12-14, 16-19) are always required.
+All other Option C sections (1-3, 5-8) are always required.
+Related Keywords (CGR §19) is optional - include only when the cross-
+references add signal not already present in the keyword content.
 
 ### Depth Calibration by Difficulty
 

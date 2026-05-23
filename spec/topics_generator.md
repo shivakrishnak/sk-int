@@ -159,7 +159,7 @@ Never invent values.
 
   MODE A - REGISTRY (default, repo-native):
     - topic maps to a registered 3-letter category code
-    - All 34 rules, 31 checks, index.md update, stub generation apply
+    - All 34 rules, 31 checks, index.md update, keyword registry apply
     - Used for: standard dictionary growth
 
   MODE B - AD-HOC:
@@ -339,11 +339,12 @@ Never invent values.
     total_keywords: 148
     rules_passed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
                    14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                   25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+                   25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+                   38, 39, 40]
     checks_passed:
       - {id: 1, status: pass, confidence: high}
       - {id: 2, status: pass, confidence: high}
-      # ... one entry per check (30 total)
+      # ... one entry per check (36 total)
       # Low-confidence entries MUST include note field:
       # - {id: 15, status: pass, confidence: low, note: "edge case"}
     checks_failed: []            # [{id, reason}] if any fail
@@ -356,7 +357,7 @@ Never invent values.
     type_column_present: true
     deprecated_topics_handled: true
     dependency_cycles: []           # empty = no cycles found
-    judge_score: null            # C1+C2+C3+C4+C5 (Section 4.1)
+    judge_score: null            # C1+C2+C3+C4+C5+C6 (Section 4.1)
     quality_state: complete      # complete|needs_revision|deferred
     missing_backlinks: []           # empty = all backlinks present
     completeness_gate: true
@@ -365,6 +366,16 @@ Never invent values.
     truthfulness_check: pass
     index_md_updated: true       # false in AD-HOC mode
     stubs_generated: true        # false in AD-HOC mode
+    interview_type_coverage:
+      L1: [1, 2]
+      L2: [1, 2, 3]
+      L3: [1, 2, 3, 4, 5]
+      L4: [1, 2, 3, 4, 5, 6]
+      L5: [1, 2, 3, 4, 5, 6]
+    scenario_anchored_keywords: null   # count at L3+
+    scenario_anchor_coverage_pct: null # percentage at L3+
+    intelligence_test_keywords: null   # count at L4+
+    blind_spot_archetypes_covered: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     notes: ""
   ```
 
@@ -441,7 +452,7 @@ Never invent values.
 
   MODE ORCHESTRATION:
     REGISTRY  → standard single-topic generation. All 34 rules,
-                31 checks, index.md update, stub generation.
+                31 checks, index.md update, keyword registry.
     AD-HOC    → single-topic, no repo integration, output only.
     DESCRIPTION → multi-topic pipeline (Phases 1-5 in Section 00.2).
                   ALWAYS generates keyword lists. NEVER stops at
@@ -1025,8 +1036,8 @@ RULE 1: COVERAGE MUST BE COMPLETE
 
   RUBRIC (v1.0):
     METRIC: (keywords_generated / minimum_expected) per level
-    PASS:   All levels >= 1.0x the minimum. All 10 dimensions
-            covered at L1+ (per Check 2).
+    PASS:   All levels >= 1.0x the minimum. All 11 dimensions
+            covered at L1+ (per Check 2). Scalability (D11) at L3+.
     FAIL:   Any level below minimum count OR any mandatory rule
             (3-30) unsatisfied. Log incomplete levels in notes.
     AUDIT:  Count rows per level, compare to Rule 32 ranges.
@@ -1121,10 +1132,10 @@ RULE 4: KEYWORDS BUILD ON EACH OTHER
             at same or lower level.
 
 ─────────────────────────────────────────────────────────────────────────
-RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [v1.0]
+RULE 5: INCLUDE ALL ELEVEN KNOWLEDGE DIMENSIONS  [v1.0]
 ─────────────────────────────────────────────────────────────────────────
 
-  For each level, ensure coverage of ALL ten:
+  For each level, ensure coverage of ALL eleven:
 
   DIMENSION 1 - CONCEPTUAL:
     What things are and why they exist.
@@ -1185,6 +1196,14 @@ RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [v1.0]
               Multi-Region (L5)"
     At least 1 project keyword per level at L1+.
     Projects at higher levels MUST extend lower-level projects.
+
+  DIMENSION 11 - SCALABILITY:  [v1.0]
+    What changes at 10x, 100x, 1000x load? Bottlenecks,
+    back-pressure, throughput ceilings, capacity planning,
+    horizontal vs vertical scaling, scale inflection points.
+    Example: "HashMap at 100k TPS — where it breaks"
+    Example: "Thread Pool Saturation Under Load"
+    At least 1 per level at L3+. Required at L4+.
 
 
   RUBRIC (v1.0):
@@ -1453,17 +1472,18 @@ RULE 15: COMPLIANCE & STANDARDS MANDATORY AT L3+  [v1.0]
 
   RUBRIC (v1.0):
     METRIC: lens_coverage at L3+
-    PASS:   Testing + Observability + Performance lenses
-            each have >=1 keyword at L3+.
-    FAIL:   Any of the three lenses missing at L3+.
+    PASS:   Testing + Observability + Performance + Scalability
+            lenses each have >=1 keyword at L3+.
+            Concurrency lens present where applicable.
+    FAIL:   Any of the four mandatory lenses missing at L3+.
     AUDIT:  Check for keywords tagged testing/observability/
-            performance at each level L3+.
+            performance/scalability at each level L3+.
 ─────────────────────────────────────────────────────────────────────────
 RULE 16: CROSS-CUTTING LENSES MANDATORY AT L3+  [v1.0]
 ─────────────────────────────────────────────────────────────────────────
 
   Every Level 3+ section MUST include at least 1 keyword
-  for EACH of these three cross-cutting concerns:
+  for EACH of these five cross-cutting concerns:
 
   TESTING LENS:
     "How to Test [Technology Concept]"
@@ -1477,11 +1497,30 @@ RULE 16: CROSS-CUTTING LENSES MANDATORY AT L3+  [v1.0]
 
   PERFORMANCE LENS:
     "Performance Tuning [Technology]"
-    "[Technology] at Scale"
+    "[Technology] Profiling and Benchmarking"
     Tagged with ⚡ in the output table.
 
+  SCALABILITY LENS:  [v1.0]
+    "[Technology] at 10x / 100x / 1000x Load"
+    "[Technology] Capacity Planning and Scale Limits"
+    "[Technology] Scale Inflection Point"
+    Tagged with 📈 in the output table.
+    Distinct from ⚡ perf: perf = optimisation within one
+    instance; 📈 scl = what changes as the system grows.
+    Mandatory at L3+. At least 2 scalability keywords at L4+.
+
+  CONCURRENCY LENS:  [v1.0]
+    "[Technology] Thread Safety"
+    "Concurrent Access to [Technology] — Safe Patterns"
+    "[Technology] Under Parallel Load"
+    Tagged with 🔀 in the output table.
+    CONDITIONAL: Apply only when the keyword involves
+    shared state, thread pools, locks, event loops, or
+    distributed coordination. Skip for purely functional
+    or stateless concepts.
+
   Note: The Security lens is covered by Rule 7 - do not
-  double-count. These three lenses are IN ADDITION to
+  double-count. These five lenses are IN ADDITION to
   security keywords required by Rule 7.
 
 
@@ -1731,6 +1770,20 @@ RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [v1.0]
       framework for answering
     - Higher-level interview keywords MUST include
       system design and architecture scenarios
+    - 🎯 ivw keywords at L3+ MUST generate ≥1 scenario-based
+      question (TYPE 4) and ≥1 debugging question (TYPE 5)
+    - Each question in a 🎯 ivw keyword MUST carry a signal tag
+      (🧠/🏭/⚖️/💬/🎯) and a brief "framework for answering" note
+
+  RUBRIC (v1.0):
+    METRIC: interview_readiness_quality per 🎯 ivw keyword at L3+
+    PASS:   ≥1 TYPE 4 (Scenario) + ≥1 TYPE 5 (Debugging) question
+            present in each 🎯 ivw keyword entry at L3+; every
+            question carries a signal tag and framework note.
+    FAIL:   Any 🎯 ivw keyword at L3+ with only TYPE 1–3 questions
+            (definition/mechanism/comparison only).
+    AUDIT:  Review each 🎯 ivw keyword at L3+; verify TYPE 4 and
+            TYPE 5 question types are explicitly framed.
 
 ──
   RUBRIC (v1.0):
@@ -2127,7 +2180,8 @@ RULE 32: COMPLETENESS QUANTIFIED  [v1.0]
   mandatory rule makes the list INCOMPLETE regardless of count.
 
   RUBRIC:
-    PASS: All per-level ranges met AND all 10 dimensions at L1+.
+    PASS: All per-level ranges met AND all 11 dimensions at L1+.
+          Scalability (D11) present at L3+.
     FAIL: Any level below minimum OR any mandatory rule unsatisfied.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2256,16 +2310,19 @@ RULE 35: INTERVIEW SIGNAL OPTIMIZATION  [v1.0]
     ⚖️ trade  = Trade-off Thinking (alternatives, constraints, costs)
     💬 comm   = Communication Clarity (explain simply, structured narrative)
     🎯 judge  = Engineering Judgment (pragmatics, prioritisation, business)
+    📈 scl    = Scalability Thinking (capacity, load behavior,
+                scale inflection points, 10x/100x/1000x impact)
 
   COVERAGE REQUIREMENT:
     - L0–L2: At least depth and comm signals present
-    - L3+:   ALL five signals must appear across the level's keywords
-    - L4+:   prod and trade signals must each appear on 2+ keywords
+    - L3+:   ALL six signals must appear across the level's keywords
+    - L4+:   prod, trade, and scl signals must each appear
+             on 2+ keywords
     - L5+:   judge signal must appear on at least 1 keyword
 
   RUBRIC (v1.0):
     METRIC: signal_coverage (boolean)
-    PASS: L3+ levels contain keywords tagged with all 5 signals.
+    PASS: L3+ levels contain keywords tagged with all 6 signals.
     FAIL: Any L3+ level missing one or more signals.
     AUDIT: Count distinct tags per level, verify coverage.
 
@@ -2328,6 +2385,79 @@ RULE 37: INTERLEAVING COVERAGE  [v1.0]
     PASS: >= 3 distinct dimensions in every 10-keyword window.
     FAIL: Any window with <= 2 dimensions.
     AUDIT: Sliding-window analysis over full keyword list.
+
+─────────────────────────────────────────────────────────────────────────
+RULE 38: INTERVIEW QUESTION TYPE COVERAGE  [v1.0]
+─────────────────────────────────────────────────────────────────────────
+
+  The keyword list at each level must collectively enable the
+  six standard interview question TYPES (from interview_content_generator.md):
+    TYPE 1 = Definition     TYPE 2 = Mechanism    TYPE 3 = Comparison
+    TYPE 4 = Scenario       TYPE 5 = Debugging     TYPE 6 = Deep Dive
+
+  Per-level coverage requirements:
+    L1:     TYPE 1 + 2 (≥3 keywords per type)
+    L2:     TYPE 1–3 (≥2 per type)
+    L3:     TYPE 1–5 (≥2 per type)
+    L4+:    ALL 6 TYPES (≥2 per type)
+
+  🎯 ivw keywords at L3+ MUST generate TYPE 4 (Scenario)
+  or TYPE 5 (Debugging) questions — not only definition/mechanism.
+
+  RUBRIC (v1.0):
+    METRIC: interview_type_coverage (types covered per level)
+    PASS:   L3 covers TYPE 1–5; L4+ covers all 6 types.
+    FAIL:   Any L3+ keyword list where TYPE 4 or TYPE 5 is absent.
+    AUDIT:  Verify 🎯 ivw keywords include scenario or debugging framing.
+
+─────────────────────────────────────────────────────────────────────────
+RULE 39: SCENARIO ANCHORS  [v1.0]
+─────────────────────────────────────────────────────────────────────────
+
+  At L3+, at least 25% of keywords per level MUST be
+  scenario-anchored: "[Technical concept] — [Concrete production scenario]"
+
+  Examples:
+    "ThreadLocal Memory Leak — Long-Running Request Handler Thread Pool"
+    "Lock Convoy — High-Contention Database Connection Pool"
+    "GC Safepoint Bias — Frequent Checkpoint in Tight Loop"
+
+  Scenario-anchored keywords are tagged with 🔮 scn in the output table.
+
+  PURPOSE:
+    Scenario anchoring forces the candidate to recall concepts in
+    the context of real problems — the same way interviewers ask them.
+    Definition-only keywords produce weak interview recall under pressure.
+
+  RUBRIC (v1.0):
+    METRIC: scenario_anchor_coverage_pct (% of L3+ keywords that are
+            scenario-anchored)
+    PASS:   ≥25% of keywords at each L3+ level are scenario-anchored.
+    FAIL:   Any L3+ level where <25% are scenario-anchored.
+    AUDIT:  Count 🔮 scn tags per level; divide by total level keywords.
+
+─────────────────────────────────────────────────────────────────────────
+RULE 40: INTELLIGENCE-TEST QUESTIONS AT L4+  [v1.0]
+─────────────────────────────────────────────────────────────────────────
+
+  At L4+, at least 1 keyword per level MUST generate an
+  "intelligence-test question" — a question that tests REASONING,
+  not RECALL. These questions cannot be answered from memory alone.
+
+  Intelligence-test question formats:
+    "Design a test that catches [X] failing silently"
+    "Implement [X] without the standard library"
+    "What changes about [X] if [fundamental assumption] is violated?"
+    "How would you prove to a skeptical colleague that [X] is worth it?"
+
+  Tagged with 🧩 iq in the output table.
+
+  RUBRIC (v1.0):
+    METRIC: intelligence_test_keywords (count at L4+)
+    PASS:   ≥1 per L4+ level.
+    FAIL:   Any L4+ level with 0 intelligence-test keywords.
+    AUDIT:  Verify 🧩 iq keywords generate questions requiring
+            derivation, not recitation.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 3: OUTPUT FORMAT - 14 COMPONENTS
@@ -2445,7 +2575,7 @@ GENERAL FORMATTING RULE (applies to all 14 components):
     When a keyword has multiple tags, they MUST appear in this
     exact order (left to right in the Tags column):
     🚨 → ⚠️ → 🔴 → 🔧 → 🧭 → 🏋️ → 🔨 → 🎓 → 🔁 → 🎯 →
-    🧪 → 📊 → ⚡ → 📋 → 🔄 → 🔗 → 📖
+    🧪 → 📊 → ⚡ → 📈 → 🔀 → 📋 → 🔄 → 🔗 → 📖
     Rationale: severity/urgency first, skill-type middle,
     cross-cutting last. Enables stable downstream parsing.
 
@@ -2460,6 +2590,8 @@ GENERAL FORMATTING RULE (applies to all 14 components):
     In the Tags column, use the text label. In schema/YAML, emit
     the numeric value as `stability: N`.
     ⚡  perf  = Performance lens keyword (Rule 16)
+    📈  scl   = Scalability lens keyword (Rule 16)
+    🔀  conc  = Concurrency/thread-safety lens keyword (Rule 16)
     🧭  dec   = Decision framework keyword (Rule 17)
     🏋️  prac  = Deliberate practice keyword (Rule 18)
     🔨  proj  = Project evolution keyword (Rule 19)
@@ -2899,53 +3031,81 @@ SAFETY RULES (NON-NEGOTIABLE)
     DO NOT MODIFY IT. Only append.
 
 ─────────────────────────────────────────────────────────────────────────
-3.11 STUB FILE GENERATION [v1.0]
+3.11 INDEX.MD KEYWORD REGISTRY [v1.0] (replaces Stub File Generation)
 ─────────────────────────────────────────────────────────────────────────
 
-After updating the category index.md, generate stub files for all
-NEW keywords grouped by level. Follow the level-per-file rule:
-one file per level, never mix levels.
+DO NOT generate separate stub files. The category index.md IS the
+single source of truth for all keyword assignments. After generating
+the keyword list, register every keyword in the index.md Keyword
+Registry section.
 
-FILE NAMING AND PLACEMENT:
+WHY NO STUBS:
+Scaffold stubs create double work. The content generator must read
+the stub file to know what to generate, then overwrite it with
+content. The index.md registry eliminates the intermediate step:
+the generator reads index.md directly and creates the target file
+on first write with content already present. No stub = no orphan
+files, no missed syncs between stub frontmatter and index.
 
-- Base path: docs/{topic-name}/ (lowercase, hyphens)
-- Naming: {Topic} - L{N} {Subtopic}.md (e.g. Java - L3 Internals.md)
-- Special: {Topic} - Prerequisites.md, {Topic} - META Patterns.md
-- Never: individual CODE-NNN - Keyword Name.md files
-- Split by subtopic when keywords exceed level capacity
+FORMAT - Keyword Registry section in index.md:
 
-STUB FILE FORMAT:
+Append a "## Keyword Registry" section after the Files table.
+For each content file, add a named sub-section with a keyword table.
+This is the ONLY place keyword-to-file assignments are recorded.
 
-```markdown
----
-title: "{Topic} - L{N} {Subtopic}"
-level: L{N}
-keywords:
-  - Keyword Name 1
-  - Keyword Name 2
-  - Keyword Name 3
-difficulty_range: "★☆☆"
-interview_weight: medium
-asked_at: All
-seniority: all
-status: draft
-version: 0
----
+## Keyword Registry
 
-<!-- Entry stubs. Generate full 18-section content using
-     interview_content_generator.md v1.0 via @interview agent. -->
-```
+### {Topic} - L{N} {Subtopic}
+
+| #   | Keyword        | Difficulty | Status  |
+| --- | -------------- | ---------- | ------- |
+| 1   | Keyword Name 1 | ★☆☆        | pending |
+| 2   | Keyword Name 2 | ★☆☆        | pending |
+| 3   | Keyword Name 3 | ★☆☆        | pending |
+
+(Repeat for every file in the Files table.)
+
+STATUS VALUES:
+pending - keyword registered in index.md, content not yet generated
+draft - content generated but not yet reviewed
+complete - content reviewed and approved
+
+FILE NAMING (when content file is first created by the generator):
+Base path: docs/{topic-name}/ (lowercase, hyphens)
+Pattern: {Topic} - L{N} {Subtopic}.md
+Special: {Topic} - Prerequisites.md, {Topic} - META Patterns.md
+Never: individual CODE-NNN - Keyword Name.md per-keyword files
 
 CAPACITY PER LEVEL (max keywords per file):
-PRE → 5 concepts (dependency map format, not full entries)
-L0 → 10 keywords
-L1 → 10 keywords
-L2 → 7 keywords
-L3 → 7 keywords
-L4 → 5 keywords
-L5 → 5 keywords
-L6 → 3 keywords
-META → 5 keywords
+PRE -> 5 concepts (dependency map format)
+L0 -> 10 keywords
+L1 -> 10 keywords
+L2 -> 7 keywords
+L3 -> 7 keywords
+L4 -> 5 keywords
+L5 -> 5 keywords
+L6 -> 3 keywords
+META -> 5 keywords
+
+GENERATION TRIGGER (for @interview agent):
+
+1. Read {topic}/index.md
+2. Locate the ## Keyword Registry sub-section for the target file
+3. Read the keywords with status: pending
+4. Create the target .md file if it does not exist
+5. Generate full content for each pending keyword
+6. Update status in index.md: pending -> draft (completed keywords)
+7. Update Files table Status column to "in-progress" or "complete"
+
+SAFETY RULES:
+
+1. NEVER create empty stub files - content is generated on first write
+2. NEVER duplicate keyword lists in both index.md AND stub frontmatter
+3. index.md Keyword Registry is the authoritative list
+4. If a content file already exists with keywords, the index.md
+   Registry still takes precedence for tracking status
+5. Keyword names in the Registry MUST exactly match the H1 headings
+   used in the generated content file
 
 ─────────────────────────────────────────────────────────────────────────
 3.12 COMPRESSION MAP OUTPUT BLOCK [v1.0]
@@ -3088,9 +3248,10 @@ VALIDATION (after all index updates)
 ─────────────────────────────────────────────────────────────────────────
 
 After the Compression Map (Section 3.12) append a Blind Spot Questions
-block. Minimum 5 questions per category output. These are uncommon or
-first-principles questions that candidates rarely prepare for but that
-expert interviewers use to separate HIRE from STRONG HIRE.
+block. Minimum 12 questions per category output (one per archetype).
+These are uncommon or first-principles questions that candidates rarely
+prepare for but that expert interviewers use to separate HIRE from
+STRONG HIRE.
 
 FORMAT:
 
@@ -3109,12 +3270,33 @@ SIGNAL TAGS (from Rule 35):
 💬 comm = Communication Clarity
 🎯 judge = Engineering Judgment
 
-MANDATORY QUESTION ARCHETYPES (at least one of each):
-🏭 "What fails first at scale?"
-⚖️ "What hidden cost does this introduce?"
-🧠 "What assumption does this silently depend on?"
-🎯 "How would this decision look in 5 years?"
-💬 "How would you explain this to a PM or junior engineer?"
+MANDATORY QUESTION ARCHETYPES (at least one of each 10):
+
+1. 🏭 "What fails first at scale?"
+2. ⚖️ "What hidden cost does this introduce?"
+3. 🧠 "What assumption does this silently depend on?"
+4. 🎯 "How would this decision look in 5 years?"
+5. 💬 "How would you explain this to a PM or junior engineer?"
+6. 🎯 Constraint Flip — "What if you couldn't use [X]?
+   How would you achieve the same goal?"
+7. 🧠 Naive Solution Trap — question framed around the obvious
+   wrong answer; candidate must identify and correct it.
+8. 🏭 On-Call Simulation — "It's 3am, service is degraded,
+   [metric A] is high, [metric B] is low. What are your
+   first 3 diagnostic steps?"
+9. 🎯 Impossible Trade-off — "You must sacrifice one of:
+   [A], [B], [C]. Which do you give up, and why?"
+10. 🧠 First Principles Derivation — "Forget [X] exists.
+    Starting from the constraints of the problem, how
+    would you arrive at a solution?"
+11. 📈 Scalability Failure — "At 10x current load, what
+    fails first — and what is the exact cascade from
+    that failure point?"
+12. 🔀 Concurrency Safety (conditional — apply when
+    technology involves shared state or parallelism) —
+    "Two threads execute [operation] simultaneously.
+    List every possible outcome. How do you guarantee
+    exactly one outcome is correct?"
 
 RULES:
 
@@ -3122,12 +3304,14 @@ RULES:
 - Every question must require reasoning, not recall.
 - No question should appear in the main keyword tables.
 - Questions should be domain-specific, not generic.
+- All 12 archetypes must appear at least once per output.
+  (Archetype 12 may be omitted for purely stateless topics.)
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: QUALITY CHECKS - 33 CHECKS
+SECTION 4: QUALITY CHECKS - 36 CHECKS
 ═══════════════════════════════════════════════════════════════════════════
 
-Before finalising output, run ALL 33 checks:
+Before finalising output, run ALL 36 checks:
 
 CHECK 1 - COMPLETENESS:
 ☐ L0: Does list give a newcomer domain context
@@ -3149,10 +3333,11 @@ to redesign or extend the technology?
 CHECK 2 - BALANCE:
 ☐ No level is significantly shorter than the guidelines
 in Section 6
-☐ All 10 knowledge dimensions covered at each level
+☐ All 11 knowledge dimensions covered at each level
 (Conceptual, Procedural, Situational,
 Diagnostic, Evaluative, Historical,
-Mental Model, Practice, Decision Framework, Project)
+Mental Model, Practice, Decision Framework, Project,
+Scalability — applies at L3+ only)
 Note: Pillars 9, 10, and 12 are NOT per-level dimensions
 
 - enforced via META keywords (Rule 23) and L6 keywords
@@ -3171,6 +3356,8 @@ CHECK 3 - MANDATORY COVERAGE (L3+):
 ☐ Testing lens keyword present at L3+ (Rule 16)
 ☐ Observability lens keyword present at L3+ (Rule 16)
 ☐ Performance lens keyword present at L3+ (Rule 16)
+☐ Scalability lens keyword present at L3+ (Rule 16)
+☐ Concurrency lens keyword present at L3+ where applicable (Rule 16)
 ☐ At least 1 decision framework at L2,
 at least 2 at L3+ (Rule 17)
 ☐ At least 1 practice keyword at L1+,
@@ -3179,6 +3366,8 @@ at least 2 at L2-L3 (Rule 18)
 ☐ At least 1 teaching keyword at L3+ (Rule 20)
 ☐ At least 2 retention keywords per category (Rule 21)
 ☐ At least 1 interview keyword per level (Rule 22)
+☐ 🎯 ivw keywords at L3+ include ≥1 TYPE 4 (Scenario)
+and ≥1 TYPE 5 (Debugging) question each (Rule 22)
 
 CHECK 4 - ATOMICITY:
 ☐ Each keyword is a single concept
@@ -3428,9 +3617,9 @@ extraction (P3 verified for every "promote" recommendation)
 
 CHECK 32 - INTERVIEW SIGNAL COVERAGE: [v1.0]
 ☐ SIG column (or tag) present in all level tables
-☐ All 5 signals (🧠 depth / 🏭 prod / ⚖️ trade / 💬 comm / 🎯 judge)
-present across each L3+ level (Rule 35)
-☐ L4+ levels have ≥2 keywords each tagged prod and trade
+☐ All 6 signals (🧠 depth / 🏭 prod / ⚖️ trade / 💬 comm / 🎯 judge /
+📈 scl) present across each L3+ level (Rule 35)
+☐ L4+ levels have ≥2 keywords each tagged prod, trade, and scl
 ☐ L5+ levels have ≥1 keyword tagged judge
 
 CHECK 33 - DIFFICULTY COLUMN PRESENT: [v1.0]
@@ -3438,6 +3627,24 @@ CHECK 33 - DIFFICULTY COLUMN PRESENT: [v1.0]
 ☐ No L0 keyword has DIFF > 2
 ☐ No L5/L6/META keyword has DIFF < 4
 ☐ Values follow the scale defined in Rule 36
+
+CHECK 34 - INTERVIEW QUESTION TYPE COVERAGE: [v1.0]
+☐ L3 keywords collectively enable TYPE 1–5 questions (Rule 38)
+☐ L4+ keywords collectively enable all 7 question types (Rule 38)
+☐ 🎯 ivw keywords at L3+ each include TYPE 4 or TYPE 5 framing
+☐ interview_type_coverage field in validation report populated
+
+CHECK 35 - SCENARIO ANCHORS: [v1.0]
+☐ ≥25% of L3+ keywords per level are scenario-anchored (Rule 39)
+☐ Scenario-anchored keywords tagged with 🔮 scn
+☐ Each scenario anchor uses format: "[Concept] — [Production scenario]"
+☐ scenario_anchor_coverage_pct in validation report populated
+
+CHECK 36 - INTELLIGENCE-TEST KEYWORDS AT L4+: [v1.0]
+☐ ≥1 intelligence-test keyword (🧩 iq) per L4+ level (Rule 40)
+☐ Each 🧩 iq keyword generates a reasoning question (not recall)
+☐ Formats: design-a-test, implement-without, what-if-assumption-violated
+☐ intelligence_test_keywords in validation report populated
 
 ─────────────────────────────────────────────────────────────────────────
 4.1 LLM-AS-JUDGE EVALUATION RUBRIC [v1.0]
@@ -3475,11 +3682,20 @@ C5 - CROSS-CUTTING QUALITY (1-5):
 5 = Compression maps, knowledge graph, role matrix,
 AI layer all present and domain-specific
 
+C6 - INTERVIEW QUESTION RICHNESS (1-5):
+1 = Most L3+ keywords generate only definition questions;
+no scenario anchors present; no intelligence-test keywords
+3 = L3+ keywords mix TYPE 1–4; some scenario-anchored keywords;
+few TYPE 5–6 questions; ≤ 1 intelligence-test keyword
+5 = All 7 question types covered at L4+; ≥25% of L3+ keywords
+scenario-anchored; ≥1 intelligence-test keyword per level
+at L4+; all 12 blind spot archetypes covered
+
 SCORING:
-Total = C1 + C2 + C3 + C4 + C5 (max 25)
-PASS: >= 18 (average 3.6 per criterion)
-GOOD: >= 21 (average 4.2 per criterion)
-EXCEPTIONAL: 24-25
+Total = C1 + C2 + C3 + C4 + C5 + C6 (max 30)
+PASS: >= 20
+GOOD: >= 24
+EXCEPTIONAL: 28-30
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 5: INVOCATION - HOW TO USE THIS PROMPT

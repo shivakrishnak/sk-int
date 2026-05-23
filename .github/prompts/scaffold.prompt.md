@@ -18,7 +18,7 @@ tools:
 > only to preview file structure before generating content.
 
 Run the scaffold generator to create `[FILL:...]` stub files for an
-interview topic. The scaffold pre-builds all 19 sections per keyword
+interview topic. The scaffold pre-builds all 8 Option C sections per keyword
 with placeholder markers.
 
 ## Usage
@@ -44,7 +44,7 @@ with placeholder markers.
 
 ## Post-Scaffold
 
-After scaffolding, use `@generate-entries` or `@fill-content` to
+After scaffolding, use `@generate-entries` to
 generate real content for each keyword.
 
 Alternatively, skip scaffolding entirely and use the agent or prompts

@@ -24,7 +24,9 @@ mastery files using keyword-batch mode (1-3 keywords per pass).
 
 ## Phase 0 - Discover work items
 
-1. If `target` is a file path: read frontmatter to get keywords list
+1. If `target` is a file path: read `{topic}/index.md` Keyword Registry
+   to get the keyword list and status for this file. If no index.md
+   exists, fall back to frontmatter `keywords:` field.
 2. If `target` is a topic name: list files in `docs/{topic}/`,
    identify files with unfilled keywords
 3. For each file, detect progress:
@@ -55,8 +57,8 @@ For all subsequent keywords, use the condensed generation rules in
 Work **one batch at a time**. Batch size adapts to difficulty:
 
 - hard keywords: 1 per batch
-- medium keywords: 1-2 per batch
-- easy keywords: 2-3 per batch
+- medium keywords: 2 per batch
+- easy keywords: 3 per batch
 
 For each keyword in the batch:
 
@@ -69,13 +71,13 @@ For each keyword in the batch:
 ### 2b. Generate complete v1.0 entry
 
 Apply all rules from `.github/instructions/interview.instructions.md`
-(auto-loaded). All 19 sections required in order. Conditional section
-decisions:
+(auto-loaded). Generate all 8 Option C sections in order (plus §9
+Comparison Table when applicable). Conditional section decisions:
 
-| Section              | Include when...                    |
-| -------------------- | ---------------------------------- |
-| 11. Code Example     | Concept has programmatic interface |
-| 15. Comparison Table | 2+ named alternatives exist        |
+| Option C Section    | Include when...                          |
+| ------------------- | ---------------------------------------- |
+| §4 Code Example     | Concept has a programmatic interface     |
+| §9 Comparison Table | Difficulty ★★☆ or above, 2+ alternatives |
 
 **Critical rules - apply for every keyword:**
 
@@ -102,54 +104,13 @@ Use UTF-8 without BOM.
 
 ---
 
-## Quality Constitution (Non-Negotiable)
+## Quality Standard
 
-Every keyword MUST pass ALL eight quality tests.
-Full spec: `spec/interview_content_generator.md` Section 6.
-
-**Voice:** Precise like Josh Bloch. Clear like Martin Fowler. Intuitive like
-Feynman. Production-scarred like a senior systems architect.
-Interview-ready like a FAANG bar raiser.
-
-**Eight Tests (all must pass):**
-
-1. Search Again? - reader never needs to look elsewhere
-2. Feynman - smart beginner understands without confusion
-3. Senior Engineer - senior still learns something useful
-4. Staff Engineer - staff/principal respects this explanation
-5. Production Reality - reader can diagnose real issues
-6. Retention - reader remembers this next month
-7. Decision - reader knows when to use or avoid
-8. Scale - 10x/100x/1000x behavior covered
-
-**Code Example Requirements (Non-Negotiable):**
-
-Every concept with code - choose based on complexity (min 2-3):
-
-1. Recognition Example - identify pattern in existing code
-2. Wrong vs Right - MANDATORY (BAD before GOOD, always)
-3. Production Example - real-world, not toy
-4. Failure Example - MANDATORY - what breaks, symptoms, fix
-5. Debugging Example - diagnostic commands, log analysis
-6. Scale Example - what changes under load
-7. Trade-off Example - gain vs sacrifice in code
-8. Internal Mechanism Example - how it works underneath
-9. System Interaction Example - cross-component behavior
-10. Testing/Verification Example - prove correctness
-
-Goal: reader understands why, when, failure, scale, debugging,
-and trade-offs - not just the API.
-
-**10-Point Writing Standard:**
-Intuition, Mechanism, Trade-off, Failure, Diagnosis, Scale,
-Decision, Memory, Transfer, Reality
-
-**Forbidden:** Generic definitions, toy examples, vague advice,
-fabricated numbers, surface explanations, "best practice" without
-reasoning, walls of prose, repetition across sections.
-
-**Final Gate:** "Would an experienced engineer say 'Damn - this is
-genuinely excellent'?" If uncertain: rewrite. Masterclass = target.
+> All quality rules are in `.github/instructions/interview.instructions.md`
+> (auto-loaded). Applies in full: Quality Constitution (8 tests), Code
+> Example Requirements (10 categories), 10-Point Writing Standard, Forbidden
+> Patterns, Final Gate, and Voice. Every keyword MUST pass all eight tests.
+> Full spec: `spec/interview_content_generator.md` Section 6.
 
 ### 2d. Report and continue
 
@@ -184,5 +145,33 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 After all keywords in a file are complete:
 
 1. Grep for `[TODO:` and `[FILL:` - must return zero matches
-2. Count `# ` headings - must match `keywords:` count in frontmatter
-3. Verify `version: 3` and update `status: complete` in frontmatter
+2. Check `{topic}/index.md` Keyword Registry - all keywords for this
+   file must show `draft` or `complete` status (no `pending` remaining)
+3. If frontmatter is present: verify `version: 1` and update
+   `status: complete` when all keywords are filled
+
+---
+
+## Invocation Examples
+
+**Specific file:**
+
+```
+Generate content for: docs/java-language/Java Language - L1 Foundations.md
+```
+
+**File with specific keywords:**
+
+```
+Generate content for: docs/java-language/Java Language - L2 Object Model.md
+Keywords: Inheritance and Polymorphism, Abstract Classes vs Interfaces
+Difficulty: medium
+```
+
+**Full topic (all pending files):**
+
+```
+Generate all remaining content for: java-language
+```
+
+Work through keywords in batch order. Do NOT attempt all keywords in one pass.

@@ -11,9 +11,10 @@
 > | ---------------------- | ------------- | --------------------------------------------------------- |
 > | `LATEST_VERSION`       | `1`           | Integer written to `version:` in all complete entries     |
 > | `LATEST_VERSION_LABEL` | `v1.0`        | Human-readable label used in titles, headers, commit msgs |
-> | `STUB_VERSION`         | `0`           | Integer for placeholder stubs with no generated body      |
 >
-> **v1.0 (2026-05) - Current spec.** Technical Interview Dictionary entry generation system with 18 core sections per keyword (Sections 4.1-4.18), 6 interview question taxonomy types (Section 2), seniority calibration framework (Section 3), production scenario templates, candidate mistake patterns, system design connections, spoken answer templates, elite learning loop, deliberate recall schedule, and self-validation checklist.
+> **Keyword Source of Truth:** Always read `{topic}/index.md` → `## Keyword Registry` section to get the keyword list for any target file. Do NOT rely on stub files or file frontmatter for keyword lists. Stub files are no longer created (see `topics_generator.md` Section 3.11). When generating content for a file, create it directly with full content on first write.
+>
+> **v1.0 (2026-05) - Current spec.** Technical Interview Dictionary entry generation system with 9 sections per keyword (5 mandatory + 4 conditional, Sections 4.1-4.10), 7 interview question taxonomy types (Section 2), seniority calibration framework (Section 3), production failure and candidate mistake Q&A, system design connections, spoken answer templates, and self-validation checklist.
 >
 > **To release v2:** Set `LATEST_VERSION` = `2`, `LATEST_VERSION_LABEL` = `v2.0`. Then add a `v2.0` row here, update the Section 7 skeleton `version:`, rename `upgrade_to_v1.ps1` → `upgrade_to_v2.ps1`, and add a v2 entry to the changelog.
 
@@ -100,6 +101,31 @@ ELITE COMMUNICATION PHRASES:
   "The non-obvious thing about this is..."
   "If I were redesigning this from scratch, I would..."
   "The question this really comes down to is..."
+
+OPENING MOVES — How to buy 10 seconds of structured thinking time:
+  Every candidate blanks occasionally. The difference is what you do in the
+  first 5 seconds. Never go silent. These moves signal structured thinking
+  even before you have the answer.
+
+  1. RESTATE:          "Let me make sure I understand — you're asking about
+                        X in the context of Y?"
+  2. CLASSIFY:         "This is fundamentally a [consistency / concurrency /
+                        memory / design] problem..."
+  3. FIRST PRINCIPLES: "Let me think through what problem this exists to solve
+                        — given [constraint], you need..."
+  4. BRIDGE:           "This connects to [related concept]. Starting from
+                        there — X works similarly/differently because..."
+  5. PARTIAL SIGNAL:   "Two things immediately come to mind: A and B.
+                        Let me start with A and come back to B..."
+
+  BLANK MIND RECOVERY — when you go completely blank:
+    Step 1: Restate aloud: "So you are asking about X..."
+    Step 2: First principles: "What problem does X solve? It solves..."
+    Step 3: Bridge: "This reminds me of [Y], which works by... X is
+                     similar/different because..."
+  These three steps buy 30–60 seconds of structured-sounding recovery time.
+  NEVER say "I don't know" and stop. Say "Let me think through this" and
+  keep talking from first principles — even a partial answer beats silence.
 
 INTERVIEW FLOW STRATEGY:
   Every answer follows: CLAIM → EVIDENCE → IMPLICATION
@@ -260,6 +286,31 @@ TYPE 6: DEEP DIVE / STRESS TEST QUESTIONS
     Not knowing the design rationale
     No awareness of at-scale behaviour
 
+TYPE 7: PERFORMANCE & SCALABILITY QUESTIONS  [v1.0]
+─────────────────────────────────────────────────────────────────────────
+  "What happens to [X] at 10x current load?"
+  "Where is the bottleneck when [X] saturates?"
+  "How does [X] behave under back-pressure?"
+  "What is the capacity limit of [X] per node?"
+  "How do you scale [X] horizontally?"
+
+  What the interviewer wants:
+    Concrete bottleneck analysis, not vague "it slows down"
+    Understanding of throughput ceilings and saturation points
+    Knowledge of scale inflection points and what breaks first
+    Awareness of trade-offs introduced by scaling
+
+  HIDDEN INTENT: Testing whether candidates treat scale as an
+    afterthought or as a first-class design constraint. Staff
+    engineers know not just WHERE the ceiling is, but WHY and
+    what the cascade failure path looks like past that ceiling.
+
+  Failure mode:
+    "It can handle it" without numbers or analysis
+    No knowledge of the actual throughput ceiling
+    Confusing performance optimisation with scalability design
+    Inability to reason about failure cascades under overload
+
 INTERVIEW DIFFICULTY MAPPING:
 
   | Type | Typical Difficulty | Typical Seniority Target |
@@ -270,6 +321,7 @@ INTERVIEW DIFFICULTY MAPPING:
   | TYPE 4 (Scenario) | 3 — Hard | Senior |
   | TYPE 5 (Debugging) | 3-4 — Hard/FAANG Hard | Senior |
   | TYPE 6 (Deep Dive) | 4-5 — FAANG to Staff | Staff |
+  | TYPE 7 (Performance & Scalability) | 3-4 — Hard/FAANG Hard | Senior/Staff |
 
 PUSHBACK HANDLING (5 TYPES):
   When the interviewer challenges your answer, identify the type:
@@ -318,10 +370,8 @@ JUNIOR (0-2 years):
     Startup:    Show you can apply it without hand-holding.
     Enterprise: Show you know the standard usage pattern.
 
-  DELIBERATE PRACTICE:
-    Week 1: Write the definition from memory (10 times).
-    Week 2: Explain it to a junior colleague or voice-record yourself.
-    Week 3: Answer "What is X?" without notes, time yourself (30 sec max).
+  INTERVIEW FOCUS: Recall the definition in ≤30 sec without notes;
+    give one concrete usage example that shows you have used it.
 
 ─────────────────────────────────────────────────────────────────────────
 MID-LEVEL (2-5 years):
@@ -338,10 +388,8 @@ MID-LEVEL (2-5 years):
     Startup:    Pragmatics. When to use vs. skip. Velocity over elegance.
     Enterprise: Reliability patterns. Integration with legacy systems.
 
-  DELIBERATE PRACTICE:
-    Week 1: Diagram the mechanism from memory.
-    Week 2: Explain it to a non-technical person in 2 minutes.
-    Week 3: Find one real case from your project. Tell it as STAR story.
+  INTERVIEW FOCUS: Diagram the mechanism from memory; name one common
+    pattern and one anti-pattern; prepare a STAR story from your own work.
 
 ─────────────────────────────────────────────────────────────────────────
 SENIOR (5-8 years):
@@ -360,10 +408,8 @@ SENIOR (5-8 years):
     Startup:    Trade-offs + migration story. What you replaced and why.
     Enterprise: Reliability + stability + compliance considerations.
 
-  DELIBERATE PRACTICE:
-    Week 1: Write out 3 failure modes for this concept.
-    Week 2: Create a STAR story for one production failure.
-    Week 3: Explain the trade-off vs. the most common alternative (2 min).
+  INTERVIEW FOCUS: Tell a production failure STAR story in ≤3 min; state
+    the trade-off vs. the most common alternative with the deciding factor.
 
 ─────────────────────────────────────────────────────────────────────────
 STAFF / PRINCIPAL (8+ years):
@@ -388,18 +434,31 @@ STAFF / PRINCIPAL (8+ years):
     Enterprise: Governance, compliance, migration at scale.
                 Cross-team coordination patterns.
 
-  DELIBERATE PRACTICE:
-    Week 1: Sketch the system design where this concept appears.
-    Week 2: Write out the org-level decision you made or would make.
-    Week 3: Teach it to a mid-level engineer. Find gaps in your explanation.
+  INTERVIEW FOCUS: Sketch the system design placement; state the org-level
+    decision and what you would change if starting over. Teach it to a
+    mid-level engineer — the gaps you find ARE your FAANG prep gaps.
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: ENTRY STRUCTURE — EXACT SECTION ORDER (18 SECTIONS)
+SECTION 4: ENTRY STRUCTURE — EXACT SECTION ORDER (9 SECTIONS, 5 MANDATORY + 4 CONDITIONAL)
 ═══════════════════════════════════════════════════════════════════════════
 
 Every entry follows this EXACT order.
-Every section is REQUIRED unless marked CONDITIONAL.
-Do not add sections. Do not skip sections.
+MANDATORY sections are always included.
+CONDITIONAL sections follow the inclusion rules in their spec.
+
+MANDATORY (all entries):
+  4.1  Title and Metadata
+  4.2  Model Answer
+  4.3  Concept Explanation
+  4.4  Code Example (include unless concept has no non-trivial usage)
+  4.5  Answers by Seniority
+  4.6  Questions & Spoken Answers
+
+CONDITIONAL:
+  4.7  Comparison       — ★★☆ or above
+  4.8  Field Q&A        — ★★☆ or above
+  4.9  System Design    — ★★★ or sd: true in frontmatter
+  4.10 Diagram          — ★★★ or mechanism requires visual explanation
 
 ─────────────────────────────────────────────────────────────────────────
 4.1  TITLE AND METADATA  [REQUIRED]
@@ -416,6 +475,8 @@ YAML FRONTMATTER:
   seniority: [junior | mid | senior | staff | all]
   tags: #tag1, #tag2, #tag3
   status: draft
+  sd: false     ← set true to include System Design for non-★★★ entries
+  version: 1
   ---
 
 TITLE LINE:
@@ -426,65 +487,55 @@ INTERVIEW SIGNAL LINE:
      how often and where this appears in interviews]
 
 ─────────────────────────────────────────────────────────────────────────
-4.2  THE 30-SECOND ANSWER  [REQUIRED]
+4.2  MODEL ANSWER  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### ⚡ The 30-Second Answer
+  ### 🎯 Model Answer
+
+MERGES: former "⚡ The 30-Second Answer" + "🎯 Why Interviewers Ask This"
 
 PURPOSE:
-  The answer to "What is X?" that impresses
-  every interviewer at every level.
-  Crisp. No jargon. Shows WHY it exists.
+  The first thing the candidate reads. Delivers two things:
+  1. A ready-to-speak answer at two time depths (30s + 3 min)
+  2. A reusable framework structure for any novel question
 
 FORMAT:
-  > [The answer in 3-4 sentences.
-     Sentence 1: What it is in plain English.
-     Sentence 2: The problem it solves.
-     Sentence 3: One concrete example.
-     Sentence 4: The key trade-off or insight.]
+  **30 seconds:**
+  > [The answer in 2-3 spoken sentences. Plain English. No jargon.
+     Sentence 1: What it is + what problem it solves.
+     Sentence 2: How it works in one sentence.
+     Sentence 3: The key trade-off or insight.]
+
+  **3 minutes (Senior):**
+  > [Fully written spoken answer. First person. Natural English.
+     Covers: WHAT → WHY → HOW → TRADE-OFF → EXAMPLE.
+     Ends with the non-obvious insight.]
+
+  **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
+
+  *Adapting up:*   [How a senior/staff extends this answer]
+  *Adapting down:* [How a junior shortens — WHAT + WHY + EXAMPLE only]
+
+  **Blank Mind Recovery:**
+  If you blank in the interview:
+  (1) Restate: "So you are asking about X — let me think through
+      what problem that solves."
+  (2) First principles: "From first principles, this domain needs to
+      handle [constraint A] and [constraint B]..."
+  (3) Bridge: "This reminds me of [related concept]. X works
+      similarly/differently because..."
+  These three steps buy 30–60 seconds of structured recovery.
+  Never say "I don't know" and stop — first principles beats silence.
 
 RULES:
-  - Blockquote format always
-  - Zero jargon that isn't explained
-  - Must be speakable — reads naturally aloud
-  - A junior can use this answer
-  - A senior can use this as an opener
-    then go deeper
+  - Both versions must be SPEAKABLE — read naturally aloud
+  - 3-minute version written in first person: "I", "my team", "I've seen"
+  - No "What the interviewer is measuring" coaching content
+  - No seniority signal table (those belong in Section 4.5)
 
 ─────────────────────────────────────────────────────────────────────────
-4.3  WHY INTERVIEWERS ASK THIS  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🎯 Why Interviewers Ask This
-
-PURPOSE:
-  Decode the interviewer's intent.
-  What are they really testing?
-  Knowing this shapes how you answer.
-
-FORMAT:
-  **What they are really testing:**
-  [2-3 bullet points — the underlying skills
-   they probe with this question]
-
-  **Roles that ask this most:**
-  [Backend / Frontend / Full Stack / DevOps /
-   SRE / Data Engineer / ML Engineer / All]
-
-  **Seniority signal:**
-  [Table showing what answer earns what level signal]
-
-  | Answer Quality | Seniority Signal |
-  |---|---|
-  | [minimal answer] | Junior |
-  | [good answer] | Mid-level |
-  | [excellent answer] | Senior |
-  | [exceptional answer] | Staff/Principal |
-
-─────────────────────────────────────────────────────────────────────────
-4.4  CONCEPT EXPLANATION  [REQUIRED]
+4.3  CONCEPT EXPLANATION  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -534,60 +585,71 @@ SUB-SECTIONS:
    so we arrive at [THIS] as the necessary solution."]
 
 ─────────────────────────────────────────────────────────────────────────
-4.5  INTERVIEW ANSWERS BY SENIORITY  [REQUIRED]
+4.4  CODE EXAMPLE  [REQUIRED if non-trivial usage]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 🎓 Interview Answers by Seniority
+  ### 💻 Code Example
 
 PURPOSE:
-  Ready-to-use answer templates for each level.
-  Candidate picks their level, adapts to their
-  experience, and delivers confidently.
+  Demonstrate correct, idiomatic usage and the failure path.
+  Candidates must see correct code before they can speak about it.
 
-FORMAT FOR EACH LEVEL:
+FORMAT:
+  2-3 examples of increasing complexity:
+  - Example 1: basic happy-path usage (lock/unlock, acquire/release)
+  - Example 2: conditional or timeout pattern
+  - Example 3: full production-realistic usage (conditions, multiple threads)
 
-  **[LEVEL] Answer ([N]-[N] years exp):**
-  > [The answer in natural spoken English.
-     Written as if the candidate is speaking.
-     Includes: definition + mechanism + example
-     + level-appropriate depth.
-     Use "In my experience..." for mid+
-     Use "I have seen..." for senior+
-     Use "When I designed..." for staff]
+  For each example:
+  ```java
+  [code block — compiles, idiomatic, with inline comments]
+  ```
+  *Why this matters:* [1-3 sentences explaining the key point]
 
-  *What makes this answer strong:*
-  [2-3 bullets explaining why this answer
-   impresses at this level]
-
-  *What to add if they push deeper:*
-  [1-2 bullets on what to say if the
-   interviewer follows up]
-
-LEVELS TO COVER:
-  - Junior Answer (0-2 years)
-  - Mid-Level Answer (2-5 years)
-  - Senior Answer (5-8 years)
-  - Staff Answer (8+ years)
-
-TIME-CALIBRATED VERSIONS:
-  For each seniority level, also provide time-compressed variants.
-  Candidates must be able to expand OR contract depth on demand:
-
-  30-SECOND: Definition + why it exists + one concrete example.
-             No trade-offs. Crisp. Speakable.
-  90-SECOND: 30-second + mechanism + the key distinction.
-             One follow-up point ready if pushed.
-  3-MINUTE:  90-second + trade-off vs. alternative + production story.
-             One specific failure mode or diagnostic.
-  5-MINUTE:  3-minute + system design touch + personal narrative.
-             "The non-obvious thing I have learned is..."
-
-  RULE: Train the 30-second version until it is fluent.
-  Never skip to the 5-minute version. Expand only when invited.
+RULES:
+  - Code must compile — no invented APIs
+  - Comments on any non-obvious line
+  - Show the failure path (try/finally, exception handling)
+  - If no non-trivial usage: mark OMIT and explain why
 
 ─────────────────────────────────────────────────────────────────────────
-4.6  QUESTIONS YOU WILL BE ASKED  [REQUIRED]
+4.5  ANSWERS BY SENIORITY  [REQUIRED]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 🎓 Answers by Seniority
+
+PURPOSE:
+  Calibrate depth to the role.
+  Candidate picks their level and delivers confidently.
+
+FORMAT: Two combined levels only (reduces noise):
+
+  **Junior / Mid (0-5 years):**
+  > [30-second version — crisp, spoken, no jargon]
+
+  [Optional 1-2 sentence extension for mid-level]
+
+  *Push deeper:* [What to add if interviewer asks "Can you elaborate?"]
+
+  ---
+
+  **Senior / Staff (5+ years):**
+  > [30-second version — same crisp opening]
+
+  [Full paragraph: mechanism + trade-off + production angle]
+
+  *Push deeper:* [Staff extension: system design + org impact]
+
+RULES:
+  - Two levels only (Junior/Mid + Senior/Staff)
+  - 30-second version always first at each level
+  - Staff extension is a paragraph, not a full separate block
+  - First person ("I have seen...", "When I designed...")
+
+─────────────────────────────────────────────────────────────────────────
+4.6  QUESTIONS & SPOKEN ANSWERS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -599,594 +661,219 @@ PURPOSE:
   list and prepares for each one.
 
 FORMAT:
-  Grouped by question type (from Section 2).
-  Each question followed by the key points
-  to cover in a good answer.
+  #### [Q-Type]
+  - "[Question 1]"
+  - "[Question 2]"
+  🗣️ "[Spoken answer template — first person, natural English.
+       Covers the key points for this Q-type.]"
 
-  **Definition Questions:**
-  - "What is [KEYWORD]?"
-    → Cover: definition, why it exists, one example
+  Repeat for all seven Q-types.
 
-  - "[Additional question]"
-    → Cover: [key points]
+SEVEN Q-TYPES (from Section 2):
+  #### Definition
+  #### Mechanism
+  #### Comparison
+  #### Scenario
+  #### Debugging
+  #### Deep Dive
+  #### Performance & Scalability
 
-  **Mechanism Questions:**
-  - "How does [KEYWORD] work?"
-    → Cover: step-by-step, failure path, diagram
-
-  **Comparison Questions:**
-  - "What's the difference between [X] and [Y]?"
-    → Cover: [key distinction], [when to choose each]
-
-  **Scenario Questions:**
-  - "When would you use [KEYWORD]?"
-    → Cover: [specific conditions], [counterexample]
-
-  **Debugging Questions:**
-  - "What can go wrong with [KEYWORD]?"
-    → Cover: [top 3 failure modes], [how to diagnose]
-
-  **Deep Dive Questions:**
-  - "Why was [KEYWORD] designed this way?"
-    → Cover: [design rationale], [alternatives considered]
+  Interviewer type adaptation table at end:
+  | Interviewer Type | Emphasis |
+  |---|---|
+  | Technical Panel  | Lead with mechanism. Use precise terminology. |
+  | Hiring Manager   | Lead with business impact. Outcome language. |
+  | Bar Raiser       | Lead with trade-offs. What you would NOT use it for. |
+  | Peer Engineer    | Collaborative. "The thing I keep finding is..." |
 
 RULES:
   - Minimum 2 questions per type
-  - Maximum 4 questions per type
-  - Questions must be REAL — phrased as interviewers
-    actually ask them
-  - Key points must be specific, not vague
+  - 🗣️ template immediately follows each Q-type group (no separate section)
+  - Templates written in first person, speakable English
+  - Interviewer type adaptation table always at end of this section
 
 ─────────────────────────────────────────────────────────────────────────
-4.7  THE ANSWER FRAMEWORK  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🏗️ The Answer Framework
-
-PURPOSE:
-  A reusable structure for answering ANY question
-  on this topic. Candidate internalises this
-  framework and applies it to novel questions.
-
-FORMAT:
-  **WHAT → WHY → HOW → TRADE-OFF → EXAMPLE**
-
-  Use this structure for every question on [KEYWORD]:
-
-  WHAT:   [One sentence definition]
-  WHY:    [The problem it solves]
-  HOW:    [The mechanism — 2-3 sentences]
-  TRADE:  [What you gain vs what you sacrifice]
-  EXAMPLE:[Concrete production scenario]
-
-  *Adapt the depth:*
-  Junior: WHAT + WHY + EXAMPLE
-  Mid:    WHAT + WHY + HOW + EXAMPLE
-  Senior: All five + specific failure you've seen
-  Staff:  All five + system design implications
-
-─────────────────────────────────────────────────────────────────────────
-4.8  COMPARISON TABLE  [REQUIRED if alternatives exist]
+4.7  COMPARISON  [CONDITIONAL — ★★☆ or above]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### ⚖️ How It Compares
+  ### ⚖️ Comparison
 
 PURPOSE:
-  Answer "What's the difference between X and Y?"
-  before the interviewer asks.
+  Pre-emptively answer "What's the difference between X and Y?"
   Show trade-off thinking proactively.
 
 FORMAT:
   | Option | [Dimension 1] | [Dimension 2] | Choose When |
   |---|---|---|---|
   | **[THIS]** | ... | ... | ... |
-  | [Alternative A] | ... | ... | ... |
-  | [Alternative B] | ... | ... | ... |
+  | [Alt A]    | ... | ... | ... |
+  | [Alt B]    | ... | ... | ... |
 
   **The deciding factor:**
-  [One sentence: the single most important condition
-   that determines which to choose]
-
-  **Interview tip:**
-  [How to bring up this comparison proactively
-   to signal senior thinking]
-
-─────────────────────────────────────────────────────────────────────────
-4.9  PRODUCTION SCENARIOS  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🔥 Production Scenarios
-
-PURPOSE:
-  Real scenarios to reference in interviews.
-  "In my experience..." answers that demonstrate
-  production depth without needing to have actually
-  experienced every scenario personally.
-
-FORMAT FOR EACH SCENARIO:
-
-  **Scenario [N]: [Short descriptive title]**
-
-  Situation:
-  [2-3 sentences: the production context,
-   the problem that surfaced]
-
-  What happened:
-  [The failure or challenge in technical detail]
-
-  How it was diagnosed:
-  ```bash
-  [actual diagnostic command or tool]
-  ```
-
-  How it was resolved:
-  [The fix — technical and specific]
-
-  Interview use:
-  [How to reference this scenario naturally
-   in an interview answer]
+  [One sentence: the single condition that determines which to choose]
 
 RULES:
-  - Minimum 2 scenarios
-  - Maximum 4 scenarios
-  - Must be REALISTIC — based on how systems
-    actually fail in production
-  - Must include a diagnostic command
-  - Must be usable as "I have seen..." even
-    if the candidate read it here
-
-RCA (ROOT CAUSE ANALYSIS) ENGINE:
-  For each scenario, structure the diagnosis chain:
-
-  Symptom      → [Observable indicator: metric, log, alert]
-  Hypotheses   → [Ranked by probability: H1 (most likely), H2, H3]
-  Tests        → [Command or query that rules each hypothesis in/out]
-  Root Cause   → [Confirmed underlying cause]
-  Fix          → [The change that resolved it]
-  Prevention   → [Process or config change to prevent recurrence]
-
-STORY BANK TEMPLATE (for interview use):
-  Structure each scenario as a STAR story:
-
-  Situation: [Production context in 1-2 sentences]
-  Task:      [Your specific responsibility]
-  Action:    [What you/your team did — be specific]
-  Result:    [Quantifiable outcome: latency reduced, errors eliminated]
-
-  Timing: 90 seconds max unless asked to elaborate.
-  First person only: "I saw...", "We diagnosed...", "I changed..."
+  - Include for ★★☆ and above only
+  - Minimum 3 rows (this concept + 2 alternatives)
+  - No "Interview tip" or "Bring this up proactively" lines
 
 ─────────────────────────────────────────────────────────────────────────
-4.10  COMMON MISTAKES CANDIDATES MAKE  [REQUIRED]
+4.8  FIELD Q&A  [CONDITIONAL — ★★☆ or above]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### ⚠️ Common Mistakes Candidates Make
+  ### 🔥 Field Q&A
+
+MERGES: former "🔥 Production Scenarios" + "⚠️ Common Mistakes Candidates Make"
+        + "🗣️ Follow-Up Questions to Ask the Interviewer"
 
 PURPOSE:
-  What NOT to say. What kills good candidates.
-  Read this, remember it, avoid it.
+  Three sub-groups that prepare the candidate for the hardest interview
+  moments: production depth, avoiding traps, and demonstrating initiative.
 
-FORMAT:
-  Table with 3 columns:
+FORMAT: Four sub-groups with #### headings:
 
-  | Mistake | Why It Hurts | Say This Instead |
-  |---|---|---|
-  | [what candidates wrongly say/do] | [why interviewers penalise it] | [correct approach] |
+  #### Production Failures
+
+  Q: [Realistic production scenario or failure question]
+
+  A: [Technical answer: symptom → diagnosis → fix. First person where natural.]
+
+  (Minimum 3 Q&As; each must include a concrete diagnostic step or command)
+
+  #### Candidate Mistakes
+
+  Q: [Mistake to avoid, framed as coaching]
+
+  A: [Correct framing or answer to give instead]
+
+  (Minimum 4 Q&As)
+
+  #### Questions to Ask the Interviewer
+
+  Q: "[Smart question to ask]"
+
+  *Why:* [Why this signals depth — 1 sentence]
+  *If asked back:* [What to say if interviewer turns it around]
+
+  (Minimum 4 questions)
+
+  #### Live Coding Context
+  [Include when concept has coding round implications. Mark OMIT otherwise.]
+
+  Coding question template:
+    [The specific coding challenge this concept generates — e.g.,
+     "Implement a thread-safe bounded queue using ReentrantLock"]
+
+  What the interviewer watches:
+    - [Observable behavior #1 — concrete, e.g., "whether you wrap
+      lock() in try/finally"]
+    - [Observable behavior #2]
+    - [Observable behavior #3]
+
+  Most common implementation mistake:
+    [Specific coding error most candidates make — not vague]
+
+  *Why this signals:* [What it tells the interviewer about your depth]
 
 RULES:
-  - Minimum 4 rows
-  - Maximum 7 rows
-  - Mistakes must be REAL — things candidates
-    actually do wrong, not obvious errors
-  - "Say This Instead" must be specific and usable
-
-RED FLAG DETECTOR:
-  The following answer patterns trigger NO HIRE signals.
-  They are confident, common, and wrong.
-  Every entry must include a RED FLAG block:
-
-  | Red Flag Answer | Signal It Sends | Correct Framing |
-  |---|---|---|
-  | [Red flag 1] | [NO HIRE signal] | [How to reframe] |
-
-  EXAMPLES OF UNIVERSAL RED FLAGS:
-    "It just works" → signals no production depth
-    "It depends" [no elaboration] → signals avoidance
-    "I always use X" → signals hammer/nail pattern
-    "I've never seen it fail" → signals limited exposure
-    "That's implementation detail" → signals dismissiveness
-
-DANGEROUS OVER-SIMPLIFICATIONS:
-  Correct-but-oversimplified answers that fail senior+ candidates:
-
-  | Oversimplification | What It Misses | Better Answer |
-  |---|---|---|
+  - Blank line between every Q and its A
+  - #### headings, not bold caps
+  - Production Failures must be realistic (how systems actually fail)
+  - Candidate Mistakes must be common (things candidates actually do wrong)
+  - Interviewer questions must be non-Googleable and reveal your thinking
+  - Live Coding Context: OMIT explicitly with reason if no coding round
+    implications (pure system-design-only concepts)
 
 ─────────────────────────────────────────────────────────────────────────
-4.11  FOLLOW-UP QUESTIONS TO ASK THE INTERVIEWER  [REQUIRED]
+4.9  SYSTEM DESIGN  [CONDITIONAL — ★★★ or sd: true in frontmatter]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 🗣️ Follow-Up Questions to Ask the Interviewer
+  ### 🏛️ System Design
 
 PURPOSE:
-  Interviews are conversations.
-  Asking smart questions demonstrates depth.
-  This section provides questions that
-  signal senior thinking and genuine curiosity.
+  Show how this concept appears in system design interviews —
+  the highest-value interview type for senior+ roles.
 
 FORMAT:
-  **When the interviewer asks about [KEYWORD],
-  consider asking:**
+  > *(Conditional: included because [reason]. Omit for ★☆☆/★★☆ unless
+  >  sd: true in frontmatter.)*
 
-  - "[Question 1]"
-    *Why this signals depth:* [1 sentence]
-
-  - "[Question 2]"
-    *Why this signals depth:* [1 sentence]
-
-  - "[Question 3]"
-    *Why this signals depth:* [1 sentence]
-
-RULES:
-  - Minimum 3 questions
-  - Maximum 5 questions
-  - Questions must be genuinely interesting —
-    not filler
-  - Each must reveal something about the
-    candidate's thinking
-  - Avoid questions answerable by Google
-
-─────────────────────────────────────────────────────────────────────────
-4.12  SYSTEM DESIGN CONNECTIONS  [REQUIRED for ★★★]
-       [CONDITIONAL for ★★☆ — include if concept
-        appears in system design interviews]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🏛️ System Design Connections
-
-PURPOSE:
-  Show how this concept appears in system design
-  interviews — the highest-value interview type
-  for senior+ roles.
-
-FORMAT:
   **Where [KEYWORD] appears in system design:**
+  [Bullet list of system design scenarios]
 
-  [Bullet list of system design scenarios where
-   this concept is relevant]
+  **Example question:** [One specific system design question]
 
-  **How to bring it up naturally:**
-  [2-3 sentences: when and how to introduce
-   this concept in a system design discussion]
+  **6-step framework answer:**
+  Step 1 CLARIFY  — [2-3 requirement questions]
+  Step 2 ESTIMATE — [back-of-envelope scale estimate]
+  Step 3 DESIGN   — [high-level boxes and arrows]
+  Step 4 DEEP DIVE— [introduce THIS concept here, with trade-offs]
+  Step 5 ALTS     — [what you considered and rejected]
+  Step 6 EVOLVE   — [how this changes at 10× scale]
 
-  **Design decisions it influences:**
-  [Bullet list of architectural decisions
-   where this concept is a factor]
+  **Scale inflection point:**
+  At [X RPS / Y GB / Z concurrent connections / N nodes], [KEYWORD]
+  becomes the limiting factor because [specific reason]. Before that
+  threshold, [simpler alternative] is sufficient.
 
-  **Example system design question where
-  this appears:**
-  [One specific system design question]
+  **Common system design traps:**
+  - [Trap 1: what candidates typically design wrong, and why it fails]
+  - [Trap 2]
+  - [Trap 3]
 
-  *How [KEYWORD] fits the answer:*
-  [2-3 sentences on where in the design
-   this concept appears and what role it plays]
+  **LLD sketch:** [ASCII class/component diagram if applicable]
 
-6-STEP SYSTEM DESIGN FRAMEWORK:
-  When this concept appears in a design interview, introduce it
-  at the right point using this structure:
+  **Staff angle:** [Cost + org impact + migration plan + simplification case]
 
-  Step 1: CLARIFY — Ask 2-3 requirement questions
-  Step 2: ESTIMATE — Back-of-envelope scale estimate
-  Step 3: HIGH-LEVEL DESIGN — Boxes and arrows
-  Step 4: DEEP DIVE — Introduce THIS concept here, with trade-offs
-  Step 5: ALTERNATIVES — What you considered and rejected
-  Step 6: EVOLUTION — How this changes at 10× scale
-
-STAFF / PRINCIPAL THINKING:
-  For L5+ roles, the system design connection must also address:
-  - Cost: cloud cost, operational overhead, team ownership cost
-  - Org impact: which teams are affected, who owns this decision
-  - Migration: current state → desired state → rollout plan
-  - Simplification: when the simpler alternative wins
-
-LOW-LEVEL DESIGN (LLD) GUIDANCE:
-  INCLUDE IF this concept appears in LLD interviews:
-  - Class or interface diagram (ASCII)
-  - 2-3 key design decisions to explain
-    (e.g., interface vs abstract class, composition vs inheritance)
-  - What invariants this design maintains
+RULES:
+  - Include for ★★★ or sd: true only
+  - 6-step framework always present
+  - Scale inflection point always present
+  - Common system design traps (3 bullets) always present
+  - Staff angle always present
+  - LLD sketch only if concept appears in LLD interviews
 
 ─────────────────────────────────────────────────────────────────────────
-4.13  WHITEBOARD / DIAGRAM  [CONDITIONAL]
+4.10  DIAGRAM  [CONDITIONAL — ★★★ or mechanism requires visual explanation]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 📊 Whiteboard / Diagram
+  ### 📊 Diagram
 
 PURPOSE:
-  If this concept is commonly drawn on a
-  whiteboard in interviews, provide the
-  canonical diagram to memorise.
+  If this concept is commonly drawn in interviews, or the mechanism
+  is not fully clear from prose, provide the canonical diagram.
 
 INCLUDE IF:
-  - Concept is frequently drawn in interviews
-  - A diagram makes it significantly clearer
-  - System design interviews commonly
-    include this concept visually
+  - Concept is ★★★ and has a state machine, flow, or structure
+  - A diagram makes the mechanism significantly clearer
+  - Commonly drawn in system design or LLD rounds
 
 FORMAT:
-  ASCII diagram (max 59 chars wide)
-  Label every component
-  Show data flow with arrows
-  Include the failure path if relevant
+  > *(Conditional: included because [reason]. Omit for topics where
+  >  prose makes the mechanism clear.)*
 
-  *What to say while drawing:*
-  [Script for what to say as you draw —
-   thinking aloud while diagramming
-   signals senior reasoning]
+  ASCII diagram first (max 59 chars wide):
+  ```
+  [ASCII diagram — label every component, show data flow and failure path]
+  ```
 
-─────────────────────────────────────────────────────────────────────────
-4.14  QUICK REFERENCE CARD  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
+  Mermaid diagram immediately below (DUAL FORMAT — both always together):
+  ```mermaid
+  [Mermaid diagram reproducing the same information]
+  ```
 
-Section header:
-  ### 📌 Quick Reference Card
+  [4-bullet reading guide: explain each state/transition in prose]
 
-FORMAT (exact ASCII box):
-
-  ┌──────────────────────────────────────────────────────────┐
-  │ ONE-LINE DEF  │ [15-word max definition]                 │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ PROBLEM       │ [what breaks without it]                 │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ KEY INSIGHT   │ [the non-obvious truth]                  │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ USE WHEN      │ [specific condition]                     │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ AVOID WHEN    │ [specific condition]                     │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ TRADE-OFF     │ [gain] vs [cost]                         │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ VS ALTERNATIVE│ [key distinction from closest rival]     │
-  ├───────────────┼──────────────────────────────────────────┤
-  │ INTERVIEW TIP │ [one sentence on how to use this         │
-  │               │  in an interview to signal depth]        │
-  └──────────────────────────────────────────────────────────┘
-
-─────────────────────────────────────────────────────────────────────────
-4.15  LAST-MINUTE PREP  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🚀 Last-Minute Prep
-
-PURPOSE:
-  The candidate reads this 10 minutes before
-  the interview. Everything that must be
-  fresh in memory. Nothing else.
-
-FORMAT:
-  **Remember these 3 things:**
-  1. [Most important point about this concept]
-  2. [Most common misconception to avoid]
-  3. [The trade-off that signals senior thinking]
-
-  **If you blank on the definition, say:**
-  > "[Recoverable answer that buys you thinking
-     time while still sounding competent]"
-
-  **The example that always works:**
-  [One concrete, relatable example that
-   illustrates this concept perfectly —
-   works at any seniority level]
-
-  **One sentence that signals depth:**
-  > "[Something non-obvious that separates
-     candidates who truly understand this
-     from those who memorised a definition]"
-
-RECOVERY LANGUAGE TEMPLATES:
-  Use when you blank, get pushed back, or hit a gap:
-
-  "Let me think through this from first principles..."
-  "I haven't seen that exact scenario, but by analogy..."
-  "My best understanding is X, though I would want to verify Y."
-  "Can I sketch this on the whiteboard to think it through?"
-  "The trade-off I would focus on first is..."
-
-CONFIDENCE UNDER PRESSURE:
-  When the interviewer pushes back or corrects you:
-    "That's a great point — let me revise my thinking. More precisely..."
-    "I see the issue with my earlier answer. The correct framing is..."
-  NEVER: "Oh, I knew that" (fake agreement after being corrected)
-  NEVER: "It depends" without immediately explaining on what
-  NEVER: Silence longer than 5 seconds without saying something
-
-INTERVIEW DAY EXECUTION:
-  - Name the question type before answering (internally)
-  - Start every answer with the 30-second version
-  - Clarify before answering ambiguous scenario questions
-  - Pause and offer to expand: "Does that answer your question,
-    or should I go deeper into [specific aspect]?"
-  - End strong: "The key insight I always come back to is..."
-
-─────────────────────────────────────────────────────────────────────────
-4.16  SPOKEN ANSWER TEMPLATES  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🗣️ Spoken Answer Templates
-
-PURPOSE:
-  Ready-to-speak templates for each question type. The candidate
-  reads these aloud until fluent. They are not scripts — they are
-  scaffolding that the candidate fills with their own experience.
-
-FORMAT (one template per question type):
-
-  **Template for TYPE 1 (Definition):**
-  > "[KEYWORD] is [plain English definition]. It exists because
-    [problem it solves]. A simple example is [concrete example].
-    The key thing to understand is [one non-obvious insight]."
-
-  **Template for TYPE 2 (Mechanism):**
-  > "When [event happens], here is what occurs step by step:
-    First, [step 1]. Then [step 2]. Then [step 3].
-    The important thing is [why each step exists].
-    When this goes wrong, you see [symptom] and diagnose it by [method]."
-
-  **Template for TYPE 3 (Comparison):**
-  > "[THIS] and [ALTERNATIVE] both solve [problem], but they differ in
-    [key dimension]. I choose [THIS] when [specific condition].
-    I choose [ALTERNATIVE] when [other condition].
-    The deciding factor for me is [single most important criterion]."
-
-  **Template for TYPE 4 (Scenario):**
-  > "I would reach for [KEYWORD] in this situation because [reasoning].
-    My approach would be: [step 1], [step 2], [step 3].
-    The risk I would watch for is [specific failure mode].
-    I would know it is working when [measurable outcome]."
-
-  **Template for TYPE 5 (Debugging):**
-  > "The most common failure I have seen with [KEYWORD] is [failure mode].
-    You see it as [observable symptom]. To diagnose: [diagnostic step].
-    The root cause is usually [common root cause].
-    The fix is [resolution]. To prevent recurrence: [prevention]."
-
-  **Template for TYPE 6 (Deep Dive):**
-  > "[KEYWORD] was designed this way because [design rationale].
-    The trade-off that decision created is [trade-off].
-    Its fundamental limitation is [limitation] — which matters at scale because [why].
-    If I were redesigning it, I would [what you would change] because [reasoning]."
-
-INTERVIEWER TYPE ADAPTATION:
-  Adapt tone and emphasis based on interviewer behaviour:
-
-  TECHNICAL PANEL (senior engineers):
-    Lead with mechanism. Use precise terminology. Show failure awareness.
-    Offer to go deeper: "I can go into [specific mechanism] if useful."
-
-  HIRING MANAGER:
-    Lead with business impact. Use outcome language.
-    "This reduced our deployment time by..." / "This eliminated the class of..."
-
-  BAR RAISER:
-    Lead with trade-offs and what you would not use this for.
-    Signal intellectual honesty: "The limitation I would flag is..."
-
-  PEER ENGINEER (same level):
-    Use collaborative language. Show curiosity.
-    "The thing I keep finding is..." / "Have you seen the same pattern with...?"
-
-─────────────────────────────────────────────────────────────────────────
-4.17  ELITE LEARNING LOOP  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 🔄 Elite Learning Loop
-
-PURPOSE:
-  A 8-step practice system that converts reading this entry into
-  interview-fluent retrieval. Deliberate practice beats passive review.
-
-THE 8-STEP CYCLE:
-  Step 1: READ     — Read the entry once. Note gaps in your knowledge.
-  Step 2: RECALL   — Close the entry. Write down everything you remember.
-  Step 3: COMPARE  — Open the entry. Identify gaps between recall and content.
-  Step 4: EXPLAIN  — Explain the concept aloud to yourself (rubber duck).
-  Step 5: DIAGRAM  — Draw the mechanism from memory on paper.
-  Step 6: APPLY    — Find one instance of this in a past/current project.
-  Step 7: MOCK     — Answer "What is X?" and "What can go wrong with X?"
-             aloud, timed (30 seconds for junior answer, 3 minutes for senior).
-  Step 8: TEACH    — Explain it to someone else (or record yourself).
-           Gaps in your explanation reveal gaps in your understanding.
-
-WEAKNESS → STRENGTH PROGRESSION:
-  WEAK   (cannot define without notes)   → Do Steps 1-3 three times.
-  OKAY   (can define, cannot explain)    → Do Steps 4-5 until fluent.
-  SOLID  (can explain, no examples)      → Do Step 6 until story is ready.
-  STRONG (example ready, no trade-offs)  → Do Step 7 for senior answer.
-  ELITE  (trade-offs ready, no fluency)  → Do Step 8 with another person.
-
-TECHNICAL FLUENCY PRACTICE:
-  Explain this concept at 4 levels, timed:
-    To a junior engineer:  [2 min] — no jargon, use analogy
-    To a product manager:  [1 min] — business outcome only
-    To a senior engineer:  [3 min] — trade-offs and failure modes
-    To a staff engineer:   [5 min] — system implications and history
-
-  A concept you can explain at all 4 levels is interview-ready.
-
-─────────────────────────────────────────────────────────────────────────
-4.18  DELIBERATE RECALL SCHEDULE  [REQUIRED]
-─────────────────────────────────────────────────────────────────────────
-
-Section header:
-  ### 📅 Deliberate Recall Schedule
-
-PURPOSE:
-  Spaced repetition schedule for this concept. Do not re-read
-  the entry. Answer the recall questions from memory.
-  Struggle is the point — it strengthens retrieval.
-
-RECALL SCHEDULE (answer 5 questions each session, no notes):
-
-  Day 1  (same day):
-    - What is [KEYWORD] in one sentence?
-    - What problem does it solve?
-    - How does it work at a high level?
-    - What is the key trade-off?
-    - What is one failure mode?
-
-  Day 3  (two days later):
-    - Explain the mechanism step by step.
-    - When would you NOT use [KEYWORD]?
-    - What is the closest alternative and the deciding factor?
-    - Describe one production failure scenario.
-    - What question would a staff engineer ask that you should be ready for?
-
-  Day 7  (one week):
-    - Explain [KEYWORD] to a junior engineer (2 min, out loud).
-    - What is the system design scenario where this appears?
-    - Name 3 interview red flags for this topic.
-    - What is the non-obvious insight that separates good from great answers?
-    - Give your 90-second senior answer, start to finish.
-
-  Day 14 (two weeks):
-    - Draw the mechanism diagram from memory.
-    - Give your 3-minute senior answer with a production story.
-    - What would a bar raiser ask about [KEYWORD]?
-    - What is the first-principles derivation?
-
-  Day 30 (one month):
-    - Give the full 5-minute staff answer, unprompted.
-    - What are the limitations of [KEYWORD] at 10× scale?
-    - Compare this to [NEAREST ALTERNATIVE] in 90 seconds.
-    - What has changed about this concept in the last 2-3 years?
-
-  Day 60 (two months — mastery check):
-    - Teach this concept to another engineer (15 min).
-    - Answer all 6 question types from memory without preparation.
-    - Rate your confidence on each interviewer signal (1-5):
-        🧠 Technical Depth, 🏭 Production Experience,
-        ⚖️ Trade-off Thinking, 💬 Communication Clarity,
-        🎯 Engineering Judgment
-
-RETRIEVAL UNDER PRESSURE DRILLS:
-  Set a 2-minute timer. Answer one question below with no notes.
-  Simulate interview stress: speak aloud, sit upright.
-  Questions (rotate per session):
-    - "Tell me about a time [KEYWORD] caused you a production problem."
-    - "I prefer [ALTERNATIVE]. Why would you use [KEYWORD] instead?"
-    - "Explain [KEYWORD] assuming I have never heard of it."
-    - "What would you change about [KEYWORD] if you designed it?"
-    - "How does [KEYWORD] behave at 100× your current scale?"
+RULES:
+  - DUAL FORMAT required: ASCII first, then Mermaid, always together
+  - Mermaid type: stateDiagram-v2 for state machines; sequenceDiagram for
+    flows; classDiagram for OO structures; graph TD for DAGs
+  - 4-bullet reading guide always follows the Mermaid block
+  - Do not include for straightforward API-usage topics
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 5: YAML FRONTMATTER — FIELD RULES
@@ -1270,6 +957,10 @@ THE INTERVIEW REALITY TEST:
   ☐ Is the Last-Minute Prep section genuinely
     the 3 things most worth remembering?
 
+    (Note: Last-Minute Prep is no longer a separate section.
+     Check instead: does the 30-second answer serve the same
+     function — i.e., is it genuinely memorisable under pressure?)
+
 ─────────────────────────────────────────────────────────────────────────
 LANGUAGE RULES:
 ─────────────────────────────────────────────────────────────────────────
@@ -1293,58 +984,63 @@ DEPTH CALIBRATION:
 ─────────────────────────────────────────────────────────────────────────
 
   ★☆☆ Foundational:
-    30-second answer: always correct and crisp
-    Junior + Mid answers: fully written out
-    Senior + Staff: brief notes sufficient
-    Production scenarios: 2 simple ones
-    Questions: focus on Type 1, 2, 3
+    Model Answer (4.2): 30-second + 3-minute versions + Blank Mind Recovery
+    Answers by Seniority (4.5): two combined levels, brief
+    Questions & Spoken Answers (4.6): Types 1–3 focus; 2 per type
+    Conditional sections (4.7-4.10): OMIT
 
   ★★☆ Intermediate:
-    All four seniority answers: fully written
-    Production scenarios: 2-3 realistic ones
-    System design: brief connection
-    Questions: all 6 types covered
+    All mandatory sections (4.2-4.6): fully written
+    Comparison (4.7): required
+    Field Q&A (4.8): Production (3+) + Mistakes (4+) + Interviewer Qs (4+)
+      + Live Coding Context (if applicable)
+    Questions (4.6): all 8 types covered; 3 per type
+    Misconception/Trap type: minimum 2 questions
+    Performance & Scalability type: minimum 2 questions
+    System Design (4.9): include only if sd: true in frontmatter
 
   ★★★ Deep-dive:
-    All four seniority answers: fully written
-    Production scenarios: 3-4 detailed ones
-    System design: full section required
-    Whiteboard diagram: include if visual
-    Questions: all 6 types, 3+ each
+    All sections (4.2-4.10): fully written
+    System Design (4.9): always required; scale inflection point +
+      common design traps always present
+    Diagram (4.10): include if mechanism is visual
+    Questions (4.6): all 8 types; 4 per type
+    Misconception/Trap type: minimum 3 questions
+    Performance & Scalability type: minimum 3 questions
 
 ─────────────────────────────────────────────────────────────────────────
-SELF-VALIDATION CHECKLIST (15 items):
+SELF-VALIDATION CHECKLIST (10 items):
 ─────────────────────────────────────────────────────────────────────────
 
   Run this before marking any entry complete:
 
   ☐ 4.1   YAML frontmatter complete and valid. Status = draft, version correct.
-  ☐ 4.2   30-second answer speakable without jargon. Blockquote format.
-  ☐ 4.3   Seniority signal table present. Roles that ask this stated.
-  ☐ 4.4   Concept explanation covers: WHAT / PROBLEM / HOW / KEY INSIGHT /
+           sd: field present if System Design section is included.
+  ☐ 4.2   Model Answer: 30-second + 3-minute versions. Both speakable.
+           Framework (WHAT→WHY→HOW→TRADE-OFF→EXAMPLE) present.
+           Blank Mind Recovery (3-step sequence) present.
+  ☐ 4.3   Concept explanation covers: WHAT / PROBLEM / HOW / KEY INSIGHT /
             WHEN TO USE / WHEN NOT TO USE / ALTERNATIVES / FIRST PRINCIPLES.
-  ☐ 4.5   Four seniority answers written in first person, spoken English.
-            Time-calibrated versions (30s/90s/3min/5min) noted.
-  ☐ 4.6   At least 2 questions per type (Types 1-6) with key points.
-  ☐ 4.7   Answer framework WHAT→WHY→HOW→TRADE-OFF→EXAMPLE present.
-  ☐ 4.8   Comparison table present (if alternatives exist).
-            Deciding factor stated in one sentence.
-  ☐ 4.9   At least 2 production scenarios. Each has diagnostic command.
-            RCA chain and STAR story template provided.
-  ☐ 4.10  At least 4 mistakes in table. Red Flag Detector block present.
-            Dangerous Over-Simplifications block present.
-  ☐ 4.11  At least 3 follow-up questions with depth signal explanations.
-  ☐ 4.12  System design connection present (required for ★★★).
-            6-step framework applied. Staff/Principal thinking block present.
-  ☐ 4.14  Quick Reference Card in exact ASCII box format.
-  ☐ 4.15  Last-Minute Prep has 3 things, recovery language, and interview
-            day execution notes.
-  ☐ 4.16  Spoken Answer Templates for all 6 question types present.
-            Interviewer type adaptation table present.
-  ☐ 4.17  Elite Learning Loop 8-step cycle present.
-            Weakness→Strength progression table present.
-  ☐ 4.18  Deliberate Recall Schedule Day 1/3/7/14/30/60 present.
-            Retrieval Under Pressure drills present.
+  ☐ 4.4   Code Example: 2-3 examples, compiling, idiomatic, with comments.
+           Or explicitly marked OMIT with reason if no non-trivial usage.
+  ☐ 4.5   Two seniority levels (Junior/Mid + Senior/Staff). First person.
+           30-second version present at each level. Staff push-deeper included.
+  ☐ 4.6   All 8 Q-types present (Definition, Mechanism, Comparison, Scenario,
+           Debugging, Deep Dive, Misconception/Trap, Performance & Scalability).
+           Minimums met per depth level (★☆☆: 2; ★★☆: 3; ★★★: 4). 🗣️ template per type.
+           Interviewer type adaptation table at end.
+           Misconception/Trap: ≥2 questions for ★★☆+; omit for ★☆☆.
+           Performance & Scalability: ≥2 questions for ★★☆+; omit for ★☆☆.
+  ☐ 4.7   Comparison (★★☆+): table present. Deciding factor in one sentence.
+           No "Interview tip" or "Bring up proactively" lines.
+  ☐ 4.8   Field Q&A (★★☆+): Production Failures (3+), Candidate Mistakes (4+),
+           Questions to Ask (4+). Live Coding Context present or OMIT with
+           reason. Blank line between every Q and A.
+  ☐ 4.9   System Design (★★★ or sd: true): 6-step framework + Scale Inflection
+           Point + Common System Design Traps (3) + Staff angle.
+           Conditional note present. LLD sketch if applicable.
+  ☐ 4.10  Diagram (★★★ or mechanism-visual): DUAL format (ASCII + Mermaid).
+           Conditional note present. 4-bullet reading guide follows Mermaid.
 
 INTERVIEWER EVALUATION RUBRIC (7 dimensions, 1-10):
 ─────────────────────────────────────────────────────────────────────────
@@ -1371,9 +1067,12 @@ INTERVIEWER EVALUATION RUBRIC (7 dimensions, 1-10):
     1 = Written English. Passive voice. Cannot be spoken.
     10 = First person. Active voice. Speakable at every level.
 
-  D6 — PRACTICE INTEGRATION (1-10):
-    1 = No practice guidance.
-    10 = 8-step learning loop + recall schedule + pressure drills present.
+  D6 — INTERVIEW READINESS (1-10):
+    1 = Spoken templates absent or unnatural; no push-deeper guidance.
+    10 = All 6 Q-type 🗣️ templates genuinely speakable; Section 4.5
+         push-deeper lines enable fluency under follow-up pressure;
+         Section 4.8 Field Q&A drills cover production failures,
+         candidate mistakes, and candidate-initiated questions.
 
   D7 — INTERVIEW SIGNAL COVERAGE (1-10):
     1 = Covers only 🧠 depth signal.
@@ -1389,7 +1088,7 @@ FINAL QUALITY BAR:
 ─────────────────────────────────────────────────────────────────────────
 
   An entry PASSES if:
-    - Self-validation checklist: all 18 items checked
+    - Self-validation checklist: all 10 items checked
     - Evaluator rubric score: >= 49
     - All five interviewer signals represented in Section 4.5
     - No invented facts, API names, benchmarks, or incident details
@@ -1412,7 +1111,8 @@ asked_at: [FAANG | Mid-size | Startup | All]
 seniority: [junior | mid | senior | staff | all]
 tags: #tag1, #tag2, #tag3
 status: draft
-version: 0
+sd: false
+version: 1
 ---
 
 # [ICON] [ID] — [KEYWORD NAME]
@@ -1421,31 +1121,28 @@ version: 0
 
 ---
 
-### ⚡ The 30-Second Answer
+### 🎯 Model Answer
 
-> [3-4 sentences. Speakable. No jargon.
->  What + Why + Example + Key Insight.]
+**30 seconds:**
+> [2-3 spoken sentences. What + Why + Key Insight. No jargon.]
 
----
+**3 minutes (Senior):**
+> [Full spoken answer in first person.
+>  WHAT → WHY → HOW → TRADE-OFF → EXAMPLE.
+>  Ends with the non-obvious insight.]
 
-### 🎯 Why Interviewers Ask This
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
-**What they are really testing:**
-- [underlying skill 1]
-- [underlying skill 2]
-- [underlying skill 3]
+*Adapting up:*   [Senior/Staff extension — system design angle, org impact]
+*Adapting down:* [Junior: WHAT + WHY + EXAMPLE only]
 
-**Roles that ask this most:**
-[Backend / Frontend / All / etc.]
-
-**Seniority signal:**
-
-| Answer Quality | Seniority Signal |
-|---|---|
-| Defines it correctly | Junior |
-| Explains mechanism + example | Mid-level |
-| Trade-offs + failure mode | Senior |
-| System design + org impact | Staff |
+**Blank Mind Recovery:**
+(1) Restate: "So you are asking about [KEYWORD] — let me think through what
+    problem that solves."
+(2) First principles: "From first principles, this domain needs to handle
+    [constraint A] and [constraint B]..."
+(3) Bridge: "This reminds me of [related concept]. [KEYWORD] works
+    similarly/differently because..."
 
 ---
 
@@ -1458,308 +1155,274 @@ version: 0
 [2-3 sentences]
 
 **How it works:**
-[Step-by-step + diagram if helpful]
+[Step-by-step + ASCII diagram if helpful. Max 59 chars wide.]
 
 **The key insight:**
 [1-2 sentences — the non-obvious truth]
 
----
+**When to use it:**
+[Specific conditions]
 
-### 🎓 Interview Answers by Seniority
+**When NOT to use it:**
+[Anti-patterns + simpler alternative]
 
-**Junior Answer (0-2 years):**
-> [Spoken answer in first person]
+**Alternatives:**
+- Alternative A → [one-line distinction]
+- Alternative B → [one-line distinction]
 
-*What makes this answer strong:*
-- [point 1]
-- [point 2]
-
-*What to add if they push deeper:*
-- [follow-up point]
-
----
-
-**Mid-Level Answer (2-5 years):**
-> [Spoken answer in first person]
-
-*What makes this answer strong:*
-- [point 1]
-- [point 2]
-
-*What to add if they push deeper:*
-- [follow-up point]
+**First-principles derivation:**
+[Derive WHY from basic constraints]
 
 ---
 
-**Senior Answer (5-8 years):**
-> [Spoken answer in first person]
+### 💻 Code Example
 
-*What makes this answer strong:*
-- [point 1]
-- [point 2]
+**Example 1: [Basic usage title]**
 
-*What to add if they push deeper:*
-- [follow-up point]
+```java
+[idiomatic code — compiles, with inline comments on non-obvious lines]
+```
 
----
+*Why this matters:* [1-3 sentences]
 
-**Staff Answer (8+ years):**
-> [Spoken answer in first person]
+**Example 2: [Pattern title]**
 
-*What makes this answer strong:*
-- [point 1]
-- [point 2]
+```java
+[code]
+```
 
-*What to add if they push deeper:*
-- [follow-up point]
+*Why this matters:* [1-3 sentences]
 
----
+**Example 3: [Production-realistic title]**
 
-### ❓ Questions You Will Be Asked
+```java
+[code]
+```
 
-**Definition Questions:**
-- "[Question]"
-  → Cover: [key points]
-
-**Mechanism Questions:**
-- "[Question]"
-  → Cover: [key points]
-
-**Comparison Questions:**
-- "[Question]"
-  → Cover: [key points]
-
-**Scenario Questions:**
-- "[Question]"
-  → Cover: [key points]
-
-**Debugging Questions:**
-- "[Question]"
-  → Cover: [key points]
-
-**Deep Dive Questions:**
-- "[Question]"
-  → Cover: [key points]
+*Why this matters:* [1-3 sentences]
 
 ---
 
-### 🏗️ The Answer Framework
+### 🎓 Answers by Seniority
 
-**WHAT → WHY → HOW → TRADE-OFF → EXAMPLE**
+**Junior / Mid (0-5 years):**
+> [30-second version — crisp, spoken, no jargon]
 
-WHAT:   [definition]
-WHY:    [problem solved]
-HOW:    [mechanism]
-TRADE:  [gain vs cost]
-EXAMPLE:[concrete scenario]
+[Optional 1-2 sentence extension for mid-level]
 
-*Adapt the depth:*
-Junior: WHAT + WHY + EXAMPLE
-Mid:    WHAT + WHY + HOW + EXAMPLE
-Senior: All five + failure mode
-Staff:  All five + system design
+*Push deeper:* [What to add if interviewer asks "Can you elaborate?"]
 
 ---
 
-### ⚖️ How It Compares
+**Senior / Staff (5+ years):**
+> [30-second version — same crisp opening]
+
+[Full paragraph: mechanism + trade-off + production angle]
+
+*Push deeper:* [Staff: system design + org impact]
+
+---
+
+### ❓ Questions & Spoken Answers
+
+#### Definition
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template — first person, natural English]"
+
+#### Mechanism
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template]"
+
+#### Comparison
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template]"
+
+#### Scenario
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template]"
+
+#### Debugging
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template]"
+
+#### Deep Dive
+- "[Question 1]"
+- "[Question 2]"
+🗣️ "[Spoken answer template]"
+
+#### Misconception / Trap
+[Include for ★★☆ and above. Omit for ★☆☆.]
+- "[Question framing a common wrong assumption — e.g., Since X is always faster...]"
+- "[Another trap question]"
+🗣️ "[Trap-recognition move: 'Actually, that premise isn't quite right —'
+     then correct and answer the real question. First person, speakable.]"
+
+#### Performance & Scalability
+[Include for ★★☆ and above. Omit for ★☆☆.]
+- "[Question about capacity ceiling, throughput, or saturation point]"
+- "[Question about behaviour at 10x / 100x load, or horizontal scaling]"
+🗣️ "[Scale-framing move: 'At current load X is fine, but at 10x the first
+     thing that saturates is...' First person, with concrete bottleneck
+     identified and cascade described.]"
+
+| Interviewer Type | Emphasis |
+|---|---|
+| Technical Panel  | Lead with mechanism. Use precise terminology. |
+| Hiring Manager   | Lead with business impact. Outcome language. |
+| Bar Raiser       | Lead with trade-offs. What you would NOT use it for. |
+| Peer Engineer    | Collaborative. "The thing I keep finding is..." |
+
+---
+
+### ⚖️ Comparison
+[Include for ★★☆ or above. Omit for ★☆☆.]
 
 | Option | [Dimension 1] | [Dimension 2] | Choose When |
 |---|---|---|---|
 | **[THIS]** | ... | ... | ... |
-| [Alternative A] | ... | ... | ... |
-| [Alternative B] | ... | ... | ... |
+| [Alt A]    | ... | ... | ... |
+| [Alt B]    | ... | ... | ... |
 
 **The deciding factor:**
 [One sentence]
 
-**Interview tip:**
-[How to bring up comparison proactively]
+---
+
+### 🔥 Field Q&A
+[Include for ★★☆ or above. Omit for ★☆☆.]
+
+#### Production Failures
+
+Q: [Scenario or failure question]
+
+A: [Symptom → diagnosis → fix. First person where natural.]
+
+Q: [Scenario or failure question]
+
+A: [Symptom → diagnosis → fix]
+
+Q: [Scenario or failure question]
+
+A: [Symptom → diagnosis → fix]
+
+#### Candidate Mistakes
+
+Q: [Mistake to avoid]
+
+A: [Correct framing]
+
+Q: [Mistake to avoid]
+
+A: [Correct framing]
+
+Q: [Mistake to avoid]
+
+A: [Correct framing]
+
+Q: [Mistake to avoid]
+
+A: [Correct framing]
+
+#### Questions to Ask the Interviewer
+
+Q: "[Smart question]"
+
+*Why:* [Signals depth — 1 sentence]
+*If asked back:* [What to say]
+
+Q: "[Smart question]"
+
+*Why:* [Signals depth]
+*If asked back:* [What to say]
+
+Q: "[Smart question]"
+
+*Why:* [Signals depth]
+*If asked back:* [What to say]
+
+Q: "[Smart question]"
+
+*Why:* [Signals depth]
+*If asked back:* [What to say]
+
+#### Live Coding Context
+[Include when concept has coding round implications. Mark OMIT otherwise.]
+
+Coding question template:
+  [The specific coding challenge this concept generates — e.g.,
+   "Implement a thread-safe bounded queue using this primitive"]
+
+What the interviewer watches:
+  - [Observable behavior #1 — concrete, specific]
+  - [Observable behavior #2]
+  - [Observable behavior #3]
+
+Most common implementation mistake:
+  [Specific coding error most candidates make]
+
+*Why this signals:* [What it reveals about production depth]
 
 ---
 
-### 🔥 Production Scenarios
+### 🏛️ System Design
+[Include for ★★★ or sd: true in frontmatter. Add conditional note below.]
 
-**Scenario 1: [Title]**
-
-Situation:
-[2-3 sentences]
-
-What happened:
-[Technical detail]
-
-How it was diagnosed:
-```bash
-[diagnostic command]
-```
-
-How it was resolved:
-[The fix]
-
-Interview use:
-[How to reference naturally]
-
----
-
-### ⚠️ Common Mistakes Candidates Make
-
-| Mistake | Why It Hurts | Say This Instead |
-|---|---|---|
-| [mistake] | [why penalised] | [correct approach] |
-| [mistake] | [why penalised] | [correct approach] |
-| [mistake] | [why penalised] | [correct approach] |
-| [mistake] | [why penalised] | [correct approach] |
-
----
-
-### 🗣️ Follow-Up Questions to Ask the Interviewer
-
-- "[Question 1]"
-  *Why this signals depth:* [1 sentence]
-
-- "[Question 2]"
-  *Why this signals depth:* [1 sentence]
-
-- "[Question 3]"
-  *Why this signals depth:* [1 sentence]
-
----
-
-### 🏛️ System Design Connections
-[Include for ★★★, include for ★★☆ if relevant]
+> *(Conditional: included because [reason]. Omit for ★☆☆/★★☆ unless sd: true in frontmatter.)*
 
 **Where [KEYWORD] appears in system design:**
 - [scenario 1]
 - [scenario 2]
 
-**How to bring it up naturally:**
-[2-3 sentences]
+**Example question:** [Specific system design question]
 
-**Design decisions it influences:**
-- [decision 1]
-- [decision 2]
+**6-step framework answer:**
+Step 1 CLARIFY  — [requirement questions]
+Step 2 ESTIMATE — [scale estimate]
+Step 3 DESIGN   — [high-level design]
+Step 4 DEEP DIVE— [where THIS concept fits, with trade-offs]
+Step 5 ALTS     — [alternatives considered and rejected]
+Step 6 EVOLVE   — [behaviour at 10× scale]
 
-**Example system design question:**
-[Specific question]
+**Scale inflection point:**
+At [X RPS / Y GB / Z concurrent users], [KEYWORD] becomes the limiting
+factor because [specific reason]. Before that, [simpler alternative]
+is sufficient.
 
-*How [KEYWORD] fits the answer:*
-[2-3 sentences]
+**Common system design traps:**
+- [Trap 1: what candidates typically design wrong and why it fails]
+- [Trap 2]
+- [Trap 3]
+
+**LLD sketch:**
+[ASCII class/component diagram if concept appears in LLD interviews]
+
+**Staff angle:**
+[Cost + org impact + migration plan + when simpler alternative wins]
 
 ---
 
-### 📊 Whiteboard / Diagram
-[Include if commonly drawn in interviews]
+### 📊 Diagram
+[Include for ★★★ or when mechanism requires visual explanation. Add conditional note below.]
+
+> *(Conditional: included because [reason]. Omit for topics where prose makes the mechanism clear.)*
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  [DIAGRAM TITLE]                                        │
-│                                                         │
-│  [ASCII diagram — max 57 chars content width]           │
-└─────────────────────────────────────────────────────────┘
+[ASCII diagram — max 59 chars wide, label every component, show failure path]
 ```
 
-*What to say while drawing:*
-[Speaking script]
+```mermaid
+[Mermaid diagram — same information as ASCII above]
+```
 
----
-
-### 📌 Quick Reference Card
-
-┌──────────────────────────────────────────────────────────┐
-│ ONE-LINE DEF  │ [15-word max]                            │
-├───────────────┼──────────────────────────────────────────┤
-│ PROBLEM       │ [what breaks without it]                 │
-├───────────────┼──────────────────────────────────────────┤
-│ KEY INSIGHT   │ [non-obvious truth]                      │
-├───────────────┼──────────────────────────────────────────┤
-│ USE WHEN      │ [specific condition]                     │
-├───────────────┼──────────────────────────────────────────┤
-│ AVOID WHEN    │ [specific condition]                     │
-├───────────────┼──────────────────────────────────────────┤
-│ TRADE-OFF     │ [gain] vs [cost]                         │
-├───────────────┼──────────────────────────────────────────┤
-│ VS ALTERNATIVE│ [key distinction]                        │
-├───────────────┼──────────────────────────────────────────┤
-│ INTERVIEW TIP │ [one sentence on signalling depth]       │
-└──────────────────────────────────────────────────────────┘
-
----
-
-### 🚀 Last-Minute Prep
-
-**Remember these 3 things:**
-1. [Most important point]
-2. [Most common misconception to avoid]
-3. [Trade-off that signals senior thinking]
-
-**If you blank on the definition, say:**
-> "[Recoverable answer]"
-
-**The example that always works:**
-[One concrete, relatable example]
-
-**One sentence that signals depth:**
-> "[Non-obvious insight]"
-
----
-
-### 🗣️ Spoken Answer Templates
-
-**Template for TYPE 1 (Definition):**
-> "[KEYWORD] is [definition]. It exists because [problem].
-  A simple example is [example]. The key thing is [insight]."
-
-**Template for TYPE 2 (Mechanism):**
-> "When [event], here is what happens step by step: [steps].
-  When this goes wrong, you see [symptom] and diagnose it by [method]."
-
-**Template for TYPE 3 (Comparison):**
-> "Both solve [problem], but differ in [key dimension].
-  I choose [THIS] when [condition]. [ALTERNATIVE] when [other condition]."
-
-**Template for TYPE 4 (Scenario):**
-> "I would reach for [KEYWORD] here because [reasoning].
-  My approach: [steps]. Watch for [failure mode]. Success = [outcome]."
-
-**Template for TYPE 5 (Debugging):**
-> "Most common failure: [failure]. Symptom: [observable].
-  Diagnose: [command/step]. Root cause: [cause]. Fix: [resolution]."
-
-**Template for TYPE 6 (Deep Dive):**
-> "Designed this way because [rationale]. Trade-off: [trade-off].
-  Limitation: [limitation]. At scale: [scale behaviour]."
-
----
-
-### 🔄 Elite Learning Loop
-
-**The 8-Step Cycle:** READ → RECALL → COMPARE → EXPLAIN → DIAGRAM → APPLY → MOCK → TEACH
-
-**Weakness → Strength progression:**
-- WEAK (cannot define):   Do Steps 1-3 three times.
-- OKAY (can define):      Do Steps 4-5 until fluent.
-- SOLID (can explain):    Do Step 6 until story ready.
-- STRONG (story ready):   Do Step 7 for senior answer.
-- ELITE (trade-offs):     Do Step 8 with another person.
-
-**Technical Fluency:** Explain this concept to: junior engineer (2 min) / PM (1 min) / senior (3 min) / staff (5 min).
-
----
-
-### 📅 Deliberate Recall Schedule
-
-**Day 1:**  What is it? What problem? How does it work? Key trade-off? One failure mode?
-**Day 3:**  Mechanism step-by-step. When NOT to use? Closest alternative? Production failure story.
-**Day 7:**  Explain to junior (2 min aloud). System design scenario. 3 interview red flags.
-**Day 14:** Draw mechanism from memory. 3-minute senior answer with story. Bar-raiser question.
-**Day 30:** Full 5-minute staff answer unprompted. Limitations at 10× scale. Compare to alternative.
-**Day 60:** Teach to another engineer (15 min). Answer all 6 question types cold. Rate all 5 signals 1-5.
-
-**Pressure Drill:** Set 2-minute timer. Speak aloud. Rotate per session:
-- "Tell me about a time [KEYWORD] caused a production problem."
-- "I prefer [ALTERNATIVE]. Why would you use [KEYWORD] instead?"
-- "Explain [KEYWORD] assuming I have never heard of it."
-- "What would you change about [KEYWORD] if you designed it?"
-- "How does [KEYWORD] behave at 100× your current scale?"
+- [Reading guide bullet 1: first state/transition explained]
+- [Reading guide bullet 2]
+- [Reading guide bullet 3]
+- [Reading guide bullet 4]
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 8: INVOCATION — HOW TO USE
@@ -1828,34 +1491,66 @@ SELF-VALIDATION CHECKLIST:
 
   Before finalising each entry verify:
 
-  CONTENT:
-  ☐ 30-second answer is speakable, 3-4 sentences
-  ☐ All 4 seniority answers are distinct
-  ☐ Each seniority answer is in first person
-  ☐ Minimum 6 question types covered
-  ☐ Minimum 2 questions per type
-  ☐ Minimum 2 production scenarios
-  ☐ Each scenario has diagnostic command
-  ☐ Mistakes table: minimum 4 rows, 3 columns
-  ☐ Follow-up questions: minimum 3
-  ☐ Last-Minute Prep: exactly 3 points
+  YAML & STRUCTURE:
+  ☐ YAML: all 11 fields present (id, title, category, difficulty,
+           interview_weight, asked_at, seniority, tags, status, sd, version)
+  ☐ status: draft   version: 1   sd: false (or true if System Design included)
+  ☐ No H2 headers (##) inside the entry body
+  ☐ All markdown headers inside the body use ### or ####
 
-  QUALITY:
-  ☐ Sample answers sound natural spoken aloud
-  ☐ Production scenarios are believable
-  ☐ Mistakes are things candidates actually do
-  ☐ System design connection is specific
-  ☐ Quick Reference Card: all 8 rows present
+  MODEL ANSWER (4.2):
+  ☐ 30-second answer: 2-3 spoken sentences, no jargon, speakable aloud
+  ☐ 3-minute answer: first person, WHAT→WHY→HOW→TRADE-OFF→EXAMPLE
+  ☐ Blank Mind Recovery block present (3-step recovery sequence)
+  ☐ Adapting up / Adapting down lines present
 
-  FORMAT:
-  ☐ YAML: all 9 fields present
-  ☐ No H2 headers in entry body
-  ☐ Diagrams: max 59 chars wide
-  ☐ Comparison table: max 4 columns
-  ☐ Blockquotes: 30-second answer
-                 + all seniority answers
-                 + blank recovery line
-                 + depth signal line
+  SENIORITY ANSWERS (4.5):
+  ☐ Two levels only: Junior/Mid + Senior/Staff
+  ☐ 30-second version present at each level, in first person
+  ☐ Push deeper guidance present at each level
+
+  QUESTIONS & SPOKEN ANSWERS (4.6):
+  ☐ All 8 Q-types present: Definition, Mechanism, Comparison,
+    Scenario, Debugging, Deep Dive, Misconception/Trap,
+    Performance & Scalability
+  ☐ Minimums met: ★☆☆ → 2 per type; ★★☆ → 3 per type; ★★★ → 4 per type
+  ☐ Each Q-type has a 🗣️ spoken template immediately below it
+  ☐ Interviewer type adaptation table present at end of section
+  ☐ All 🗣️ templates are in first person and speakable aloud
+
+  CODE EXAMPLE (4.4):
+  ☐ 2-3 examples; code compiles mentally (no invented APIs)
+  ☐ try/finally or equivalent shown for any resource/lock pattern
+  ☐ Or explicitly OMIT with reason if no non-trivial usage
+
+  FIELD Q&A (4.8 — ★★☆ and above):
+  ☐ Production Failures: ≥3 Q&As; each has symptom→diagnosis→fix
+  ☐ Candidate Mistakes: ≥4 Q&As; correct framing given for each
+  ☐ Questions to Ask: ≥4 smart questions with Why and If asked back
+  ☐ Live Coding Context: present if concept has coding round implications
+    (or explicitly OMIT with reason)
+  ☐ Blank line between every Q and its A
+
+  COMPARISON (4.7 — ★★☆ and above):
+  ☐ Table has ≥3 rows; deciding factor in one sentence
+  ☐ No "Interview tip" or "Bring up proactively" lines
+
+  SYSTEM DESIGN (4.9 — ★★★ or sd: true):
+  ☐ 6-step framework present + Staff angle present
+  ☐ Scale inflection point present
+  ☐ Common system design traps (3 bullets) present
+  ☐ Conditional note present
+
+  DIAGRAM (4.10 — ★★★ or mechanism-visual):
+  ☐ DUAL format: ASCII (max 59 chars wide) + Mermaid
+  ☐ 4-bullet reading guide follows Mermaid block
+  ☐ Conditional note present
+
+  FINAL SPEAK TEST:
+  ☐ Read the 30-second answer aloud — does it sound natural?
+  ☐ Read each 🗣️ template aloud — is it speakable under pressure?
+  ☐ Are all production scenarios believable (not hypothetical textbook)?
+  ☐ Are the Candidate Mistakes real things interviewees actually do wrong?
 
 ═══════════════════════════════════════════════════════════════════════════
 END OF TECHNICAL INTERVIEW DICTIONARY GENERATOR v1.0
