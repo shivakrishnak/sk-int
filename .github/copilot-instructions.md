@@ -1,6 +1,6 @@
 # GitHub Copilot - Workspace Instructions
 
-This workspace is **SK Interview** - an interview-focused technical reference with deep Q&A for every concept. Built with **Material for MkDocs** following the **Interview Mastery Dictionary v1.0** spec.
+This workspace is **SK Interview** - an interview-focused technical reference with deep Q&A for every concept. Built with **Just the Docs** (Jekyll) following the **Interview Mastery Dictionary v1.0** spec.
 
 ---
 
@@ -8,9 +8,8 @@ This workspace is **SK Interview** - an interview-focused technical reference wi
 
 ```
 southstar/
-  mkdocs.yml                  Material for MkDocs config
-  requirements.txt            Python dependencies
-  .python-version             3.12
+  _config.yml                 Jekyll/just-the-docs config
+  Gemfile                     Ruby dependencies
   .editorconfig  .gitignore  .markdownlint.json
   README.md  LICENSE  CONTRIBUTING.md
 
@@ -41,8 +40,8 @@ southstar/
       generate-entries.prompt.md     @generate-entries
       scaffold.prompt.md             @scaffold
     workflows/
-      deploy.yml              MkDocs build + GitHub Pages deploy
-    dependabot.yml            Weekly pip + github-actions updates
+      deploy.yml              Jekyll build + GitHub Pages deploy
+    dependabot.yml            Weekly bundler + github-actions updates
 
   .githooks/pre-commit        Local hook (enable via core.hooksPath)
   .vscode/                    Editor settings + recommended extensions
@@ -82,20 +81,22 @@ southstar/
 - Every diagram MUST be followed by `> **Diagram walkthrough:**` (3-5 sentences).
   For DUAL blocks one shared walkthrough after the Mermaid block is sufficient
 - Use `# Keyword Name` as keyword separators within a content file
-  (MkDocs renders the first H1 as the page title; subsequent H1s act
+  (Jekyll renders the first H1 as the page title; subsequent H1s act
   as in-page section anchors)
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - Blockquote (`>`) reserved for: One analogy (Section 5.6), Mental Model
-  (Section 5.9), Code walkthrough, Diagram walkthrough, MkDocs admonitions
+  (Section 5.9), Code walkthrough, Diagram walkthrough, just-the-docs callouts
 - BAD pattern before GOOD pattern in all code examples
 - Every `###` heading preceded by `---` with blank lines
 
 ### YAML (when used in docs/)
 
-- MkDocs does not require frontmatter; use only when overriding page title
-  or attaching custom Material metadata (tags, hide, etc.)
+- Jekyll/just-the-docs does not require frontmatter; use only when
+  overriding page title, setting nav order, or nesting pages
 - If used, file MUST start at byte 0 with `---` (no BOM, no whitespace)
 - Double-quote any title value containing `: ` (colon + space)
+- just-the-docs nav keys: `nav_order`, `parent`, `has_children`,
+  `grand_parent`, `nav_exclude`, `search_exclude`
 
 ### Git Workflow
 

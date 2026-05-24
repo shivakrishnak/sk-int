@@ -16,7 +16,8 @@ description: "Rules for generating and editing Interview Mastery Dictionary v1.0
 
 ```
 southstar/
-  mkdocs.yml                  Material for MkDocs config
+  _config.yml                 Jekyll/just-the-docs config
+  Gemfile                     Ruby dependencies
   docs/                       Published content
     index.md                  Homepage
     {topic}/                  Topic folders
@@ -102,11 +103,46 @@ Full rules for each section are in the Condensed Generation Reference below.
 - No em dashes anywhere - use regular hyphens only
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - Use `# Keyword Name` as keyword separators within content files
-  (MkDocs renders the first H1 as the page title)
+  (Jekyll renders the first H1 as the page title)
 - Every code block followed by `> **Code walkthrough:**` (3-6 sentences:
   what it shows, key mechanism, why it matters, what breaks, takeaway)
 - Every diagram followed by `> **Diagram walkthrough:**` (3-5 sentences).
   For DUAL blocks, one shared walkthrough after the Mermaid block is sufficient
+
+### Blank Mind Recovery Format (Mandatory - R19)
+
+Every keyword Model Answer section MUST include a Blank Mind Recovery block.
+The block appears AFTER the 3-minute blockquote, BEFORE the `---` separator.
+
+**Required format (Format A - standalone block):**
+
+```markdown
+**Blank Mind Recovery:**
+
+**(1) Restate:** "You are asking about [TOPIC] - let me walk through
+[KEY ASPECTS]."
+
+**(2) First principles:** "From first principles, [CORE CONCEPT].
+[KEY CONSTRAINT OR MECHANISM]."
+
+**(3) Bridge:** "[CONCRETE ANALOGY that maps the concept to something
+familiar]."
+```
+
+**Rules (validated by R19):**
+
+- `**Blank Mind Recovery:**` must use bold (`**...**`) - not bare text
+- Step labels must be bold: `**(1) Restate:**`, `**(2) First principles:**`,
+  `**(3) Bridge:**` - never bare `(1) Restate:`
+- Each step must be its own paragraph (blank line between steps)
+- Multiple steps MUST NOT appear on the same line
+- Line max 70 chars (same as all prose)
+
+**Format B (table row - L0/L1 compact format only):**
+
+In L0/L1 files that use the compact Interview Deep-Dive table, "Blank mind
+recovery" (lowercase) appears as the last table row with a one-liner cue.
+This format is intentional for L0/L1 and is NOT checked by R19.
 
 ## Encoding Rules
 
@@ -175,22 +211,23 @@ Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off,
 _"Would an experienced engineer say 'Damn - this is genuinely excellent'?"_
 If uncertain: rewrite.
 
-## File Frontmatter Format (optional in MkDocs)
+## File Frontmatter Format (optional in Jekyll)
 
-MkDocs auto-discovers pages from `docs/` and reads navigation from
-`mkdocs.yml`'s `nav:` block (or alphabetically if `nav:` is omitted).
+Jekyll auto-discovers pages from the `source:` directory (`docs/`).
 Frontmatter is **optional**. When used, the supported keys are:
 
 ```yaml
 ---
 title: "Topic - Subtopic" # Optional - overrides first H1
+nav_order: 1 # Optional - navigation sort position
+parent: "Topic" # Optional - nesting under a parent page
+nav_exclude: false # Optional - hide from nav tree
+search_exclude: false # Optional - hide from search index
 description: "One-line summary" # Optional - meta description
-tags: [tag1, tag2] # Optional - shown via material/tags
-hide: [navigation, toc] # Optional - per-page UI controls
 ---
 ```
 
-**Project-specific keys** (not used by MkDocs, but useful for tooling):
+**Project-specific keys** (not used by Jekyll, useful for tooling):
 
 ```yaml
 ---

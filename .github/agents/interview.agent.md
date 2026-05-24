@@ -214,13 +214,14 @@ in `docs/`
    - Verify level coverage using the Level Coverage Framework above
 6. **Run Keyword Cross-Verification** (see section below)
 7. Create the topic folder: `docs/{topic-name}/` (lowercase, hyphens)
-8. Create `index.md` for the topic folder (frontmatter optional in MkDocs;
-   add only when overriding title or attaching tags):
+8. Create `index.md` for the topic folder (frontmatter optional in Jekyll;
+   add only when overriding title or setting nav order):
 
    ```yaml
    ---
    title: "{Topic Name}"
-   tags: [interview]
+   nav_order: 1
+   has_children: true
    ---
    ```
 
@@ -233,8 +234,7 @@ in `docs/`
     - Then move to next file
 11. Update `docs/index.md` navigation table with new topic row
 12. Update `spec/topics_registry.md` "Active Topics" table
-13. Update `mkdocs.yml` `nav:` block if explicit navigation is used
-14. Track completed files; commit per batch rules (see Commit Strategy)
+13. Track completed files; commit per batch rules (see Commit Strategy)
 
 ### Mode 2 - NEW SUBTOPIC (subtopic of existing topic)
 
@@ -309,7 +309,7 @@ This step is NON-NEGOTIABLE. Never skip it.
 ## Pre-Commit Frontmatter Verification (when frontmatter is used)
 
 When content files use the optional project-specific frontmatter,
-verify before commit. MkDocs itself does not require frontmatter, but
+verify before commit. Jekyll does not require frontmatter, but
 when the `keywords:` list and related fields are present they must be
 consistent.
 
@@ -321,7 +321,7 @@ When used, content files SHOULD have:
 ---
 title: "{Topic} - {Subtopic}" # optional - overrides first H1
 description: "{one-line}" # optional - SEO/meta
-tags: [interview, { topic }] # optional - Material tag pages
+nav_exclude: false # optional - hide from nav tree
 topic: { Topic } # project key
 subtopic: { Subtopic } # project key
 keywords: # required when frontmatter is present
@@ -341,7 +341,8 @@ When used, `docs/{topic}/index.md` SHOULD have:
 ---
 title: "{Topic Name}"
 description: "Interview coverage for {Topic}"
-tags: [interview, { topic }]
+nav_order: 1
+has_children: true
 ---
 ```
 
@@ -467,9 +468,8 @@ When adding new topics, subtopics, or keywords:
 1. **Topic `index.md`**: List all subtopic files with links
 2. **`docs/index.md`**: Add/update the topic row in the navigation table
    - Update Files, Keywords, and Status columns
-3. **`mkdocs.yml`**: If using explicit `nav:`, add the topic
-4. `nav_order` is not used in MkDocs - the `nav:` block in `mkdocs.yml`
-   controls ordering
+3. Navigation order is controlled by `nav_order` in page frontmatter
+   (just-the-docs auto-discovers all pages; no manual nav config required)
 
 ## Scaffold Command (optional - not required for generation)
 
