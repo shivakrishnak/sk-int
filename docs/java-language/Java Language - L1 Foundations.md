@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L1 Foundations"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 2
+permalink: /java-language/l1-foundations/
+---
+
 # Primitives vs References: The Two Type Universes
 
 **TL;DR** - Java has two completely separate type universes: 8
@@ -1461,7 +1470,7 @@ performance interviews.
 > avoid widening and must cast back explicitly.
 >
 > Integer overflow is silent in Java. `int max = Integer.MAX_VALUE;
-> max + 1` produces -2147483648, not an exception. This is a
+max + 1` produces -2147483648, not an exception. This is a
 > well-known source of calendar bugs, index calculation bugs, and
 > financial calculation bugs. Java 8 added `Math.addExact()`,
 > `Math.multiplyExact()` etc. which throw ArithmeticException on
@@ -1479,13 +1488,13 @@ performance interviews.
 (int -> long -> float -> double) -> OVERFLOW (silent, addExact)
 -> SHORT-CIRCUIT (&& vs &, || vs |) -> SHIFT (>>, >>>, <<)
 
-*Adapting up:* The `float` vs `double` precision difference matters
+_Adapting up:_ The `float` vs `double` precision difference matters
 in accumulation: summing 1,000,000 floats gives a different result
 than summing as doubles because float has 7 significant digits of
 precision vs 15 for double. In financial code, neither is correct -
 use BigDecimal with explicit scale and rounding mode.
 
-*Adapting down:* "When you add two bytes, Java converts them to
+_Adapting down:_ "When you add two bytes, Java converts them to
 int first. When you mix int and long in an expression, the int
 becomes a long. Integer overflow wraps silently - no exception."
 
@@ -1651,7 +1660,7 @@ boundary values (-1, MIN_VALUE, MAX_VALUE).
 > `Math.addExact()`, and for exact decimal calculations use
 > BigDecimal, not float or double.
 
-*Push deeper:* The short-circuit behavior of `&&` and `||` means
+_Push deeper:_ The short-circuit behavior of `&&` and `||` means
 code like `if (list != null && list.size() > 0)` is safe: if
 `list` is null, the second condition is never evaluated.
 
@@ -1664,7 +1673,7 @@ code like `if (list != null && list.size() > 0)` is safe: if
 > where both are int. The multiplication overflows before widening.
 > The fix is `(long) count * price`. This appears in financial
 > calculations, date arithmetic, and index calculations. `Math.
-> multiplyExact` is the defensive choice when the domain requires
+multiplyExact` is the defensive choice when the domain requires
 > detecting overflow rather than silently wrapping.
 >
 > For high-performance code doing bit manipulation (hash functions,
@@ -1673,7 +1682,7 @@ code like `if (list != null && list.size() > 0)` is safe: if
 > Using `>>` on negative values fills with 1 bits, which is correct
 > for arithmetic right shift but wrong for logical operations.
 
-*Push deeper:* Java 9+ added `Math.floorDiv` and `Math.floorMod`
+_Push deeper:_ Java 9+ added `Math.floorDiv` and `Math.floorMod`
 for correct modulo with negative numbers. Java's `%` operator
 gives the remainder (can be negative), not true mathematical
 modulo. `(-7) % 3 = -1` in Java; mathematically it should be 2.
@@ -1684,12 +1693,12 @@ For hash distribution or circular buffer indexing, use
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Integer overflow throws an exception" | Java integer overflow silently wraps (two's complement). Only `Math.addExact()` and friends throw ArithmeticException. | Silent overflow produces plausible-looking wrong values in financial or index calculations |
-| 2 | "float is precise enough for currency" | Float has ~7 significant decimal digits; double has ~15. Neither can represent 0.1 exactly in binary. Financial calculations require BigDecimal with explicit scale and rounding mode. | Floating-point rounding errors accumulate in financial calculations |
-| 3 | "byte + byte = byte" | byte + byte = int due to numeric promotion. Assigning back to byte requires an explicit cast. | Compile errors in byte manipulation code; or silent data corruption with explicit cast that truncates |
-| 4 | "&& and & are equivalent for booleans" | `&&` short-circuits (right side not evaluated if left is false); `&` evaluates both sides. The choice matters when the right side has side effects (method call, null check). | Using `&` where `&&` is needed causes NPE when the right side is `null.something` that should have been skipped |
+| #   | Misconception                          | Reality                                                                                                                                                                                | Why It Matters                                                                                                  |
+| --- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1   | "Integer overflow throws an exception" | Java integer overflow silently wraps (two's complement). Only `Math.addExact()` and friends throw ArithmeticException.                                                                 | Silent overflow produces plausible-looking wrong values in financial or index calculations                      |
+| 2   | "float is precise enough for currency" | Float has ~7 significant decimal digits; double has ~15. Neither can represent 0.1 exactly in binary. Financial calculations require BigDecimal with explicit scale and rounding mode. | Floating-point rounding errors accumulate in financial calculations                                             |
+| 3   | "byte + byte = byte"                   | byte + byte = int due to numeric promotion. Assigning back to byte requires an explicit cast.                                                                                          | Compile errors in byte manipulation code; or silent data corruption with explicit cast that truncates           |
+| 4   | "&& and & are equivalent for booleans" | `&&` short-circuits (right side not evaluated if left is false); `&` evaluates both sides. The choice matters when the right side has side effects (method call, null check).          | Using `&` where `&&` is needed causes NPE when the right side is `null.something` that should have been skipped |
 
 ---
 
@@ -1764,23 +1773,23 @@ long total = (long) count * unitPrice; // long multiply
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: explain numeric promotion | 30-45 seconds |
-| Mid: overflow traps and BigDecimal | 2 minutes |
-| Senior: shift operators, Math.floorMod | 3-4 minutes |
-| Staff: performance code, exact arithmetic design | 4-5 minutes |
-| Blank mind recovery | "Bytes promote to int. Integer overflow wraps silently. float is imprecise for money. && short-circuits..." |
+| Signal                                           | Time Guidance                                                                                               |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Junior: explain numeric promotion                | 30-45 seconds                                                                                               |
+| Mid: overflow traps and BigDecimal               | 2 minutes                                                                                                   |
+| Senior: shift operators, Math.floorMod           | 3-4 minutes                                                                                                 |
+| Staff: performance code, exact arithmetic design | 4-5 minutes                                                                                                 |
+| Blank mind recovery                              | "Bytes promote to int. Integer overflow wraps silently. float is imprecise for money. && short-circuits..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"Why can't you assign byte + byte back to a byte without a cast?"*
+_"Why can't you assign byte + byte back to a byte without a cast?"_
 
-*Why they ask:* Tests understanding of numeric promotion, a common
+_Why they ask:_ Tests understanding of numeric promotion, a common
 compile-error surprise.
 
-*Likely follow-up:* "What value would `(byte)(100 + 100)` produce?"
+_Likely follow-up:_ "What value would `(byte)(100 + 100)` produce?"
 
 **Answer:**
 Java's numeric promotion rule states that byte and short operands
@@ -1802,19 +1811,19 @@ binary file reading. When manipulating byte arrays, the pattern is:
 compute as int, then cast back to byte at the assignment site,
 with explicit knowledge of the truncation behavior.
 
-*What separates good from great:* Computing the actual -56 result
+_What separates good from great:_ Computing the actual -56 result
 and explaining the two's complement binary representation. This
 shows understanding of the actual data, not just the rule name.
 
 ---
 
 **Q2 [MID] - MECHANISM**
-*"How does integer overflow work in Java and how do you detect it?"*
+_"How does integer overflow work in Java and how do you detect it?"_
 
-*Why they ask:* Production bug detection - overflow causes incorrect
+_Why they ask:_ Production bug detection - overflow causes incorrect
 calculations in production without any exception.
 
-*Likely follow-up:* "What is Math.addExact and when would you use it?"
+_Likely follow-up:_ "What is Math.addExact and when would you use it?"
 
 **Answer:**
 Java integer arithmetic operates in two's complement arithmetic,
@@ -1836,13 +1845,14 @@ For large integer arithmetic where overflow is a correctness concern:
 overflows - at the cost of heap allocation per operation.
 
 When to use each:
+
 - `Math.addExact` / `multiplyExact`: financial counters, index
   calculations, any domain where overflow = data corruption
 - `BigInteger`: cryptography, arbitrary-precision numeric domains
 - Silent overflow (no check): performance-critical counters where
   wrap-around is acceptable (hash functions, CRC calculations)
 
-*What separates good from great:* Naming the three use-case buckets
+_What separates good from great:_ Naming the three use-case buckets
 (exact, BigInteger, intentional) rather than "always use BigInteger."
 Production engineers choose the tool appropriate to the overflow
 consequence.
@@ -1850,20 +1860,21 @@ consequence.
 ---
 
 **Q3 [MID] - DEBUGGING**
-*"You have `long total = count * price` where both are int.
-Total is coming out negative. What happened and how do you fix it?"*
+_"You have `long total = count _ price` where both are int.
+Total is coming out negative. What happened and how do you fix it?"\*
 
-*Why they ask:* Classic multiply-before-widen overflow trap; common
+_Why they ask:_ Classic multiply-before-widen overflow trap; common
 in financial code.
 
-*Likely follow-up:* "How do you prevent this at code review?"*
+_Likely follow-up:_ "How do you prevent this at code review?"\*
 
 **Answer:**
 The multiplication `count * price` is performed in int arithmetic
+
 - both operands are int, so the result is int. If the product
-exceeds Integer.MAX_VALUE (~2.1 billion), it overflows and wraps
-to a negative value. The widening to long happens AFTER the
-overflow, so `total` gets the wrong (negative) long value.
+  exceeds Integer.MAX_VALUE (~2.1 billion), it overflows and wraps
+  to a negative value. The widening to long happens AFTER the
+  overflow, so `total` gets the wrong (negative) long value.
 
 Fix:
 
@@ -1887,7 +1898,7 @@ At code review: any expression `int * int` assigned to long should
 trigger a comment. The fix is mechanical but easy to miss. A
 SpotBugs custom rule or a checkstyle rule can flag this pattern.
 
-*What separates good from great:* Explaining WHY only the first
+_What separates good from great:_ Explaining WHY only the first
 operand needs the cast (the promotion rules widen the second
 automatically) and suggesting the code review pattern to prevent
 recurrence.
@@ -1895,20 +1906,21 @@ recurrence.
 ---
 
 **Q4 [SENIOR] - PRODUCTION**
-*"Why is `0.1 + 0.2 != 0.3` in Java, and how do you handle
-decimal arithmetic correctly?"*
+_"Why is `0.1 + 0.2 != 0.3` in Java, and how do you handle
+decimal arithmetic correctly?"_
 
-*Why they ask:* Financial calculation correctness - a fundamental
+_Why they ask:_ Financial calculation correctness - a fundamental
 production concern.
 
-*Likely follow-up:* "When is it acceptable to use double for
-numeric calculation?"*
+_Likely follow-up:_ "When is it acceptable to use double for
+numeric calculation?"\*
 
 **Answer:**
 Computers store floating-point numbers in binary. The number 0.1
 (decimal) cannot be represented exactly in binary floating-point
+
 - it is an infinite repeating fraction in binary, truncated to
-the available precision (23 bits for float, 52 bits for double).
+  the available precision (23 bits for float, 52 bits for double).
 
 `0.1 + 0.2` in double precision: both are approximations, and
 their sum is 0.30000000000000004 - not exactly 0.3.
@@ -1938,7 +1950,7 @@ When double is acceptable: physics simulations, statistics,
 graphics where precision to 15 significant digits is sufficient
 and accumulated error is acceptable. Never for monetary values.
 
-*What separates good from great:* Knowing that `new BigDecimal(0.1)`
+_What separates good from great:_ Knowing that `new BigDecimal(0.1)`
 is ALSO wrong (it inherits the double's imprecision). The String
 constructor is the correct initialization. This is the specific
 gotcha that separates engineers who have used BigDecimal in
@@ -1947,13 +1959,13 @@ production from those who read about it.
 ---
 
 **Q5 [SENIOR] - TRADE-OFF**
-*"When would you use `>>>` versus `>>` for right shift?"*
+_"When would you use `>>>` versus `>>` for right shift?"_
 
-*Why they ask:* Tests bit manipulation knowledge for systems,
+_Why they ask:_ Tests bit manipulation knowledge for systems,
 networking, or performance code.
 
-*Likely follow-up:* "How does Java handle unsigned arithmetic
-for byte values?"*
+_Likely follow-up:_ "How does Java handle unsigned arithmetic
+for byte values?"\*
 
 **Answer:**
 `>>` is the signed right shift: it preserves the sign bit (fills
@@ -1967,25 +1979,28 @@ identical to `>>`. For negative numbers, it produces a large
 positive result (the sign bit is shifted out).
 
 Use `>>>` when:
+
 - Manipulating bit patterns (hash functions, CRC, UUID generation)
 - Reading binary protocol data where a field spans a sign boundary
 - Implementing unsigned arithmetic (Java has no native unsigned
   integer type; `>>>` is how you implement unsigned right shift)
 
 Use `>>` when:
+
 - Implementing arithmetic right shift (divide by 2^n)
 - Extending sign for two's complement manipulations
 
 Java has no unsigned int type. For truly unsigned byte/short/int
 values read from binary data, the common pattern is widening with
 masking:
+
 ```java
 int unsignedByte = byteValue & 0xFF;  // 0-255
 int unsignedShort = shortValue & 0xFFFF; // 0-65535
 long unsignedInt = intValue & 0xFFFFFFFFL; // 0-4294967295
 ```
 
-*What separates good from great:* Knowing the unsigned masking
+_What separates good from great:_ Knowing the unsigned masking
 pattern (`& 0xFF`) for working with unsigned bytes from binary
 protocols. Anyone doing networking or binary file parsing uses
 this constantly.
@@ -1993,14 +2008,14 @@ this constantly.
 ---
 
 **Q6 [STAFF] - ARCHITECTURE**
-*"When designing a financial calculation library, what numeric
-type strategy would you choose and why?"*
+_"When designing a financial calculation library, what numeric
+type strategy would you choose and why?"_
 
-*Why they ask:* Tests architectural judgment about numeric type
+_Why they ask:_ Tests architectural judgment about numeric type
 selection for a domain with strict correctness requirements.
 
-*Likely follow-up:* "What is the performance cost of BigDecimal
-vs double at scale?"*
+_Likely follow-up:_ "What is the performance cost of BigDecimal
+vs double at scale?"\*
 
 **Answer:**
 For a financial calculation library, the strategy depends on the
@@ -2034,7 +2049,7 @@ Design rule: declare currency type explicitly in the type system.
 `Money(long cents, Currency currency)` record makes the unit
 explicit and prevents mixing currencies accidentally.
 
-*What separates good from great:* The "represent as integer cents"
+_What separates good from great:_ The "represent as integer cents"
 insight as the primary recommendation, with BigDecimal reserved
 for rate/percentage calculations. Most engineers say "use BigDecimal"
 and stop there; the integer cents approach is what production
@@ -2043,14 +2058,14 @@ financial systems actually use for throughput reasons.
 ---
 
 **Q7 [STAFF] - TRADE-OFF**
-*"Explain the trade-offs between `&&` with a null check guard
-versus a try-catch approach for null safety."*
+_"Explain the trade-offs between `&&` with a null check guard
+versus a try-catch approach for null safety."_
 
-*Why they ask:* Tests understanding of short-circuit evaluation
+_Why they ask:_ Tests understanding of short-circuit evaluation
 and defensive programming patterns.
 
-*Likely follow-up:* "How does Optional change this trade-off in
-modern Java?"*
+_Likely follow-up:_ "How does Optional change this trade-off in
+modern Java?"\*
 
 **Answer:**
 The `&&` null guard pattern:
@@ -2073,6 +2088,7 @@ length. The null is silently ignored - callers may not know what
 happened when the condition was false.
 
 The try-catch approach (anti-pattern for null):
+
 ```java
 try {
     String city = user.getAddress().getCity();
@@ -2086,6 +2102,7 @@ exceptional conditions; null is an expected state. Try-catch for
 null also silently catches unrelated NPEs in the block.
 
 The Optional approach (modern Java):
+
 ```java
 Optional<String> city = Optional.ofNullable(user)
     .map(User::getAddress)
@@ -2100,7 +2117,7 @@ checks. For method return types where absence is a valid state,
 Optional is idiomatic modern Java. For internal null guarding of
 parameters, null checks or Objects.requireNonNull are appropriate.
 
-*What separates good from great:* The clear "exceptions are not
+_What separates good from great:_ The clear "exceptions are not
 for control flow" position on the try-catch approach, and the
 nuanced Optional trade-off (wrapper allocation cost vs. type
 system expressiveness). Senior engineers use Optional for return
@@ -2108,12 +2125,12 @@ types; they do not use it for every intermediate null check.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | Numeric promotion rules, shift operators, overflow detection mechanisms. |
-| Hiring Manager | Financial calculation correctness (BigDecimal), silent overflow in production. |
-| Bar Raiser | Integer-cents for financial performance, unsigned masking pattern, Math.floorMod. |
-| Peer Engineer | "The multiply-before-widen overflow bug hit us in a billing calculation. (long) cast before multiply is now a team rule." |
+| Interviewer Type | Emphasis                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | Numeric promotion rules, shift operators, overflow detection mechanisms.                                                  |
+| Hiring Manager   | Financial calculation correctness (BigDecimal), silent overflow in production.                                            |
+| Bar Raiser       | Integer-cents for financial performance, unsigned masking pattern, Math.floorMod.                                         |
+| Peer Engineer    | "The multiply-before-widen overflow bug hit us in a billing calculation. (long) cast before multiply is now a team rule." |
 
 ---
 
@@ -2180,14 +2197,14 @@ IMPORTS (compile-time only) -> CLASSPATH (runtime search path) ->
 CLASS LOADER HIERARCHY (bootstrap/platform/app) -> EXCEPTIONS
 (ClassNotFoundException vs NoClassDefFoundError)
 
-*Adapting up:* JPMS module-info.java makes the requires/exports
+_Adapting up:_ JPMS module-info.java makes the requires/exports
 graph explicit. A module can only access public classes in packages
 that the owning module explicitly exports. This is the structural
 solution to JAR hell - not just first-on-classpath wins. Spring
 Boot's fat JAR changes the class loading model: a nested-JAR
 classloader loads classes from JARs within the fat JAR.
 
-*Adapting down:* "Packages are like folders. Imports are shortcuts
+_Adapting down:_ "Packages are like folders. Imports are shortcuts
 so you don't have to type the full package name every time.
 ClassNotFoundException means Java can't find the class file at all."
 
@@ -2363,7 +2380,7 @@ Use `jdeps` to analyze class dependencies: `jdeps --list-deps app.jar`.
 > at runtime - typically a dependency that was not included in
 > deployment.
 
-*Push deeper:* The class loader delegation model: when a class is
+_Push deeper:_ The class loader delegation model: when a class is
 requested, the JVM delegates UP to the parent class loader first.
 This prevents application code from accidentally overriding JDK
 classes.
@@ -2390,7 +2407,7 @@ classes.
 > run on the unnamed module (classpath mode) where JAR hell is
 > still possible.
 
-*Push deeper:* Maven dependency mediation: Maven resolves version
+_Push deeper:_ Maven dependency mediation: Maven resolves version
 conflicts by nearest-wins (the version declared closest to the
 root in the dependency tree wins). This is often NOT what you want.
 `mvn dependency:tree` shows the selected version; `mvn
@@ -2401,12 +2418,12 @@ where a selected version is lower than what a dependency requires.
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Import statements affect the bytecode" | Imports are erased at compile time. The bytecode uses fully qualified class names. Imports are purely a source-level convenience for the programmer. | Thinking imports add overhead or change behavior at runtime |
-| 2 | "ClassNotFoundException and NoClassDefFoundError are the same" | CNFE is a checked Exception thrown on explicit Class.forName calls. NCDFE is an Error thrown when the JVM encounters a class reference that was present at compile time but missing at runtime. Different causes, different fixes. | Misdiagnosing the root cause and fixing the wrong problem |
-| 3 | "Adding * to classpath loads all JARs in a directory" | `-classpath "lib/*"` DOES load all JARs in `lib/`. But the order of JAR loading within that wildcard is implementation-defined - which version wins in a conflict is not predictable. | Assuming a specific version is loaded when the classpath has version conflicts |
-| 4 | "Package-private is the weakest access" | Package-private (no modifier) is STRONGER than private within a class hierarchy that spans packages. Private members are inaccessible to subclasses in other packages; package-private members are accessible to all classes in the SAME package. | Misunderstanding access control leads to unintended API exposure |
+| #   | Misconception                                                  | Reality                                                                                                                                                                                                                                           | Why It Matters                                                                 |
+| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 1   | "Import statements affect the bytecode"                        | Imports are erased at compile time. The bytecode uses fully qualified class names. Imports are purely a source-level convenience for the programmer.                                                                                              | Thinking imports add overhead or change behavior at runtime                    |
+| 2   | "ClassNotFoundException and NoClassDefFoundError are the same" | CNFE is a checked Exception thrown on explicit Class.forName calls. NCDFE is an Error thrown when the JVM encounters a class reference that was present at compile time but missing at runtime. Different causes, different fixes.                | Misdiagnosing the root cause and fixing the wrong problem                      |
+| 3   | "Adding \* to classpath loads all JARs in a directory"         | `-classpath "lib/*"` DOES load all JARs in `lib/`. But the order of JAR loading within that wildcard is implementation-defined - which version wins in a conflict is not predictable.                                                             | Assuming a specific version is loaded when the classpath has version conflicts |
+| 4   | "Package-private is the weakest access"                        | Package-private (no modifier) is STRONGER than private within a class hierarchy that spans packages. Private members are inaccessible to subclasses in other packages; package-private members are accessible to all classes in the SAME package. | Misunderstanding access control leads to unintended API exposure               |
 
 ---
 
@@ -2436,7 +2453,7 @@ where a selected version is lower than what a dependency requires.
 **Mode 2: JAR Hell - NoSuchMethodError**
 
 - **Symptom:** `NoSuchMethodError: com.fasterxml.jackson.core
-  .ObjectMapper.readValue(...)` despite Jackson being in
+.ObjectMapper.readValue(...)` despite Jackson being in
   dependencies
 - **Root Cause:** Two Jackson JARs of different versions on the
   classpath; the JVM loaded the older one (which lacks the method)
@@ -2459,7 +2476,7 @@ where a selected version is lower than what a dependency requires.
 **Mode 3: ClassLoader Isolation in Application Servers**
 
 - **Symptom:** Class cast fails: `ClassCastException:
-  com.example.User cannot be cast to com.example.User`
+com.example.User cannot be cast to com.example.User`
   (same class name in the error!)
 - **Root Cause:** The same class was loaded by two different
   classloaders. The JVM treats them as different types. Common
@@ -2481,31 +2498,32 @@ where a selected version is lower than what a dependency requires.
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: define package, import, classpath | 30-45 seconds |
-| Mid: CNFE vs NCDFE difference | 2 minutes |
-| Senior: class loader hierarchy, JAR hell | 3-4 minutes |
-| Staff: JPMS as solution, Spring Boot fat JAR | 5 minutes |
-| Blank mind recovery | "Packages = namespaces. Imports = compile-time only. Classpath = runtime search path. CNFE = missing class. NCDFE = missing at runtime..." |
+| Signal                                       | Time Guidance                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Junior: define package, import, classpath    | 30-45 seconds                                                                                                                              |
+| Mid: CNFE vs NCDFE difference                | 2 minutes                                                                                                                                  |
+| Senior: class loader hierarchy, JAR hell     | 3-4 minutes                                                                                                                                |
+| Staff: JPMS as solution, Spring Boot fat JAR | 5 minutes                                                                                                                                  |
+| Blank mind recovery                          | "Packages = namespaces. Imports = compile-time only. Classpath = runtime search path. CNFE = missing class. NCDFE = missing at runtime..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"What is the classpath and why does it matter?"*
+_"What is the classpath and why does it matter?"_
 
-*Why they ask:* Baseline operational knowledge for every Java
+_Why they ask:_ Baseline operational knowledge for every Java
 developer.
 
-*Likely follow-up:* "What is the difference between ClassNotFoundException
+_Likely follow-up:_ "What is the difference between ClassNotFoundException
 and NoClassDefFoundError?"
 
 **Answer:**
 The classpath is the list of locations - directories and JAR files
+
 - that the JVM searches when it needs to find a class at runtime.
-When your code calls a method on a class, the JVM must load the
-corresponding `.class` file. It looks through each classpath entry
-in order until it finds the class, or throws an error if not found.
+  When your code calls a method on a class, the JVM must load the
+  corresponding `.class` file. It looks through each classpath entry
+  in order until it finds the class, or throws an error if not found.
 
 Without a correct classpath, the JVM cannot find your application's
 classes or its dependencies. This is why Maven and Gradle exist:
@@ -2520,7 +2538,7 @@ the JVM encounters a reference to a class that existed at compile
 time but is missing at runtime - typically a deployment packaging
 error where a dependency JAR was not included.
 
-*What separates good from great:* The deployment-packaging cause
+_What separates good from great:_ The deployment-packaging cause
 of NoClassDefFoundError: "the class was there when Maven compiled
 the code, but when we deployed the fat JAR, that dependency was
 not included." This is the production root cause, not just a
@@ -2529,14 +2547,14 @@ textbook definition.
 ---
 
 **Q2 [MID] - MECHANISM**
-*"Explain the class loader hierarchy and why it matters."*
+_"Explain the class loader hierarchy and why it matters."_
 
-*Why they ask:* Tests depth - the delegation model explains why
+_Why they ask:_ Tests depth - the delegation model explains why
 you cannot override JDK classes and why app server classloader
 isolation works.
 
-*Likely follow-up:* "What is classloader isolation and when does
-it cause ClassCastException?"*
+_Likely follow-up:_ "What is classloader isolation and when does
+it cause ClassCastException?"\*
 
 **Answer:**
 Java's class loader hierarchy has three levels: Bootstrap
@@ -2550,6 +2568,7 @@ parent. The class is loaded by the highest-level loader that can
 find it. This is called parent-first delegation.
 
 Why it matters:
+
 1. Security: you cannot replace `java.lang.String` by putting your
    own String.class on the classpath. Bootstrap always wins.
 2. Shared JDK classes: all application code shares the same JDK
@@ -2565,7 +2584,7 @@ class loaders each load the same class independently. The JVM
 treats them as different types because they came from different
 loaders. This is the "same class name, different type" scenario.
 
-*What separates good from great:* The "same class name in the
+_What separates good from great:_ The "same class name in the
 error" ClassCastException scenario is the specific symptom that
 signals classloader isolation issues. Every Java enterprise
 developer should recognize it.
@@ -2573,13 +2592,13 @@ developer should recognize it.
 ---
 
 **Q3 [MID] - DEBUGGING**
-*"How do you diagnose a NoClassDefFoundError in a production JAR?"*
+_"How do you diagnose a NoClassDefFoundError in a production JAR?"_
 
-*Why they ask:* Tests production debugging skills for a common
+_Why they ask:_ Tests production debugging skills for a common
 deployment failure.
 
-*Likely follow-up:* "How does Maven dependency scope affect what
-is included in the runtime classpath?"*
+_Likely follow-up:_ "How does Maven dependency scope affect what
+is included in the runtime classpath?"\*
 
 **Answer:**
 NoClassDefFoundError means a class was present at compile time
@@ -2608,7 +2627,7 @@ application server has the dependency in its shared library.
 `java -verbose:class -jar app.jar 2>&1 | grep "MessageConverter"`
 shows whether the class is ever loaded and from which JAR.
 
-*What separates good from great:* Knowing the Maven `provided`
+_What separates good from great:_ Knowing the Maven `provided`
 scope as the most common cause of NoClassDefFoundError in Spring
 Boot fat JARs vs WAR deployments. This is the root cause that
 appears in every Java team's history at least once.
@@ -2616,13 +2635,13 @@ appears in every Java team's history at least once.
 ---
 
 **Q4 [SENIOR] - TRADE-OFF**
-*"What is JAR hell and how does JPMS (Java 9 modules) address it?"*
+_"What is JAR hell and how does JPMS (Java 9 modules) address it?"_
 
-*Why they ask:* Tests understanding of the classpath problem and
+_Why they ask:_ Tests understanding of the classpath problem and
 its structural solution.
 
-*Likely follow-up:* "Why does most application code still run on
-the unnamed module (classpath mode) rather than using JPMS?"*
+_Likely follow-up:_ "Why does most application code still run on
+the unnamed module (classpath mode) rather than using JPMS?"\*
 
 **Answer:**
 JAR hell is the classpath version conflict problem: two JARs on
@@ -2638,6 +2657,7 @@ and the first one wins.
 
 JPMS (Java Platform Module System, Java 9) addresses this through
 two mechanisms:
+
 1. Module identity: a module has a name (`com.example.service`)
    and can only appear once on the module path. Duplicate module
    names are rejected at startup.
@@ -2653,7 +2673,7 @@ and frameworks have not fully adopted JPMS. Running without
 "unnamed module," which can read all other modules on the
 classpath - backward compatible but without JPMS isolation benefits.
 
-*What separates good from great:* Knowing that JPMS requires
+_What separates good from great:_ Knowing that JPMS requires
 ALL dependencies to adopt it for the full benefit, and that the
 unnamed module is the pragmatic backward-compatible mode most
 applications use. JPMS is most valuable for library authors and
@@ -2662,13 +2682,13 @@ platform teams, not for typical application code.
 ---
 
 **Q5 [SENIOR] - PRODUCTION**
-*"How does Spring Boot's fat JAR change the class loading model?"*
+_"How does Spring Boot's fat JAR change the class loading model?"_
 
-*Why they ask:* Tests practical knowledge of the most common
+_Why they ask:_ Tests practical knowledge of the most common
 Java deployment format.
 
-*Likely follow-up:* "Why can't you deploy a Spring Boot fat JAR
-to a traditional application server without modification?"*
+_Likely follow-up:_ "Why can't you deploy a Spring Boot fat JAR
+to a traditional application server without modification?"\*
 
 **Answer:**
 A Spring Boot fat JAR (or "executable JAR") embeds all dependency
@@ -2696,7 +2716,7 @@ cannot read the `BOOT-INF/lib` structure - dependencies are not
 found. To deploy to Tomcat, package as a WAR with an appropriate
 `SpringBootServletInitializer` and set dependency scope correctly.
 
-*What separates good from great:* Knowing the `LaunchedURLClassLoader`
+_What separates good from great:_ Knowing the `LaunchedURLClassLoader`
 / `JarLauncher` mechanism and why fat JAR deployment to app servers
 fails at the classloader level. This is the root explanation for
 a common deployment confusion.
@@ -2704,14 +2724,14 @@ a common deployment confusion.
 ---
 
 **Q6 [STAFF] - ARCHITECTURE**
-*"How would you design a plugin architecture in Java that loads
-classes dynamically without JAR hell?"*
+_"How would you design a plugin architecture in Java that loads
+classes dynamically without JAR hell?"_
 
-*Why they ask:* Tests architectural application of class loading
+_Why they ask:_ Tests architectural application of class loading
 knowledge for extensible systems.
 
-*Likely follow-up:* "How does this relate to how application
-servers isolate web applications?"*
+_Likely follow-up:_ "How does this relate to how application
+servers isolate web applications?"\*
 
 **Answer:**
 A plugin architecture requires: (1) discovering plugins at runtime,
@@ -2752,7 +2772,7 @@ This is exactly how Eclipse and IntelliJ IDEA implement their
 plugin systems, and how Java EE application servers isolate web
 applications.
 
-*What separates good from great:* The child-first delegation
+_What separates good from great:_ The child-first delegation
 inversion for plugin isolation and the critical rule about using
 INTERFACE types across classloader boundaries. The structural
 parallel to IDE plugin systems shows this is a well-established
@@ -2761,14 +2781,14 @@ architectural pattern.
 ---
 
 **Q7 [STAFF] - ARCHITECTURE**
-*"How do you prevent and diagnose dependency version conflicts
-in a large Maven project?"*
+_"How do you prevent and diagnose dependency version conflicts
+in a large Maven project?"_
 
-*Why they ask:* Tests practical dependency management discipline
+_Why they ask:_ Tests practical dependency management discipline
 for large Java projects.
 
-*Likely follow-up:* "What is the Bill of Materials (BOM) pattern
-and how does it help?"*
+_Likely follow-up:_ "What is the Bill of Materials (BOM) pattern
+and how does it help?"\*
 
 **Answer:**
 Dependency version conflicts in Maven are solved at three levels:
@@ -2783,6 +2803,7 @@ wins mediation chose a different version.
 Enforcement: Maven Enforcer Plugin with `requireUpperBoundDeps`
 ensures no dependency is resolved to a lower version than what
 its dependents require. Add to CI/CD:
+
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
@@ -2797,6 +2818,7 @@ Alignment: Bill of Materials (BOM) imports align all versions of a
 library family in one declaration. Spring Boot BOM, Jakarta EE BOM,
 AWS SDK BOM. A BOM `<import>` in `<dependencyManagement>` pins all
 versions in that family:
+
 ```xml
 <dependencyManagement>
   <dependencies>
@@ -2815,7 +2837,7 @@ With the Spring Boot BOM imported, any Spring dependency added
 without a version uses the BOM-managed version - consistent,
 tested combination.
 
-*What separates good from great:* The three-level approach
+_What separates good from great:_ The three-level approach
 (visibility, enforcement, alignment) and knowing that the Enforcer
 `requireUpperBoundDeps` rule is the CI/CD gate that prevents
 version regression. Most engineers know `dependency:tree`; the
@@ -2824,12 +2846,12 @@ dependency management system.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | Class loader hierarchy, CNFE vs NCDFE, JAR hell diagnosis. |
-| Hiring Manager | Production deployment packaging failures, dependency management with Maven BOM. |
-| Bar Raiser | Plugin architecture with isolated class loaders, JPMS vs unnamed module trade-offs. |
-| Peer Engineer | "NoClassDefFoundError in production at 2am taught me the difference between compile and runtime scope in Maven." |
+| Interviewer Type | Emphasis                                                                                                         |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | Class loader hierarchy, CNFE vs NCDFE, JAR hell diagnosis.                                                       |
+| Hiring Manager   | Production deployment packaging failures, dependency management with Maven BOM.                                  |
+| Bar Raiser       | Plugin architecture with isolated class loaders, JPMS vs unnamed module trade-offs.                              |
+| Peer Engineer    | "NoClassDefFoundError in production at 2am taught me the difference between compile and runtime scope in Maven." |
 
 ---
 
@@ -2887,14 +2909,14 @@ code review discussions.
 vs expression exhaustiveness) -> LABELED BREAK (nested loop escape)
 -> ANTI-PATTERNS (exceptions as flow, deeply nested conditionals)
 
-*Adapting up:* Switch expression exhaustiveness over sealed classes
+_Adapting up:_ Switch expression exhaustiveness over sealed classes
 is the type-system enforcement of completeness: if you add a new
 subtype to a sealed hierarchy and forget to handle it in a switch
 expression, the code does not compile. This is a compile-time
 safety net replacing runtime `IllegalArgumentException` or silent
 default handling.
 
-*Adapting down:* "Switch fall-through is when execution continues
+_Adapting down:_ "Switch fall-through is when execution continues
 from one case to the next if you forget `break`. Switch expressions
 with `->` prevent this and also require you to handle all cases."
 
@@ -3091,9 +3113,9 @@ a specific condition, not just the inner loop.
 > through and require all cases to be handled. `break` and
 > `continue` in loops exit or skip the current iteration.
 > Labeled break lets you exit a specific outer loop: `break
-> outerLoopLabel`.
+outerLoopLabel`.
 
-*Push deeper:* The yield keyword returns a value from a block arm
+_Push deeper:_ The yield keyword returns a value from a block arm
 in a switch expression - needed when you have multiple statements
 in one case.
 
@@ -3113,7 +3135,7 @@ in one case.
 > must be updated - the compiler enforces this, not the team
 > remembering to update all the places.
 
-*Push deeper:* Guard patterns in switch expressions (Java 21+)
+_Push deeper:_ Guard patterns in switch expressions (Java 21+)
 add conditional refinement: `case String s when s.length() > 5 ->`.
 Combined with record deconstruction patterns, this enables
 type-safe structural matching that was previously only possible
@@ -3123,12 +3145,12 @@ with instanceof chains and explicit casts.
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Why It Matters |
-|---|---------------|---------|----------------|
-| 1 | "Switch fall-through is a bug, not a feature" | Fall-through is intentional for grouping cases (MONDAY and TUESDAY both -> "weekday") but is dangerous when unintentional (missing break). Switch expression arrow syntax eliminates this ambiguity. | Misunderstanding leads to either avoiding switch entirely or introducing bugs with missing breaks |
-| 2 | "break exits the whole method" | `break` exits only the innermost loop or switch. To exit a method, use `return`. To exit a specific outer loop, use a labeled break. | Confusion about break scope; attempting to exit a method with break when return is needed |
-| 3 | "do-while is equivalent to while with the condition moved" | do-while always executes the body AT LEAST ONCE regardless of the condition; while may execute 0 times. They are not interchangeable when the first iteration may need to be skipped. | Using while when do-while is semantically correct (reading user input loop, retry logic) |
-| 4 | "Switch expression requires a default for enums" | A switch expression over a complete enum (all cases covered) or over a sealed type does NOT need a default - the compiler verifies exhaustiveness. Adding default suppresses the exhaustiveness check. | Adding unnecessary default defeats the exhaustiveness guarantee |
+| #   | Misconception                                              | Reality                                                                                                                                                                                                | Why It Matters                                                                                    |
+| --- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| 1   | "Switch fall-through is a bug, not a feature"              | Fall-through is intentional for grouping cases (MONDAY and TUESDAY both -> "weekday") but is dangerous when unintentional (missing break). Switch expression arrow syntax eliminates this ambiguity.   | Misunderstanding leads to either avoiding switch entirely or introducing bugs with missing breaks |
+| 2   | "break exits the whole method"                             | `break` exits only the innermost loop or switch. To exit a method, use `return`. To exit a specific outer loop, use a labeled break.                                                                   | Confusion about break scope; attempting to exit a method with break when return is needed         |
+| 3   | "do-while is equivalent to while with the condition moved" | do-while always executes the body AT LEAST ONCE regardless of the condition; while may execute 0 times. They are not interchangeable when the first iteration may need to be skipped.                  | Using while when do-while is semantically correct (reading user input loop, retry logic)          |
+| 4   | "Switch expression requires a default for enums"           | A switch expression over a complete enum (all cases covered) or over a sealed type does NOT need a default - the compiler verifies exhaustiveness. Adding default suppresses the exhaustiveness check. | Adding unnecessary default defeats the exhaustiveness guarantee                                   |
 
 ---
 
@@ -3213,23 +3235,23 @@ switch (status) {
 
 ### 🎯 Interview Deep-Dive
 
-| Signal | Time Guidance |
-|--------|---------------|
-| Junior: explain switch fall-through | 30-45 seconds |
-| Mid: switch expression vs statement | 2 minutes |
-| Senior: exhaustiveness with sealed classes | 3-4 minutes |
-| Staff: guard patterns, ADT design | 5 minutes |
-| Blank mind recovery | "Switch statements fall through without break. Switch expressions with -> do not fall through and are exhaustive..." |
+| Signal                                     | Time Guidance                                                                                                        |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Junior: explain switch fall-through        | 30-45 seconds                                                                                                        |
+| Mid: switch expression vs statement        | 2 minutes                                                                                                            |
+| Senior: exhaustiveness with sealed classes | 3-4 minutes                                                                                                          |
+| Staff: guard patterns, ADT design          | 5 minutes                                                                                                            |
+| Blank mind recovery                        | "Switch statements fall through without break. Switch expressions with -> do not fall through and are exhaustive..." |
 
 ---
 
 **Q1 [JUNIOR] - CONCEPTUAL**
-*"What is switch fall-through and why is it dangerous?"*
+_"What is switch fall-through and why is it dangerous?"_
 
-*Why they ask:* Tests understanding of the switch statement's
+_Why they ask:_ Tests understanding of the switch statement's
 default behavior and a common source of bugs.
 
-*Likely follow-up:* "How do you prevent fall-through in modern Java?"
+_Likely follow-up:_ "How do you prevent fall-through in modern Java?"
 
 **Answer:**
 Switch fall-through is when execution continues from one case label
@@ -3257,6 +3279,7 @@ inputs, often hard to trace because the code "looks correct."
 Prevention in modern Java: use switch expressions with arrow
 syntax (`->`). Each arrow case is independent - execution never
 falls through to the next:
+
 ```java
 switch (day) {
     case MONDAY  -> System.out.println("Start of week");
@@ -3265,7 +3288,7 @@ switch (day) {
 }
 ```
 
-*What separates good from great:* Mentioning intentional fall-through
+_What separates good from great:_ Mentioning intentional fall-through
 (grouping cases with the same behavior) as the legitimate use case,
 and noting that switch expressions eliminate the ambiguity by making
 all cases independent by syntax.
@@ -3273,13 +3296,13 @@ all cases independent by syntax.
 ---
 
 **Q2 [MID] - COMPARISON**
-*"What is the difference between a switch statement and a switch
-expression? When should you use each?"*
+_"What is the difference between a switch statement and a switch
+expression? When should you use each?"_
 
-*Why they ask:* Tests awareness of modern Java control flow
+_Why they ask:_ Tests awareness of modern Java control flow
 and when to apply it.
 
-*Likely follow-up:* "What is `yield` in a switch expression?"
+_Likely follow-up:_ "What is `yield` in a switch expression?"
 
 **Answer:**
 Switch statements (the traditional form) execute code for a
@@ -3296,6 +3319,7 @@ a switch expression over an enum if any enum constant is missing.
 
 `yield` is used in block arms of switch expressions to return
 a value when you need multiple statements in a case:
+
 ```java
 String msg = switch (code) {
     case 200 -> "OK";
@@ -3313,7 +3337,7 @@ Switch statements are still appropriate for purely imperative
 multi-case dispatch (multiple statements, no return value, and
 intentional fall-through grouping).
 
-*What separates good from great:* Knowing that adding an
+_What separates good from great:_ Knowing that adding an
 unnecessary `default` to a switch expression over an enum
 SUPPRESSES the exhaustiveness check - the compiler stops
 verifying that all cases are covered. Omit `default` when
@@ -3322,14 +3346,14 @@ exhaustiveness is the goal.
 ---
 
 **Q3 [MID] - MECHANISM**
-*"How does exhaustiveness checking in switch expressions work
-with sealed classes?"*
+_"How does exhaustiveness checking in switch expressions work
+with sealed classes?"_
 
-*Why they ask:* Tests knowledge of how switch expressions interact
+_Why they ask:_ Tests knowledge of how switch expressions interact
 with the modern Java type system.
 
-*Likely follow-up:* "What happens when you add a new implementation
-to a sealed interface?"*
+_Likely follow-up:_ "What happens when you add a new implementation
+to a sealed interface?"\*
 
 **Answer:**
 A sealed interface declares the complete set of permitted
@@ -3361,7 +3385,7 @@ variant forces you to handle it everywhere it matters. Compare
 to the switch STATEMENT behavior: missing `Pentagon` in a switch
 statement silently does nothing for Pentagon shapes.
 
-*What separates good from great:* Showing the specific compiler
+_What separates good from great:_ Showing the specific compiler
 error message ("switch expression does not cover all possible
 input values") and explaining that this is the key advantage
 of sealed classes + switch expressions over traditional
@@ -3370,14 +3394,14 @@ polymorphism via inheritance or instanceof chains.
 ---
 
 **Q4 [SENIOR] - TRADE-OFF**
-*"When would you prefer a switch expression with pattern matching
-over traditional polymorphism (virtual dispatch)?"*
+_"When would you prefer a switch expression with pattern matching
+over traditional polymorphism (virtual dispatch)?"_
 
-*Why they ask:* Tests understanding of when the expression
+_Why they ask:_ Tests understanding of when the expression
 problem favors type-based dispatch vs polymorphism.
 
-*Likely follow-up:* "What are the cases where traditional
-polymorphism is still superior?"*
+_Likely follow-up:_ "What are the cases where traditional
+polymorphism is still superior?"\*
 
 **Answer:**
 Switch expressions with pattern matching and virtual dispatch
@@ -3400,17 +3424,19 @@ for both new types AND new operations without one of them requiring
 changes across the codebase.
 
 Choose switch expressions when:
+
 - The set of types is closed (all domain variants known)
 - New operations are added frequently (analytics, serialization,
   transformation pipelines)
 - You want compile-time completeness checking
 
 Choose virtual dispatch when:
+
 - New subtypes are added frequently (plugin architectures, open APIs)
 - Core operations (toString, equals) are few and stable
 - Callers should not need to know the concrete type
 
-*What separates good from great:* Naming the expression problem
+_What separates good from great:_ Naming the expression problem
 explicitly and explaining the two extensibility dimensions. This
 is the framework that turns "switch vs polymorphism" from an
 opinion into an engineering decision with a clear rationale.
@@ -3418,14 +3444,14 @@ opinion into an engineering decision with a clear rationale.
 ---
 
 **Q5 [SENIOR] - PRODUCTION**
-*"Describe a production bug caused by switch fall-through or a
-missing case, and how you would prevent it."*
+_"Describe a production bug caused by switch fall-through or a
+missing case, and how you would prevent it."_
 
-*Why they ask:* Tests whether the candidate has production
+_Why they ask:_ Tests whether the candidate has production
 experience with switch bugs.
 
-*Likely follow-up:* "How would you find all switch statements over
-a specific enum in a large codebase?"*
+_Likely follow-up:_ "How would you find all switch statements over
+a specific enum in a large codebase?"\*
 
 **Answer:**
 Switch fall-through and missing cases produce bugs that are
@@ -3447,18 +3473,22 @@ Prevention strategy:
 
 2. For switch statements that cannot be converted (legacy code),
    add a default that throws:
+
    ```java
    default -> throw new IllegalStateException(
        "Unhandled status: " + status);
    ```
+
    This converts a silent failure to a loud runtime failure.
 
 3. Find all switch statements over a specific enum:
    ArchUnit assertion:
+
    ```java
    // Test that all switch statements over OrderStatus
    // either use switch expression or have a throwing default
    ```
+
    Or use IntelliJ IDEA's "Switch statement with missing case"
    structural search.
 
@@ -3467,7 +3497,7 @@ Prevention strategy:
    the processing method with each - fail if any throws
    IllegalStateException.
 
-*What separates good from great:* The "default throw" pattern
+_What separates good from great:_ The "default throw" pattern
 as the MINIMUM for switch statements that cannot be converted to
 expressions. This converts a silent bug into a loud one - much
 easier to catch and fix.
@@ -3475,14 +3505,14 @@ easier to catch and fix.
 ---
 
 **Q6 [STAFF] - ARCHITECTURE**
-*"How do switch expressions with sealed types and records change
-how you model domain logic in Java 21?"*
+_"How do switch expressions with sealed types and records change
+how you model domain logic in Java 21?"_
 
-*Why they ask:* Staff-level pattern design - ADT-style modeling
+_Why they ask:_ Staff-level pattern design - ADT-style modeling
 in Java.
 
-*Likely follow-up:* "How does this compare to the Visitor pattern
-from traditional OOP?"*
+_Likely follow-up:_ "How does this compare to the Visitor pattern
+from traditional OOP?"\*
 
 **Answer:**
 Records + sealed classes + switch expressions bring algebraic data
@@ -3491,6 +3521,7 @@ a class hierarchy with polymorphism to a closed data type with
 type-dispatched operations.
 
 Traditional OOP model (Visitor pattern):
+
 ```java
 interface Shape { double area(); double perimeter(); }
 class Circle implements Shape { ... }    // all ops in class
@@ -3499,6 +3530,7 @@ class Rectangle implements Shape { ... } // all ops in class
 ```
 
 ADT model (Java 21):
+
 ```java
 sealed interface Shape permits Circle, Rectangle {}
 record Circle(double radius) implements Shape {}
@@ -3528,7 +3560,7 @@ PercentagePayment, TieredPayment), event handling (all events
 known at compile time), ASTs (compiler/interpreter domains),
 and anywhere the type set is closed and operations are open.
 
-*What separates good from great:* Naming the Visitor pattern
+_What separates good from great:_ Naming the Visitor pattern
 explicitly as what this replaces and explaining WHY the Visitor
 pattern existed (adding operations without touching classes).
 The ADT model is the cleaner solution to the same problem when
@@ -3537,13 +3569,13 @@ the type set is closed.
 ---
 
 **Q7 [STAFF] - TRADE-OFF**
-*"When is it appropriate to use exceptions for flow control
-versus returning an error value?"*
+_"When is it appropriate to use exceptions for flow control
+versus returning an error value?"_
 
-*Why they ask:* Tests judgment on the exception-as-flow-control
+_Why they ask:_ Tests judgment on the exception-as-flow-control
 anti-pattern and its legitimate exceptions.
 
-*Likely follow-up:* "How does Optional fit into this decision?"*
+_Likely follow-up:_ "How does Optional fit into this decision?"\*
 
 **Answer:**
 Exceptions should represent exceptional, unexpected conditions -
@@ -3552,6 +3584,7 @@ significant: capturing the stack trace is an expensive operation
 (dozens to hundreds of microseconds).
 
 Never use exceptions for control flow when:
+
 - "Not found" is a normal outcome (use Optional, null, or
   a special-value pattern)
 - Validation failure is expected input (return a validation
@@ -3561,6 +3594,7 @@ Never use exceptions for control flow when:
   was thrown (use if/else instead)
 
 Use exceptions when:
+
 - The condition is truly unexpected and indicates a programming
   error (NullPointerException, IndexOutOfBoundsException)
 - Recovery requires unwinding multiple stack frames (deep library
@@ -3580,7 +3614,7 @@ caught takes ~50-100x longer than an if/else check. In a system
 processing thousands of requests per second, exception-as-flow-
 control is a measurable throughput bottleneck.
 
-*What separates good from great:* The performance numbers and the
+_What separates good from great:_ The performance numbers and the
 "deep unwinding" legitimate use case. Many candidates say "never
 use exceptions for flow control" absolutely; the nuanced answer
 acknowledges that deep non-local failure signaling is a legitimate
@@ -3589,9 +3623,9 @@ control is a performance anti-pattern.
 
 ---
 
-| Interviewer Type | Emphasis |
-|------------------|---------|
-| Technical Panel | Switch expression exhaustiveness, sealed class integration, yield keyword. |
-| Hiring Manager | Switch fall-through bugs in production, prevention via switch expressions. |
-| Bar Raiser | ADT modeling with sealed + records + switch, Visitor pattern replacement, expression problem. |
-| Peer Engineer | "We converted all switch statements over domain enums to switch expressions after a silent missing-case bug cost us a day." |
+| Interviewer Type | Emphasis                                                                                                                    |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Technical Panel  | Switch expression exhaustiveness, sealed class integration, yield keyword.                                                  |
+| Hiring Manager   | Switch fall-through bugs in production, prevention via switch expressions.                                                  |
+| Bar Raiser       | ADT modeling with sealed + records + switch, Visitor pattern replacement, expression problem.                               |
+| Peer Engineer    | "We converted all switch statements over domain enums to switch expressions after a silent missing-case bug cost us a day." |

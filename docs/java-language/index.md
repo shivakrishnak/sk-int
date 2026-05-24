@@ -1,7 +1,11 @@
 ---
+layout: default
 title: "Java Language"
+parent: "SK Interview"
+nav_order: 1
+has_children: true
+permalink: /java-language/
 description: "Interview coverage for Java language features: types, OOP, generics, lambdas, and modern Java (8-21)"
-tags: [interview, java, java-language]
 ---
 
 # Java Language
@@ -24,12 +28,12 @@ compatibility reasoning.
 | [Java Language - L2 Generics and Types](Java%20Language%20-%20L2%20Generics%20and%20Types.md) | L2    | 5        | complete |
 | [Java Language - L2 Functional](Java%20Language%20-%20L2%20Functional.md)                     | L2    | 5        | complete |
 | [Java Language - L3 Type System Depth](Java%20Language%20-%20L3%20Type%20System%20Depth.md)   | L3    | 5        | complete |
-| [Java Language - L3 Modern Java](Java%20Language%20-%20L3%20Modern%20Java.md)                 | L3    | 5        | planned  |
-| Java Language - L4 Language Internals   | L4    | 4        | planned  |
-| Java Language - L5 Architecture                 | L5    | 3        | planned  |
-| Java Language - META Patterns                     | META  | 3        | planned  |
+| [Java Language - L3 Modern Java](Java%20Language%20-%20L3%20Modern%20Java.md)                 | L3    | 5        | complete |
+| [Java Language - L4 Language Internals](Java%20Language%20-%20L4%20Language%20Internals.md)   | L4    | 4        | complete |
+| [Java Language - L5 Architecture](Java%20Language%20-%20L5%20Architecture.md)                 | L5    | 3        | complete |
+| [Java Language - META Patterns](Java%20Language%20-%20META%20Patterns.md)                     | META  | 3        | complete |
 
-**Total: 46 keywords, 10 files**
+**Total: 52 keywords, 10 files**
 
 ---
 
@@ -97,35 +101,35 @@ compatibility reasoning.
 
 ### Java Language - L3 Modern Java
 
-| #   | Keyword                                                          | Difficulty | Status  |
-| --- | ---------------------------------------------------------------- | ---------- | ------- |
-| 1   | Text Blocks: Indentation Stripping and Incidental Whitespace     | medium     | pending |
-| 2   | Switch Expressions: Exhaustiveness, Arrow Syntax, and Yield      | medium     | pending |
-| 3   | var: Local Variable Type Inference and Its Limits                | medium     | pending |
-| 4   | Default and Static Interface Methods: Evolution Without Breaking | medium     | pending |
-| 5   | Structured Concurrency and Scoped Values (Java 21+)              | medium     | pending |
+| #   | Keyword                                                          | Difficulty | Status |
+| --- | ---------------------------------------------------------------- | ---------- | ------ |
+| 1   | Text Blocks: Indentation Stripping and Incidental Whitespace     | medium     | draft  |
+| 2   | Switch Expressions: Exhaustiveness, Arrow Syntax, and Yield      | medium     | draft  |
+| 3   | var: Local Variable Type Inference and Its Limits                | medium     | draft  |
+| 4   | Default and Static Interface Methods: Evolution Without Breaking | medium     | draft  |
+| 5   | Structured Concurrency and Scoped Values (Java 21+)              | medium     | draft  |
 
 ### Java Language - L4 Language Internals
 
-| #   | Keyword                                                               | Difficulty | Status  |
-| --- | --------------------------------------------------------------------- | ---------- | ------- |
-| 1   | Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings      | hard       | pending |
-| 2   | Immutability: Defensive Copies, Unmodifiable Views, Deep Immutability | hard       | pending |
-| 3   | Reflection: Class, Method, Field - Power, Cost, Security              | hard       | pending |
-| 4   | String Pool and Interning: Memory Footprint at Scale                  | hard       | pending |
+| #   | Keyword                                                               | Difficulty | Status |
+| --- | --------------------------------------------------------------------- | ---------- | ------ |
+| 1   | Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings      | hard       | draft  |
+| 2   | Immutability: Defensive Copies, Unmodifiable Views, Deep Immutability | hard       | draft  |
+| 3   | Reflection: Class, Method, Field - Power, Cost, Security              | hard       | draft  |
+| 4   | String Pool and Interning: Memory Footprint at Scale                  | hard       | draft  |
 
 ### Java Language - L5 Architecture
 
-| #   | Keyword                                                        | Difficulty | Status  |
-| --- | -------------------------------------------------------------- | ---------- | ------- |
-| 1   | Backward Compatibility: The Java Social Contract and Its Costs | hard       | pending |
-| 2   | Java Language Specification: Type System Formal Rules          | hard       | pending |
-| 3   | Java Platform Module System: Encapsulation at Module Level     | hard       | pending |
+| #   | Keyword                                                        | Difficulty | Status |
+| --- | -------------------------------------------------------------- | ---------- | ------ |
+| 1   | Backward Compatibility: The Java Social Contract and Its Costs | hard       | draft  |
+| 2   | Java Language Specification: Type System Formal Rules          | hard       | draft  |
+| 3   | Java Platform Module System: Encapsulation at Module Level     | hard       | draft  |
 
 ### Java Language - META Patterns
 
-| #   | Keyword                                                          | Difficulty | Status  |
-| --- | ---------------------------------------------------------------- | ---------- | ------- |
-| 1   | The Billion-Dollar Mistake: Java Null Safety History and Lessons | hard       | pending |
-| 2   | API Design Principles: Effective Java Distilled                  | hard       | pending |
-| 3   | The Expression Problem: Extensibility Trade-offs in OOP vs FP    | hard       | pending |
+| #   | Keyword                                                          | Difficulty | Status |
+| --- | ---------------------------------------------------------------- | ---------- | ------ |
+| 1   | The Billion-Dollar Mistake: Java Null Safety History and Lessons | hard       | draft  |
+| 2   | API Design Principles: Effective Java Distilled                  | hard       | draft  |
+| 3   | The Expression Problem: Extensibility Trade-offs in OOP vs FP    | hard       | draft  |

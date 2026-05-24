@@ -1,7 +1,11 @@
 ---
+layout: default
 title: "Java Core APIs"
+parent: "SK Interview"
+nav_order: 2
+has_children: true
+permalink: /java-core/
 description: "Interview coverage for Java platform APIs: collections, I/O, serialization, reflection, exceptions"
-tags: [interview, java, java-core]
 ---
 
 # Java Core APIs
@@ -15,15 +19,15 @@ generations, serialization security, reflection cost, exception design.
 
 ## Files
 
-| File                                                                                            | Level | Keywords | Status  |
-| ----------------------------------------------------------------------------------------------- | ----- | -------- | ------- |
-| Java Core - L0 Orientation                             | L0    | 4        | planned |
-| Java Core - L1 Foundations                             | L1    | 5        | planned |
-| Java Core - L2 Collections                             | L2    | 5        | planned |
-| Java Core - L2 Collections Advanced         | L2    | 5        | planned |
-| Java Core - L3 Internals                                 | L3    | 5        | planned |
+| File                                   | Level | Keywords | Status  |
+| -------------------------------------- | ----- | -------- | ------- |
+| Java Core - L0 Orientation             | L0    | 4        | planned |
+| Java Core - L1 Foundations             | L1    | 5        | planned |
+| Java Core - L2 Collections             | L2    | 5        | planned |
+| Java Core - L2 Collections Advanced    | L2    | 5        | planned |
+| Java Core - L3 Internals               | L3    | 5        | planned |
 | Java Core - L4 Security and Reflection | L4    | 4        | planned |
-| Java Core - META Patterns                               | META  | 3        | planned |
+| Java Core - META Patterns              | META  | 3        | planned |
 
 **Total: 31 keywords, 7 files**
 

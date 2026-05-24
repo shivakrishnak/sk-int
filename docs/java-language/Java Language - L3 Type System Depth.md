@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L3 Type System Depth"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 6
+permalink: /java-language/l3-type-system-depth/
+---
+
 # Records: Value Semantics and Compact Constructors
 
 **TL;DR** - Records (Java 16) are immutable data carriers. They
@@ -1181,7 +1190,6 @@ without losing type safety.
 type dispatch. Use it over instanceof+cast chains wherever you target
 Java 16+. For full exhaustiveness, combine with sealed classes.
 
-
 ---
 
 ---
@@ -1202,6 +1210,7 @@ and APT/code generation discussions.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Annotations are metadata. `@Retention` controls lifecycle: SOURCE
 > annotations are discarded after compilation, CLASS annotations
 > survive to bytecode, RUNTIME annotations are visible via reflection.
@@ -1209,6 +1218,7 @@ and APT/code generation discussions.
 > field, type, etc.).
 
 **3 minutes (Senior):**
+
 > Every annotation a developer uses - `@Override`, `@Autowired`,
 > `@Entity`, `@JsonProperty` - is backed by a `@interface` definition
 > with retention and target metadata.
@@ -1253,11 +1263,11 @@ public @interface Audited {
 
 **Retention Policies**
 
-| Policy | Survives To | Readable By |
-|--------|-------------|-------------|
-| `SOURCE` | Compilation only | APT processors, IDEs |
-| `CLASS` | Bytecode | Bytecode tools (ASM, Javassist) |
-| `RUNTIME` | JVM runtime | Reflection API |
+| Policy    | Survives To      | Readable By                     |
+| --------- | ---------------- | ------------------------------- |
+| `SOURCE`  | Compilation only | APT processors, IDEs            |
+| `CLASS`   | Bytecode         | Bytecode tools (ASM, Javassist) |
+| `RUNTIME` | JVM runtime      | Reflection API                  |
 
 **Target Element Types**
 
@@ -1366,6 +1376,7 @@ class AuditInterceptor {
 > to the interceptor. No naming convention required. The annotation
 > is visible in IDE autocompletion. If the method is renamed, the
 > annotation moves with it. The interceptor reads only annotated methods
+>
 > - unannotated methods are transparently bypassed.
 
 ```java
@@ -1441,13 +1452,13 @@ overhead."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "Default retention is RUNTIME" | Default is CLASS - bytecode-visible but not loadable via reflection. Most frameworks need RUNTIME explicitly. | Framework annotation not working at runtime |
-| 2 | "@Inherited makes annotation available on all subclasses" | @Inherited only works for class-level annotations. Interface annotations are never inherited. | Assuming subclass inherits method-level annotations |
-| 3 | "Annotation elements can be any type" | Elements must be primitive, String, Class, enum, annotation type, or array of the above. No List, no Map. | Compile error on invalid element type |
-| 4 | "Changing annotation values is free" | Annotation values are constant at compile time. Dynamic values require runtime logic (e.g., Spring SpEL in @Value). | Trying to use expressions directly in annotation elements |
-| 5 | "APT and runtime processing are the same" | APT runs at compile time and generates code. Runtime processors use reflection. Very different costs and use cases. | Confusing Lombok (APT) with Spring AOP (runtime) |
+| #   | Misconception                                             | Reality                                                                                                             | Danger                                                    |
+| --- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| 1   | "Default retention is RUNTIME"                            | Default is CLASS - bytecode-visible but not loadable via reflection. Most frameworks need RUNTIME explicitly.       | Framework annotation not working at runtime               |
+| 2   | "@Inherited makes annotation available on all subclasses" | @Inherited only works for class-level annotations. Interface annotations are never inherited.                       | Assuming subclass inherits method-level annotations       |
+| 3   | "Annotation elements can be any type"                     | Elements must be primitive, String, Class, enum, annotation type, or array of the above. No List, no Map.           | Compile error on invalid element type                     |
+| 4   | "Changing annotation values is free"                      | Annotation values are constant at compile time. Dynamic values require runtime logic (e.g., Spring SpEL in @Value). | Trying to use expressions directly in annotation elements |
+| 5   | "APT and runtime processing are the same"                 | APT runs at compile time and generates code. Runtime processors use reflection. Very different costs and use cases. | Confusing Lombok (APT) with Spring AOP (runtime)          |
 
 ---
 
@@ -1455,47 +1466,49 @@ overhead."
 
 **FM1 - Framework annotation not visible via reflection**
 
-*Symptom:* `method.getAnnotation(MyAnnotation.class)` returns null even
+_Symptom:_ `method.getAnnotation(MyAnnotation.class)` returns null even
 though the annotation is present in source.
 
-*Root Cause:* Missing `@Retention(RetentionPolicy.RUNTIME)`. Default
+_Root Cause:_ Missing `@Retention(RetentionPolicy.RUNTIME)`. Default
 is CLASS - annotation not loaded by reflection API.
 
-*Diagnostic:*
+_Diagnostic:_
+
 ```java
 // Check declared retention
 MyAnnotation.class.getAnnotation(Retention.class)
 // If null or RetentionPolicy.CLASS -> not visible via reflection
 ```
 
-*Fix:* Add `@Retention(RetentionPolicy.RUNTIME)` to the annotation definition.
+_Fix:_ Add `@Retention(RetentionPolicy.RUNTIME)` to the annotation definition.
 
 **FM2 - @Inherited not working on interface annotations**
 
-*Symptom:* Subclass or implementing class does not have expected annotation.
+_Symptom:_ Subclass or implementing class does not have expected annotation.
 
-*Root Cause:* `@Inherited` only applies to class hierarchy (extends),
+_Root Cause:_ `@Inherited` only applies to class hierarchy (extends),
 not interface hierarchy (implements). If the annotation is on an
 interface, implementing classes do NOT inherit it.
 
-*Fix:* Explicitly annotate each implementation, or use a different
+_Fix:_ Explicitly annotate each implementation, or use a different
 mechanism (AOP pointcut on interface) to avoid the inheritance limitation.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Three retention policies + read via reflection |
-| 15 minutes | Custom annotation definition + @Target + @Inherited limits |
-| 30 minutes | APT introduction + Lombok/MapStruct examples + compile vs runtime |
-| Under pressure | "SOURCE=compile tools, CLASS=bytecode, RUNTIME=reflection" |
+| Preparation time | Recommended approach                                              |
+| ---------------- | ----------------------------------------------------------------- |
+| 5 minutes        | Three retention policies + read via reflection                    |
+| 15 minutes       | Custom annotation definition + @Target + @Inherited limits        |
+| 30 minutes       | APT introduction + Lombok/MapStruct examples + compile vs runtime |
+| Under pressure   | "SOURCE=compile tools, CLASS=bytecode, RUNTIME=reflection"        |
 
 **[MID] Q1 - Conceptual**
-*What do @Retention and @Target control on an annotation?*
+_What do @Retention and @Target control on an annotation?_
 
 `@Retention` controls the annotation's lifecycle:
+
 - `RetentionPolicy.SOURCE`: discarded after compilation (compile-time
   tools only)
 - `RetentionPolicy.CLASS`: written to .class bytecode (default; not
@@ -1504,6 +1517,7 @@ mechanism (AOP pointcut on interface) to avoid the inheritance limitation.
   `method.getAnnotation()`
 
 `@Target` controls where the annotation can be applied:
+
 - `ElementType.METHOD`, `TYPE`, `FIELD`, `PARAMETER`, etc.
 - The compiler enforces target at the use site
 
@@ -1515,14 +1529,14 @@ mechanism (AOP pointcut on interface) to avoid the inheritance limitation.
 }
 ```
 
-*What separates good from great:* Knowing the default retention is
+_What separates good from great:_ Knowing the default retention is
 CLASS, not RUNTIME - a common source of "my framework annotation does
 not work" bugs.
 
 ---
 
 **[SENIOR] Q2 - Architecture**
-*How does Spring's @Transactional use annotations internally?*
+_How does Spring's @Transactional use annotations internally?_
 
 `@Transactional` has `@Retention(RetentionPolicy.RUNTIME)`.
 
@@ -1550,27 +1564,30 @@ readOnly, rollbackFor. The framework reads these at runtime for each
 invocation. This is why `@Transactional` on a private method does
 not work - the AOP proxy cannot intercept it.
 
-*What separates good from great:* The private method limitation -
+_What separates good from great:_ The private method limitation -
 it is a direct consequence of how proxy-based AOP reads annotations.
 
 ---
 
 **[STAFF] Q3 - Trade-off**
-*When should you use compile-time annotation processing vs runtime
-reflection?*
+_When should you use compile-time annotation processing vs runtime
+reflection?_
 
 **Use compile-time APT when:**
+
 - Code generation is needed (Lombok, MapStruct, Dagger, AutoFactory)
 - The metadata is fully known at compile time
 - Eliminating reflection overhead matters (Android, embedded)
 - You want compile errors, not runtime failures
 
 **Use runtime reflection when:**
+
 - Dynamic behavior based on deployment configuration
 - Frameworks need to adapt to user-defined classes at startup
 - The full type set is not known at compile time (plugin systems)
 
 **Examples:**
+
 - Lombok `@Data`: APT - generates getters/setters in source
 - Spring `@Autowired`: runtime reflection - wires beans at startup
 - MapStruct `@Mapper`: APT - generates mapper implementation class
@@ -1580,7 +1597,7 @@ reflection?*
 generated code to be checked in or regenerated on build. Runtime
 reflection is flexible but has startup cost and is harder to debug.
 
-*What separates good from great:* Noting that MapStruct vs ModelMapper
+_What separates good from great:_ Noting that MapStruct vs ModelMapper
 is exactly this trade-off: compile-time APT (MapStruct, fast) vs
 runtime reflection (ModelMapper, slower, more magic).
 
@@ -1588,18 +1605,17 @@ runtime reflection (ModelMapper, slower, more magic).
 
 ### ⚖️ Comparison Table
 
-| Aspect | SOURCE Annotation | CLASS Annotation | RUNTIME Annotation |
-|--------|------------------|-----------------|-------------------|
-| Available to | APT processors | Bytecode tools | Reflection API |
-| JVM overhead | None | None | Class loading + reflection |
-| Use cases | Override checks, Lombok | ASM, AspectJ weaving | Spring, JPA, Jackson |
-| Discarded at | Compilation | Class loading | Never |
-| Default | No | Yes | No |
+| Aspect       | SOURCE Annotation       | CLASS Annotation     | RUNTIME Annotation         |
+| ------------ | ----------------------- | -------------------- | -------------------------- |
+| Available to | APT processors          | Bytecode tools       | Reflection API             |
+| JVM overhead | None                    | None                 | Class loading + reflection |
+| Use cases    | Override checks, Lombok | ASM, AspectJ weaving | Spring, JPA, Jackson       |
+| Discarded at | Compilation             | Class loading        | Never                      |
+| Default      | No                      | Yes                  | No                         |
 
 **Deciding factor:** RUNTIME for framework annotations read at
 startup/invocation. SOURCE for compile-time tools and code generation.
 CLASS rarely needed directly - it is the default for bytecode tools.
-
 
 ---
 
@@ -1621,6 +1637,7 @@ Appears in senior-level generics deep-dives and API design discussions.
 ### 🎯 Model Answer
 
 **30 seconds:**
+
 > Covariance allows a more specific type where a general type is expected
 > for reading. `List<? extends Animal>` accepts any `List<Cat>` or
 > `List<Dog>`. You can read Animals from it but cannot add to it.
@@ -1628,6 +1645,7 @@ Appears in senior-level generics deep-dives and API design discussions.
 > that can hold Dogs - you can write but not type-safely read.
 
 **3 minutes (Senior):**
+
 > The problem: in Java, `List<Cat>` is NOT a `List<Animal>` even though
 > `Cat` is an Animal. This is because `List<Animal>` allows adding any
 > Animal (including dogs), but `List<Cat>` cannot hold dogs.
@@ -1692,10 +1710,10 @@ Contravariant wildcard = writing is safe, reading gives Object.
 
 **PECS Mnemonic**
 
-| Role | Wildcard | Can | Cannot |
-|------|----------|-----|--------|
-| Producer (source) | `extends` | read T | write T |
-| Consumer (sink) | `super` | write T | read T (only Object) |
+| Role              | Wildcard  | Can     | Cannot               |
+| ----------------- | --------- | ------- | -------------------- |
+| Producer (source) | `extends` | read T  | write T              |
+| Consumer (sink)   | `super`   | write T | read T (only Object) |
 
 **Collections.copy() - PECS in action**
 
@@ -1851,13 +1869,13 @@ that read and write the same element type without capturing."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-|---|---------------|---------|--------|
-| 1 | "`List<Cat>` is a `List<Animal>` (covariant by default)" | Java generics are invariant by default. `List<Cat>` and `List<Animal>` have no subtype relationship. Wildcards are required for covariant use. | Compile errors from passing List<Cat> where List<Animal> is expected |
-| 2 | "You can add null to `List<? extends T>`" | You can add null to any List. The restriction is on typed elements - you cannot add `new Cat()` to `List<? extends Animal>`. | Unexpected null addition to a covariant list |
-| 3 | "PECS means extends is for writing" | It is the opposite. Extends = reading (producer provides T to you). Super = writing (consumer accepts T from you). | Wrong wildcard choice in method signatures |
-| 4 | "Wildcard `?` and Object are the same" | `List<?>` and `List<Object>` are different. `List<?>` can be any parameterized list. `List<Object>` is specifically a list of Objects - `List<String>` is NOT a `List<Object>`. | Wrong assumption about List<Object> accepting List<String> |
-| 5 | "Contravariant lists give you back the right type" | `List<? super Dog>` gives back Object, not Dog. If you need both read and write, use an invariant parameter `List<T>`. | Unchecked casts when reading from super wildcard |
+| #   | Misconception                                            | Reality                                                                                                                                                                         | Danger                                                               |
+| --- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1   | "`List<Cat>` is a `List<Animal>` (covariant by default)" | Java generics are invariant by default. `List<Cat>` and `List<Animal>` have no subtype relationship. Wildcards are required for covariant use.                                  | Compile errors from passing List<Cat> where List<Animal> is expected |
+| 2   | "You can add null to `List<? extends T>`"                | You can add null to any List. The restriction is on typed elements - you cannot add `new Cat()` to `List<? extends Animal>`.                                                    | Unexpected null addition to a covariant list                         |
+| 3   | "PECS means extends is for writing"                      | It is the opposite. Extends = reading (producer provides T to you). Super = writing (consumer accepts T from you).                                                              | Wrong wildcard choice in method signatures                           |
+| 4   | "Wildcard `?` and Object are the same"                   | `List<?>` and `List<Object>` are different. `List<?>` can be any parameterized list. `List<Object>` is specifically a list of Objects - `List<String>` is NOT a `List<Object>`. | Wrong assumption about List<Object> accepting List<String>           |
+| 5   | "Contravariant lists give you back the right type"       | `List<? super Dog>` gives back Object, not Dog. If you need both read and write, use an invariant parameter `List<T>`.                                                          | Unchecked casts when reading from super wildcard                     |
 
 ---
 
@@ -1865,11 +1883,11 @@ that read and write the same element type without capturing."
 
 **FM1 - Wildcard capture error**
 
-*Symptom:* "capture#1 of ? cannot be applied to capture#1 of ?"
+_Symptom:_ "capture#1 of ? cannot be applied to capture#1 of ?"
 compiler error when trying to set an element to a value read from
 the same list.
 
-*Root Cause:* The compiler treats each `?` occurrence as a potentially
+_Root Cause:_ The compiler treats each `?` occurrence as a potentially
 different type.
 
 ```java
@@ -1892,30 +1910,31 @@ private <T> void swapHelper(List<T> list, int i, int j) {
 
 **FM2 - Over-restrictive API with invariant collections**
 
-*Symptom:* Library users cannot pass `List<Integer>` where `List<Number>`
+_Symptom:_ Library users cannot pass `List<Integer>` where `List<Number>`
 is expected, forcing unnecessary copies.
 
-*Root Cause:* Method parameter declared `List<Number>` instead of
+_Root Cause:_ Method parameter declared `List<Number>` instead of
 `List<? extends Number>` for a read-only operation.
 
-*Diagnostic:* If the method only reads from the list, change to
+_Diagnostic:_ If the method only reads from the list, change to
 `? extends T`. If it only writes, change to `? super T`. Both is invariant `T`.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-|---|---|
-| 5 minutes | Invariance + extends = read + super = write |
-| 15 minutes | PECS + why Cat not subtype of Animal list |
-| 30 minutes | Wildcard capture + Collections.copy internals + declaration vs use-site variance |
-| Under pressure | "Invariant by default; extends=read; super=write; PECS" |
+| Preparation time | Recommended approach                                                             |
+| ---------------- | -------------------------------------------------------------------------------- |
+| 5 minutes        | Invariance + extends = read + super = write                                      |
+| 15 minutes       | PECS + why Cat not subtype of Animal list                                        |
+| 30 minutes       | Wildcard capture + Collections.copy internals + declaration vs use-site variance |
+| Under pressure   | "Invariant by default; extends=read; super=write; PECS"                          |
 
 **[MID] Q1 - Conceptual**
-*Why is `List<Cat>` not a `List<Animal>` in Java?*
+_Why is `List<Cat>` not a `List<Animal>` in Java?_
 
 Because `List<Animal>` allows adding any Animal:
+
 ```java
 List<Animal> animals = ...; // if this were List<Cat>...
 animals.add(new Dog());     // legal for List<Animal>, breaks List<Cat>
@@ -1928,15 +1947,15 @@ invariant: `List<Cat>` and `List<Animal>` have no subtype relationship.
 To allow read-only access up the hierarchy, use `List<? extends Animal>`.
 This is safe because you cannot add to it.
 
-*What separates good from great:* The concrete example of "if it were
+_What separates good from great:_ The concrete example of "if it were
 allowed, this illegal operation would compile" - connecting the rule
 to its motivation.
 
 ---
 
 **[SENIOR] Q2 - Hands-On**
-*Implement a method that copies elements from a source into a destination
-using PECS wildcards.*
+_Implement a method that copies elements from a source into a destination
+using PECS wildcards._
 
 ```java
 <T> void copy(
@@ -1957,16 +1976,17 @@ PECS: source PRODUCES T values -> `extends`. dest CONSUMES T values
 -> `super`. This signature is the most flexible possible while remaining
 type-safe.
 
-*What separates good from great:* Noting that this is exactly the
+_What separates good from great:_ Noting that this is exactly the
 signature of `Collections.copy(dest, src)` in the JDK.
 
 ---
 
 **[STAFF] Q3 - Trade-off**
-*Compare Java use-site variance (wildcards) with Kotlin declaration-site
-variance (in/out). When does each approach win?*
+_Compare Java use-site variance (wildcards) with Kotlin declaration-site
+variance (in/out). When does each approach win?_
 
 **Java wildcards (use-site):**
+
 - Variance declared at each use site (`List<? extends T>`)
 - The API designer writes invariant types; callers apply wildcards
 - More verbose at call sites
@@ -1975,6 +1995,7 @@ variance (in/out). When does each approach win?*
 - Works for any existing type, including JDK collections
 
 **Kotlin declaration-site variance:**
+
 - `out T` on the class declaration means always covariant
 - `in T` means always contravariant
 - Single declaration applies everywhere
@@ -1983,6 +2004,7 @@ variance (in/out). When does each approach win?*
 - Cannot change variance on a type you do not control
 
 **When each wins:**
+
 - Use-site: when using existing types you do not own, when the same
   type needs both co- and contra-variance in different contexts
 - Declaration-site: when designing a new API from scratch where the
@@ -1993,7 +2015,7 @@ Java 8+ added `Stream<T>` which is implicitly covariant in practice
 (you only get T out, never add T in), but the type itself is not
 declared with variance.
 
-*What separates good from great:* The point that declaration-site
+_What separates good from great:_ The point that declaration-site
 variance requires design foresight and is best applied to new APIs -
 not a retrofit for existing types.
 
@@ -2001,12 +2023,12 @@ not a retrofit for existing types.
 
 ### ⚖️ Comparison Table
 
-| Variance | Wildcard | Direction | Read | Write | Example |
-|----------|----------|-----------|------|-------|---------|
-| Invariant | `T` | Neither | T | T | `List<T>` parameter |
-| Covariant | `? extends T` | Subtype UP | T (safe) | No | source/producer |
-| Contravariant | `? super T` | Supertype UP | Object only | T (safe) | dest/consumer |
-| Unbounded | `?` | Both | Object only | null only | wildcard passthrough |
+| Variance      | Wildcard      | Direction    | Read        | Write     | Example              |
+| ------------- | ------------- | ------------ | ----------- | --------- | -------------------- |
+| Invariant     | `T`           | Neither      | T           | T         | `List<T>` parameter  |
+| Covariant     | `? extends T` | Subtype UP   | T (safe)    | No        | source/producer      |
+| Contravariant | `? super T`   | Supertype UP | Object only | T (safe)  | dest/consumer        |
+| Unbounded     | `?`           | Both         | Object only | null only | wildcard passthrough |
 
 **Deciding factor:** Read-only collection parameter -> `? extends T`.
 Write-only collection parameter -> `? super T`. Both read and write ->

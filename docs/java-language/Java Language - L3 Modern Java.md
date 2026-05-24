@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L3 Modern Java"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 7
+permalink: /java-language/l3-modern-java/
+---
+
 # Text Blocks: Indentation Stripping and Incidental Whitespace
 
 **TL;DR** - Text blocks are multi-line string literals delimited by
@@ -1025,7 +1034,6 @@ is lost with `var`.
 **Deciding factor:** Use `var` when type is obvious from right side.
 Use explicit type when the type is the primary documentation.
 
-
 ---
 
 ---
@@ -1055,8 +1063,9 @@ and diamond-problem discussions.
 **3 minutes (Senior):**
 
 > Before Java 8, adding a method to an interface was a breaking change
+>
 > - every existing implementor had to add the new method. This made
-> Java collection framework evolution nearly impossible.
+>   Java collection framework evolution nearly impossible.
 >
 > `default` methods solved this by letting the interface provide a
 > fallback implementation. `Collection.stream()`, `Iterable.forEach()`,
@@ -1187,10 +1196,10 @@ class F extends E implements A {
 
 **Inheritance Priority (Diamond)**
 
-| Winner | Scenario |
-| ------ | -------- |
-| Class method | Always wins over any default |
-| More specific interface | B extends A: B's default wins |
+| Winner                     | Scenario                         |
+| -------------------------- | -------------------------------- |
+| Class method               | Always wins over any default     |
+| More specific interface    | B extends A: B's default wins    |
 | Explicit `Interface.super` | Required when two interfaces tie |
 
 ---
@@ -1326,13 +1335,13 @@ only option."
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception | Reality | Danger |
-| --- | ------------- | ------- | ------ |
-| 1   | "Adding a default method is always non-breaking" | Non-breaking for implementors. If two library interfaces both add the same default, any class implementing both gets a compile error on upgrade. | Diamond collision on library update |
-| 2   | "Static interface methods can be called on instances" | Static interface methods require the interface name: `Validator.nonEmpty()`, not `myValidator.nonEmpty()`. | Compile error |
-| 3   | "default methods make abstract classes obsolete" | Abstract classes still provide: shared state, constructors, non-public API, single-inheritance structure. Defaults cannot have instance state. | Wrong API choice for stateful base classes |
-| 4   | "Interface.super.method() calls the class super" | `Interface.super.method()` calls a specific interface's default, not the class hierarchy's super. | Wrong mental model of resolution order |
-| 5   | "All methods with bodies in interfaces are default" | `static` methods also have bodies but are not `default`. Only `default` participates in inheritance. | Confusing static and default |
+| #   | Misconception                                         | Reality                                                                                                                                          | Danger                                     |
+| --- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| 1   | "Adding a default method is always non-breaking"      | Non-breaking for implementors. If two library interfaces both add the same default, any class implementing both gets a compile error on upgrade. | Diamond collision on library update        |
+| 2   | "Static interface methods can be called on instances" | Static interface methods require the interface name: `Validator.nonEmpty()`, not `myValidator.nonEmpty()`.                                       | Compile error                              |
+| 3   | "default methods make abstract classes obsolete"      | Abstract classes still provide: shared state, constructors, non-public API, single-inheritance structure. Defaults cannot have instance state.   | Wrong API choice for stateful base classes |
+| 4   | "Interface.super.method() calls the class super"      | `Interface.super.method()` calls a specific interface's default, not the class hierarchy's super.                                                | Wrong mental model of resolution order     |
+| 5   | "All methods with bodies in interfaces are default"   | `static` methods also have bodies but are not `default`. Only `default` participates in inheritance.                                             | Confusing static and default               |
 
 ---
 
@@ -1416,12 +1425,12 @@ default void processIfValid(T value) {
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-| ---------------- | -------------------- |
-| 5 minutes | Syntax + backward compatibility purpose |
-| 15 minutes | Add diamond resolution + Comparator examples |
-| 30 minutes | Add library evolution story + abstract class comparison |
-| Under pressure | "default = evolution without breaking; static = interface utility; diamond = class wins or explicit super" |
+| Preparation time | Recommended approach                                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| 5 minutes        | Syntax + backward compatibility purpose                                                                    |
+| 15 minutes       | Add diamond resolution + Comparator examples                                                               |
+| 30 minutes       | Add library evolution story + abstract class comparison                                                    |
+| Under pressure   | "default = evolution without breaking; static = interface utility; diamond = class wins or explicit super" |
 
 **[JUNIOR] Q1 - Conceptual**
 _What problem do default interface methods solve?_
@@ -1439,12 +1448,12 @@ method. Every existing class implementing `Collection` - ArrayList,
 LinkedList, every custom collection - immediately had `.stream()`
 available without a single line of change.
 
-*Why they ask:* Tests whether you understand the motivation behind
+_Why they ask:_ Tests whether you understand the motivation behind
 default methods, not just the syntax.
 
-*Likely follow-up:* "What is the diamond problem with defaults?"
+_Likely follow-up:_ "What is the diamond problem with defaults?"
 
-*What separates good from great:* Connecting the abstract answer
+_What separates good from great:_ Connecting the abstract answer
 ("backward-compatible evolution") to the concrete Java 8 story
 (`Collection.stream()`) and knowing the scale of impact.
 
@@ -1472,12 +1481,12 @@ Both have implementations in the interface body. The distinction:
 `default` is about behavior that implements carry; `static` is about
 factory/utility functions attached to the interface namespace.
 
-*Why they ask:* Separates syntax knowledge from conceptual
+_Why they ask:_ Separates syntax knowledge from conceptual
 understanding of Java 8 interface features.
 
-*Likely follow-up:* "What are `private` methods on interfaces?" (Java 9+)
+_Likely follow-up:_ "What are `private` methods on interfaces?" (Java 9+)
 
-*What separates good from great:* The inheritance distinction - static
+_What separates good from great:_ The inheritance distinction - static
 methods are namespaced utilities, not inherited behavior.
 
 ---
@@ -1510,13 +1519,13 @@ class C implements A, B {
 If C provides its own implementation, no disambiguation is needed:
 the class override always wins over any interface default.
 
-*Why they ask:* Tests the diamond problem resolution rules, which
+_Why they ask:_ Tests the diamond problem resolution rules, which
 are tested in almost every Java 8 interface discussion.
 
-*Likely follow-up:* "Which wins: abstract class method or interface
+_Likely follow-up:_ "Which wins: abstract class method or interface
 default?"
 
-*What separates good from great:* Stating the full hierarchy: (1)
+_What separates good from great:_ Stating the full hierarchy: (1)
 class override wins; (2) more-specific interface wins; (3) tie
 requires `Interface.super.method()`.
 
@@ -1544,13 +1553,13 @@ Decision rule: **if you need state, use an abstract class**. If you
 need multiple inheritance of behavior with no state, use interfaces
 with defaults.
 
-*Why they ask:* This is the core OOP design question disguised as
+_Why they ask:_ This is the core OOP design question disguised as
 a Java 8 question.
 
-*Likely follow-up:* "What if you need both state and multiple
+_Likely follow-up:_ "What if you need both state and multiple
 inheritance?"
 
-*What separates good from great:* The state distinction is the
+_What separates good from great:_ The state distinction is the
 fundamental, irreducible difference. Defaults cannot have instance
 fields.
 
@@ -1580,13 +1589,13 @@ This is the abstract-default layering: `stream()` delegates to
 `spliterator()` which delegates to `iterator()` (the one abstract
 method every collection already implemented).
 
-*Why they ask:* Tests whether you understand the architecture, not
+_Why they ask:_ Tests whether you understand the architecture, not
 just "Java 8 added streams."
 
-*Likely follow-up:* "What would have happened without default methods?"
+_Likely follow-up:_ "What would have happened without default methods?"
 
-*What separates good from great:* The delegation chain - `stream()`
-->  `spliterator()` -> `iterator()`. The abstract method is the
+_What separates good from great:_ The delegation chain - `stream()`
+-> `spliterator()` -> `iterator()`. The abstract method is the
 one thing every implementor must provide; everything else composes
 from it.
 
@@ -1616,13 +1625,13 @@ Mitigations:
 - Semantic versioning: adding defaults is minor (backward-compatible
   for implementors, potentially breaking for users of both interfaces)
 
-*Why they ask:* Tests library design thinking, not just syntax
+_Why they ask:_ Tests library design thinking, not just syntax
 awareness.
 
-*Likely follow-up:* "How would you design an interface for a plugin
+_Likely follow-up:_ "How would you design an interface for a plugin
 system that must evolve?"
 
-*What separates good from great:* The diamond collision scenario -
+_What separates good from great:_ The diamond collision scenario -
 it is breaking for consumers of both interfaces even though only
 one library changed.
 
@@ -1666,12 +1675,12 @@ old one:
 Rule: **new abstract methods go into new interfaces**, never into
 existing ones. This is how `javax` -> `jakarta` API evolution works.
 
-*Why they ask:* Tests API evolution design thinking at staff level.
+_Why they ask:_ Tests API evolution design thinking at staff level.
 
-*Likely follow-up:* "How does this relate to the open/closed
+_Likely follow-up:_ "How does this relate to the open/closed
 principle?"
 
-*What separates good from great:* The "new abstract methods go into
+_What separates good from great:_ The "new abstract methods go into
 new interfaces" rule - this is the key insight that prevents
 accidental breaking changes.
 
@@ -1709,13 +1718,13 @@ contracts as the abstract methods. Concurrent collections have
 different null-key semantics. The `Map` default could not be written
 to handle both correctly.
 
-*Why they ask:* Tests production experience with concurrent code
+_Why they ask:_ Tests production experience with concurrent code
 and API contracts.
 
-*Likely follow-up:* "Why does ConcurrentHashMap not support null
+_Likely follow-up:_ "Why does ConcurrentHashMap not support null
 keys?"
 
-*What separates good from great:* Understanding that defaults are
+_What separates good from great:_ Understanding that defaults are
 "best effort" for the general case - performance-sensitive or
 semantics-sensitive implementations must override.
 
@@ -1756,27 +1765,27 @@ interface Sortable<T extends Comparable<T>> {
 
 This is the Template Method pattern applied to interfaces.
 
-*Why they ask:* Tests depth of understanding beyond "interfaces can
+_Why they ask:_ Tests depth of understanding beyond "interfaces can
 now have method bodies."
 
-*Likely follow-up:* "What is the Template Method pattern?"
+_Likely follow-up:_ "What is the Template Method pattern?"
 
-*What separates good from great:* The Template Method connection
+_What separates good from great:_ The Template Method connection
 and the design smell - defaults that bypass abstract methods.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Feature | abstract class | interface + default |
-| ------- | -------------- | ------------------- |
-| Instance state (fields) | Yes | No |
-| Constructor | Yes | No |
-| Multiple inheritance | No (single) | Yes |
-| Non-public methods | Yes | No (Java 8); private (Java 9+) |
-| Default behavior | Concrete methods | `default` methods |
-| Evolution cost | Adding method = recompile | Adding default = backward-compatible |
-| Diamond problem | N/A | Resolved by rules |
+| Feature                 | abstract class            | interface + default                  |
+| ----------------------- | ------------------------- | ------------------------------------ |
+| Instance state (fields) | Yes                       | No                                   |
+| Constructor             | Yes                       | No                                   |
+| Multiple inheritance    | No (single)               | Yes                                  |
+| Non-public methods      | Yes                       | No (Java 8); private (Java 9+)       |
+| Default behavior        | Concrete methods          | `default` methods                    |
+| Evolution cost          | Adding method = recompile | Adding default = backward-compatible |
+| Diamond problem         | N/A                       | Resolved by rules                    |
 
 **Deciding factor:** Need state or constructor -> abstract class.
 Need multiple inheritance of behavior without state or need
@@ -1956,13 +1965,13 @@ void handleRequest() {
 
 **ThreadLocal vs ScopedValue**
 
-| Property | ThreadLocal | ScopedValue |
-| -------- | ----------- | ----------- |
-| Mutability | Mutable (`set`/`get`) | Immutable within scope |
-| Inheritance | Not inherited by forks | Inherited by child tasks |
-| Cleanup | Manual `remove()` | Automatic at scope end |
-| Thread reuse risk | High (pool context leak) | None (scope-bounded) |
-| Virtual thread fit | Poor at scale | Designed for it |
+| Property           | ThreadLocal              | ScopedValue              |
+| ------------------ | ------------------------ | ------------------------ |
+| Mutability         | Mutable (`set`/`get`)    | Immutable within scope   |
+| Inheritance        | Not inherited by forks   | Inherited by child tasks |
+| Cleanup            | Manual `remove()`        | Automatic at scope end   |
+| Thread reuse risk  | High (pool context leak) | None (scope-bounded)     |
+| Virtual thread fit | Poor at scale            | Designed for it          |
 
 ---
 
@@ -2096,13 +2105,13 @@ and CompletableFuture callback hell."
 
 ### ⚠️ Common Misconceptions
 
-| # | Misconception | Reality | Danger |
-| - | ------------- | ------- | ------ |
-| 1 | "StructuredTaskScope is ExecutorService with auto-shutdown" | Different programming model: scope owns tasks, not executor. Tasks cannot outlive their scope. | Wrong lifetime mental model |
-| 2 | "ScopedValue is just a read-only ThreadLocal" | ScopedValue is lexically scoped AND automatically inherited by child tasks. ThreadLocal is neither. | Missing the inheritance benefit |
-| 3 | "Virtual threads make StructuredTaskScope unnecessary" | Virtual threads are the mechanism (lightweight threads). Structured concurrency is the discipline (task lifecycle). Complementary, not alternatives. | Conflating mechanism with discipline |
-| 4 | "ShutdownOnFailure waits for ALL tasks to fail" | It cancels remaining tasks on the FIRST failure. One failure triggers immediate cancellation of all siblings. | Misunderstanding failure propagation |
-| 5 | "StructuredTaskScope is stable in Java 21" | Preview in Java 21 (JEP 453). Finalized in Java 24 (JEP 505). Using preview API requires `--enable-preview`. | Using unstable API in production |
+| #   | Misconception                                               | Reality                                                                                                                                              | Danger                               |
+| --- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| 1   | "StructuredTaskScope is ExecutorService with auto-shutdown" | Different programming model: scope owns tasks, not executor. Tasks cannot outlive their scope.                                                       | Wrong lifetime mental model          |
+| 2   | "ScopedValue is just a read-only ThreadLocal"               | ScopedValue is lexically scoped AND automatically inherited by child tasks. ThreadLocal is neither.                                                  | Missing the inheritance benefit      |
+| 3   | "Virtual threads make StructuredTaskScope unnecessary"      | Virtual threads are the mechanism (lightweight threads). Structured concurrency is the discipline (task lifecycle). Complementary, not alternatives. | Conflating mechanism with discipline |
+| 4   | "ShutdownOnFailure waits for ALL tasks to fail"             | It cancels remaining tasks on the FIRST failure. One failure triggers immediate cancellation of all siblings.                                        | Misunderstanding failure propagation |
+| 5   | "StructuredTaskScope is stable in Java 21"                  | Preview in Java 21 (JEP 453). Finalized in Java 24 (JEP 505). Using preview API requires `--enable-preview`.                                         | Using unstable API in production     |
 
 ---
 
@@ -2154,12 +2163,12 @@ programmer discipline enforced by code review.
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach |
-| ---------------- | -------------------- |
-| 5 minutes | Scope guarantee + ShutdownOnFailure pattern |
-| 15 minutes | Add ShutdownOnSuccess + ScopedValue vs ThreadLocal |
-| 30 minutes | Add virtual thread relationship + JDK version status |
-| Under pressure | "Tasks can't outlive scope; failure cancels siblings; ScopedValue = immutable inherited ThreadLocal for Loom" |
+| Preparation time | Recommended approach                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| 5 minutes        | Scope guarantee + ShutdownOnFailure pattern                                                                   |
+| 15 minutes       | Add ShutdownOnSuccess + ScopedValue vs ThreadLocal                                                            |
+| 30 minutes       | Add virtual thread relationship + JDK version status                                                          |
+| Under pressure   | "Tasks can't outlive scope; failure cancels siblings; ScopedValue = immutable inherited ThreadLocal for Loom" |
 
 **[JUNIOR] Q1 - Conceptual**
 _What guarantee does StructuredTaskScope provide that ExecutorService
@@ -2179,12 +2188,12 @@ With `StructuredTaskScope`, when the try-with-resources block exits:
 No orphaned tasks. No resource leaks from forgotten futures. No
 silent background work after the logical scope ends.
 
-*Why they ask:* Tests whether you understand the programming model,
+_Why they ask:_ Tests whether you understand the programming model,
 not just the API.
 
-*Likely follow-up:* "How does this relate to virtual threads?"
+_Likely follow-up:_ "How does this relate to virtual threads?"
 
-*What separates good from great:* Framing as a "lifetime guarantee"
+_What separates good from great:_ Framing as a "lifetime guarantee"
 not just "automatic shutdown" - it is about ownership and predictability.
 
 ---
@@ -2192,11 +2201,11 @@ not just "automatic shutdown" - it is about ownership and predictability.
 **[JUNIOR] Q2 - Conceptual**
 _What is the difference between ScopedValue and ThreadLocal?_
 
-| Property | ThreadLocal | ScopedValue |
-| -------- | ----------- | ----------- |
-| Mutability | Mutable (set/remove) | Immutable in scope |
-| Inheritance | Not inherited | Inherited by child tasks |
-| Cleanup | Manual `remove()` | Automatic at scope end |
+| Property    | ThreadLocal          | ScopedValue              |
+| ----------- | -------------------- | ------------------------ |
+| Mutability  | Mutable (set/remove) | Immutable in scope       |
+| Inheritance | Not inherited        | Inherited by child tasks |
+| Cleanup     | Manual `remove()`    | Automatic at scope end   |
 
 The practical differences:
 
@@ -2210,11 +2219,11 @@ The practical differences:
 3. Forgetting `ThreadLocal.remove()` in a thread pool leaks the
    value to the next request. `ScopedValue` has no cleanup.
 
-*Why they ask:* Directly tests Loom knowledge depth.
+_Why they ask:_ Directly tests Loom knowledge depth.
 
-*Likely follow-up:* "When would ThreadLocal still be the right choice?"
+_Likely follow-up:_ "When would ThreadLocal still be the right choice?"
 
-*What separates good from great:* The thread pool leak risk is the
+_What separates good from great:_ The thread pool leak risk is the
 practical reason ThreadLocal is dangerous at scale with virtual threads.
 
 ---
@@ -2255,12 +2264,12 @@ try (var scope =
 `ShutdownOnFailure` when: all subtasks must succeed (fan-in, parallel
 fetch where every result is needed).
 
-*Why they ask:* Tests understanding of the two canonical patterns.
+_Why they ask:_ Tests understanding of the two canonical patterns.
 
-*Likely follow-up:* "What happens if all tasks fail with
+_Likely follow-up:_ "What happens if all tasks fail with
 ShutdownOnSuccess?"
 
-*What separates good from great:* The "latency hedging" terminology
+_What separates good from great:_ The "latency hedging" terminology
 and a concrete production example.
 
 ---
@@ -2296,13 +2305,13 @@ CompletableFuture?_
 - Complex multi-step async pipelines
 - Library code that must be Java 8 compatible
 
-*Why they ask:* Tests whether you can reason about trade-offs rather
+_Why they ask:_ Tests whether you can reason about trade-offs rather
 than just promoting new features.
 
-*Likely follow-up:* "Can you mix CompletableFuture and
+_Likely follow-up:_ "Can you mix CompletableFuture and
 StructuredTaskScope?"
 
-*What separates good from great:* Acknowledging CompletableFuture's
+_What separates good from great:_ Acknowledging CompletableFuture's
 maturity and that structured concurrency is not universally better.
 
 ---
@@ -2332,13 +2341,14 @@ request context (trace ID, user, transaction) to all child tasks.
 This is the "Loom stack": virtual threads + structured tasks +
 scoped values.
 
-*Why they ask:* Tests conceptual depth of the Loom initiative.
+_Why they ask:_ Tests conceptual depth of the Loom initiative.
 
-*Likely follow-up:* "What is Project Loom trying to replace?"
+_Likely follow-up:_ "What is Project Loom trying to replace?"
 
-*What separates good from great:* "Mechanism vs discipline" framing
+_What separates good from great:_ "Mechanism vs discipline" framing
+
 - virtual threads are the runtime mechanism, structured concurrency
-is the programming discipline built on top.
+  is the programming discipline built on top.
 
 ---
 
@@ -2377,11 +2387,11 @@ Challenge: Logback and Log4j2 use `MDC` (ThreadLocal-based) for
 log correlation. Full migration requires framework-level changes.
 Logback 1.5+ added initial ScopedValue support.
 
-*Why they ask:* Tests practical migration knowledge.
+_Why they ask:_ Tests practical migration knowledge.
 
-*Likely follow-up:* "What if you cannot upgrade the logging framework?"
+_Likely follow-up:_ "What if you cannot upgrade the logging framework?"
 
-*What separates good from great:* Knowing the Logback/Log4j2
+_What separates good from great:_ Knowing the Logback/Log4j2
 integration gap is the practical production blocker.
 
 ---
@@ -2430,12 +2440,12 @@ User user = withFallback(
 );
 ```
 
-*Why they ask:* Tests ability to compose structured concurrency
+_Why they ask:_ Tests ability to compose structured concurrency
 primitives into production patterns.
 
-*Likely follow-up:* "How would you add retry logic?"
+_Likely follow-up:_ "How would you add retry logic?"
 
-*What separates good from great:* Using `ShutdownOnSuccess` - the
+_What separates good from great:_ Using `ShutdownOnSuccess` - the
 insight is that the fallback is a success, not a failure. This is
 the key design decision.
 
@@ -2447,12 +2457,12 @@ structured concurrency?_
 
 JDK history:
 
-| JDK | JEP | Status |
-| --- | --- | ------ |
-| 19 | 428 | Incubator module |
-| 21 | 453 | Second preview |
-| 22 | 462 | Third preview |
-| 24 | 505 | **Finalized** |
+| JDK | JEP | Status           |
+| --- | --- | ---------------- |
+| 19  | 428 | Incubator module |
+| 21  | 453 | Second preview   |
+| 22  | 462 | Third preview    |
+| 24  | 505 | **Finalized**    |
 
 Production guidance:
 
@@ -2471,11 +2481,11 @@ the preview API stability and migration path to Java 24 justifies
 adoption. For new services targeting Java 24+, `StructuredTaskScope`
 is the preferred concurrency model for fan-in/fan-out operations.
 
-*Why they ask:* Tests up-to-date knowledge of the JDK roadmap.
+_Why they ask:_ Tests up-to-date knowledge of the JDK roadmap.
 
-*Likely follow-up:* "Is Java 21 or Java 24 the LTS for your team?"
+_Likely follow-up:_ "Is Java 21 or Java 24 the LTS for your team?"
 
-*What separates good from great:* Knowing the exact JEP numbers,
+_What separates good from great:_ Knowing the exact JEP numbers,
 the Java 24 finalization, and the Spring 6.2+ integration.
 
 ---
@@ -2516,23 +2526,23 @@ try (var scope =
 > `InterruptedException` if the waiting thread is interrupted -
 > a different failure mode entirely.
 
-*Why they ask:* Tests the exact exception model, which is non-obvious.
+_Why they ask:_ Tests the exact exception model, which is non-obvious.
 
-*Likely follow-up:* "What is the difference between InterruptedException
+_Likely follow-up:_ "What is the difference between InterruptedException
 from join() and ExecutionException from throwIfFailed()?"
 
-*What separates good from great:* The two-stage model: `join()`
+_What separates good from great:_ The two-stage model: `join()`
 stores the exception, `throwIfFailed()` rethrows it.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| API | Task ownership | Failure handling | Context propagation | Stable since |
-| --- | -------------- | ---------------- | ------------------- | ------------ |
-| Thread / ExecutorService | None | Manual future check | ThreadLocal (leaks) | All Java |
-| CompletableFuture | None | exceptionally() | Manual passing | Java 8 |
-| StructuredTaskScope | Strong (scope owns) | Automatic cancellation | ScopedValue (inherits) | Java 24 |
+| API                      | Task ownership      | Failure handling       | Context propagation    | Stable since |
+| ------------------------ | ------------------- | ---------------------- | ---------------------- | ------------ |
+| Thread / ExecutorService | None                | Manual future check    | ThreadLocal (leaks)    | All Java     |
+| CompletableFuture        | None                | exceptionally()        | Manual passing         | Java 8       |
+| StructuredTaskScope      | Strong (scope owns) | Automatic cancellation | ScopedValue (inherits) | Java 24      |
 
 **Deciding factor:** Use `StructuredTaskScope` with virtual threads
 for new Java 24+ code where fan-in, fan-out, or request-scoped

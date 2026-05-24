@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L2 Functional"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /java-language/l2-functional/
+---
+
 # Lambda Expressions: Syntax, Capture Rules, and Effectively Final
 
 **TL;DR** - Lambdas are anonymous function implementations for

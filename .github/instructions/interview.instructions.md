@@ -211,44 +211,75 @@ Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off,
 _"Would an experienced engineer say 'Damn - this is genuinely excellent'?"_
 If uncertain: rewrite.
 
-## File Frontmatter Format (optional in Jekyll)
+## File Frontmatter (Required for Navigation)
 
-Jekyll auto-discovers pages from the `source:` directory (`docs/`).
-Frontmatter is **optional**. When used, the supported keys are:
+Every file under `docs/` MUST start with a frontmatter block.
+Frontmatter drives the just-the-docs sidebar navigation hierarchy.
+Without it, pages render as plain Markdown with no sidebar entry.
 
-```yaml
----
-title: "Topic - Subtopic" # Optional - overrides first H1
-nav_order: 1 # Optional - navigation sort position
-parent: "Topic" # Optional - nesting under a parent page
-nav_exclude: false # Optional - hide from nav tree
-search_exclude: false # Optional - hide from search index
-description: "One-line summary" # Optional - meta description
----
-```
-
-**Project-specific keys** (not used by Jekyll, useful for tooling):
+### Root index (`docs/index.md`)
 
 ```yaml
 ---
-topic: Java
-subtopic: Collections
-keywords: # Informational - authoritative source is {topic}/index.md Registry
-  - Keyword One
-  - Keyword Two
-difficulty_range: easy | medium | hard
-status: in-progress | complete
-version: 1
+layout: default
+title: "SK Interview"
+nav_order: 1
+has_children: true
+permalink: /
 ---
 ```
 
-### Frontmatter Rules (when used)
+### Topic index (`docs/{topic}/index.md`)
 
-- File starts at byte 0 with `---` (no BOM, no whitespace)
-- `title` quoted if it contains `: ` (colon + space)
-- `keywords` list of 3-5 items, must match `# KEYWORD` headings in file
-- `status` is `complete` when all keywords filled, else `in-progress`
-- `version` always `1` - matches SPEC_VERSION constant
+```yaml
+---
+layout: default
+title: "Java Language" # matches the folder's display name
+parent: "SK Interview"
+nav_order: N # 1=java-language 2=java-core 3=java-jvm 4=java-concurrency 5=java-performance
+has_children: true
+permalink: /{topic-slug}/
+description: "One-line summary" # optional - used by SEO plugin
+---
+```
+
+### Content file (`docs/{topic}/{File}.md`)
+
+```yaml
+---
+layout: default
+title: "Java Language - L0 Orientation" # "{Topic} - {Subtopic}"
+parent: "Java Language" # must match topic index title exactly
+grand_parent: "SK Interview" # must match root title exactly
+nav_order: N # position within topic folder (1-based)
+permalink: /{topic-slug}/{file-slug}/ # kebab-case slug
+---
+```
+
+### Frontmatter Rules (Non-Negotiable)
+
+- File MUST start at byte 0 with `---` (no BOM, no leading whitespace)
+- `title` must be quoted when it contains `: ` (colon + space)
+- `parent` value must match the `title` of the parent page exactly
+- `grand_parent` value must match the `title` of the grandparent page exactly
+- `permalink` uses kebab-case: `L0 Orientation` -> `l0-orientation`
+- `layout: default` is required on every page for theme rendering
+- `has_children: true` is required on every page that has child pages
+- Do NOT add metadata keys (`keywords`, `status`, `difficulty_range`, etc.) -
+  these are not used by just-the-docs and add noise to frontmatter
+
+### nav_order Reference
+
+| nav_order | Topic            |
+| --------- | ---------------- |
+| 1         | Java Language    |
+| 2         | Java Core APIs   |
+| 3         | Java JVM         |
+| 4         | Java Concurrency |
+| 5         | Java Performance |
+
+Within each topic folder, content files are numbered 1-N in level order
+(L0=1, L1=2, L2 files=3-5, L3 files=6-7, L4=8, L5=9, META=10).
 
 ### Batch Commit Rules (Non-Negotiable)
 

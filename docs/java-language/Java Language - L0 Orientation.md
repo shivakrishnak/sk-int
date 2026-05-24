@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L0 Orientation"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 1
+permalink: /java-language/l0-orientation/
+---
+
 # Why Java? Design Philosophy and Guiding Principles
 
 **TL;DR** - Java was built for safety, portability, and large-team

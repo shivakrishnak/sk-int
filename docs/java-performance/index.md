@@ -1,7 +1,11 @@
 ---
+layout: default
 title: "Java Performance"
+parent: "SK Interview"
+nav_order: 5
+has_children: true
+permalink: /java-performance/
 description: "Interview coverage for Java performance: JFR, async-profiler, GC tuning, heap analysis, JVM flags"
-tags: [interview, java, java-performance]
 ---
 
 # Java Performance
@@ -17,12 +21,12 @@ performance testing.
 
 ## Files
 
-| File                                                                                                      | Level   | Keywords | Status  |
-| --------------------------------------------------------------------------------------------------------- | ------- | -------- | ------- |
-| Java Performance - L0 Orientation                         | L0      | 4        | planned |
-| Java Performance - L2 Profiling                             | L2      | 5        | planned |
-| Java Performance - L3 GC Tuning                           | L3      | 5        | planned |
-| Java Performance - L4 Advanced Diagnostics     | L4      | 5        | planned |
+| File                                        | Level   | Keywords | Status  |
+| ------------------------------------------- | ------- | -------- | ------- |
+| Java Performance - L0 Orientation           | L0      | 4        | planned |
+| Java Performance - L2 Profiling             | L2      | 5        | planned |
+| Java Performance - L3 GC Tuning             | L3      | 5        | planned |
+| Java Performance - L4 Advanced Diagnostics  | L4      | 5        | planned |
 | Java Performance - L5 Architecture and META | L5+META | 4        | planned |
 
 **Total: 23 keywords, 5 files**

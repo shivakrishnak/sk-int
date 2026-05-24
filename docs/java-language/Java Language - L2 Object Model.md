@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L2 Object Model"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /java-language/l2-object-model/
+---
+
 # Classes, Abstract Classes, and Interfaces: When to Use Which
 
 **TL;DR** - Interfaces define behavioral contracts; abstract classes share

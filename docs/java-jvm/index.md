@@ -1,7 +1,11 @@
 ---
+layout: default
 title: "Java JVM"
+parent: "SK Interview"
+nav_order: 3
+has_children: true
+permalink: /java-jvm/
 description: "Interview coverage for JVM internals: class loading, garbage collection, JIT, bytecode, memory model"
-tags: [interview, java, java-jvm]
 ---
 
 # Java JVM
@@ -15,16 +19,16 @@ algorithm trade-offs, JIT optimization, bytecode, JPMS, JMM.
 
 ## Files
 
-| File                                                                          | Level   | Keywords | Status  |
-| ----------------------------------------------------------------------------- | ------- | -------- | ------- |
-| Java JVM - L0 Orientation             | L0      | 4        | planned |
-| Java JVM - L1 Foundations             | L1      | 5        | planned |
-| Java JVM - L2 Memory Model         | L2      | 5        | planned |
-| Java JVM - L3 Class Loading       | L3      | 5        | planned |
-| Java JVM - L3 GC Foundations     | L3      | 4        | planned |
-| Java JVM - L4 GC Algorithms       | L4      | 5        | planned |
-| Java JVM - L4 JIT Compilation   | L4      | 4        | planned |
-| Java JVM - L5 Architecture           | L5      | 3        | planned |
+| File                          | Level   | Keywords | Status  |
+| ----------------------------- | ------- | -------- | ------- |
+| Java JVM - L0 Orientation     | L0      | 4        | planned |
+| Java JVM - L1 Foundations     | L1      | 5        | planned |
+| Java JVM - L2 Memory Model    | L2      | 5        | planned |
+| Java JVM - L3 Class Loading   | L3      | 5        | planned |
+| Java JVM - L3 GC Foundations  | L3      | 4        | planned |
+| Java JVM - L4 GC Algorithms   | L4      | 5        | planned |
+| Java JVM - L4 JIT Compilation | L4      | 4        | planned |
+| Java JVM - L5 Architecture    | L5      | 3        | planned |
 | Java JVM - L6 Theory and META | L6+META | 4        | planned |
 
 **Total: 39 keywords, 9 files**

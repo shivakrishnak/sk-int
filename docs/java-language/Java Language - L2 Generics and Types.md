@@ -1,3 +1,12 @@
+---
+layout: default
+title: "Java Language - L2 Generics and Types"
+parent: "Java Language"
+grand_parent: "SK Interview"
+nav_order: 4
+permalink: /java-language/l2-generics-and-types/
+---
+
 # Generics: Type Parameters, Bounds, and Type Safety
 
 **TL;DR** - Generics add compile-time type safety to collections and
