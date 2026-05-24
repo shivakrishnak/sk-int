@@ -1,0 +1,16 @@
+  L1: # Generics: Type Parameters, Bounds, and Type Safety
+  L42: **Blank Mind Recovery:**
+  L44: **(1) Restate:** "You are asking about generics - let me cover the core
+  L528: # Wildcards and PECS: Producer Extends, Consumer Super
+  L948: # Enums: State Machines, Abstract Methods, and EnumMap
+  L1198: # Check JPA mapping
+  L1200: # Any result is a risk
+  L1329: # Autoboxing, Unboxing, and the Integer Cache Trap
+  L1577: # Find potential unboxing NPE sites
+  L1579: # Each result needs null check before unboxing
+  L1608: # JVM flags to observe allocation pressure
+  L1610: # High "Allocation Rate" in young gen = autoboxing candidate
+  L1612: # Async-profiler for allocation profiling
+  L1614: # Look for Integer.valueOf or Long.valueOf in hot path
+  L1701: # Open flamegraph - look for Integer.valueOf in hot areas
+  L1753: # Type Inference: Diamond Operator, var, and Target Typing

@@ -1,0 +1,51 @@
+# --- Jekyll ---
+_site/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+
+# --- MkDocs (legacy output) ---
+site/
+
+# --- Python (legacy MkDocs) ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# --- Node (for markdownlint-cli, etc) ---
+node_modules/
+package-lock.json
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editors ---
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Logs ---
+*.log
+
+# --- Java leftovers ---
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+hs_err_pid*
+replay_pid*
+
+# --- Local temp ---
+tmp/
+*.bak

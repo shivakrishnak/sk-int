@@ -1,0 +1,77 @@
+title: SK Interview
+description: >-
+  Interview-focused technical reference with deep Q&A
+  for every concept across Java and related topics.
+url: https://hv-shiva.github.io
+baseurl: /sk-int
+source: docs
+permalink: pretty
+
+# Theme
+remote_theme: just-the-docs/just-the-docs@v0.10.0
+
+# Plugins — jekyll-seo-tag and jekyll-include-cache are required by just-the-docs
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+# Search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: true
+  focus_shortcut_key: "k"
+
+# Navigation
+heading_anchors: true
+nav_sort: case_insensitive
+nav_fold: true
+
+# Links
+aux_links:
+  GitHub: https://github.com/hv-shiva/southstar
+aux_links_new_tab: true
+
+# Appearance
+color_scheme: light
+callouts_level: quiet
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# ── Copy button on every code block ────────────────────────
+enable_copy_code_button: true
+
+# ── Mermaid diagrams (renders ```mermaid fenced blocks) ────
+mermaid:
+  version: "10.9.0"
+
+# ── Markdown renderer: GitHub Flavored Markdown ────────────
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: "highlight"
+    block:
+      line_numbers: false
+
+# ── Resilient builds — warn on Liquid errors, don't fail ───
+liquid:
+  error_mode: warn
+  strict_filters: false
+
+# ── Compress HTML output ────────────────────────────────────
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  blanklines: false
+
+# ── Compress CSS ────────────────────────────────────────────
+sass:
+  style: compressed
