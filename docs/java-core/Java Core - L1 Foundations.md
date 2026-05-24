@@ -7,6 +7,19 @@ nav_order: 2
 permalink: /java-core/l1-foundations/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Iterable, Iterator, and the Enhanced For Loop Contract](#iterable-iterator-and-the-enhanced-for-loop-contract) | low-medium |
+| 2 | [Comparable vs Comparator: Natural vs External Ordering](#comparable-vs-comparator-natural-vs-external-ordering) | low-medium |
+| 3 | [List, Set, Map, Queue: The Four Core Collection Interfaces](#list-set-map-queue-the-four-core-collection-interfaces) | low |
+| 4 | [Checked vs Unchecked Exceptions: The Historical Design Debate](#checked-vs-unchecked-exceptions-the-historical-design-debate) | medium |
+| 5 | [Exception Hierarchy: Throwable, Error, Exception, RuntimeException](#exception-hierarchy-throwable-error-exception-runtimeexception) | low-medium |
+
+---
+
 # Iterable, Iterator, and the Enhanced For Loop Contract
 
 **Interview Weight:** low-medium - Appears in collections internals

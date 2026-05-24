@@ -7,6 +7,17 @@ nav_order: 10
 permalink: /java-language/meta-patterns/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [The Billion-Dollar Mistake: Java Null Safety History and Lessons](#the-billion-dollar-mistake-java-null-safety-history-and-lessons) | high |
+| 2 | [API Design Principles: Effective Java Distilled](#api-design-principles-effective-java-distilled) | high |
+| 3 | [The Expression Problem: Extensibility Trade-offs in OOP vs FP](#the-expression-problem-extensibility-trade-offs-in-oop-vs-fp) | high |
+
+---
+
 # The Billion-Dollar Mistake: Java Null Safety History and Lessons
 
 **Interview Weight:** high - Asked at senior/staff levels when

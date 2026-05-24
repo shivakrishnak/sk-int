@@ -7,6 +7,19 @@ nav_order: 2
 permalink: /java-language/l1-foundations/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Primitives vs References: The Two Type Universes](#primitives-vs-references-the-two-type-universes) | medium |
+| 2 | [Variables, Scope, and Definite Assignment](#variables-scope-and-definite-assignment) | low-medium |
+| 3 | [Operators, Precedence, and Implicit Widening](#operators-precedence-and-implicit-widening) | low-medium |
+| 4 | [Packages, Imports, and Classpath Resolution](#packages-imports-and-classpath-resolution) | low-medium |
+| 5 | [Control Flow: Loops, Conditionals, Jump Statements](#control-flow-loops-conditionals-jump-statements) | low |
+
+---
+
 # Primitives vs References: The Two Type Universes
 
 **TL;DR** - Java has two completely separate type universes: 8

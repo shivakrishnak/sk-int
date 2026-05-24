@@ -617,6 +617,40 @@ function Test-BlankMindRecoveryFormat {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# R20 - KEYWORD NAVIGATION BLOCK
+# Every content file must have "## Keywords in This File" within
+# the first 30 lines after frontmatter closes.
+# Skips index.md files and spec/scripts directories.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-KeywordNavBlock {
+  param([string[]]$Lines, [string]$FilePath)
+  $errs = @()
+  if ($FilePath -match '(\\|/)index\.md$') { return $errs }
+  if ($FilePath -match '(spec|scripts)[/\\]') { return $errs }
+  # Find end of frontmatter
+  $fmEnd = -1; $dashes = 0
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') {
+      $dashes++
+      if ($dashes -ge 2) { $fmEnd = $i; break }
+    }
+  }
+  if ($fmEnd -lt 0) { return $errs }
+  # Check first 30 lines after frontmatter for nav block
+  $found = $false
+  $limit = [Math]::Min($fmEnd + 31, $Lines.Count)
+  for ($i = $fmEnd + 1; $i -lt $limit; $i++) {
+    if ($Lines[$i] -match '^## Keywords in This File') { $found = $true; break }
+  }
+  if (-not $found) {
+    $name = Split-Path $FilePath -Leaf
+    $errs += "R20 KEYWORD-NAV: '$name' missing '## Keywords in This File' " +
+             "block within 30 lines after frontmatter"
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # RUNNER - invoke all rules against a file
 # ─────────────────────────────────────────────────────────────────────────────
 function Invoke-FileValidation {
@@ -630,7 +664,10 @@ function Invoke-FileValidation {
   $errs += Test-NoFillContentRef   -Lines $lines
   $errs += Test-CodeLineLength     -Lines $lines
   $errs += Test-AsciiDiagramWidth  -Lines $lines
-  $errs += Test-H3PrecededByHR     -Lines $lines
+  # R08 skipped for index.md (keyword registry uses ### without ---)
+  if ($FilePath -notmatch '(\\|/)index\.md$') {
+    $errs += Test-H3PrecededByHR   -Lines $lines
+  }
   $errs += Test-CodeWalkthrough    -Lines $lines -FilePath $FilePath
   $errs += Test-DualDiagramFormat  -Lines $lines
   $errs += Test-BadBeforeGood      -Lines $lines
@@ -645,6 +682,7 @@ function Invoke-FileValidation {
     $errs += Test-NoNineteenSections -Lines $lines
     $errs += Test-NoOldFileNaming    -Lines $lines -FilePath $FilePath
   }
+  $errs += Test-KeywordNavBlock    -Lines $lines -FilePath $FilePath
   return $errs | Where-Object { $_ }
 }
 
@@ -664,12 +702,4 @@ if ($MyInvocation.InvocationName -ne '.') {
   }
 }
 
-Export-ModuleMember -Function Invoke-FileValidation, Test-NoBOM,
-  Test-NoEmDash, Test-NoStubMarkers, Test-FrontmatterVersion,
-  Test-NoFillContentRef, Test-CodeLineLength, Test-AsciiDiagramWidth,
-  Test-H3PrecededByHR, Test-CodeWalkthrough, Test-DualDiagramFormat,
-  Test-BadBeforeGood, Test-DeepDiveQuestionCount,
-  Test-BoldLabelBlankSeparator, Test-NoSecrets,
-  Test-QrcBorderIntegrity, Test-NoDuplicateLines,
-  Test-BlankMindRecoveryFormat,
-  Test-NoNineteenSections, Test-NoOldFileNaming
+# Export-ModuleMember removed: file is dot-sourced, not a module.

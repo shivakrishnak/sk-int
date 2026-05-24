@@ -7,6 +7,19 @@ nav_order: 1
 permalink: /java-language/l0-orientation/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why Java? Design Philosophy and Guiding Principles](#why-java-design-philosophy-and-guiding-principles) | low-medium |
+| 2 | [Java Timeline: From Oak to Java 21](#java-timeline-from-oak-to-java-21) | low |
+| 3 | [Java Editions: SE, EE, ME, and Jakarta EE](#java-editions-se-ee-me-and-jakarta-ee) | low |
+| 4 | [Java Community Process and JEPs: How Java Evolves](#java-community-process-and-jeps-how-java-evolves) | low |
+| 5 | [JVM Languages Ecosystem: Kotlin, Scala, Groovy](#jvm-languages-ecosystem-kotlin-scala-groovy) | low-medium |
+
+---
+
 # Why Java? Design Philosophy and Guiding Principles
 
 **TL;DR** - Java was built for safety, portability, and large-team

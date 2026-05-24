@@ -7,6 +7,19 @@ nav_order: 8
 permalink: /java-language/l4-language-internals/
 ---
 
+## Keywords in This File
+
+{: .no_toc }
+
+| #   | Keyword                                                                                                                            | Weight |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | [Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings](#type-erasure-heap-pollution-bridge-methods-unchecked-warnings) | hard   |
+| 2   | [Immutability: Defensive Copies, Unmodifiable Views,](#immutability-defensive-copies-unmodifiable-views)                           | hard   |
+| 3   | [Reflection: Class, Method, Field - Power, Cost, Security](#reflection-class-method-field---power-cost-security)                   | hard   |
+| 4   | [String Pool and Interning: Memory Footprint at Scale](#string-pool-and-interning-memory-footprint-at-scale)                       | hard   |
+
+---
+
 # Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings
 
 **TL;DR** - Java generics exist only at compile time. At runtime, all

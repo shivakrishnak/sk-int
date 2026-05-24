@@ -281,6 +281,66 @@ permalink: /{topic-slug}/{file-slug}/ # kebab-case slug
 Within each topic folder, content files are numbered 1-N in level order
 (L0=1, L1=2, L2 files=3-5, L3 files=6-7, L4=8, L5=9, META=10).
 
+## Keyword Navigation Block (Required - R20)
+
+Every content file MUST have a keyword navigation table immediately after
+the frontmatter block (before the first `# Keyword` heading). This block
+lets readers jump directly to any keyword on the page.
+
+### Required format
+
+```markdown
+---
+layout: default
+title: "..."
+...
+---
+
+## Keywords in This File
+
+{: .no_toc }
+
+| #   | Keyword                      | Weight |
+| --- | ---------------------------- | ------ |
+| 1   | [Keyword Name Here](#anchor) | medium |
+| 2   | [Keyword Name Here](#anchor) | high   |
+
+---
+
+# First Keyword Name
+```
+
+### Anchor generation (kramdown/Jekyll rules)
+
+1. Take the exact heading text (without `# `)
+2. Lowercase everything
+3. Replace each space with `-`
+4. Remove all characters except `a-z`, `0-9`, `-`
+5. Do NOT collapse consecutive hyphens (`-` becomes `---`)
+6. Trim leading/trailing hyphens
+
+Examples:
+
+- `Primitives vs References: The Two Type Universes`
+  -> `#primitives-vs-references-the-two-type-universes`
+- `Reflection: Class, Method, Field - Power, Cost, Security`
+  -> `#reflection-class-method-field---power-cost-security`
+- `java.util.concurrent: The Parallel Universe for Thread Safety`
+  -> `#javautilconcurrent-the-parallel-universe-for-thread-safety`
+
+### Rules
+
+- `{: .no_toc }` after the `## Keywords` heading excludes it from
+  the page's auto-generated table of contents
+- The `Weight` column uses the exact Interview Weight value from the
+  keyword (e.g. `low`, `medium`, `high`, `critical`, `low-medium`,
+  `medium-high`)
+- The navigation block is followed by `---` (single HR), then a blank
+  line, then the first `# Keyword Name`
+- Skip index.md files (they use a different keyword registry format)
+- Validated by R20 in `scripts/file_validation_rules.ps1`
+- Use `scripts/add_keyword_nav.ps1` to add blocks to all existing files
+
 ### Batch Commit Rules (Non-Negotiable)
 
 - Commit every **5 created files** (never single files)

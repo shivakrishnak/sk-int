@@ -7,6 +7,19 @@ nav_order: 6
 permalink: /java-language/l3-type-system-depth/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Records: Value Semantics and Compact Constructors](#records-value-semantics-and-compact-constructors) | medium |
+| 2 | [Sealed Classes: Exhaustive Polymorphism and ADTs](#sealed-classes-exhaustive-polymorphism-and-adts) | medium |
+| 3 | [Pattern Matching: instanceof, Switch Expressions, Deconstruction](#pattern-matching-instanceof-switch-expressions-deconstruction) | medium |
+| 4 | [Annotations: Retention, Target, and Custom Processors](#annotations-retention-target-and-custom-processors) | medium |
+| 5 | [Covariance, Contravariance, and Wildcard Capture](#covariance-contravariance-and-wildcard-capture) | medium |
+
+---
+
 # Records: Value Semantics and Compact Constructors
 
 **TL;DR** - Records (Java 16) are immutable data carriers. They

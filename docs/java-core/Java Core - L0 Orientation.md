@@ -7,6 +7,18 @@ nav_order: 1
 permalink: /java-core/l0-orientation/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Standard Library: java.lang, java.util, java.io Architecture](#java-standard-library-javalang-javautil-javaio-architecture) | low |
+| 2 | [Collections Framework Design: Interfaces, Implementations, Algorithms](#collections-framework-design-interfaces-implementations-algorithms) | low-medium |
+| 3 | [java.util.concurrent: The Parallel Universe for Thread Safety](#javautilconcurrent-the-parallel-universe-for-thread-safety) | medium |
+| 4 | [Java I/O Generations: Streams, Readers/Writers, NIO, NIO.2](#java-io-generations-streams-readerswriters-nio-nio2) | low-medium |
+
+---
+
 # Java Standard Library: java.lang, java.util, java.io Architecture
 
 **Interview Weight:** low - Warm-up and context-setting; signals whether

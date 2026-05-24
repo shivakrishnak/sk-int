@@ -7,6 +7,19 @@ nav_order: 3
 permalink: /java-language/l2-object-model/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Classes, Abstract Classes, and Interfaces: When to Use Which](#classes-abstract-classes-and-interfaces-when-to-use-which) | critical |
+| 2 | [Inheritance, Overriding, and the Diamond Problem](#inheritance-overriding-and-the-diamond-problem) | high |
+| 3 | [The Object Class: equals, hashCode, toString, and clone](#the-object-class-equals-hashcode-tostring-and-clone) | critical |
+| 4 | [Access Modifiers and Encapsulation Patterns](#access-modifiers-and-encapsulation-patterns) | medium-high |
+| 5 | [Inner Classes: Static Nested, Member, Local, Anonymous](#inner-classes-static-nested-member-local-anonymous) | medium |
+
+---
+
 # Classes, Abstract Classes, and Interfaces: When to Use Which
 
 **TL;DR** - Interfaces define behavioral contracts; abstract classes share

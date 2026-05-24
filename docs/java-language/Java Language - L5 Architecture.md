@@ -7,6 +7,17 @@ nav_order: 9
 permalink: /java-language/l5-architecture/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Backward Compatibility: The Java Social Contract and Its Costs](#backward-compatibility-the-java-social-contract-and-its-costs) | critical |
+| 2 | [Java Language Specification: Type System Formal Rules](#java-language-specification-type-system-formal-rules) | high |
+| 3 | [Java Platform Module System: Encapsulation at Module Level](#java-platform-module-system-encapsulation-at-module-level) | high |
+
+---
+
 # Backward Compatibility: The Java Social Contract and Its Costs
 
 **Interview Weight:** critical - Asked at senior/staff levels when

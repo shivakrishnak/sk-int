@@ -7,6 +7,19 @@ nav_order: 5
 permalink: /java-language/l2-functional/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Lambda Expressions: Syntax, Capture Rules, and Effectively Final](#lambda-expressions-syntax-capture-rules-and-effectively-final) | high |
+| 2 | [Functional Interfaces: Predicate, Function, Consumer, Supplier](#functional-interfaces-predicate-function-consumer-supplier) | medium-high |
+| 3 | [Method References: Four Kinds and When Each Applies](#method-references-four-kinds-and-when-each-applies) | medium |
+| 4 | [Streams API: Lazy Evaluation, Pipelines, and Terminal Operations](#streams-api-lazy-evaluation-pipelines-and-terminal-operations) | high |
+| 5 | [Optional: The Null-Safety Pattern and When NOT to Use It](#optional-the-null-safety-pattern-and-when-not-to-use-it) | medium |
+
+---
+
 # Lambda Expressions: Syntax, Capture Rules, and Effectively Final
 
 **TL;DR** - Lambdas are anonymous function implementations for

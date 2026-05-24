@@ -7,6 +7,19 @@ nav_order: 7
 permalink: /java-language/l3-modern-java/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Text Blocks: Indentation Stripping and Incidental Whitespace](#text-blocks-indentation-stripping-and-incidental-whitespace) | medium |
+| 2 | [Switch Expressions: Exhaustiveness, Arrow Syntax, and Yield](#switch-expressions-exhaustiveness-arrow-syntax-and-yield) | medium |
+| 3 | [var: Local Variable Type Inference and Its Limits](#var-local-variable-type-inference-and-its-limits) | medium |
+| 4 | [Default and Static Interface Methods: Evolution Without Breaking](#default-and-static-interface-methods-evolution-without-breaking) | medium |
+| 5 | [Structured Concurrency and Scoped Values (Java 21+)](#structured-concurrency-and-scoped-values-java-21) | medium |
+
+---
+
 # Text Blocks: Indentation Stripping and Incidental Whitespace
 
 **TL;DR** - Text blocks are multi-line string literals delimited by

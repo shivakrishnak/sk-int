@@ -78,7 +78,7 @@ if (-not (Test-Path $rulesScript)) {
 
 foreach ($file in $files) {
   $errs = Invoke-FileValidation -FilePath $file
-  if ($errs.Count -gt 0) {
+  if ($errs -and $errs.Count -gt 0) {
     Write-Host "FAIL: $file" -ForegroundColor Red
     $errs | ForEach-Object { Write-Host "  - $_" }
     $exitCode = 1

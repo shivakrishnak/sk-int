@@ -7,6 +7,19 @@ nav_order: 4
 permalink: /java-language/l2-generics-and-types/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Generics: Type Parameters, Bounds, and Type Safety](#generics-type-parameters-bounds-and-type-safety) | high |
+| 2 | [Wildcards and PECS: Producer Extends, Consumer Super](#wildcards-and-pecs-producer-extends-consumer-super) | high |
+| 3 | [Enums: State Machines, Abstract Methods, and EnumMap](#enums-state-machines-abstract-methods-and-enummap) | medium |
+| 4 | [Autoboxing, Unboxing, and the Integer Cache Trap](#autoboxing-unboxing-and-the-integer-cache-trap) | medium |
+| 5 | [Type Inference: Diamond Operator, var, and Target Typing](#type-inference-diamond-operator-var-and-target-typing) | medium |
+
+---
+
 # Generics: Type Parameters, Bounds, and Type Safety
 
 **TL;DR** - Generics add compile-time type safety to collections and
