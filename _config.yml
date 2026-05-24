@@ -2,7 +2,7 @@ title: SK Interview
 description: >-
   Interview-focused technical reference with deep Q&A
   for every concept across Java and related topics.
-url: https://hv-shiva.github.io
+url: https://shivakrishnak.github.io
 baseurl: /sk-int
 source: docs
 permalink: pretty
@@ -35,7 +35,7 @@ nav_fold: true
 
 # Links
 aux_links:
-  GitHub: https://github.com/hv-shiva/southstar
+  GitHub: https://github.com/shivakrishnak/sk-int
 aux_links_new_tab: true
 
 # Appearance

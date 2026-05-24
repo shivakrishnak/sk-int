@@ -4,10 +4,10 @@ _site/
 .jekyll-metadata
 Gemfile.lock
 
-# --- MkDocs (legacy output) ---
+# --- Legacy site output ---
 site/
 
-# --- Python (legacy MkDocs) ---
+# --- Python ---
 .venv/
 venv/
 __pycache__/

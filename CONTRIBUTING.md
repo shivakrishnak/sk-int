@@ -12,8 +12,8 @@ Thanks for your interest. This repo houses an interview-focused technical refere
 ## One-time setup
 
 ```pwsh
-git clone https://github.com/hv-shiva/southstar
-cd southstar
+git clone https://github.com/shivakrishnak/sk-int
+cd sk-int
 bundle install
 git config core.hooksPath .githooks
 ```
