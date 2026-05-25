@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L2 Generics and Types"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-language/l2-generics-and-types/
 ---

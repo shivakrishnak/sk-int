@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L4 Security and Reflection"
 parent: "Java Core APIs"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-core/l4-security-and-reflection/
 ---

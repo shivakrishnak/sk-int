@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L3 Modern Java"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-language/l3-modern-java/
 ---

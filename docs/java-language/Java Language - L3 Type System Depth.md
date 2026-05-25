@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L3 Type System Depth"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-language/l3-type-system-depth/
 ---

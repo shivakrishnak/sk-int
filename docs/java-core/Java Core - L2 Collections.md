@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L2 Collections"
 parent: "Java Core APIs"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-core/l2-collections/
 ---

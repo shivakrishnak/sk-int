@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Java Performance"
-parent: "SK Interview"
 nav_order: 5
 has_children: true
 permalink: /java-performance/

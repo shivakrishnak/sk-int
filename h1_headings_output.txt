@@ -1,0 +1,150 @@
+========== JAVA-LANGUAGE ==========
+
+=== Java Language - L0 Orientation.md ===
+# Why Java? Design Philosophy and Guiding Principles
+# Java Timeline: From Oak to Java 21
+# Java Editions: SE, EE, ME, and Jakarta EE
+# Java Community Process and JEPs: How Java Evolves
+# JVM Languages Ecosystem: Kotlin, Scala, Groovy
+
+=== Java Language - L1 Foundations.md ===
+# Primitives vs References: The Two Type Universes
+# Variables, Scope, and Definite Assignment
+# Operators, Precedence, and Implicit Widening
+# Packages, Imports, and Classpath Resolution
+# Control Flow: Loops, Conditionals, Jump Statements
+
+=== Java Language - L2 Functional.md ===
+# Lambda Expressions: Syntax, Capture Rules, and Effectively Final
+# Functional Interfaces: Predicate, Function, Consumer, Supplier
+# Method References: Four Kinds and When Each Applies
+# Streams API: Lazy Evaluation, Pipelines, and Terminal Operations
+# Optional: The Null-Safety Pattern and When NOT to Use It
+
+=== Java Language - L2 Generics and Types.md ===
+# Generics: Type Parameters, Bounds, and Type Safety
+# Wildcards and PECS: Producer Extends, Consumer Super
+# Enums: State Machines, Abstract Methods, and EnumMap
+# Check JPA mapping
+# Any result is a risk
+# Autoboxing, Unboxing, and the Integer Cache Trap
+# Find potential unboxing NPE sites
+# Each result needs null check before unboxing
+# JVM flags to observe allocation pressure
+# High "Allocation Rate" in young gen = autoboxing candidate
+# Async-profiler for allocation profiling
+# Look for Integer.valueOf or Long.valueOf in hot path
+# Open flamegraph - look for Integer.valueOf in hot areas
+# Type Inference: Diamond Operator, var, and Target Typing
+
+=== Java Language - L2 Object Model.md ===
+# Classes, Abstract Classes, and Interfaces: When to Use Which
+# Check if a bean is proxied and what proxy type
+# In application startup logs, look for:
+# In code, inspect at runtime:
+# Find all concrete subclasses of an abstract class
+# Then check each for [TODO: implement] or empty overrides
+# Inheritance, Overriding, and the Diamond Problem
+# In tests - add this assertion to catch the bug
+# Alternatively, Spring will log a warning at startup:
+# The Object Class: equals, hashCode, toString, and clone
+# Add this assertion in tests for mutable map keys
+# Quick detection via reflection in tests
+# Access Modifiers and Encapsulation Patterns
+# In code review - look for getters returning mutable types
+# Check proxy type at startup
+# Or in code - check if the bean is actually proxied
+# If it contains "CGLIB" -> cglib proxy; if original class -> not proxied
+# Inner Classes: Static Nested, Member, Local, Anonymous
+# Take heap dump and analyze retained objects
+# Open with Eclipse MAT or VisualVM
+# Look for "Retained Heap" on Controller/Service instances
+# Look for EventListener objects holding OuterClass$1 instances
+# (OuterClass$1 is the anonymous class naming convention)
+# Alternative: look for anonymous class names in the leak path
+# Suspiciously high count of anonymous classes = likely inner class leak
+
+=== Java Language - L3 Modern Java.md ===
+# Text Blocks: Indentation Stripping and Incidental Whitespace
+# Switch Expressions: Exhaustiveness, Arrow Syntax, and Yield
+# var: Local Variable Type Inference and Its Limits
+# Default and Static Interface Methods: Evolution Without Breaking
+# Structured Concurrency and Scoped Values (Java 21+)
+
+=== Java Language - L3 Type System Depth.md ===
+# Records: Value Semantics and Compact Constructors
+# Check Jackson version - must be 2.12+ for record support
+# Must be >= 2.12.0
+# Sealed Classes: Exhaustive Polymorphism and ADTs
+# Pattern Matching: instanceof, Switch Expressions, Deconstruction
+# Annotations: Retention, Target, and Custom Processors
+# Covariance, Contravariance, and Wildcard Capture
+
+=== Java Language - L4 Language Internals.md ===
+# Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings
+# Immutability: Defensive Copies, Unmodifiable Views,
+# Reflection: Class, Method, Field - Power, Cost, Security
+# String Pool and Interning: Memory Footprint at Scale
+
+=== Java Language - L5 Architecture.md ===
+# Backward Compatibility: The Java Social Contract and Its Costs
+# Java Language Specification: Type System Formal Rules
+# Java Platform Module System: Encapsulation at Module Level
+# Create a minimal runtime for a console application
+
+=== Java Language - META Patterns.md ===
+# The Billion-Dollar Mistake: Java Null Safety History and Lessons
+# API Design Principles: Effective Java Distilled
+# The Expression Problem: Extensibility Trade-offs in OOP vs FP
+
+========== JAVA-CORE ==========
+
+=== Java Core - L0 Orientation.md ===
+# Java Standard Library: java.lang, java.util, java.io Architecture
+# Collections Framework Design: Interfaces, Implementations, Algorithms
+# java.util.concurrent: The Parallel Universe for Thread Safety
+# Java I/O Generations: Streams, Readers/Writers, NIO, NIO.2
+
+=== Java Core - L1 Foundations.md ===
+# Iterable, Iterator, and the Enhanced For Loop Contract
+# Comparable vs Comparator: Natural vs External Ordering
+# List, Set, Map, Queue: The Four Core Collection Interfaces
+# Checked vs Unchecked Exceptions: The Historical Design Debate
+# Exception Hierarchy: Throwable, Error, Exception, RuntimeException
+
+=== Java Core - L2 Collections Advanced.md ===
+# Collections Utility Class: Sort, Binary Search, Shuffle, Min/Max
+# Unmodifiable vs Immutable: List.of() vs Collections.unmodifiableList()
+# Collectors: groupingBy, partitioningBy, joining, toUnmodifiableMap
+# Stream-to-Collection Patterns: collect(), toList(), and Materialization
+# Array-to-Collection Bridges: Arrays.asList(), List.of(), Mutation Trap
+
+=== Java Core - L2 Collections.md ===
+# ArrayList vs LinkedList: Memory Layout and Access Cost
+# HashMap: Buckets, Load Factor, Rehashing, and Java 8 Treeification
+# LinkedHashMap and TreeMap: Ordered Map Variants
+# HashSet, LinkedHashSet, and TreeSet: Set Semantics
+# PriorityQueue and ArrayDeque: Queue and Deque Implementations
+
+=== Java Core - L3 Internals.md ===
+# equals and hashCode: The Full Contract and Cache Invalidation Bugs
+# HashMap vs ConcurrentHashMap: Concurrency Safety Guarantees
+# Java Serialization: ObjectOutputStream, Externalizable, Versioning
+# Java NIO: Channels, Buffers, Selectors, and Non-Blocking I/O
+
+=== Java Core - L4 Security and Reflection.md ===
+# Serialization Vulnerabilities: Gadget Chains and Deserialization Attacks
+# In startup arguments:
+# Generate a test payload (URLDNS - safe, DNS lookup only)
+# Send to the target endpoint
+# If the DNS server receives a query for canary.burp.net:
+# -> target is vulnerable to deserialization
+# -> further RCE testing is warranted
+# Java Security API: KeyStore, Cipher, MessageDigest, SecureRandom
+# Memory-Mapped Files and Direct Buffers for Large Dataset Processing
+# Collection Anti-Patterns: Wrong Abstractions and Compound Operation Bugs
+
+=== Java Core - META Patterns.md ===
+# Fail-Fast vs Fail-Safe: Iterator Design and ConcurrentModificationException
+# Choosing the Right Collection: A Decision Framework
+# Abstraction Leakage: When Java Abstractions Expose Internals

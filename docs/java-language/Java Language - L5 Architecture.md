@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L5 Architecture"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /java-language/l5-architecture/
 ---

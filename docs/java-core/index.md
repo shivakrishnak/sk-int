@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Java Core APIs"
-parent: "SK Interview"
 nav_order: 2
 has_children: true
 permalink: /java-core/

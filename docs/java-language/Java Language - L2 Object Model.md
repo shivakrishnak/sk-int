@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L2 Object Model"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-language/l2-object-model/
 ---

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - META Patterns"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-language/meta-patterns/
 ---

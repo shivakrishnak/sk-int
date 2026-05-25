@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Java Language"
-parent: "SK Interview"
 nav_order: 1
 has_children: true
 permalink: /java-language/

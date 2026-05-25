@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L1 Foundations"
 parent: "Java Core APIs"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-core/l1-foundations/
 ---

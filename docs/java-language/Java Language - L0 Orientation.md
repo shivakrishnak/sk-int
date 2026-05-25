@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L0 Orientation"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /java-language/l0-orientation/
 ---

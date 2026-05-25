@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Java Concurrency"
-parent: "SK Interview"
 nav_order: 4
 has_children: true
 permalink: /java-concurrency/

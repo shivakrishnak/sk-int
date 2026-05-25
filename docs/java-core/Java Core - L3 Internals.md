@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L3 Internals"
 parent: "Java Core APIs"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /java-core/l3-internals/
 ---

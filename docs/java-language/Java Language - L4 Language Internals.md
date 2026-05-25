@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L4 Language Internals"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /java-language/l4-language-internals/
 ---
