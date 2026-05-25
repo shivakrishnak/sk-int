@@ -7,6 +7,24 @@ baseurl: /sk-int
 source: docs
 permalink: pretty
 
+# Exclude non-content files and folders from the Jekyll build
+exclude:
+  - spec/
+  - scripts/
+  - tmp/
+  - site/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CONTRIBUTING.md
+  - LICENSE
+  - "*.txt"
+  - .github/
+  - .githooks/
+  - .gitignore
+  - .editorconfig
+  - .markdownlint.json
+
 # Theme
 remote_theme: just-the-docs/just-the-docs@v0.10.0
 
