@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Reporting & Rules Engine Interview Guide"
+parent: "Deepseek"
+permalink: /reporting-rules-engine/
+---
+
 # Reporting & Rules Engine Interview Guide
 
 ## 1. Overview

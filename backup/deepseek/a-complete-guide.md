@@ -3,7 +3,8 @@ layout: default
 title: Interview Handbook
 nav_order: 1
 has_toc: true
-permalink: /
+parent: "Deepseek"
+permalink: /a-complete-guide/
 ---
 
 # STAFF FULLSTACK ENGINEER INTERVIEW HANDBOOK

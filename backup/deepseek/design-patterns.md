@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Design Patterns Interview Guide"
+parent: "Deepseek"
+permalink: /design-patterns/
+---
+
 # Design Patterns Interview Guide
 
 ## 1. Overview

@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Core Java Interview Guide"
+parent: "Deepseek"
+permalink: /core-java/
+---
+
 # Core Java Interview Guide
 
 ## 1. Overview

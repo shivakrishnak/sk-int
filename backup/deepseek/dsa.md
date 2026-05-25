@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Data Structures & Algorithms Interview Guide"
+parent: "Deepseek"
+permalink: /dsa/
+---
+
 # Data Structures & Algorithms Interview Guide
 
 ## 1. Overview

@@ -1,3 +1,10 @@
+---
+layout: default
+title: "DevOps & Developer Productivity Interview Guide"
+parent: "Deepseek"
+permalink: /devops/
+---
+
 # DevOps & Developer Productivity Interview Guide
 
 ## 1. Overview

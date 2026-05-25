@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Frontend & Testing Interview Guide"
+parent: "Deepseek"
+permalink: /frontend-and-testing/
+---
+
 # Frontend & Testing Interview Guide
 
 ## 1. Overview

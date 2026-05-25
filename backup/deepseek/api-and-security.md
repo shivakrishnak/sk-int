@@ -1,3 +1,10 @@
+---
+layout: default
+title: "APIs & Security Interview Guide"
+parent: "Deepseek"
+permalink: /api-and-security/
+---
+
 # APIs & Security Interview Guide
 
 ## 1. Overview

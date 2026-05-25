@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Behavioral & Leadership Interview Guide"
+parent: "Deepseek"
+permalink: /behavioural/
+---
+
 # Behavioral & Leadership Interview Guide
 
 ## 1. Overview

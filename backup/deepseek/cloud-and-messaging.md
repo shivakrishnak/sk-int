@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Cloud & Messaging Infrastructure Interview Guide"
+parent: "Deepseek"
+permalink: /cloud-and-messaging/
+---
+
 # Cloud & Messaging Infrastructure Interview Guide
 
 ## 1. Overview

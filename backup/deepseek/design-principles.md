@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Design Principles Interview Guide"
+parent: "Deepseek"
+permalink: /design-principles/
+---
+
 # Design Principles Interview Guide
 
 ## 1. Overview

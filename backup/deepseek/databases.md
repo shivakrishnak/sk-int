@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Databases Interview Guide"
+parent: "Deepseek"
+permalink: /databases/
+---
+
 # Databases Interview Guide
 
 ## 1. Overview

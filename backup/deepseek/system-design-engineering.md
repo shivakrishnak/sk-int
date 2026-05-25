@@ -1,3 +1,10 @@
+---
+layout: default
+title: "System Design & System Engineering Interview Guide"
+parent: "Deepseek"
+permalink: /system-design-engineering/
+---
+
 # System Design & System Engineering Interview Guide
 
 ## 1. Overview
