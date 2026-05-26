@@ -144,6 +144,37 @@ ANTI-HALLUCINATION RULES:
 
 EVERY ENTRY MUST PREPARE THE CANDIDATE FOR ALL FIVE SIGNALS.
 
+WHAT NOT TO SAY — UNIVERSAL ANTI-PATTERNS:
+  Every entry's Candidate Mistakes section must reflect one or more
+  of these universal failure modes:
+
+  1. VAGUE OPENER:    "It's basically..." / "It's kind of like..."
+     Say instead:     A precise one-sentence definition, then analogy.
+
+  2. MEMORY DUMP:     Reciting a list with no structure or selection.
+     Say instead:     CLAIM → EVIDENCE → IMPLICATION (three things max).
+
+  3. "IT DEPENDS":    Saying "it depends" without specifying on what.
+     Say instead:     "It depends on X. When X is true, I would use Y
+                       because... When X is false, Z is better because..."
+
+  4. OVER-QUALIFYING: "I mean, arguably, in some cases, possibly..."
+     Say instead:     State your position, then add nuance at the end.
+
+  5. JARGON WITHOUT DEPTH: Using terms but being unable to explain them.
+     Say instead:     Only use terms you can explain from first principles.
+
+  6. FALSE CONFIDENCE: Stating uncertain facts as certain facts.
+     Say instead:     "My understanding is... though I would confirm this."
+
+  7. MONOLOGUE:       Talking for 3+ minutes without checking in.
+     Say instead:     Answer in 30-60 seconds, then: "Want me to go deeper
+                       on any specific part?"
+
+  8. AGREEING WITH TRAPS: Accepting false premises in the question.
+     Say instead:     "Actually, that premise has an edge case worth noting -
+                       [correct the premise], then answer the real question."
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 2: INTERVIEW QUESTION TAXONOMY
 ═══════════════════════════════════════════════════════════════════════════
@@ -311,17 +342,45 @@ TYPE 7: PERFORMANCE & SCALABILITY QUESTIONS  [v1.0]
     Confusing performance optimisation with scalability design
     Inability to reason about failure cascades under overload
 
+TYPE 8: MISCONCEPTION / TRAP QUESTIONS  [v1.0]
+─────────────────────────────────────────────────────────────────────────
+  "Isn't X always faster than Y?"
+  "Since X guarantees Z, you never need to worry about..."
+  "Why would you ever NOT use X?"
+  "X and Y are basically the same thing, right?"
+  "If you just use X correctly it will never fail?"
+
+  What the interviewer wants:
+    Ability to identify and correct false premises in the question
+    Nuanced understanding beyond surface-level knowledge
+    Resistance to being led to wrong answers by framing
+    Knowledge of where the "always" breaks down
+
+  HIDDEN INTENT: Testing whether the candidate knows the edges and
+    failure modes, not just the happy path. The best candidates
+    pause, challenge the premise politely, then give the accurate
+    answer. "Actually, that premise isn't quite right - here's why."
+
+  Failure mode:
+    Agreeing with the false premise and answering from that premise
+    Hesitating instead of confidently correcting
+    Correcting the premise but then giving a vague answer
+    Not knowing enough to recognize the trap at all
+
+  Target: ★★☆ and above. Omit for ★☆☆.
+
 INTERVIEW DIFFICULTY MAPPING:
 
   | Type | Typical Difficulty | Typical Seniority Target |
   |---|---|---|
-  | TYPE 1 (Definition) | 1 — Easy | Junior |
-  | TYPE 2 (Mechanism) | 2 — Medium | Mid |
-  | TYPE 3 (Comparison) | 2-3 — Medium/Hard | Mid–Senior |
-  | TYPE 4 (Scenario) | 3 — Hard | Senior |
-  | TYPE 5 (Debugging) | 3-4 — Hard/FAANG Hard | Senior |
-  | TYPE 6 (Deep Dive) | 4-5 — FAANG to Staff | Staff |
-  | TYPE 7 (Performance & Scalability) | 3-4 — Hard/FAANG Hard | Senior/Staff |
+  | TYPE 1 (Definition) | 1 - Easy | Junior |
+  | TYPE 2 (Mechanism) | 2 - Medium | Mid |
+  | TYPE 3 (Comparison) | 2-3 - Medium/Hard | Mid-Senior |
+  | TYPE 4 (Scenario) | 3 - Hard | Senior |
+  | TYPE 5 (Debugging) | 3-4 - Hard/FAANG Hard | Senior |
+  | TYPE 6 (Deep Dive) | 4-5 - FAANG to Staff | Staff |
+  | TYPE 7 (Performance & Scalability) | 3-4 - Hard/FAANG Hard | Senior/Staff |
+  | TYPE 8 (Misconception / Trap) | 2-4 - Medium to FAANG Hard | Mid-Staff |
 
 PUSHBACK HANDLING (5 TYPES):
   When the interviewer challenges your answer, identify the type:
@@ -439,6 +498,67 @@ STAFF / PRINCIPAL (8+ years):
     mid-level engineer — the gaps you find ARE your FAANG prep gaps.
 
 ═══════════════════════════════════════════════════════════════════════════
+SECTION 3.5: TOPIC-TYPE ADAPTATION RULES  [v1.0]
+═══════════════════════════════════════════════════════════════════════════
+
+  The six archetypes from topics_generator.md Section 00.5 each
+  require different emphasis. Apply these rules BEFORE generating
+  any entry section.
+
+  ARCHETYPE 1 - LANGUAGE / RUNTIME (Java, Python, Go):
+    Code blocks: required in ALL entries. Use topic language.
+    Complexity sections (4.9 System Design): required for L4+.
+    Q-types: all 8 required at ★★★. Performance/Scalability
+      always required. Deep Dive always required.
+    Behavioral: NONE. No STAR templates.
+    Analogy level: runtime metaphors (heap, stack, GC).
+
+  ARCHETYPE 2 - FRAMEWORK / LIBRARY (Spring, React, Django):
+    Code blocks: required in ALL entries. Use host language.
+    Configuration examples: always include alongside code.
+    System Design (4.9): required for ★★★ integration patterns.
+    Q-types: all 8 for ★★★. Misconception/Trap critical here
+      (framework magic hides behavior).
+    Behavioral: NONE.
+
+  ARCHETYPE 3 - ALGORITHM / DATA STRUCTURE:
+    Code blocks: pseudocode or most-common language (default: java).
+    Complexity table: MANDATORY for every entry.
+      Format: | Case | Time | Space | Notes |
+    No system design section unless explicitly system-relevant.
+    Q-types: Definition + Mechanism + Scenario + Debugging core.
+    Performance & Scalability: always include (it IS the point).
+    Behavioral: NONE.
+
+  ARCHETYPE 4 - CS CONCEPT / THEORY (CAP, ACID, Linearizability):
+    Code blocks: optional. Prefer ASCII diagrams and tables.
+    Formal definition: include in Concept Explanation section.
+    System Design (4.9): always include - concept applies at design.
+    Q-types: Mechanism + Comparison + Misconception/Trap critical.
+    Performance & Scalability: frame as "at what scale does this
+      constraint become visible?"
+    Behavioral: NONE.
+
+  ARCHETYPE 5 - SYSTEM DESIGN TOPIC (Rate Limiting, CQRS):
+    Code blocks: minimal. Prefer architecture ASCII diagrams.
+    System Design (4.9): ALWAYS required regardless of difficulty.
+    Diagram (4.10): ALWAYS required.
+    Q-types: Scenario + Deep Dive + Performance are primary.
+    Scale inflection: MANDATORY. What breaks at 10x? At 100x?
+    Behavioral: NONE.
+
+  ARCHETYPE 6 - BEHAVIORAL / SOFT SKILL:
+    Code blocks: NONE.
+    STAR template: MANDATORY (see SECTION 4.8 Field Q&A rules).
+    Q-types: Scenario (STAR format) is primary. No Mechanism or
+      Performance types.
+    System Design (4.9): NONE.
+    Diagram (4.10): NONE.
+    Situation variety: include 3+ different story contexts so the
+      candidate does not rely on one story for all behavioral Qs.
+    "What NOT to say": MANDATORY in Field Q&A Candidate Mistakes.
+
+═══════════════════════════════════════════════════════════════════════════
 SECTION 4: ENTRY STRUCTURE — EXACT SECTION ORDER (9 SECTIONS, 5 MANDATORY + 4 CONDITIONAL)
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -519,14 +639,18 @@ FORMAT:
 
   **Blank Mind Recovery:**
   If you blank in the interview:
-  (1) Restate: "So you are asking about X — let me think through
-      what problem that solves."
-  (2) First principles: "From first principles, this domain needs to
-      handle [constraint A] and [constraint B]..."
-  (3) Bridge: "This reminds me of [related concept]. X works
-      similarly/differently because..."
-  These three steps buy 30–60 seconds of structured recovery.
-  Never say "I don't know" and stop — first principles beats silence.
+
+  **(1) Restate:** "So you are asking about X - let me think through
+  what problem that solves."
+
+  **(2) First principles:** "From first principles, this domain needs
+  to handle [constraint A] and [constraint B]..."
+
+  **(3) Bridge:** "This reminds me of [related concept]. X works
+  similarly/differently because..."
+
+  These three steps buy 30-60 seconds of structured recovery.
+  Never say "I don't know" and stop - first principles beats silence.
 
 RULES:
   - Both versions must be SPEAKABLE — read naturally aloud
@@ -602,13 +726,26 @@ FORMAT:
   - Example 3: full production-realistic usage (conditions, multiple threads)
 
   For each example:
-  ```java
+  ```{language}
   [code block — compiles, idiomatic, with inline comments]
   ```
   *Why this matters:* [1-3 sentences explaining the key point]
 
 RULES:
-  - Code must compile — no invented APIs
+  - Replace `{language}` with the topic's primary language using
+    this priority order:
+      1. If the topic explicitly names a language (Python, Go, JS,
+         SQL, etc.) → use that language.
+      2. If the topic is design patterns, software design, system
+         design, OOP principles, SOLID, DDD, Clean Architecture,
+         or any language-neutral design concept → use `java`.
+      3. If no language is specified and the topic is not
+         design-focused → use `java` as the default.
+      4. Use `pseudocode` only when the algorithm is truly
+         language-agnostic (e.g., sorting, graph traversal) and
+         a real language would add noise.
+  - Default language: java (unless overridden by rules above)
+  - Code must compile - no invented APIs
   - Comments on any non-obvious line
   - Show the failure path (try/finally, exception handling)
   - If no non-trivial usage: mark OMIT and explain why
@@ -667,16 +804,17 @@ FORMAT:
   🗣️ "[Spoken answer template — first person, natural English.
        Covers the key points for this Q-type.]"
 
-  Repeat for all seven Q-types.
+  Repeat for all eight Q-types.
 
-SEVEN Q-TYPES (from Section 2):
+EIGHT Q-TYPES (from Section 2):
   #### Definition
   #### Mechanism
   #### Comparison
   #### Scenario
   #### Debugging
   #### Deep Dive
-  #### Performance & Scalability
+  #### Misconception / Trap  [★★☆ and above only]
+  #### Performance & Scalability  [★★☆ and above only]
 
   Interviewer type adaptation table at end:
   | Interviewer Type | Emphasis |
@@ -782,9 +920,21 @@ RULES:
   - #### headings, not bold caps
   - Production Failures must be realistic (how systems actually fail)
   - Candidate Mistakes must be common (things candidates actually do wrong)
-  - Interviewer questions must be non-Googleable and reveal your thinking
-  - Live Coding Context: OMIT explicitly with reason if no coding round
-    implications (pure system-design-only concepts)
+  - Each Candidate Mistake entry MUST include a "What NOT to say"
+    line showing the exact wrong phrasing, then the correct version:
+      **What NOT to say:** "[Wrong answer]"
+      **Say instead:** "[Correct framing]"
+  - For BEHAVIORAL topics (ARCHETYPE 6): every Scenario Q-type
+    answer MUST use the STAR template:
+      **S (Situation):** [Context - team size, system, constraints]
+      **T (Task):**      [Your specific responsibility/goal]
+      **A (Action):**    [Exact steps you took - first person]
+      **R (Result):**    [Measurable outcome or clear learning]
+    Include at least 3 different story contexts (not one story
+    reused). Each story must be distinct in situation type.
+  - Interviewer questions must be non-Googleable and reveal thinking
+  - Live Coding Context: OMIT explicitly with reason if no coding
+    round implications (pure system-design-only concepts)
 
 ─────────────────────────────────────────────────────────────────────────
 4.9  SYSTEM DESIGN  [CONDITIONAL — ★★★ or sd: true in frontmatter]
@@ -807,12 +957,15 @@ FORMAT:
   **Example question:** [One specific system design question]
 
   **6-step framework answer:**
-  Step 1 CLARIFY  — [2-3 requirement questions]
-  Step 2 ESTIMATE — [back-of-envelope scale estimate]
-  Step 3 DESIGN   — [high-level boxes and arrows]
-  Step 4 DEEP DIVE— [introduce THIS concept here, with trade-offs]
-  Step 5 ALTS     — [what you considered and rejected]
-  Step 6 EVOLVE   — [how this changes at 10× scale]
+  Step 1 CLARIFY   (~5 min) — [2-3 requirement questions]
+  Step 2 ESTIMATE  (~5 min) — [back-of-envelope scale estimate]
+  Step 3 DESIGN    (~10 min)— [high-level boxes and arrows]
+  Step 4 DEEP DIVE (~10 min)— [introduce THIS concept here;
+                               state the problem it solves at scale,
+                               the trade-off chosen, and what breaks
+                               if you get this wrong]
+  Step 5 ALTS      (~5 min) — [what you considered and rejected]
+  Step 6 EVOLVE    (~5 min) — [how this changes at 10x scale]
 
   **Scale inflection point:**
   At [X RPS / Y GB / Z concurrent connections / N nodes], [KEYWORD]
@@ -1137,12 +1290,15 @@ version: 1
 *Adapting down:* [Junior: WHAT + WHY + EXAMPLE only]
 
 **Blank Mind Recovery:**
-(1) Restate: "So you are asking about [KEYWORD] — let me think through what
-    problem that solves."
-(2) First principles: "From first principles, this domain needs to handle
-    [constraint A] and [constraint B]..."
-(3) Bridge: "This reminds me of [related concept]. [KEYWORD] works
-    similarly/differently because..."
+
+**(1) Restate:** "So you are asking about [KEYWORD] - let me think
+through what problem that solves."
+
+**(2) First principles:** "From first principles, this domain needs
+to handle [constraint A] and [constraint B]..."
+
+**(3) Bridge:** "This reminds me of [related concept]. [KEYWORD]
+works similarly/differently because..."
 
 ---
 
@@ -1179,7 +1335,7 @@ version: 1
 
 **Example 1: [Basic usage title]**
 
-```java
+```{language}
 [idiomatic code — compiles, with inline comments on non-obvious lines]
 ```
 
@@ -1187,7 +1343,7 @@ version: 1
 
 **Example 2: [Pattern title]**
 
-```java
+```{language}
 [code]
 ```
 
@@ -1195,7 +1351,7 @@ version: 1
 
 **Example 3: [Production-realistic title]**
 
-```java
+```{language}
 [code]
 ```
 
@@ -1314,19 +1470,27 @@ A: [Symptom → diagnosis → fix]
 
 Q: [Mistake to avoid]
 
-A: [Correct framing]
+**What NOT to say:** "[Wrong phrasing or wrong answer]"
+
+**Say instead:** "[Correct framing]"
 
 Q: [Mistake to avoid]
 
-A: [Correct framing]
+**What NOT to say:** "[Wrong phrasing or wrong answer]"
+
+**Say instead:** "[Correct framing]"
 
 Q: [Mistake to avoid]
 
-A: [Correct framing]
+**What NOT to say:** "[Wrong phrasing or wrong answer]"
+
+**Say instead:** "[Correct framing]"
 
 Q: [Mistake to avoid]
 
-A: [Correct framing]
+**What NOT to say:** "[Wrong phrasing or wrong answer]"
+
+**Say instead:** "[Correct framing]"
 
 #### Questions to Ask the Interviewer
 

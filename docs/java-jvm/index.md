@@ -1,36 +1,29 @@
 ---
-layout: default
 title: "Java JVM"
-nav_order: 3
+nav_order: 4
 has_children: true
-permalink: /java-jvm/
-description: "Interview coverage for JVM internals: class loading, garbage collection, JIT, bytecode, memory model"
 ---
 
 # Java JVM
 
-JVM internals - how the virtual machine works under the hood. Distinct
-from language features (java-language/), platform APIs (java-core/),
-and performance tooling (java-performance/).
-
-**Interview focus:** Memory layout, class loading delegation, GC
-algorithm trade-offs, JIT optimization, bytecode, JPMS, JMM.
+JVM internals: memory areas, garbage collection algorithms, class loading,
+JIT compilation, profiling tools, and crash analysis. From GC basics to
+production-level JVM tuning and diagnostic skills.
 
 ## Files
 
-| File                          | Level   | Keywords | Status  |
-| ----------------------------- | ------- | -------- | ------- |
-| Java JVM - L0 Orientation     | L0      | 4        | planned |
-| Java JVM - L1 Foundations     | L1      | 5        | planned |
-| Java JVM - L2 Memory Model    | L2      | 5        | planned |
-| Java JVM - L3 Class Loading   | L3      | 5        | planned |
-| Java JVM - L3 GC Foundations  | L3      | 4        | planned |
-| Java JVM - L4 GC Algorithms   | L4      | 5        | planned |
-| Java JVM - L4 JIT Compilation | L4      | 4        | planned |
-| Java JVM - L5 Architecture    | L5      | 3        | planned |
-| Java JVM - L6 Theory and META | L6+META | 4        | planned |
+| File | Level | Keywords | Status |
+| ---- | ----- | -------- | ------ |
+| [Java JVM - L0 Orientation](Java%20JVM%20-%20L0%20Orientation.md) | L0 | 4 | draft |
+| [Java JVM - L1 Foundations](Java%20JVM%20-%20L1%20Foundations.md) | L1 | 5 | draft |
+| [Java JVM - L2 Garbage Collection](Java%20JVM%20-%20L2%20Garbage%20Collection.md) | L2 | 5 | draft |
+| [Java JVM - L3 GC Deep Dive](Java%20JVM%20-%20L3%20GC%20Deep%20Dive.md) | L3 | 5 | draft |
+| [Java JVM - L3 Class Loading](Java%20JVM%20-%20L3%20Class%20Loading.md) | L3 | 5 | draft |
+| [Java JVM - L4 JVM Internals](Java%20JVM%20-%20L4%20JVM%20Internals.md) | L4 | 5 | draft |
+| [Java JVM - L5 Architecture](Java%20JVM%20-%20L5%20Architecture.md) | L5 | 3 | draft |
+| [Java JVM - META Patterns](Java%20JVM%20-%20META%20Patterns.md) | META | 2 | draft |
 
-**Total: 39 keywords, 9 files**
+**Keywords:** 34 | **Files:** 8 | **Status:** complete
 
 ---
 
@@ -38,84 +31,74 @@ algorithm trade-offs, JIT optimization, bytecode, JPMS, JMM.
 
 ### Java JVM - L0 Orientation
 
-| #   | Keyword                                                            | Difficulty | Status  |
-| --- | ------------------------------------------------------------------ | ---------- | ------- |
-| 1   | What is the JVM? Write-Once-Run-Anywhere Architecture              | easy       | pending |
-| 2   | JVM Components: Class Loader, Runtime Data Areas, Execution Engine | easy       | pending |
-| 3   | .class Files and Bytecode: What javac Produces                     | easy       | pending |
-| 4   | JVM vs Native Execution: The Abstraction Layer Trade-off           | easy       | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | JVM Architecture Overview        | ★☆☆        | pending |
+| 2   | Interpretation vs JIT Compilation| ★☆☆        | pending |
+| 3   | Garbage Collection Overview      | ★☆☆        | pending |
+| 4   | JVM Ecosystem and Tools          | ★☆☆        | pending |
 
 ### Java JVM - L1 Foundations
 
-| #   | Keyword                                                               | Difficulty | Status  |
-| --- | --------------------------------------------------------------------- | ---------- | ------- |
-| 1   | JVM Memory Areas: Heap, Stack, Metaspace, PC Register, Code Cache     | easy       | pending |
-| 2   | Stack Frames: Local Variables, Operand Stack, Constant Pool Reference | easy       | pending |
-| 3   | Class File Format: Magic Number, Constant Pool, Method Table          | easy       | pending |
-| 4   | Bytecode Instructions: The JVM Instruction Set Overview               | easy       | pending |
-| 5   | JVM Startup Sequence: Bootstrap to main()                             | easy       | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | JVM Memory Areas                 | ★☆☆        | pending |
+| 2   | Heap vs Stack                    | ★☆☆        | pending |
+| 3   | Object Lifecycle in JVM          | ★★☆        | pending |
+| 4   | Class Loading Basics             | ★☆☆        | pending |
+| 5   | Metaspace and Method Area        | ★★☆        | pending |
 
-### Java JVM - L2 Memory Model
+### Java JVM - L2 Garbage Collection
 
-| #   | Keyword                                                            | Difficulty | Status  |
-| --- | ------------------------------------------------------------------ | ---------- | ------- |
-| 1   | Java Memory Model: happens-before, Visibility, Ordering Guarantees | medium     | pending |
-| 2   | volatile: What It Guarantees and What It Does Not                  | medium     | pending |
-| 3   | Object Layout in Heap: Mark Word, Klass Pointer, Fields, Padding   | medium     | pending |
-| 4   | Escape Analysis: Stack Allocation, Scalar Replacement, Elision     | medium     | pending |
-| 5   | String Deduplication: G1GC Feature for Reduced Heap Footprint      | medium     | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | GC Roots and Reachability        | ★★☆        | pending |
+| 2   | Minor GC and Major GC            | ★★☆        | pending |
+| 3   | Serial and Parallel GC           | ★★☆        | pending |
+| 4   | G1 Garbage Collector             | ★★☆        | pending |
+| 5   | ZGC and Shenandoah               | ★★★        | pending |
+
+### Java JVM - L3 GC Deep Dive
+
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | GC Tuning Parameters             | ★★★        | pending |
+| 2   | GC Log Analysis                  | ★★★        | pending |
+| 3   | Heap Sizing and OOM Errors       | ★★★        | pending |
+| 4   | GC Pause Time Optimization       | ★★★        | pending |
+| 5   | Generational Hypothesis          | ★★☆        | pending |
 
 ### Java JVM - L3 Class Loading
 
-| #   | Keyword                                                          | Difficulty | Status  |
-| --- | ---------------------------------------------------------------- | ---------- | ------- |
-| 1   | Class Loading: Bootstrap, Platform, Application Loader Hierarchy | medium     | pending |
-| 2   | ClassLoader Delegation: Parent-First Lookup and Bootstrap Trust  | medium     | pending |
-| 3   | Class Initialization: Clinit, Static Initializers, Circular Deps | medium     | pending |
-| 4   | Dynamic Class Loading: URLClassLoader and Custom ClassLoaders    | medium     | pending |
-| 5   | JPMS: Module System Encapsulation, Requires, Exports, Opens      | medium     | pending |
+| #   | Keyword                              | Difficulty | Status  |
+| --- | ------------------------------------ | ---------- | ------- |
+| 1   | ClassLoader Delegation Model         | ★★☆        | pending |
+| 2   | Bootstrap and Platform ClassLoader   | ★★☆        | pending |
+| 3   | Dynamic Class Loading                | ★★★        | pending |
+| 4   | Hot Deployment and Class Leaks       | ★★★        | pending |
+| 5   | Java Agent and Instrumentation       | ★★★        | pending |
 
-### Java JVM - L3 GC Foundations
+### Java JVM - L4 JVM Internals
 
-| #   | Keyword                                                             | Difficulty | Status  |
-| --- | ------------------------------------------------------------------- | ---------- | ------- |
-| 1   | GC Fundamentals: Mark-Sweep-Compact and the Generational Hypothesis | medium     | pending |
-| 2   | Young Generation: Eden, Survivor Spaces, and Minor GC               | medium     | pending |
-| 3   | Old Generation: Promotion, Full GC Triggers, Humongous Objects      | medium     | pending |
-| 4   | GC Roots: Thread Stacks, Static Fields, JNI, Class Loaders          | medium     | pending |
-
-### Java JVM - L4 GC Algorithms
-
-| #   | Keyword                                                           | Difficulty | Status  |
-| --- | ----------------------------------------------------------------- | ---------- | ------- |
-| 1   | G1GC: Region-Based Heap, Mixed GC, and Humongous Allocation       | hard       | pending |
-| 2   | ZGC: Colored Pointers, Load Barriers, and Sub-Millisecond Pauses  | hard       | pending |
-| 3   | Shenandoah: Brooks Forwarding Pointers and Concurrent Compaction  | hard       | pending |
-| 4   | GC Log Analysis: Parsing -Xlog:gc\* and Diagnosing Stop-the-World | hard       | pending |
-| 5   | GC Selection Framework: Latency vs Throughput vs Footprint        | hard       | pending |
-
-### Java JVM - L4 JIT Compilation
-
-| #   | Keyword                                                           | Difficulty | Status  |
-| --- | ----------------------------------------------------------------- | ---------- | ------- |
-| 1   | JIT Compilation: C1, C2, and Tiered Compilation Strategy          | hard       | pending |
-| 2   | HotSpot Optimizations: Inlining, Loop Unrolling, Devirtualization | hard       | pending |
-| 3   | JIT Deoptimization: When Assumptions Break and Code Falls Back    | hard       | pending |
-| 4   | Graal JIT: The New Compiler and Its Trade-offs vs C2              | hard       | pending |
+| #   | Keyword                                  | Difficulty | Status  |
+| --- | ---------------------------------------- | ---------- | ------- |
+| 1   | JIT Compilation Tiers and Optimization   | ★★★        | pending |
+| 2   | JVM Bytecode and Instruction Set         | ★★★        | pending |
+| 3   | JVM Flight Recorder and Mission Control  | ★★★        | pending |
+| 4   | JVM Thread Dump Analysis                 | ★★★        | pending |
+| 5   | JVM Crash Dump Analysis                  | ★★★        | pending |
 
 ### Java JVM - L5 Architecture
 
-| #   | Keyword                                                           | Difficulty | Status  |
-| --- | ----------------------------------------------------------------- | ---------- | ------- |
-| 1   | GraalVM Native Image: AOT Compilation and Closed-World Assumption | hard       | pending |
-| 2   | JVM Version Migration: Java 8 to 21 - Modules, APIs, Deprecations | hard       | pending |
-| 3   | JPMS Governance: Modularizing a Legacy Application                | hard       | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | GraalVM and AOT Compilation      | ★★★        | pending |
+| 2   | JVM Tuning Strategy              | ★★★        | pending |
+| 3   | JVM Security Architecture        | ★★★        | pending |
 
-### Java JVM - L6 Theory and META
+### Java JVM - META Patterns
 
-| #   | Keyword                                                             | Difficulty | Status  |
-| --- | ------------------------------------------------------------------- | ---------- | ------- |
-| 1   | JVM Specification: Bytecode Verification and Class File Constraints | hard       | pending |
-| 2   | Java Memory Model: JSR-133, happens-before, Sequential Consistency  | hard       | pending |
-| 3   | JVM Internals Mental Model: Reasoning About Performance             | hard       | pending |
-| 4   | Platform Abstraction Thinking: The JVM as a Design Pattern          | hard       | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | JVM Diagnostic Framework         | ★★☆        | pending |
+| 2   | JVM Performance Mental Model     | ★★☆        | pending |

@@ -1,9 +1,0 @@
-  L1: # Lambda Expressions: Syntax, Capture Rules, and Effectively Final
-  L44: **Blank Mind Recovery:**
-  L46: **(1) Restate:** "You are asking about lambda syntax and capture rules -
-  L483: # Functional Interfaces: Predicate, Function, Consumer, Supplier
-  L877: # Method References: Four Kinds and When Each Applies
-  L1100: # Streams API: Lazy Evaluation, Pipelines, and Terminal Operations
-  L1144: **Blank Mind Recovery:**
-  L1146: **(1) Restate:** "You are asking about how Streams work - let me explain
-  L1486: # Optional: The Null-Safety Pattern and When NOT to Use It

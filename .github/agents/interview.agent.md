@@ -111,7 +111,7 @@ formatting rules. The only change is batch size, not depth.
 
 | File                                  | Purpose                                   | When to read                                   |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
-| `spec/interview_content_generator.md` | Master generation spec v1.0 (15 sections) | ONCE per session - first keyword only          |
+| `spec/interview_content_generator.md` | Master generation spec v1.0 (8 mandatory + conditional sections) | ONCE per session - first keyword only          |
 | `spec/topics_registry.md`             | Topic-to-folder mapping + level coverage  | When checking existing topics / new topic mode |
 | `docs/index.md`                       | Navigation root with all topics           | ALWAYS - to understand current structure       |
 

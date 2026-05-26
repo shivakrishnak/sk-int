@@ -17,17 +17,18 @@ level files (L0 through META). Every keyword entry follows the
 Concept Explanation, Code Example, Answers by Seniority, Common
 Misconceptions, Failure Modes, Interview Deep-Dive (7-12 full Q&A).
 
-## Java World
+## Topics
 
-The Java domain is split into five focused sub-domains. Each maps to
-a distinct interview area a senior engineer can spend 45+ minutes on.
-
-| Topic                                         | Folder            | Keywords | Status   |
-| --------------------------------------------- | ----------------- | -------- | -------- |
-| [Java Language](java-language/index.md)       | java-language/    | 52       | complete |
-| [Java Core APIs](java-core/index.md)          | java-core/        | 31       | complete |
-| [Java JVM](java-jvm/index.md)                 | java-jvm/         | 39       | planned  |
-| [Java Concurrency](java-concurrency/index.md) | java-concurrency/ | 40       | planned  |
-| [Java Performance](java-performance/index.md) | java-performance/ | 23       | planned  |
-
-**Total: 179 keywords across 40 files**
+| Topic | Folder | Files | Keywords | Status |
+| ----- | ------ | ----- | -------- | ------ |
+| [Java Language](java-language/) | java-language/ | 10 | 42 | pending |
+| [Java Core](java-core/) | java-core/ | 10 | 44 | pending |
+| [Java Concurrency](java-concurrency/) | java-concurrency/ | 9 | 39 | pending |
+| [Java JVM](java-jvm/) | java-jvm/ | 8 | 34 | pending |
+| [Java Performance](java-performance/) | java-performance/ | 8 | 33 | pending |
+| [Spring](spring/) | spring/ | 10 | 43 | pending |
+| [Hibernate](hibernate/) | hibernate/ | 10 | 41 | pending |
+| [JPA](jpa/) | jpa/ | 10 | 41 | pending |
+| [Micronaut](micronaut/) | micronaut/ | 10 | 43 | complete |
+| [Quarkus](quarkus/) | quarkus/ | 10 | 43 | complete |
+| [GraalVM](graalvm/) | graalvm/ | 10 | 34 | complete |

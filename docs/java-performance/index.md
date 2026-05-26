@@ -1,34 +1,29 @@
 ---
-layout: default
 title: "Java Performance"
 nav_order: 5
 has_children: true
-permalink: /java-performance/
-description: "Interview coverage for Java performance: JFR, async-profiler, GC tuning, heap analysis, JVM flags"
 ---
 
 # Java Performance
 
-Java performance tooling and diagnosis - how to find and fix slow or
-memory-hungry Java applications. Distinct from GC algorithm internals
-(java-jvm/) which focuses on HOW the JVM works. This folder focuses on
-HOW TO TUNE and DIAGNOSE it when it's broken.
-
-**Interview focus:** Profiling workflow, GC log analysis, heap dump
-investigation, JVM flag choices, memory leak patterns, SLO-aware
-performance testing.
+Java performance engineering: benchmarking, profiling tools, memory
+optimization, CPU optimization, production tuning, and performance
+architecture patterns. From JMH basics to diagnosing production latency.
 
 ## Files
 
-| File                                        | Level   | Keywords | Status  |
-| ------------------------------------------- | ------- | -------- | ------- |
-| Java Performance - L0 Orientation           | L0      | 4        | planned |
-| Java Performance - L2 Profiling             | L2      | 5        | planned |
-| Java Performance - L3 GC Tuning             | L3      | 5        | planned |
-| Java Performance - L4 Advanced Diagnostics  | L4      | 5        | planned |
-| Java Performance - L5 Architecture and META | L5+META | 4        | planned |
+| File | Level | Keywords | Status |
+| ---- | ----- | -------- | ------ |
+| [Java Performance - L0 Orientation](Java%20Performance%20-%20L0%20Orientation.md) | L0 | 3 | draft |
+| [Java Performance - L1 Foundations](Java%20Performance%20-%20L1%20Foundations.md) | L1 | 5 | draft |
+| [Java Performance - L2 Profiling Tools](Java%20Performance%20-%20L2%20Profiling%20Tools.md) | L2 | 5 | draft |
+| [Java Performance - L3 Memory Optimization](Java%20Performance%20-%20L3%20Memory%20Optimization.md) | L3 | 5 | draft |
+| [Java Performance - L3 CPU Optimization](Java%20Performance%20-%20L3%20CPU%20Optimization.md) | L3 | 5 | draft |
+| [Java Performance - L4 Production Tuning](Java%20Performance%20-%20L4%20Production%20Tuning.md) | L4 | 5 | draft |
+| [Java Performance - L5 Architecture](Java%20Performance%20-%20L5%20Architecture.md) | L5 | 3 | draft |
+| [Java Performance - META Patterns](Java%20Performance%20-%20META%20Patterns.md) | META | 2 | draft |
 
-**Total: 23 keywords, 5 files**
+**Keywords:** 33 | **Files:** 8 | **Status:** complete
 
 ---
 
@@ -36,48 +31,73 @@ performance testing.
 
 ### Java Performance - L0 Orientation
 
-| #   | Keyword                                                             | Difficulty | Status  |
-| --- | ------------------------------------------------------------------- | ---------- | ------- |
-| 1   | Performance Engineering: Measure Before You Optimize                | easy       | pending |
-| 2   | Latency vs Throughput vs Footprint: Choosing the Right Goal         | easy       | pending |
-| 3   | The JVM Performance Toolbox: JFR, JMC, async-profiler, JMX          | easy       | pending |
-| 4   | Java Performance Anti-Patterns: Premature Optimization and GC Abuse | easy       | pending |
+| #   | Keyword                              | Difficulty | Status  |
+| --- | ------------------------------------ | ---------- | ------- |
+| 1   | Java Performance Overview            | ★☆☆        | pending |
+| 2   | Performance Measurement Fundamentals | ★☆☆        | pending |
+| 3   | JVM Performance Model                | ★☆☆        | pending |
 
-### Java Performance - L2 Profiling
+### Java Performance - L1 Foundations
 
-| #   | Keyword                                                                | Difficulty | Status  |
-| --- | ---------------------------------------------------------------------- | ---------- | ------- |
-| 1   | Java Flight Recorder: Custom Events, Configurations, Streaming API     | medium     | pending |
-| 2   | JDK Mission Control: Flame Graphs, Hot Methods, Allocation Profiling   | medium     | pending |
-| 3   | async-profiler: CPU, Allocation, Lock Profiling Without Safepoints     | medium     | pending |
-| 4   | JMX and MBeans: Runtime Metrics, Remote Monitoring, and Alerting       | medium     | pending |
-| 5   | Heap Dump Analysis: MAT, Retained Heap, Dominator Trees, Leak Suspects | medium     | pending |
+| #   | Keyword                              | Difficulty | Status  |
+| --- | ------------------------------------ | ---------- | ------- |
+| 1   | Benchmarking with JMH                | ★★☆        | pending |
+| 2   | CPU Profiling Basics                 | ★★☆        | pending |
+| 3   | Memory Profiling Basics              | ★★☆        | pending |
+| 4   | Latency vs Throughput                | ★☆☆        | pending |
+| 5   | Performance Anti-patterns Overview   | ★☆☆        | pending |
 
-### Java Performance - L3 GC Tuning
+### Java Performance - L2 Profiling Tools
 
-| #   | Keyword                                                              | Difficulty | Status  |
-| --- | -------------------------------------------------------------------- | ---------- | ------- |
-| 1   | GC Log Analysis: Parsing -Xlog:gc\* and Identifying Pause Patterns   | medium     | pending |
-| 2   | Heap Sizing Strategy: Xms, Xmx, and Why Setting Them Equal Matters   | medium     | pending |
-| 3   | Allocation Rate Optimization: Reducing Object Pressure               | medium     | pending |
-| 4   | GC Tuning Anti-Patterns: MaxGCPauseMillis Myths and Over-Engineering | medium     | pending |
-| 5   | Object Pooling vs Allocation: When Pools Help and When They Hurt     | medium     | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | Java Flight Recorder             | ★★☆        | pending |
+| 2   | Java Mission Control             | ★★☆        | pending |
+| 3   | VisualVM and JConsole            | ★★☆        | pending |
+| 4   | Async-Profiler                   | ★★★        | pending |
+| 5   | Heap Dump Analysis               | ★★★        | pending |
 
-### Java Performance - L4 Advanced Diagnostics
+### Java Performance - L3 Memory Optimization
 
-| #   | Keyword                                                                 | Difficulty | Status  |
-| --- | ----------------------------------------------------------------------- | ---------- | ------- |
-| 1   | Memory Leak Detection: ClassLoader Leaks, Static Collections, Listeners | hard       | pending |
-| 2   | CPU Starvation vs Memory Pressure: Distinguishing the Diagnosis         | hard       | pending |
-| 3   | JVM Flag Tuning Checklist: Production-Safe Flags and Pitfalls           | hard       | pending |
-| 4   | Native Memory Tracking: Off-Heap Diagnostics with NMT                   | hard       | pending |
-| 5   | Compressed OOPs and Object Header Optimization for Large Heaps          | hard       | pending |
+| #   | Keyword                                  | Difficulty | Status  |
+| --- | ---------------------------------------- | ---------- | ------- |
+| 1   | Object Allocation Optimization           | ★★☆        | pending |
+| 2   | String Memory Optimization               | ★★☆        | pending |
+| 3   | Collection Sizing and Pre-allocation     | ★★☆        | pending |
+| 4   | Off-Heap Memory Management               | ★★★        | pending |
+| 5   | Garbage Collection Tuning                | ★★★        | pending |
 
-### Java Performance - L5 Architecture and META
+### Java Performance - L3 CPU Optimization
 
-| #   | Keyword                                                                 | Difficulty | Status  |
-| --- | ----------------------------------------------------------------------- | ---------- | ------- |
-| 1   | Performance Testing Strategy: Microbenchmarks with JMH                  | hard       | pending |
-| 2   | Continuous Performance Monitoring: Baselines, SLOs, Regression Alerts   | hard       | pending |
-| 3   | JVM Warm-Up Strategies: Class Data Sharing (CDS) and Profile-Guided AOT | hard       | pending |
-| 4   | Production Performance Thinking: First-Principles Reasoning             | hard       | pending |
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | JIT Optimization and Inlining    | ★★★        | pending |
+| 2   | Loop Optimization                | ★★☆        | pending |
+| 3   | Cache-Friendly Data Structures   | ★★★        | pending |
+| 4   | Thread Contention Reduction      | ★★★        | pending |
+| 5   | False Sharing                    | ★★★        | pending |
+
+### Java Performance - L4 Production Tuning
+
+| #   | Keyword                          | Difficulty | Status  |
+| --- | -------------------------------- | ---------- | ------- |
+| 1   | Production GC Configuration      | ★★★        | pending |
+| 2   | Thread Pool Tuning               | ★★★        | pending |
+| 3   | JVM Startup Optimization         | ★★★        | pending |
+| 4   | Memory Leak Detection and Fix    | ★★★        | pending |
+| 5   | High-Latency Diagnosis           | ★★★        | pending |
+
+### Java Performance - L5 Architecture
+
+| #   | Keyword                              | Difficulty | Status  |
+| --- | ------------------------------------ | ---------- | ------- |
+| 1   | Performance Architecture Patterns    | ★★★        | pending |
+| 2   | Capacity Planning and SLA Design     | ★★★        | pending |
+| 3   | Performance Governance               | ★★★        | pending |
+
+### Java Performance - META Patterns
+
+| #   | Keyword                              | Difficulty | Status  |
+| --- | ------------------------------------ | ---------- | ------- |
+| 1   | Performance Debugging Framework      | ★★☆        | pending |
+| 2   | Performance Interview Strategy       | ★★☆        | pending |
