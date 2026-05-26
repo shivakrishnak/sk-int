@@ -1,3 +1,23 @@
+---
+layout: default
+title: "Micronaut - META Patterns"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 10
+permalink: /micronaut/meta-patterns/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Framework Selection Decision Framework](#framework-selection-decision-framework) | critical |
+| 2 | [Cold Start Optimization Mental Model](#cold-start-optimization-mental-model) | high |
+| 3 | [Compile-Time vs Runtime Trade-off Pattern](#compile-time-vs-runtime-trade-off-pattern) | high |
+
+---
+
 # Framework Selection Decision Framework
 
 **Interview Weight:** critical - Staff-level question.

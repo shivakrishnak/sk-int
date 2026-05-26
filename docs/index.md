@@ -32,3 +32,12 @@ Misconceptions, Failure Modes, Interview Deep-Dive (7-12 full Q&A).
 | [Micronaut](micronaut/) | micronaut/ | 10 | 43 | complete |
 | [Quarkus](quarkus/) | quarkus/ | 10 | 43 | complete |
 | [GraalVM](graalvm/) | graalvm/ | 10 | 34 | complete |
+| [Design Patterns and SOLID](design-patterns/) | design-patterns/ | 10 | 44 | pending |
+| [REST API Design and HTTP](rest-api/) | rest-api/ | 10 | 43 | pending |
+| [Database and SQL](database-sql/) | database-sql/ | 10 | 44 | pending |
+| [Messaging and Event-Driven](messaging/) | messaging/ | 10 | 43 | pending |
+| [DevOps and CI/CD](devops-cicd/) | devops-cicd/ | 9 | 37 | pending |
+| [Docker and Containers](docker/) | docker/ | 9 | 37 | pending |
+| [Kubernetes](kubernetes/) | kubernetes/ | 10 | 44 | pending |
+| [Microservices](microservices/) | microservices/ | 10 | 44 | pending |
+| [System Design](system-design/) | system-design/ | 10 | 44 | pending |

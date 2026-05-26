@@ -1,3 +1,23 @@
+---
+layout: default
+title: "GraalVM - L3 Integration"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /graalvm/l3-integration/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring Boot Native Image Integration](#spring-boot-native-image-integration) | hard |
+| 2 | [Native Image JDBC and Database Drivers](#native-image-jdbc-and-database-drivers) | hard |
+| 3 | [Native Image Build Failures and Diagnostics](#native-image-build-failures-and-diagnostics) | hard |
+
+---
+
 # Spring Boot Native Image Integration
 
 **Interview Weight:** hard - Spring Boot 3 native support

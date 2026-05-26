@@ -1,3 +1,23 @@
+---
+layout: default
+title: "Quarkus - META Patterns"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 10
+permalink: /quarkus/meta-patterns/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kubernetes-Native Framework Mental Model](#kubernetes-native-framework-mental-model) | hard |
+| 2 | [Build-Time vs Runtime Trade-off Framework](#build-time-vs-runtime-trade-off-framework) | hard |
+| 3 | [Native Image Constraint Thinking Pattern](#native-image-constraint-thinking-pattern) | hard |
+
+---
+
 # Kubernetes-Native Framework Mental Model
 
 **Interview Weight:** hard - Mental models transfer

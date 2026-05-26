@@ -1,3 +1,24 @@
+---
+layout: default
+title: "JPA - L0 Orientation"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 1
+permalink: /jpa/l0-orientation/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA Overview and Purpose](#jpa-overview-and-purpose) | easy |
+| 2 | [JPA vs JDBC vs Hibernate](#jpa-vs-jdbc-vs-hibernate) | easy |
+| 3 | [JPA Provider Landscape](#jpa-provider-landscape) | easy |
+| 4 | [Spring Data JPA vs JPA](#spring-data-jpa-vs-jpa) | easy |
+
+---
+
 # JPA Overview and Purpose
 
 **Interview Weight:** easy - L0 orientation question.

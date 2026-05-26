@@ -1,3 +1,22 @@
+---
+layout: default
+title: "Micronaut - L6 Theory"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 9
+permalink: /micronaut/l6-theory/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Compile-Time DI and AOT Processing Theory](#compile-time-di-and-aot-processing-theory) | critical |
+| 2 | [Reactive Streams Specification](#reactive-streams-specification) | high |
+
+---
+
 # Compile-Time DI and AOT Processing Theory
 
 **Interview Weight:** critical - The theoretical

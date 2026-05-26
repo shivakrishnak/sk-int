@@ -1,3 +1,22 @@
+---
+layout: default
+title: "Quarkus - L6 Theory"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 9
+permalink: /quarkus/l6-theory/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Build-Time Augmentation Theory](#build-time-augmentation-theory) | hard |
+| 2 | [MicroProfile Specification](#microprofile-specification) | hard |
+
+---
+
 # Build-Time Augmentation Theory
 
 **Interview Weight:** hard - Theory separates staff

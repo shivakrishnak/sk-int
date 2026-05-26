@@ -1,3 +1,24 @@
+---
+layout: default
+title: "GraalVM - L2 Native Image"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /graalvm/l2-native-image/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Native Image Closed-World Assumption](#native-image-closed-world-assumption) | hard |
+| 2 | [Reflection and Serialization Configuration](#reflection-and-serialization-configuration) | working |
+| 3 | [Native Image Resources and File Inclusion](#native-image-resources-and-file-inclusion) | working |
+| 4 | [Native Image Startup and Memory Profile](#native-image-startup-and-memory-profile) | working |
+
+---
+
 # Native Image Closed-World Assumption
 
 **Interview Weight:** hard - This is the fundamental

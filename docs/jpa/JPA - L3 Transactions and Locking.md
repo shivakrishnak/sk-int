@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L3 Transactions and Locking"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /jpa/l3-transactions-and-locking/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA Transaction Management](#jpa-transaction-management) | critical |
+| 2 | [Optimistic Locking with @Version](#optimistic-locking-with-version) | critical |
+| 3 | [Pessimistic Locking Types](#pessimistic-locking-types) | critical |
+| 4 | [Flush Modes and Synchronization](#flush-modes-and-synchronization) | critical |
+| 5 | [JPA Callbacks and Entity Listeners](#jpa-callbacks-and-entity-listeners) | medium |
+
+---
+
 # JPA Transaction Management
 
 **Interview Weight:** critical - Transaction management

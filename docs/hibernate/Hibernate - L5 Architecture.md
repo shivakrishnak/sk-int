@@ -6,6 +6,18 @@ nav_order: 8
 permalink: /hibernate/l5-architecture/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L5 Architecture](#hibernate---l5-architecture) | medium |
+| 2 | [Hibernate in Microservices](#hibernate-in-microservices) | expert |
+| 3 | [Hibernate vs R2DBC Decision Framework](#hibernate-vs-r2dbc-decision-framework) | expert |
+| 4 | [ORM Layer Architecture Decisions](#orm-layer-architecture-decisions) | expert |
+
+---
+
 # Hibernate - L5 Architecture
 
 Architect-level Hibernate decisions: microservices data

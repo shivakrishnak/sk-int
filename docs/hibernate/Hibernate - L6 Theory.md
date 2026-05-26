@@ -6,6 +6,17 @@ nav_order: 9
 permalink: /hibernate/l6-theory/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L6 Theory](#hibernate---l6-theory) | medium |
+| 2 | [Object-Relational Impedance Mismatch](#object-relational-impedance-mismatch) | expert |
+| 3 | [Hibernate SPI and Extension Model](#hibernate-spi-and-extension-model) | expert |
+
+---
+
 # Hibernate - L6 Theory
 
 Theoretical foundations: the Object-Relational Impedance

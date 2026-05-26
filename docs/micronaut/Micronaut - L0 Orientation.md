@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Micronaut - L0 Orientation"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 1
+permalink: /micronaut/l0-orientation/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut Ecosystem Overview](#micronaut-ecosystem-overview) | medium |
+| 2 | [Why Micronaut Exists - Spring vs Micronaut](#why-micronaut-exists---spring-vs-micronaut) | medium |
+| 3 | [Micronaut vs Spring Boot vs Quarkus](#micronaut-vs-spring-boot-vs-quarkus) | medium |
+| 4 | [Micronaut Architecture Philosophy](#micronaut-architecture-philosophy) | medium |
+
+---
+
 # Micronaut Ecosystem Overview
 
 **Interview Weight:** medium - Orientation question

@@ -6,6 +6,20 @@ nav_order: 3
 permalink: /hibernate/l2-mapping/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L2 Mapping](#hibernate---l2-mapping) | medium |
+| 2 | [One-to-One and One-to-Many Mappings](#one-to-one-and-one-to-many-mappings) | working |
+| 3 | [Many-to-Many with Join Tables](#many-to-many-with-join-tables) | working |
+| 4 | [Inheritance Mapping Strategies](#inheritance-mapping-strategies) | working |
+| 5 | [Embedded Objects and Components](#embedded-objects-and-components) | working |
+| 6 | [Collection Mappings](#collection-mappings) | working |
+
+---
+
 # Hibernate - L2 Mapping
 
 Entity relationship mapping: one-to-many, many-to-many,

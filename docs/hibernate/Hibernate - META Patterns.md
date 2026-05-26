@@ -6,6 +6,17 @@ nav_order: 10
 permalink: /hibernate/meta-patterns/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - META Patterns](#hibernate---meta-patterns) | medium |
+| 2 | [ORM Anti-Pattern Recognition](#orm-anti-pattern-recognition) | intermediate |
+| 3 | [Hibernate Interview Mental Model](#hibernate-interview-mental-model) | intermediate |
+
+---
+
 # Hibernate - META Patterns
 
 Transferable thinking frameworks for Hibernate: anti-pattern

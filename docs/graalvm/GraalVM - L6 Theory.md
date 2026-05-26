@@ -1,3 +1,22 @@
+---
+layout: default
+title: "GraalVM - L6 Theory"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 9
+permalink: /graalvm/l6-theory/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Ahead-of-Time Compilation Theory](#ahead-of-time-compilation-theory) | hard |
+| 2 | [Points-To Analysis and Escape Analysis](#points-to-analysis-and-escape-analysis) | hard |
+
+---
+
 # Ahead-of-Time Compilation Theory
 
 **Interview Weight:** hard - AOT theory is Principal-level

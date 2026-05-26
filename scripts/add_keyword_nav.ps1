@@ -1,13 +1,30 @@
 #!/usr/bin/env pwsh
 # scripts/add_keyword_nav.ps1
-# Adds "## Keywords in This File" navigation table to every content file
-# under docs/ that does not already have one.
+# Adds frontmatter (if missing) and "## Keywords in This File" navigation
+# table to every content file under docs/ that does not already have one.
 # Usage:  pwsh scripts/add_keyword_nav.ps1
 # Safe to re-run: skips files that already contain the nav block.
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $enc = [System.Text.UTF8Encoding]::new($false) # UTF-8 without BOM
+
+# ── Topic parent titles (from index.md frontmatter) ────────────────────────
+$script:TopicTitles = @{}
+
+function Initialize-TopicTitles {
+    $docsPath = Join-Path $PSScriptRoot '..' 'docs'
+    Get-ChildItem $docsPath -Directory | ForEach-Object {
+        $idx = Join-Path $_.FullName 'index.md'
+        if (Test-Path $idx) {
+            $m = Select-String -Path $idx -Pattern '^title:\s*"?(.+?)"?\s*$' |
+                 Select-Object -First 1
+            if ($m) {
+                $script:TopicTitles[$_.Name] = $m.Matches.Groups[1].Value
+            }
+        }
+    }
+}
 
 # ── Anchor generation (matches kramdown/Jekyll rules) ──────────────────────
 function Get-KramdownAnchor([string]$heading) {
@@ -27,43 +44,97 @@ function Get-Difficulty([string]$iwLine) {
     return 'medium'
 }
 
+# ── Generate nav_order from filename level band ────────────────────────────
+function Get-NavOrder([string]$fileName) {
+    if ($fileName -match 'L0') { return 1 }
+    if ($fileName -match 'L1') { return 2 }
+    if ($fileName -match 'L2.*Creational|L2.*Synch|L2.*Queries|L2.*Map|L2.*Core|L2.*HTTP|L2.*Object|L2.*Functional|L2.*Collections$|L2.*Garbage|L2.*Profiling|L2.*Native|L2.*Polyglot|L2.*Caching|L2.*Relationship|L2.*Data(?!$)|L2.*Boot') { return 3 }
+    if ($fileName -match 'L2') { return 4 }
+    if ($fileName -match 'L3.*Enterprise|L3.*Thread|L3.*Async|L3.*Internal|L3.*Type|L3.*Modern|L3.*Class|L3.*GC|L3.*CPU|L3.*Memory|L3.*Integration|L3.*Advanced|L3.*Transaction|L3.*Spring|L3.*MVC|L3.*Cloud|L3.*Reactive|L3.*Data') { return 5 }
+    if ($fileName -match 'L3') { return 6 }
+    if ($fileName -match 'L4') { return 7 }
+    if ($fileName -match 'L5') { return 8 }
+    if ($fileName -match 'L6') { return 9 }
+    if ($fileName -match 'META') { return 10 }
+    return 5
+}
+
+# ── Generate permalink slug from filename ──────────────────────────────────
+function Get-Permalink([string]$folderName, [string]$fileName) {
+    $base = $fileName -replace '\.md$', ''
+    # Remove topic prefix (e.g., "Design Patterns - " or "GraalVM - ")
+    if ($base -match '^.+?\s-\s(.+)$') {
+        $slug = $matches[1]
+    } else {
+        $slug = $base
+    }
+    $slug = $slug.ToLower() -replace '\s+', '-' -replace '[^a-z0-9\-]', ''
+    return "/$folderName/$slug/"
+}
+
+# ── Generate frontmatter for a file that lacks it ──────────────────────────
+function New-Frontmatter([string]$folderName, [string]$fileName) {
+    $base = $fileName -replace '\.md$', ''
+    $parent = if ($script:TopicTitles.ContainsKey($folderName)) {
+        $script:TopicTitles[$folderName]
+    } else { $folderName }
+    $navOrder = Get-NavOrder $fileName
+    $permalink = Get-Permalink $folderName $fileName
+
+    $fm = @(
+        '---'
+        "layout: default"
+        "title: `"$base`""
+        "parent: `"$parent`""
+        "grand_parent: `"SK Interview`""
+        "nav_order: $navOrder"
+        "permalink: $permalink"
+        '---'
+    )
+    return $fm
+}
+
 # ── Process one file ────────────────────────────────────────────────────────
 function Add-KeywordNav([string]$filePath) {
     $name = Split-Path $filePath -Leaf
     $lines = [System.IO.File]::ReadAllLines($filePath)
+    $folderName = Split-Path (Split-Path $filePath -Parent) -Leaf
 
     # Skip index files
     if ($name -eq 'index.md') { return }
 
     # Find end of frontmatter (second ---)
     $fmEnd = -1; $dashCount = 0
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($lines[$i].Trim() -eq '---') {
-            $dashCount++
-            if ($dashCount -ge 2) { $fmEnd = $i; break }
+    $hasFrontmatter = $false
+    if ($lines.Count -gt 0 -and $lines[0].Trim() -eq '---') {
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i].Trim() -eq '---') {
+                $dashCount++
+                if ($dashCount -ge 2) { $fmEnd = $i; $hasFrontmatter = $true; break }
+            }
         }
     }
-    if ($fmEnd -lt 0) {
-        Write-Host "SKIP (no frontmatter): $name" -ForegroundColor DarkGray
-        return
-    }
 
-    # Skip if nav block already exists in first 30 lines after frontmatter
-    $limit = [Math]::Min($fmEnd + 31, $lines.Count)
-    for ($i = $fmEnd + 1; $i -lt $limit; $i++) {
+    # Skip if nav block already exists
+    $searchStart = if ($hasFrontmatter) { $fmEnd + 1 } else { 0 }
+    $limit = [Math]::Min($searchStart + 31, $lines.Count)
+    for ($i = $searchStart; $i -lt $limit; $i++) {
         if ($lines[$i] -match '^## Keywords in This File') {
             Write-Host "SKIP (already has nav): $name" -ForegroundColor DarkGray
             return
         }
     }
 
-    # Extract H1 keywords + difficulty (skip code blocks)
+    # Determine content start (after frontmatter or from line 0)
+    $contentStart = if ($hasFrontmatter) { $fmEnd + 1 } else { 0 }
+
+    # Extract H1 keywords + difficulty from content (skip code blocks)
     $keywords    = [System.Collections.Generic.List[string]]::new()
     $difficulties = @{}
     $inFence     = $false
     $lastKw      = $null
 
-    for ($i = $fmEnd + 1; $i -lt $lines.Count; $i++) {
+    for ($i = $contentStart; $i -lt $lines.Count; $i++) {
         $line = $lines[$i]
         if ($line -match '^\s*```') { $inFence = -not $inFence; continue }
         if ($inFence) { continue }
@@ -102,14 +173,23 @@ function Add-KeywordNav([string]$filePath) {
     $nav.Add('---')
     $nav.Add('')
 
-    # Assemble new file: frontmatter + blank + nav block + content
+    # Assemble new file
     $newLines = [System.Collections.Generic.List[string]]::new()
-    foreach ($l in $lines[0..$fmEnd]) { $newLines.Add($l) }
+
+    if ($hasFrontmatter) {
+        # Keep existing frontmatter
+        foreach ($l in $lines[0..$fmEnd]) { $newLines.Add($l) }
+    } else {
+        # Generate frontmatter
+        $fm = New-Frontmatter $folderName $name
+        foreach ($l in $fm) { $newLines.Add($l) }
+    }
+
     $newLines.Add('')
     foreach ($l in $nav) { $newLines.Add($l) }
 
-    # Skip blank lines immediately after frontmatter in original content
-    $start = $fmEnd + 1
+    # Skip blank lines immediately after frontmatter/start in original content
+    $start = $contentStart
     while ($start -lt $lines.Count -and $lines[$start].Trim() -eq '') {
         $start++
     }
@@ -119,23 +199,22 @@ function Add-KeywordNav([string]$filePath) {
 
     # Write UTF-8 without BOM
     [System.IO.File]::WriteAllLines($filePath, $newLines, $enc)
-    Write-Host ("UPDATED: $name  [$($keywords.Count) keywords: " +
-                "$($keywords -join ', ')]") -ForegroundColor Green
+    Write-Host ("UPDATED: $name  [$($keywords.Count) keywords]") -ForegroundColor Green
+    $script:updatedCount++
 }
 
 # ── Main ────────────────────────────────────────────────────────────────────
+Initialize-TopicTitles
 $docsPath = Join-Path $PSScriptRoot '..' 'docs'
 $files    = Get-ChildItem $docsPath -Recurse -Filter '*.md' |
             Where-Object { $_.Name -ne 'index.md' } |
             Sort-Object FullName
 
-$updated = 0; $skipped = 0
+$script:updatedCount = 0
 foreach ($f in $files) {
-    $before = $updated
     Add-KeywordNav $f.FullName
-    if ($updated -gt $before) { } # counted inside function indirectly
-    # recount by checking output - just track totals via files
 }
 
 Write-Host ''
+Write-Host "Done. Updated $($script:updatedCount) files." -ForegroundColor Cyan
 Write-Host "Done. Processed $($files.Count) files." -ForegroundColor Cyan

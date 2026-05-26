@@ -1,3 +1,25 @@
+---
+layout: default
+title: "GraalVM - L3 Internals"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /graalvm/l3-internals/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [SubstrateVM Runtime Model](#substratevm-runtime-model) | hard |
+| 2 | [Graal JIT Compiler Architecture](#graal-jit-compiler-architecture) | hard |
+| 3 | [Native Image Heap Initialization](#native-image-heap-initialization) | hard |
+| 4 | [Points-To Analysis in Native Image](#points-to-analysis-in-native-image) | hard |
+| 5 | [Truffle Framework and AST Interpreters](#truffle-framework-and-ast-interpreters) | hard |
+
+---
+
 # SubstrateVM Runtime Model
 
 **Interview Weight:** hard - SubstrateVM knowledge separates

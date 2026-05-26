@@ -1,3 +1,22 @@
+---
+layout: default
+title: "JPA - META Patterns"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 10
+permalink: /jpa/meta-patterns/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA Anti-Pattern Catalog](#jpa-anti-pattern-catalog) | medium |
+| 2 | [ORM Selection Decision Framework](#orm-selection-decision-framework) | critical |
+
+---
+
 # JPA Anti-Pattern Catalog
 
 **Interview Weight:** medium - Anti-pattern recognition

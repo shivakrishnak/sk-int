@@ -6,6 +6,18 @@ nav_order: 10
 permalink: /spring/meta-patterns/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - META Patterns](#spring---meta-patterns) | medium |
+| 2 | [Spring Anti-Pattern Catalog](#spring-anti-pattern-catalog) | high |
+| 3 | [Spring Interview Mental Model](#spring-interview-mental-model) | meta |
+| 4 | [Framework Magic Decision Framework](#framework-magic-decision-framework) | meta |
+
+---
+
 # Spring - META Patterns
 
 Transferable thinking patterns for mastering Spring and

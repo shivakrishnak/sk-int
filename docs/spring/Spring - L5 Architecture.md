@@ -6,6 +6,18 @@ nav_order: 8
 permalink: /spring/l5-architecture/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring in Microservices Architecture](#spring-in-microservices-architecture) | architect |
+| 2 | [Spring Cloud Service Discovery and Config](#spring-cloud-service-discovery-and-config) | high |
+| 3 | [Spring Application Migration Strategy](#spring-application-migration-strategy) | architect |
+| 4 | [Spring Security OAuth2 at Scale](#spring-security-oauth2-at-scale) | architect |
+
+---
+
 # Spring in Microservices Architecture
 
 **Interview Weight:** architect - Staff+ engineers are

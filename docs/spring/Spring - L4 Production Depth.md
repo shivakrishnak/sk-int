@@ -6,6 +6,20 @@ nav_order: 7
 permalink: /spring/l4-production-depth/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [BeanPostProcessor and Extension Points](#beanpostprocessor-and-extension-points) | expert |
+| 2 | [Transactional Self-Invocation Anti-Pattern](#transactional-self-invocation-anti-pattern) | critical |
+| 3 | [Spring Proxy Anti-Patterns](#spring-proxy-anti-patterns) | expert |
+| 4 | [Spring Security Architecture](#spring-security-architecture) | critical |
+| 5 | [Spring Performance Diagnostics](#spring-performance-diagnostics) | high |
+| 6 | [Spring Performance Diagnostics](#spring-performance-diagnostics) | high |
+
+---
+
 # BeanPostProcessor and Extension Points
 
 **Interview Weight:** expert - Senior/staff engineers

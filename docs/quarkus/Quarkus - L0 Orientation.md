@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Quarkus - L0 Orientation"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 1
+permalink: /quarkus/l0-orientation/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus Ecosystem Overview](#quarkus-ecosystem-overview) | foundational |
+| 2 | [Why Quarkus Exists - Kubernetes-Native Java](#why-quarkus-exists---kubernetes-native-java) | medium |
+| 3 | [Quarkus vs Spring Boot vs Micronaut](#quarkus-vs-spring-boot-vs-micronaut) | high |
+| 4 | [Quarkus Build-Time Augmentation Philosophy](#quarkus-build-time-augmentation-philosophy) | high |
+
+---
+
 # Quarkus Ecosystem Overview
 
 **Interview Weight:** foundational - Context question.

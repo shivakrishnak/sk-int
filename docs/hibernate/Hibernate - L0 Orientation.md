@@ -6,6 +6,19 @@ nav_order: 1
 permalink: /hibernate/l0-orientation/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L0 Orientation](#hibernate---l0-orientation) | medium |
+| 2 | [ORM Concept and Why Hibernate](#orm-concept-and-why-hibernate) | foundational |
+| 3 | [Hibernate vs JDBC Trade-offs](#hibernate-vs-jdbc-trade-offs) | foundational |
+| 4 | [Hibernate vs JPA Relationship](#hibernate-vs-jpa-relationship) | foundational |
+| 5 | [Hibernate Ecosystem and Versions](#hibernate-ecosystem-and-versions) | orientation |
+
+---
+
 # Hibernate - L0 Orientation
 
 Why Hibernate exists, what problem it solves, how it

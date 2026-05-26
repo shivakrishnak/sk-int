@@ -1,3 +1,22 @@
+---
+layout: default
+title: "GraalVM - L4 Production Depth"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 7
+permalink: /graalvm/l4-production-depth/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Native Image Performance Profiling](#native-image-performance-profiling) | hard |
+| 2 | [GraalVM Anti-Patterns and Closed-World Violations](#graalvm-anti-patterns-and-closed-world-violations) | hard |
+
+---
+
 # Native Image Performance Profiling
 
 **Interview Weight:** hard - Performance profiling in native

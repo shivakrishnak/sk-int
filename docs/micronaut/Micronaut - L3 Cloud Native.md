@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Micronaut - L3 Cloud Native"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /micronaut/l3-cloud-native/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut Health Indicators and Management](#micronaut-health-indicators-and-management) | medium |
+| 2 | [Micronaut Security and JWT](#micronaut-security-and-jwt) | high |
+| 3 | [Micronaut Messaging Kafka and RabbitMQ](#micronaut-messaging-kafka-and-rabbitmq) | high |
+| 4 | [Micronaut Function and AWS Lambda](#micronaut-function-and-aws-lambda) | high |
+| 5 | [Micronaut Distributed Tracing](#micronaut-distributed-tracing) | medium |
+
+---
+
 # Micronaut Health Indicators and Management
 
 **Interview Weight:** medium - Health endpoints are

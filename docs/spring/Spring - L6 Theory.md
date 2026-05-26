@@ -6,6 +6,17 @@ nav_order: 9
 permalink: /spring/l6-theory/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L6 Theory](#spring---l6-theory) | medium |
+| 2 | [Inversion of Control Principle](#inversion-of-control-principle) | architect |
+| 3 | [Spring Container Design Internals](#spring-container-design-internals) | architect |
+
+---
+
 # Spring - L6 Theory
 
 Theoretical foundations of the Spring Framework: the

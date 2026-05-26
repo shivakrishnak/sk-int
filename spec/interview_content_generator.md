@@ -1,5 +1,23 @@
 # 🎯 Technical Interview Dictionary Generator — Master Prompt v1.0
 
+## ⛔⛔⛔ PRE-GENERATION HARD STOPS
+
+### GATE 1 - SPEC MUST BE READ BEFORE ANY GENERATION (Fixes Failure 1)
+
+**RULE:** Before generating ANY entry, read `spec/interview_content_generator.md` in full.
+
+Generating from memory, conversation summaries, or abbreviated notes is PROHIBITED.
+The spec defines exact section IDs, exact `###` headers, exact emoji, mandatory
+subsections, and TYPE-specific adaptations that cannot be reproduced from memory.
+Any entry generated without reading the spec WILL contain wrong headers and MUST be
+regenerated from scratch.
+
+**ENFORCEMENT:** If the model has not confirmed reading `spec/interview_content_generator.md`
+in the current session since the last context reset, it MUST read it before writing
+any file. No exceptions. This is the first step of every generation workflow.
+
+---
+
 > **This is the authoritative generation spec** for every keyword interview entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
 

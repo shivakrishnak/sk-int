@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L1 Foundations"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 2
+permalink: /jpa/l1-foundations/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [EntityManager and Persistence Context](#entitymanager-and-persistence-context) | critical |
+| 2 | [Entity Annotations @Entity @Id @Column](#entity-annotations-entity-id-column) | easy |
+| 3 | [Entity Lifecycle States](#entity-lifecycle-states) | medium |
+| 4 | [JPQL Basics](#jpql-basics) | easy |
+| 5 | [JPA Configuration and persistence.xml](#jpa-configuration-and-persistencexml) | medium |
+
+---
+
 # EntityManager and Persistence Context
 
 **Interview Weight:** critical - The persistence context

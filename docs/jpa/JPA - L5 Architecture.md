@@ -1,3 +1,23 @@
+---
+layout: default
+title: "JPA - L5 Architecture"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 8
+permalink: /jpa/l5-architecture/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA in Domain-Driven Design](#jpa-in-domain-driven-design) | critical |
+| 2 | [CQRS with JPA Read Models](#cqrs-with-jpa-read-models) | critical |
+| 3 | [JPA Multi-tenancy Architecture](#jpa-multi-tenancy-architecture) | critical |
+
+---
+
 # JPA in Domain-Driven Design
 
 **Interview Weight:** critical - DDD with JPA is a

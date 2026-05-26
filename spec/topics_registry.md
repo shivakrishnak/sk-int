@@ -37,6 +37,15 @@ This file is the **single source of truth** for the keyword generation rubric an
 | Micronaut | docs/micronaut/ | scaffolded | Micronaut Framework: compile-time DI, HTTP, Micronaut Data, cloud-native, GraalVM native |
 | Quarkus | docs/quarkus/ | complete | Quarkus: build-time augmentation, ArC CDI, Panache ORM, native image, MicroProfile |
 | GraalVM | docs/graalvm/ | complete | GraalVM: Graal JIT, native-image AOT, SubstrateVM, polyglot engine, Truffle |
+| Design Patterns and SOLID | docs/design-patterns/ | planned | SOLID principles, GoF patterns (creational/structural/behavioral), enterprise patterns, anti-patterns, refactoring |
+| REST API Design and HTTP | docs/rest-api/ | planned | REST architectural style, HTTP protocol, API versioning, pagination, OpenAPI, GraphQL vs REST, API gateway |
+| Database and SQL | docs/database-sql/ | planned | SQL mastery, indexing (B-tree, composite), query plans, transactions, MVCC, connection pooling, schema design |
+| Messaging and Event-Driven | docs/messaging/ | planned | Kafka, RabbitMQ, event sourcing, CQRS, Saga, outbox pattern, schema evolution, exactly-once semantics |
+| DevOps and CI/CD | docs/devops-cicd/ | planned | CI/CD pipelines, GitHub Actions, Jenkins, deployment strategies, GitOps, IaC, platform engineering |
+| Docker and Containers | docs/docker/ | planned | Docker, containerization, multi-stage builds, JVM in containers, image optimization, security, OCI standards |
+| Kubernetes | docs/kubernetes/ | planned | K8s orchestration, pods, deployments, services, HPA, operators, Java on Kubernetes, multi-cluster |
+| Microservices | docs/microservices/ | planned | Microservices architecture, service decomposition, circuit breaker, saga, DDD, distributed tracing, contract testing |
+| System Design | docs/system-design/ | planned | System design interviews, scalability, load balancing, caching, sharding, capacity estimation, trade-offs |
 
 
 ---

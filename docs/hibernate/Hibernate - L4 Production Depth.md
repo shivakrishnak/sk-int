@@ -6,6 +6,18 @@ nav_order: 7
 permalink: /hibernate/l4-production-depth/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L4 Production Depth](#hibernate---l4-production-depth) | medium |
+| 2 | [LazyInitializationException Root Cause](#lazyinitializationexception-root-cause) | expert |
+| 3 | [Hibernate Performance Anti-Patterns](#hibernate-performance-anti-patterns) | expert |
+| 4 | [Schema Migration with Hibernate and Flyway](#schema-migration-with-hibernate-and-flyway) | expert |
+
+---
+
 # Hibernate - L4 Production Depth
 
 Production-grade Hibernate diagnostics: LazyInitializationException,

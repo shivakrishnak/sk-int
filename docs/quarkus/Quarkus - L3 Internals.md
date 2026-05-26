@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Quarkus - L3 Internals"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /quarkus/l3-internals/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus ArC CDI Container Internals](#quarkus-arc-cdi-container-internals) | hard |
+| 2 | [Quarkus Build-Time DI Internals](#quarkus-build-time-di-internals) | hard |
+| 3 | [Quarkus Continuous Testing](#quarkus-continuous-testing) | medium |
+| 4 | [Quarkus Native Build Process](#quarkus-native-build-process) | hard |
+| 5 | [Quarkus Extension Development](#quarkus-extension-development) | hard |
+
+---
+
 # Quarkus ArC CDI Container Internals
 
 **Interview Weight:** hard - ArC internals separate

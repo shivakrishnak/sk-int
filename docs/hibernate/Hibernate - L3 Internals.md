@@ -6,6 +6,20 @@ nav_order: 5
 permalink: /hibernate/l3-internals/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L3 Internals](#hibernate---l3-internals) | medium |
+| 2 | [Hibernate Session States](#hibernate-session-states) | intermediate |
+| 3 | [Dirty Checking and Automatic Flush](#dirty-checking-and-automatic-flush) | intermediate |
+| 4 | [Optimistic Locking with @Version](#optimistic-locking-with-version) | intermediate |
+| 5 | [Pessimistic Locking Strategies](#pessimistic-locking-strategies) | intermediate |
+| 6 | [Cascade Types and Orphan Removal](#cascade-types-and-orphan-removal) | intermediate |
+
+---
+
 # Hibernate - L3 Internals
 
 Deep Hibernate internals: entity state machine, dirty

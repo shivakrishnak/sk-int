@@ -6,6 +6,19 @@ nav_order: 6
 permalink: /hibernate/l3-advanced-features/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L3 Advanced Features](#hibernate---l3-advanced-features) | medium |
+| 2 | [Batch Processing and Bulk Operations](#batch-processing-and-bulk-operations) | expert |
+| 3 | [Hibernate Interceptors and Listeners](#hibernate-interceptors-and-listeners) | expert |
+| 4 | [Multi-tenancy Strategies](#multi-tenancy-strategies) | expert |
+| 5 | [Hibernate Security HQL Injection and Sensitive Data](#hibernate-security-hql-injection-and-sensitive-data) | expert |
+
+---
+
 # Hibernate - L3 Advanced Features
 
 Advanced Hibernate capabilities: batch processing, native

@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Quarkus - L2 Core"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /quarkus/l2-core/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus CDI Scopes and Producers](#quarkus-cdi-scopes-and-producers) | medium |
+| 2 | [Quarkus RESTEasy Reactive](#quarkus-resteasy-reactive) | high |
+| 3 | [Quarkus Fault Tolerance SmallRye](#quarkus-fault-tolerance-smallrye) | high |
+| 4 | [Quarkus Health and Metrics](#quarkus-health-and-metrics) | working |
+| 5 | [Quarkus Dev Services](#quarkus-dev-services) | working |
+
+---
+
 # Quarkus CDI Scopes and Producers
 
 **Interview Weight:** medium - CDI scopes and producers

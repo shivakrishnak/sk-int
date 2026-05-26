@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Quarkus - L2 Data"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /quarkus/l2-data/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus Hibernate ORM and Panache](#quarkus-hibernate-orm-and-panache) | critical |
+| 2 | [Quarkus Panache Active Record Pattern](#quarkus-panache-active-record-pattern) | medium |
+| 3 | [Quarkus Hibernate Reactive](#quarkus-hibernate-reactive) | high |
+| 4 | [Quarkus Flyway and Liquibase](#quarkus-flyway-and-liquibase) | medium |
+| 5 | [Quarkus Redis and Caching](#quarkus-redis-and-caching) | medium |
+
+---
+
 # Quarkus Hibernate ORM and Panache
 
 **Interview Weight:** critical - Panache is Quarkus's

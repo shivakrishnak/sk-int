@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Micronaut - L4 Production Depth"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 7
+permalink: /micronaut/l4-production-depth/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut GraalVM Native Image Build](#micronaut-graalvm-native-image-build) | critical |
+| 2 | [Micronaut Startup Performance Tuning](#micronaut-startup-performance-tuning) | high |
+| 3 | [Micronaut Anti-Patterns](#micronaut-anti-patterns) | high |
+| 4 | [Micronaut Production Diagnostics](#micronaut-production-diagnostics) | critical |
+
+---
+
 # Micronaut GraalVM Native Image Build
 
 **Interview Weight:** critical - Native image is

@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Quarkus - L4 Production Depth"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 7
+permalink: /quarkus/l4-production-depth/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus Native Image Build and Diagnostics](#quarkus-native-image-build-and-diagnostics) | hard |
+| 2 | [Quarkus Performance Diagnostics](#quarkus-performance-diagnostics) | hard |
+| 3 | [Quarkus Anti-Patterns](#quarkus-anti-patterns) | hard |
+| 4 | [Quarkus Security Misconfiguration](#quarkus-security-misconfiguration) | hard |
+| 5 | [Quarkus Memory and Startup Optimization](#quarkus-memory-and-startup-optimization) | hard |
+
+---
+
 # Quarkus Native Image Build and Diagnostics
 
 **Interview Weight:** hard - Native image troubleshooting

@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Micronaut - L1 Foundations"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 2
+permalink: /micronaut/l1-foundations/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut Bean Model and DI Basics](#micronaut-bean-model-and-di-basics) | medium |
+| 2 | [Micronaut Application Startup](#micronaut-application-startup) | medium |
+| 3 | [Micronaut HTTP Server Basics](#micronaut-http-server-basics) | medium |
+| 4 | [Micronaut Configuration System](#micronaut-configuration-system) | medium |
+| 5 | [Micronaut Testing Fundamentals](#micronaut-testing-fundamentals) | medium |
+
+---
+
 # Micronaut Bean Model and DI Basics
 
 **Interview Weight:** medium - The bean model is the

@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L3 Spring Data JPA"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /jpa/l3-spring-data-jpa/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Repository Interface Hierarchy](#repository-interface-hierarchy) | medium |
+| 2 | [Query Derivation Method Naming](#query-derivation-method-naming) | medium |
+| 3 | [@Query and Custom JPQL](#query-and-custom-jpql) | medium |
+| 4 | [Pagination and Sorting](#pagination-and-sorting) | medium |
+| 5 | [Spring Data JPA Projections](#spring-data-jpa-projections) | critical |
+
+---
+
 # Repository Interface Hierarchy
 
 **Interview Weight:** medium - Spring Data JPA repository

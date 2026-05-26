@@ -6,6 +6,20 @@ nav_order: 4
 permalink: /hibernate/l2-caching-and-fetching/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L2 Caching and Fetching](#hibernate---l2-caching-and-fetching) | medium |
+| 2 | [Eager vs Lazy Loading](#eager-vs-lazy-loading) | working |
+| 3 | [First-Level Cache Session Cache](#first-level-cache-session-cache) | working |
+| 4 | [Second-Level Cache](#second-level-cache) | expert |
+| 5 | [N+1 Problem Detection](#n1-problem-detection) | expert |
+| 6 | [Query Cache](#query-cache) | working |
+
+---
+
 # Hibernate - L2 Caching and Fetching
 
 Fetch strategies, the first and second-level caches,

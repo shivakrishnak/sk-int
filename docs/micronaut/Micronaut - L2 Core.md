@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Micronaut - L2 Core"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /micronaut/l2-core/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Compile-Time Dependency Injection](#compile-time-dependency-injection) | critical |
+| 2 | [Micronaut AOP and Interceptors](#micronaut-aop-and-interceptors) | medium |
+| 3 | [Micronaut Bean Scopes and Lifecycle](#micronaut-bean-scopes-and-lifecycle) | medium |
+| 4 | [Micronaut Environment and Property Sources](#micronaut-environment-and-property-sources) | medium |
+| 5 | [Micronaut Annotation Processing Pipeline](#micronaut-annotation-processing-pipeline) | medium |
+
+---
+
 # Compile-Time Dependency Injection
 
 **Interview Weight:** critical - Compile-time DI is

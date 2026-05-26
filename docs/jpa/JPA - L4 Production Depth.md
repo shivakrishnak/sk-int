@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L4 Production Depth"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 7
+permalink: /jpa/l4-production-depth/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [N+1 Select Anti-Pattern](#n1-select-anti-pattern) | critical |
+| 2 | [Open Session in View Anti-Pattern](#open-session-in-view-anti-pattern) | critical |
+| 3 | [Persistence Context Size Management](#persistence-context-size-management) | critical |
+| 4 | [JPA Performance Tuning Strategies](#jpa-performance-tuning-strategies) | critical |
+| 5 | [JPA Security Native Queries and Data Exposure](#jpa-security-native-queries-and-data-exposure) | critical |
+
+---
+
 # N+1 Select Anti-Pattern
 
 **Interview Weight:** critical - N+1 is the most common

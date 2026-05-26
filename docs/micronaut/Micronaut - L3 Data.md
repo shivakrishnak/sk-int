@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Micronaut - L3 Data"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /micronaut/l3-data/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut Data JDBC](#micronaut-data-jdbc) | critical |
+| 2 | [Micronaut Data JPA](#micronaut-data-jpa) | high |
+| 3 | [Micronaut Data Repositories and Criteria](#micronaut-data-repositories-and-criteria) | high |
+| 4 | [Micronaut Transaction Management](#micronaut-transaction-management) | critical |
+| 5 | [Micronaut Data Reactive Repositories](#micronaut-data-reactive-repositories) | high |
+
+---
+
 # Micronaut Data JDBC
 
 **Interview Weight:** critical - Micronaut Data JDBC

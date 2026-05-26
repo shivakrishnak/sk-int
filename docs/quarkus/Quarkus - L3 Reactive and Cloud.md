@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Quarkus - L3 Reactive and Cloud"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 5
+permalink: /quarkus/l3-reactive-and-cloud/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus Reactive Messaging and Kafka](#quarkus-reactive-messaging-and-kafka) | critical |
+| 2 | [Quarkus Security and OIDC](#quarkus-security-and-oidc) | critical |
+| 3 | [Quarkus OpenTelemetry and Tracing](#quarkus-opentelemetry-and-tracing) | high |
+| 4 | [Quarkus Kubernetes Operator Pattern](#quarkus-kubernetes-operator-pattern) | high |
+| 5 | [Quarkus Multi-Tenancy Patterns](#quarkus-multi-tenancy-patterns) | high |
+
+---
+
 # Quarkus Reactive Messaging and Kafka
 
 **Interview Weight:** critical - Kafka integration is

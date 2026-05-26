@@ -14,6 +14,30 @@ tools:
 
 > **Version Registry** - `SPEC_VERSION` = **1** | `SPEC_LABEL` = **v1.0**
 
+## ⛔ CONFIRMED FAILURES - NON-NEGOTIABLE HARD RULES
+
+They are permanently prohibited. Violation = file is REJECTED, not written.
+
+**FAILURE 1 - Spec not read:** NEVER generate any entry without first reading
+`spec/interview_content_generator.md` in full in the current session. Generating
+from memory or conversation summaries produces wrong headers. ALWAYS read the spec.
+
+### GATE 1 - SPEC MUST BE READ BEFORE ANY GENERATION (Fixes Failure 1)
+
+**RULE:** Before generating ANY entry, read `spec/interview_content_generator.md` in full.
+
+Generating from memory, conversation summaries, or abbreviated notes is PROHIBITED.
+The spec defines exact section IDs, exact `###` headers, exact emoji, mandatory
+subsections, and TYPE-specific adaptations that cannot be reproduced from memory.
+Any entry generated without reading the spec WILL contain wrong headers and MUST be
+regenerated from scratch.
+
+**ENFORCEMENT:** If the model has not confirmed reading `spec/interview_content_generator.md`
+in the current session since the last context reset, it MUST read it before writing
+any file. No exceptions. This is the first step of every generation workflow.
+
+---
+
 Generate complete, spec-compliant v1.0 keyword entries for interview
 mastery files using keyword-batch mode (1-3 keywords per pass).
 

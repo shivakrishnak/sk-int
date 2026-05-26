@@ -6,6 +6,19 @@ nav_order: 6
 permalink: /spring/l3-data-and-transactions/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring Transaction Management](#spring-transaction-management) | critical |
+| 2 | [Transaction Propagation and Isolation](#transaction-propagation-and-isolation) | critical |
+| 3 | [Spring Data JPA Repositories](#spring-data-jpa-repositories) | high |
+| 4 | [Spring Cache Abstraction](#spring-cache-abstraction) | medium |
+| 5 | [Spring Events and ApplicationEventPublisher](#spring-events-and-applicationeventpublisher) | medium |
+
+---
+
 # Spring Transaction Management
 
 **Interview Weight:** critical - The most important Spring

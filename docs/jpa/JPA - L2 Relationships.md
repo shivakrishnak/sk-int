@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L2 Relationships"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /jpa/l2-relationships/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [OneToMany and ManyToOne](#onetomany-and-manytoone) | critical |
+| 2 | [ManyToMany and Join Tables](#manytomany-and-join-tables) | medium |
+| 3 | [Fetch Types EAGER vs LAZY](#fetch-types-eager-vs-lazy) | critical |
+| 4 | [Cascade Types and Orphan Removal](#cascade-types-and-orphan-removal) | medium |
+| 5 | [Embeddable and Embedded](#embeddable-and-embedded) | medium |
+
+---
+
 # OneToMany and ManyToOne
 
 **Interview Weight:** critical - Relationship mapping

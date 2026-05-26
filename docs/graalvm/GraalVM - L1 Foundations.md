@@ -1,3 +1,24 @@
+---
+layout: default
+title: "GraalVM - L1 Foundations"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 2
+permalink: /graalvm/l1-foundations/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GraalVM Native Image Basics](#graalvm-native-image-basics) | foundational |
+| 2 | [GraalVM Installation and Toolchain](#graalvm-installation-and-toolchain) | foundational |
+| 3 | [Native Image Build Process](#native-image-build-process) | working |
+| 4 | [Reflection Configuration in Native Image](#reflection-configuration-in-native-image) | working |
+
+---
+
 # GraalVM Native Image Basics
 
 **Interview Weight:** foundational - Native image is

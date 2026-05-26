@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Micronaut - L5 Architecture"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 8
+permalink: /micronaut/l5-architecture/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut in Microservices Architecture](#micronaut-in-microservices-architecture) | high |
+| 2 | [Micronaut vs Spring Migration Strategy](#micronaut-vs-spring-migration-strategy) | high |
+| 3 | [Micronaut Distributed Systems Design](#micronaut-distributed-systems-design) | high |
+| 4 | [Micronaut Serverless Architecture](#micronaut-serverless-architecture) | medium |
+
+---
+
 # Micronaut in Microservices Architecture
 
 **Interview Weight:** high - Staff-level question.

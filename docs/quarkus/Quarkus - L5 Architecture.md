@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Quarkus - L5 Architecture"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 8
+permalink: /quarkus/l5-architecture/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus in Kubernetes Microservices](#quarkus-in-kubernetes-microservices) | hard |
+| 2 | [Quarkus Serverless Architecture](#quarkus-serverless-architecture) | high |
+| 3 | [Quarkus Migration Strategy from Spring](#quarkus-migration-strategy-from-spring) | hard |
+| 4 | [Quarkus Multi-Module Projects at Scale](#quarkus-multi-module-projects-at-scale) | high |
+
+---
+
 # Quarkus in Kubernetes Microservices
 
 **Interview Weight:** hard - Architecture is the Staff/Principal

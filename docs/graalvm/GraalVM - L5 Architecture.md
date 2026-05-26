@@ -1,3 +1,23 @@
+---
+layout: default
+title: "GraalVM - L5 Architecture"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 8
+permalink: /graalvm/l5-architecture/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GraalVM in Platform Architecture Decision](#graalvm-in-platform-architecture-decision) | hard |
+| 2 | [Native vs JIT Trade-off at Scale](#native-vs-jit-trade-off-at-scale) | hard |
+| 3 | [GraalVM Polyglot Architecture Patterns](#graalvm-polyglot-architecture-patterns) | hard |
+
+---
+
 # GraalVM in Platform Architecture Decision
 
 **Interview Weight:** hard - Architecture decision making

@@ -1,3 +1,24 @@
+---
+layout: default
+title: "Quarkus - L1 Foundations"
+parent: "Quarkus"
+grand_parent: "SK Interview"
+nav_order: 2
+permalink: /quarkus/l1-foundations/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Quarkus CDI Bean Model](#quarkus-cdi-bean-model) | foundational |
+| 2 | [Quarkus Dev Mode and Live Coding](#quarkus-dev-mode-and-live-coding) | medium |
+| 3 | [Quarkus Configuration System](#quarkus-configuration-system) | medium |
+| 4 | [Quarkus Extensions Ecosystem](#quarkus-extensions-ecosystem) | medium |
+
+---
+
 # Quarkus CDI Bean Model
 
 **Interview Weight:** foundational - CDI is the core

@@ -1,3 +1,22 @@
+---
+layout: default
+title: "JPA - L6 Theory"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 9
+permalink: /jpa/l6-theory/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Persistence Context Theory](#persistence-context-theory) | critical |
+| 2 | [JPA Specification vs Implementation Design](#jpa-specification-vs-implementation-design) | critical |
+
+---
+
 # Persistence Context Theory
 
 **Interview Weight:** critical - Understanding the

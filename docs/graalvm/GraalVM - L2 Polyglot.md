@@ -1,3 +1,24 @@
+---
+layout: default
+title: "GraalVM - L2 Polyglot"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /graalvm/l2-polyglot/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GraalVM Polyglot Context API](#graalvm-polyglot-context-api) | medium |
+| 2 | [Running JavaScript on GraalVM](#running-javascript-on-graalvm) | medium |
+| 3 | [GraalPy and TruffleRuby on GraalVM](#graalpy-and-truffleruby-on-graalvm) | medium |
+| 4 | [Polyglot Security Sandbox](#polyglot-security-sandbox) | hard |
+
+---
+
 # GraalVM Polyglot Context API
 
 **Interview Weight:** medium - Polyglot API is a GraalVM

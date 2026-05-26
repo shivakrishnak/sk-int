@@ -1,3 +1,23 @@
+---
+layout: default
+title: "GraalVM - META Patterns"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 10
+permalink: /graalvm/meta-patterns/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Closed-World Assumption Mental Model](#closed-world-assumption-mental-model) | hard |
+| 2 | [AOT vs JIT Decision Framework](#aot-vs-jit-decision-framework) | hard |
+| 3 | [Native Image Constraint Thinking Pattern](#native-image-constraint-thinking-pattern) | hard |
+
+---
+
 # Closed-World Assumption Mental Model
 
 **Interview Weight:** hard - Conceptual anchor for all

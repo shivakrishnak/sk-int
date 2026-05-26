@@ -1,3 +1,25 @@
+---
+layout: default
+title: "JPA - L2 Querying"
+parent: "JPA"
+grand_parent: "SK Interview"
+nav_order: 4
+permalink: /jpa/l2-querying/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPQL Advanced Queries](#jpql-advanced-queries) | medium |
+| 2 | [JPA Criteria API](#jpa-criteria-api) | medium |
+| 3 | [Named Queries](#named-queries) | easy |
+| 4 | [Native Queries and Result Mapping](#native-queries-and-result-mapping) | medium |
+| 5 | [DTO Projections](#dto-projections) | medium |
+
+---
+
 # JPQL Advanced Queries
 
 **Interview Weight:** medium - Advanced JPQL covers JOIN

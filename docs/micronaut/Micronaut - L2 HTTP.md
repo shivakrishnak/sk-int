@@ -1,3 +1,25 @@
+---
+layout: default
+title: "Micronaut - L2 HTTP"
+parent: "Micronaut"
+grand_parent: "SK Interview"
+nav_order: 3
+permalink: /micronaut/l2-http/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Micronaut HTTP Routing and Controllers](#micronaut-http-routing-and-controllers) | medium |
+| 2 | [Micronaut Declarative HTTP Client](#micronaut-declarative-http-client) | medium |
+| 3 | [Micronaut Reactive HTTP](#micronaut-reactive-http) | medium |
+| 4 | [Micronaut Server Filters and Middleware](#micronaut-server-filters-and-middleware) | medium |
+| 5 | [Micronaut Service Discovery](#micronaut-service-discovery) | medium |
+
+---
+
 # Micronaut HTTP Routing and Controllers
 
 **Interview Weight:** medium - HTTP routing is core

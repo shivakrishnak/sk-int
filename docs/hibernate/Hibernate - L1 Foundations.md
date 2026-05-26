@@ -6,6 +6,20 @@ nav_order: 2
 permalink: /hibernate/l1-foundations/
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Hibernate - L1 Foundations](#hibernate---l1-foundations) | medium |
+| 2 | [SessionFactory and Session](#sessionfactory-and-session) | foundational |
+| 3 | [Entity Mapping with @Entity and @Id](#entity-mapping-with-entity-and-id) | foundational |
+| 4 | [Basic CRUD with Hibernate](#basic-crud-with-hibernate) | foundational |
+| 5 | [HQL Hibernate Query Language](#hql-hibernate-query-language) | working |
+| 6 | [Hibernate Configuration and Dialects](#hibernate-configuration-and-dialects) | working |
+
+---
+
 # Hibernate - L1 Foundations
 
 Core Hibernate vocabulary: SessionFactory, Session, entity

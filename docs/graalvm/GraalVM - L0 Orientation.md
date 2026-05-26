@@ -1,3 +1,24 @@
+---
+layout: default
+title: "GraalVM - L0 Orientation"
+parent: "GraalVM"
+grand_parent: "SK Interview"
+nav_order: 1
+permalink: /graalvm/l0-orientation/
+---
+
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GraalVM Ecosystem Overview](#graalvm-ecosystem-overview) | foundational |
+| 2 | [GraalVM vs OpenJDK - Why Native Compilation](#graalvm-vs-openjdk---why-native-compilation) | foundational |
+| 3 | [GraalVM Use Cases and When Not to Use It](#graalvm-use-cases-and-when-not-to-use-it) | foundational |
+| 4 | [GraalVM CE vs EE vs Oracle GraalVM](#graalvm-ce-vs-ee-vs-oracle-graalvm) | easy |
+
+---
+
 # GraalVM Ecosystem Overview
 
 **Interview Weight:** foundational - Understanding the
