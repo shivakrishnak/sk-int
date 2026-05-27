@@ -21,12 +21,12 @@ normalization, and polyglot persistence decisions.
 | [Database SQL - L2 Indexing](Database%20SQL%20-%20L2%20Indexing.md) | L2 | 5 | complete |
 | [Database SQL - L3 Transactions and Concurrency](Database%20SQL%20-%20L3%20Transactions%20and%20Concurrency.md) | L3 | 5 | complete |
 | [Database SQL - L3 Internals](Database%20SQL%20-%20L3%20Internals.md) | L3 | 5 | complete |
-| [Database SQL - L4 Production Depth](Database%20SQL%20-%20L4%20Production%20Depth.md) | L4 | 5 | pending |
-| [Database SQL - L5 Architecture](Database%20SQL%20-%20L5%20Architecture.md) | L5 | 4 | pending |
-| [Database SQL - L6 Theory](Database%20SQL%20-%20L6%20Theory.md) | L6 | 3 | pending |
-| [Database SQL - META Patterns](Database%20SQL%20-%20META%20Patterns.md) | META | 3 | pending |
+| [Database SQL - L4 Production Depth](Database%20SQL%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
+| [Database SQL - L5 Architecture](Database%20SQL%20-%20L5%20Architecture.md) | L5 | 4 | complete |
+| [Database SQL - L6 Theory](Database%20SQL%20-%20L6%20Theory.md) | L6 | 3 | complete |
+| [Database SQL - META Patterns](Database%20SQL%20-%20META%20Patterns.md) | META | 3 | complete |
 
-**Keywords:** 44 | **Files:** 10 | **Status:** pending
+**Keywords:** 44 | **Files:** 10 | **Status:** complete
 
 ---
 

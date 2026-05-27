@@ -15,8 +15,8 @@ seniority level without needing another source.
 
 | File | Level | Keywords | Status |
 | ---- | ----- | -------- | ------ |
-| [Java Language - L0 Orientation](Java%20Language%20-%20L0%20Orientation.md) | L0 | 4 | draft |
-| [Java Language - L1 Foundations](Java%20Language%20-%20L1%20Foundations.md) | L1 | 5 | draft |
+| [Java Language - L0 Orientation](Java%20Language%20-%20L0%20Orientation.md) | L0 | 4 | complete |
+| [Java Language - L1 Foundations](Java%20Language%20-%20L1%20Foundations.md) | L1 | 5 | complete |
 | [Java Language - L2 Object Model](Java%20Language%20-%20L2%20Object%20Model.md) | L2 | 3 | draft |
 | [Java Language - L2 Generics and Types](Java%20Language%20-%20L2%20Generics%20and%20Types.md) | L2 | 4 | draft |
 | [Java Language - L2 Functional](Java%20Language%20-%20L2%20Functional.md) | L2 | 5 | draft |
@@ -36,28 +36,28 @@ seniority level without needing another source.
 
 | #   | Keyword                          | Difficulty | Status  |
 | --- | -------------------------------- | ---------- | ------- |
-| 1   | Java Ecosystem Overview          | ★☆☆        | draft   |
-| 2   | Java Platform Architecture       | ★☆☆        | draft   |
-| 3   | Java Compilation and Bytecode    | ★☆☆        | draft   |
-| 4   | Java Version History and LTS     | ★☆☆        | draft   |
+| 1   | Java Ecosystem Overview          | ★☆☆        | complete |
+| 2   | Java Platform Architecture       | ★☆☆        | complete |
+| 3   | Java Compilation and Bytecode    | ★☆☆        | complete |
+| 4   | Java Version History and LTS     | ★☆☆        | complete |
 
 ### Java Language - L1 Foundations
 
 | #   | Keyword                           | Difficulty | Status  |
 | --- | --------------------------------- | ---------- | ------- |
-| 1   | Primitive Types and Autoboxing    | ★☆☆        | draft   |
-| 2   | Reference Types and Pass-by-Value | ★☆☆        | draft   |
-| 3   | Access Modifiers                  | ★☆☆        | draft   |
-| 4   | Static vs Instance Context        | ★☆☆        | draft   |
-| 5   | Java Control Flow                 | ★☆☆        | draft   |
+| 1   | Primitive Types and Autoboxing    | ★☆☆        | complete |
+| 2   | Reference Types and Pass-by-Value | ★☆☆        | complete |
+| 3   | Access Modifiers                  | ★☆☆        | complete |
+| 4   | Static vs Instance Context        | ★☆☆        | complete |
+| 5   | Java Control Flow                 | ★☆☆        | complete |
 
 ### Java Language - L2 Object Model
 
 | #   | Keyword                                                | Difficulty | Status  |
 | --- | ------------------------------------------------------ | ---------- | ------- |
-| 1   | Classes, Abstract Classes, and Interfaces              | ★★☆        | draft   |
-| 2   | Inheritance, Overriding, and the Diamond Problem       | ★★☆        | draft   |
-| 3   | The Object Class: equals, hashCode, toString, and clone| ★★☆        | draft   |
+| 1   | Classes, Abstract Classes, and Interfaces              | ★★☆        | complete |
+| 2   | Inheritance, Overriding, and the Diamond Problem       | ★★☆        | complete |
+| 3   | The Object Class: equals, hashCode, toString, and clone| ★★☆        | complete |
 
 ### Java Language - L2 Generics and Types
 

@@ -98,7 +98,7 @@ $PromptFile    = Join-Path $SpecDir "interview.md"
 $RegistryFile  = Join-Path $SpecDir "topics_registry.md"
 $Utf8NoBom     = [System.Text.UTF8Encoding]::new($false)
 # - Version Registry (update when spec versions change) ----
-$LatestInterviewVersion = "v3.0"  # spec/interview.md current version
+$LatestInterviewVersion = "v1.0"  # spec/interview.md current version
 
 # - Validation ---------------------------------------------
 if (-not (Test-Path $PromptFile)) {

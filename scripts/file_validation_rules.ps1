@@ -651,6 +651,115 @@ function Test-KeywordNavBlock {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# RULE R21 - ALL sections presence check (NON-NEGOTIABLE)
+# Every keyword block MUST contain ALL 10 Option C section headers.
+# Conditional sections are NOT silently omitted - they must appear with
+# an explicit OMIT note (e.g. *(Omit: reason)*) when not applicable.
+#
+# Source: interview.instructions.md Content Structure + spec/interview_content_generator.md
+#
+# ALL 10 SECTIONS REQUIRED (header must be present in every keyword):
+#   ### 🎯 Model Answer           Option C §2 - ALWAYS, no OMIT allowed
+#   ### 📘 Concept Explanation    Option C §3 - ALWAYS, no OMIT allowed
+#   ### 💻 Code Example           Option C §4 - header always present;
+#                                content = code OR explicit OMIT + reason
+#   ### 🎓 Answers by Seniority   Option C §5 - ALWAYS, no OMIT allowed
+#   ### ⚠️ Common Misconceptions  Option C §6 - ALWAYS, no OMIT allowed
+#   ### 🚨 Failure Modes          Option C §7 - ALWAYS, no OMIT allowed
+#   ### 🎯 Interview Deep-Dive    Option C §8 - ALWAYS, CAPSTONE, no OMIT
+#   ### ⚖️ Comparison Table       Option C §9 - header always present;
+#                                content = table OR explicit OMIT for ★☆☆
+#   ### 🏛️ System Design          spec §4.9 - header always present;
+#                                content = design OR explicit OMIT for non-★★★
+#   ### 📊 Diagram                spec §4.10 - header always present;
+#                                content = diagram OR explicit OMIT for non-visual
+#
+# HARD STOP: Any missing section header = file is REJECTED, not written.
+# Sections with OMIT content still require their ### header to be present.
+# Silent omissions are never acceptable.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-MandatorySections {
+  param([string[]]$Lines, [string]$FilePath)
+  if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
+  if ($FilePath -match '(spec|scripts|\.github)[/\\]') { return @() }
+  # Skip empty files - they have no keywords to check
+  if ($Lines.Count -lt 5) { return @() }
+
+  $errs = @()
+
+  # ALL 10 sections required - header must appear in every keyword block.
+  # Conditional sections must have explicit OMIT note if not applicable.
+  # Source: interview.instructions.md Content Structure + spec/interview_content_generator.md
+  $mandatoryGroups = @(
+    @{ name = 'Model Answer (Option C §2)';
+       pattern = '^### 🎯 Model Answer' },
+    @{ name = 'Concept Explanation (Option C §3)';
+       pattern = '^### 📘 Concept Explanation' },
+    @{ name = 'Code Example (Option C §4 - OMIT note required if non-programmatic)';
+       pattern = '^### 💻 Code Example' },
+    @{ name = 'Answers by Seniority (Option C §5)';
+       pattern = '^### 🎓 Answers by Seniority' },
+    @{ name = 'Common Misconceptions (Option C §6)';
+       pattern = '^### ⚠️ Common Misconceptions' },
+    @{ name = 'Failure Modes and Diagnosis (Option C §7)';
+       pattern = '^### 🚨 Failure Modes' },
+    @{ name = 'Interview Deep-Dive (Option C §8 - CAPSTONE)';
+       pattern = '^### 🎯 Interview Deep-Dive' },
+    @{ name = 'Comparison Table (Option C §9 - OMIT note required for ★☆☆)';
+       pattern = '^### ⚖️ Comparison' },
+    @{ name = 'System Design (spec §4.9 - OMIT note required for non-★★★)';
+       pattern = '^### 🏛️ System Design' },
+    @{ name = 'Diagram (spec §4.10 - OMIT note required for non-visual concepts)';
+       pattern = '^### 📊 Diagram' }
+  )
+
+  # Find end of frontmatter
+  $bodyStart = 0
+  if ($Lines[0].Trim() -eq '---') {
+    for ($i = 1; $i -lt $Lines.Count; $i++) {
+      if ($Lines[$i].Trim() -eq '---') { $bodyStart = $i + 1; break }
+    }
+  }
+
+  # Find keyword boundaries (H1 headings in body, outside code fences)
+  $keywordStarts = @()
+  $inFence = $false
+  for ($i = $bodyStart; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match '^\s*```') { $inFence = -not $inFence; continue }
+    if (-not $inFence -and $Lines[$i] -match '^# [^#]') { $keywordStarts += $i }
+  }
+
+  # No keywords found - skip (file may be metadata-only like index)
+  if ($keywordStarts.Count -eq 0) { return @() }
+
+  for ($k = 0; $k -lt $keywordStarts.Count; $k++) {
+    $start = $keywordStarts[$k]
+    $end   = if ($k + 1 -lt $keywordStarts.Count) {
+               $keywordStarts[$k + 1] - 1
+             } else { $Lines.Count - 1 }
+    $block  = $Lines[$start..$end]
+    $kwLine = $Lines[$start].Trim()
+    # Strip leading # chars to get keyword name
+    $kwName = $kwLine -replace '^#+\s*', ''
+
+    foreach ($mg in $mandatoryGroups) {
+      $found = $false
+      foreach ($bline in $block) {
+        if ($bline -match $mg.pattern) { $found = $true; break }
+      }
+      if (-not $found) {
+        $errs += "R21 MISSING-SECTION: keyword '$kwName' " +
+                 "(line $($start+1)): mandatory section '$($mg.name)' " +
+                 "is missing. HARD STOP: interview.instructions.md " +
+                 "Option C requires this in every keyword. " +
+                 "Read spec/interview_content_generator.md and regenerate."
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # RUNNER - invoke all rules against a file
 # ─────────────────────────────────────────────────────────────────────────────
 function Invoke-FileValidation {
@@ -683,6 +792,7 @@ function Invoke-FileValidation {
     $errs += Test-NoOldFileNaming    -Lines $lines -FilePath $FilePath
   }
   $errs += Test-KeywordNavBlock    -Lines $lines -FilePath $FilePath
+  $errs += Test-MandatorySections  -Lines $lines -FilePath $FilePath
   return $errs | Where-Object { $_ }
 }
 

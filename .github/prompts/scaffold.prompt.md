@@ -12,6 +12,9 @@ tools:
 
 ## ⛔ CONFIRMED FAILURES - NON-NEGOTIABLE HARD RULES
 
+<!-- Gate 1 is also in interview.instructions.md (auto-loads for docs/spec/scripts). -->
+<!-- Retained here as a safety net for cold invocations where the instructions file may not yet be loaded. -->
+
 They are permanently prohibited. Violation = file is REJECTED, not written.
 
 **FAILURE 1 - Spec not read:** NEVER generate any entry without first reading

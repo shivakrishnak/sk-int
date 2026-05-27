@@ -16,6 +16,9 @@ tools:
 
 ## ⛔ CONFIRMED FAILURES - NON-NEGOTIABLE HARD RULES
 
+<!-- Gate 1 is also in interview.instructions.md (auto-loads for docs/spec/scripts). -->
+<!-- Retained here as a safety net for cold invocations where the instructions file may not yet be loaded. -->
+
 They are permanently prohibited. Violation = file is REJECTED, not written.
 
 **FAILURE 1 - Spec not read:** NEVER generate any entry without first reading
@@ -36,13 +39,48 @@ regenerated from scratch.
 in the current session since the last context reset, it MUST read it before writing
 any file. No exceptions. This is the first step of every generation workflow.
 
+### GATE 2 - QUALITY GATE: ALL MANDATORY SECTIONS MUST BE IN OUTPUT (Fixes missed sections)
+
+**RULE:** Before writing any keyword to disk, confirm ALL 10 section headers
+are present in the planned output. A section that is "implied" or "will be
+added next" does NOT count - it must exist in THIS output block.
+
+**ALL 10 sections required per keyword - NON-NEGOTIABLE:**
+
+Conditional sections must appear with an explicit `*(Omit: reason)*` note when
+not applicable. Silent omissions are NEVER acceptable.
+
+| # | Option C Section | Header | Rule |
+|---|---|---|---|
+| 2 | Model Answer | `### 🎯 Model Answer` (30s + 3min + Blank Mind Recovery) | ALWAYS - no OMIT |
+| 3 | Concept Explanation | `### 📘 Concept Explanation` (all 8 sub-sections) | ALWAYS - no OMIT |
+| 4 | Code Example | `### 💻 Code Example` | ALWAYS - code OR explicit OMIT + reason |
+| 5 | Answers by Seniority | `### 🎓 Answers by Seniority` (Junior/Mid + Senior/Staff) | ALWAYS - no OMIT |
+| 6 | Common Misconceptions | `### ⚠️ Common Misconceptions` | ALWAYS - no OMIT |
+| 7 | Failure Modes | `### 🚨 Failure Modes and Diagnosis` | ALWAYS - no OMIT |
+| 8 | Interview Deep-Dive | `### 🎯 Interview Deep-Dive` (CAPSTONE) | ALWAYS - no OMIT |
+| 9 | Comparison Table | `### ⚖️ Comparison Table` | ALWAYS - table OR explicit OMIT for ★☆☆ |
+| - | System Design | `### 🏛️ System Design` | ALWAYS - design OR explicit OMIT for non-★★★ |
+| - | Diagram | `### 📊 Diagram` | ALWAYS - diagram OR explicit OMIT for non-visual |
+
+**⛔ HARD STOP - Do NOT write the file if:**
+- Any section header (rows 2-10 above) is missing from the output
+- Section §2 does not contain a `**Blank Mind Recovery:**` block
+- Section §8 (Interview Deep-Dive) has fewer than the minimum questions
+  (★☆☆: 7, ★★☆: 9, ★★★: 12)
+- A conditional section is silently absent (no header, no OMIT note)
+- `spec/interview_content_generator.md` has not been read in this session
+
+**Recovery:** Immediately append any missing section before updating index.md.
+Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
+
 ---
 
 Generate complete, spec-compliant v1.0 keyword entries for interview
 mastery files using keyword-batch mode (1-3 keywords per pass).
 
 **Target:** `${input:target:File path or topic name (e.g. docs/java/Java - Collections.md or Java)}`
-**Batch size:** `${input:batchSize:Keywords per batch (default: 3, use 1 for hard keywords)}`
+**Batch size:** `${input:batchSize:Keywords per call - ★★★=1, ★★☆=2 max, ★☆☆=3 max. Do NOT increase.}`
 
 ---
 
@@ -78,11 +116,13 @@ For all subsequent keywords, use the condensed generation rules in
 
 ## Phase 2 - Generate keyword content
 
-Work **one batch at a time**. Batch size adapts to difficulty:
+Work within these per-call limits. Exceeding them truncates the response.
 
-- hard keywords: 1 per batch
-- medium keywords: 2 per batch
-- easy keywords: 3 per batch
+| Difficulty | Keywords/Call | Why |
+| ---------- | ------------- | --- |
+| Hard (★★★)  | 1             | 12 Q&As ≈ 6,000-8,000 words |
+| Medium (★★☆)| 2 max         | 9 Q&As each ≈ 8,000-10,000 words total |
+| Easy (★☆☆)  | 3 max         | 7 Q&As each ≈ 6,000-7,500 words total |
 
 For each keyword in the batch:
 
@@ -118,13 +158,19 @@ Comparison Table when applicable). Conditional section decisions:
 
 ### 2c. Write to file
 
-- **New/empty file**: write frontmatter + keyword content
-- **File with stubs**: replace `[TODO:]`/`[FILL:]` sections for
-  the current keyword, or append after last completed keyword
-- **Partially complete file**: append after last completed keyword,
-  before any remaining stubs
+**ALWAYS use `create_file` tool to a temp path, then copy:**
 
-Use UTF-8 without BOM.
+```pwsh
+# New file (first keyword):
+Copy-Item "_tmp_kw.md" "docs/{topic}/{File}.md" -Force
+
+# Append (subsequent keywords):
+Get-Content "_tmp_kw.md" | Add-Content "docs/{topic}/{File}.md" -Encoding UTF8
+```
+
+NEVER use PowerShell here-strings (`@'...'@`) or
+`[System.IO.File]::WriteAllText()` with inline content - both fail
+silently for content > 5KB.
 
 ---
 

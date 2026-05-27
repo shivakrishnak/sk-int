@@ -86,7 +86,7 @@ $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $DocsRoot = Join-Path $WorkspaceRoot "docs"
 $Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 # - Version Registry (update when spec versions change) ----
-$LatestInterviewVersion = "v3.0"  # spec/interview.md current version
+$LatestInterviewVersion = "v1.0"  # spec/interview.md current version
 
 # ── Helper Functions ───────────────────────────────────────
 

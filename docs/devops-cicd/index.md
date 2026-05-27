@@ -14,17 +14,17 @@ as Code, secret management, feature flags, GitOps, and platform engineering.
 
 | File | Level | Keywords | Status |
 | ---- | ----- | -------- | ------ |
-| [DevOps - L0 Orientation](DevOps%20-%20L0%20Orientation.md) | L0 | 4 | pending |
-| [DevOps - L1 Foundations](DevOps%20-%20L1%20Foundations.md) | L1 | 5 | pending |
-| [DevOps - L2 CI Pipelines](DevOps%20-%20L2%20CI%20Pipelines.md) | L2 | 5 | pending |
-| [DevOps - L2 Deployment Strategies](DevOps%20-%20L2%20Deployment%20Strategies.md) | L2 | 5 | pending |
-| [DevOps - L3 Advanced Practices](DevOps%20-%20L3%20Advanced%20Practices.md) | L3 | 5 | pending |
-| [DevOps - L4 Production Depth](DevOps%20-%20L4%20Production%20Depth.md) | L4 | 5 | pending |
-| [DevOps - L5 Architecture](DevOps%20-%20L5%20Architecture.md) | L5 | 3 | pending |
-| [DevOps - L6 Theory](DevOps%20-%20L6%20Theory.md) | L6 | 2 | pending |
-| [DevOps - META Patterns](DevOps%20-%20META%20Patterns.md) | META | 3 | pending |
+| [DevOps - L0 Orientation](DevOps%20-%20L0%20Orientation.md) | L0 | 4 | complete |
+| [DevOps - L1 Foundations](DevOps%20-%20L1%20Foundations.md) | L1 | 5 | complete |
+| [DevOps - L2 CI Pipelines](DevOps%20-%20L2%20CI%20Pipelines.md) | L2 | 5 | complete |
+| [DevOps - L2 Deployment Strategies](DevOps%20-%20L2%20Deployment%20Strategies.md) | L2 | 5 | complete |
+| [DevOps - L3 Advanced Practices](DevOps%20-%20L3%20Advanced%20Practices.md) | L3 | 5 | complete |
+| [DevOps - L4 Production Depth](DevOps%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
+| [DevOps - L5 Architecture](DevOps%20-%20L5%20Architecture.md) | L5 | 3 | complete |
+| [DevOps - L6 Theory](DevOps%20-%20L6%20Theory.md) | L6 | 2 | complete |
+| [DevOps - META Patterns](DevOps%20-%20META%20Patterns.md) | META | 3 | complete |
 
-**Keywords:** 37 | **Files:** 9 | **Status:** pending
+**Keywords:** 37 | **Files:** 9 | **Status:** complete
 
 ---
 

@@ -1,30 +1,38 @@
 ---
-layout: default
 title: "Java Language - L1 Foundations"
 parent: "Java Language"
 nav_order: 2
 permalink: /java-language/l1-foundations/
+topic: Java Language
+subtopic: L1 Foundations
+keywords:
+  - Primitive Types and Autoboxing
+  - Reference Types and Pass-by-Value
+  - Access Modifiers
+  - Static vs Instance Context
+  - Java Control Flow
+difficulty_range: easy
+status: in-progress
+version: 1
 ---
 
-## Keywords in This File
-{: .no_toc }
+# Java Language - L1 Foundations
 
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Primitive Types and Autoboxing](#primitive-types-and-autoboxing) | high |
-| 2 | [Reference Types and Pass-by-Value](#reference-types-and-pass-by-value) | high |
-| 3 | [Access Modifiers](#access-modifiers) | medium |
-| 4 | [Static vs Instance Context](#static-vs-instance-context) | high |
-| 5 | [Java Control Flow](#java-control-flow) | medium |
+| # | Keyword | Difficulty |
+| --- | --- | --- |
+| 1 | [Primitive Types and Autoboxing](#primitive-types-and-autoboxing) | ★☆☆ |
+| 2 | [Reference Types and Pass-by-Value](#reference-types-and-pass-by-value) | ★☆☆ |
+| 3 | [Access Modifiers](#access-modifiers) | ★☆☆ |
+| 4 | [Static vs Instance Context](#static-vs-instance-context) | ★☆☆ |
+| 5 | [Java Control Flow](#java-control-flow) | ★☆☆ |
 
 ---
 
 # Primitive Types and Autoboxing
 
-**Interview Weight:** high - One of the most common Java gotcha
-questions. Interviewers use this to filter candidates who know
-Java syntax from those who understand the type system and the
-performance implications of autoboxing.
+**Interview Weight:** high - Frequently asked as a trap question.
+Tests whether candidates know the autoboxing cache behavior
+and the == vs equals distinction.
 
 ---
 
@@ -32,57 +40,47 @@ performance implications of autoboxing.
 
 **30 seconds:**
 
-> Java has 8 primitive types (byte, short, int, long, float, double,
-> char, boolean) that live on the stack and store raw values directly.
-> Each has a corresponding wrapper class (Integer, Long, Double...)
-> that is a full object on the heap. Autoboxing is the compiler
-> automatically converting between the two. The danger: autoboxing
-> in a hot loop creates millions of short-lived objects, generating
-> GC pressure. The subtlety: Integer.valueOf(-128 to 127) returns
-> cached instances - `==` comparison works there but fails outside
-> that range.
+> Java has 8 primitive types (boolean, byte, short, int, long,
+> float, double, char) that store values directly on the stack.
+> Each has a wrapper class (Integer, Long, Double, etc.) for use
+> in collections and generics. Autoboxing automatically converts
+> between primitives and wrappers. The key trap: == on Integer
+> objects checks reference equality, not value; and the Integer
+> cache (-128 to 127) means Integer.valueOf(127) == Integer.valueOf(127)
+> is true, but Integer.valueOf(128) == Integer.valueOf(128) is false.
 
 **3 minutes (Senior):**
 
-> Primitives are Java's performance escape hatch. They are stored
-> on the stack (for local variables), not the heap, and avoid
-> object header overhead (typically 16 bytes per object). An int
-> is 4 bytes; an Integer object is 16+ bytes with header overhead
-> and an int field inside it.
+> Primitives are the foundation of Java's type system. They are
+> not objects: int stores the value directly, no heap allocation,
+> no null. Wrappers (Integer, Long, Boolean, etc.) are objects:
+> they live on the heap, can be null, and have methods.
 >
-> Autoboxing is syntactic sugar that the compiler expands to
-> `Integer.valueOf(x)` for boxing and `integer.intValue()` for
-> unboxing. The JIT often eliminates boxing entirely through escape
-> analysis - if an Integer never escapes the method, the JIT may
-> keep it as a primitive on the stack. But this optimization is
-> JIT-profile-dependent and not guaranteed.
+> Autoboxing (introduced Java 5) automatically converts primitives
+> to wrappers and back. This allows int to be added to a List<Integer>,
+> or Integer to be used where int is expected. The cost: heap allocation
+> and potential NullPointerException if the wrapper is null when
+> unboxed.
 >
-> The Integer cache (pool) caches values -128 to 127. This is the
-> source of one of Java's most common interview traps: `Integer a =
-> 127; Integer b = 127; a == b` is `true` (same cached object);
-> `Integer a = 128; Integer b = 128; a == b` is `false` (different
-> objects). Always compare boxed types with `.equals()`.
->
-> In hot code paths - sorting comparators, stream operations,
-> collection lookups - the difference between using `int[]` vs
-> `List<Integer>` can be 5-10x in throughput due to boxing
-> overhead, cache locality, and GC pressure.
-
-**Framework:** PRIMITIVES (raw values, stack) → WRAPPERS
-(objects, heap) → AUTOBOXING (compiler sugar) → TRAPS
-(== on Integer, GC pressure in loops)
+> The Integer cache is the classic interview trap. Java caches Integer
+> instances for values -128 to 127 (and optionally higher with
+> -XX:AutoBoxCacheMax). Two Integer.valueOf(127) calls return the same
+> cached object; == returns true. Two Integer.valueOf(128) calls return
+> different objects; == returns false. This is why you must use equals()
+> for Integer comparisons, not ==.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about the difference between
-int and Integer, and what autoboxing is."
+**(1) Restate:** "Primitive types - let me cover the 8 primitives,
+their wrapper classes, and the autoboxing mechanism."
 
-**(2) First principles:** "Java needs both raw numeric types for
-performance and object types for generics. You cannot put an int
-in a List<int>. Autoboxing is the bridge."
+**(2) First principles:** "JVM performance requires value types that
+don't need heap allocation. That's primitives. But generics and
+collections require objects. Autoboxing bridges the two worlds."
 
-**(3) Bridge:** "This is similar to C# boxing/unboxing, except
-Java's specific trap is the Integer cache for small values."
+**(3) Bridge:** "Think of primitives as cash in your hand (immediate,
+no overhead) vs wrappers as a bank account (flexible, but with
+overhead to deposit and withdraw)."
 
 ---
 
@@ -90,156 +88,169 @@ Java's specific trap is the Integer cache for small values."
 
 **What it is:**
 
-Eight primitive types (byte 1B, short 2B, int 4B, long 8B, float
-4B, double 8B, char 2B, boolean 1B) hold raw values in-place.
-Wrapper classes (Byte, Short, Integer, Long, Float, Double,
-Character, Boolean) wrap them as objects for use in collections
-and generics. Autoboxing/unboxing is the compiler-generated
-conversion between them.
+Java has two kinds of types: primitives (value types) and reference
+types (objects). The 8 primitives each have a corresponding wrapper
+class that represents the same value as a heap object.
 
 **The problem it solves:**
 
-Java's generics are erased to Object at runtime - you cannot use
-primitive types as generic type parameters. `List<int>` is illegal;
-`List<Integer>` works because Integer is an Object. Autoboxing
-lets you write `list.add(5)` instead of `list.add(Integer.valueOf(5))`.
+Generic types and collections (List, Map) only work with objects,
+not primitives. Without wrappers, you could not store ints in a
+List. Without autoboxing, you would write Integer.valueOf(x)
+and intValue() conversions everywhere. Autoboxing makes the
+conversion automatic.
 
 **How it works:**
 
-```java
-// Autoboxing: compiler rewrites this
-int x = 5;
-Integer boxed = x;  // compiled to: Integer.valueOf(x)
+```
+PRIMITIVE TYPES (8 total):
+  boolean (1 bit)
+  byte    (8-bit signed,    -128 to 127)
+  short   (16-bit signed,   -32768 to 32767)
+  int     (32-bit signed,   -2^31 to 2^31-1)
+  long    (64-bit signed,   -2^63 to 2^63-1)
+  float   (32-bit IEEE 754 floating-point)
+  double  (64-bit IEEE 754 floating-point)
+  char    (16-bit Unicode,  0 to 65535)
 
-// Unboxing: compiler rewrites this
-int y = boxed;      // compiled to: boxed.intValue()
+WRAPPER CLASSES:
+  int     -> Integer
+  long    -> Long
+  double  -> Double
+  boolean -> Boolean
+  (etc.)
 
-// Integer cache range: [-128, 127]
-Integer a = 100;    // returns Integer.valueOf(100) - CACHED
-Integer b = 100;
-a == b;             // true - same cached object
+AUTOBOXING (compiler desugars):
+  Integer i = 42;
+  // Compiles to: Integer i = Integer.valueOf(42);
 
-Integer c = 200;    // returns new Integer(200) - NOT cached
-Integer d = 200;
-c == d;             // false - different objects!
+  int x = i;
+  // Compiles to: int x = i.intValue();
+
+INTEGER CACHE (-128 to 127):
+  Integer a = 127; Integer b = 127;
+  a == b  => true  (same cached instance)
+
+  Integer c = 128; Integer d = 128;
+  c == d  => false (different instances)
+  c.equals(d) => true (same value)
 ```
 
 **The key insight:**
 
-Every unboxing operation on a null reference throws a
-NullPointerException - this is the #1 source of production
-NPEs from autoboxing. `Integer sum = null; int result = sum + 1;`
-throws NPE at unboxing. Always initialize wrapper types, or
-use primitives when nullability is not needed.
+The Integer cache exists for performance: small integers are used
+constantly; caching avoids heap allocation for the most common values.
+But it creates a reference-equality trap: == on Integer works for
+small values (by accident) and fails for large values. Always use
+equals() for wrapper comparisons.
 
 **When to use it:**
 
-- Primitives: default for numeric computation, local variables,
-  method parameters where null is not a valid value
-- Wrappers: when you need to store in a collection, use as a
-  generic type parameter, or explicitly represent absence (null)
-- Wrappers in DTOs/entities where "field not set" means null
-  (vs. 0 for unset int)
+- Primitives: for local variables, method parameters, and fields
+  where null is not needed - always prefer primitive over wrapper
+- Wrappers: when null is semantically valid (e.g., Optional as an
+  alternative), in collections/generics, in method signatures that
+  require an Object
 
 **When NOT to use it:**
 
-- Avoid `List<Integer>` when `int[]` suffices for performance-
-  critical code - boxing creates GC pressure
-- Never use `==` to compare boxed numerics (use `.equals()`)
-- Avoid boxing in tight loops (stream operations on large
-  integer datasets)
+- Do not use Integer/Long in hot computational loops: autoboxing
+  allocates on every iteration, causing GC pressure
+- Do not compare wrapper values with == (Integer, Long, etc.)
+- Do not assume int and Integer behave identically (null unboxing
+  causes NPE)
 
 **Alternatives:**
 
-- `int[]` instead of `List<Integer>` for numerical data
-- `OptionalInt`, `IntStream` for null-safe/functional int
-  operations without boxing
-- Valhalla (upcoming Java feature) - value types that avoid
-  the boxing overhead for generics
+- int arrays (int[]) instead of List<Integer> for performance-critical
+  numeric processing
+- Eclipse Collections or Vavr's primitive collections avoid boxing
+- Records and value types (JEP 401, preview): future Java feature for
+  user-defined primitives
 
 **First-principles derivation:**
 
-Java needs generics to work on the Object type hierarchy. Primitives
-are not Objects. You need either: (1) allow generics to know about
-primitives (complex, adds to VM spec), or (2) provide Object
-wrappers and auto-convert. Java chose option 2. The Integer cache
-exists as a micro-optimization (small integer literals are
-common; sharing them saves allocation). The range -128 to 127
-is configurable via `-XX:AutoBoxCacheMax`.
+CPUs operate on registers containing primitive values. Representing
+every integer as a heap object would be catastrophically inefficient.
+Java chose a dual type system: primitives for performance, objects
+for flexibility. The wrapper classes are the bridge, and autoboxing
+makes the bridge transparent to the programmer at the cost of hidden
+allocations.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: The Integer cache trap (Wrong vs Right)**
+**Example 1: The Integer cache trap**
 
 ```java
-// BAD: Using == to compare Integer objects
+// BAD: == comparison on Integer objects
 Integer a = 1000;
 Integer b = 1000;
-if (a == b) {
-    // This branch is NEVER taken for values outside [-128, 127]
-    // a and b are different heap objects
-    System.out.println("equal");
+System.out.println(a == b);      // false (different objects)
+System.out.println(a.equals(b)); // true (same value)
+
+// DECEPTIVE: this works by accident (cache range)
+Integer x = 100;
+Integer y = 100;
+System.out.println(x == y);  // true (same cached object!)
+// Danger: works in unit tests but fails with large values
+// -> always use .equals() for Integer comparison
+
+// GOOD: always use equals() for wrapper types
+public boolean sameId(Integer id1, Integer id2) {
+    // BAD: return id1 == id2;  // fails for id > 127
+    return Objects.equals(id1, id2); // null-safe equals
 }
-
-// BAD: Unboxing null causes NPE (subtle - no null check visible)
-Map<String, Integer> scores = new HashMap<>();
-int total = scores.get("missing") + 10;  // NPE! get returns null, unboxing explodes
-
-// GOOD: Use .equals() for wrapper comparison
-Integer x = 1000;
-Integer y = 1000;
-if (x.equals(y)) {         // Always correct
-    System.out.println("equal");
-}
-// Or unbox both and compare primitives:
-if (x.intValue() == y.intValue()) { ... }
-
-// GOOD: Null-safe unboxing
-Integer raw = scores.get("missing");
-int safeTotal = (raw != null ? raw : 0) + 10;
-// Or with Java 8+:
-int safeTotal2 = scores.getOrDefault("missing", 0) + 10;
 ```
 
-> **Code walkthrough:** The `==` trap is the most common autoboxing
-> bug in production. Integer cache makes `==` work for small values
-> (-128 to 127), so unit tests with small values pass, but the bug
-> appears in production with large IDs or counts. The NPE pattern
-> is harder to spot because the addition `+` triggers unboxing of
-> the null Integer before the NPE is thrown.
+> **Code walkthrough:** Integer.valueOf(100) always returns the same
+> cached object because 100 is in the -128 to 127 cache range. Two
+> calls to Integer.valueOf(1000) return different objects because 1000
+> is outside the cache. Using == on Integers tests whether they are
+> the same object (reference equality), not whether they have the same
+> value (value equality). Objects.equals(a, b) handles null safely and
+> calls a.equals(b) when both are non-null.
 
-**Example 2: Autoboxing performance in hot paths**
+**Example 2: Autoboxing NullPointerException trap**
 
 ```java
-// BAD: Boxing in a tight loop - creates 1 million Integer objects
-List<Integer> list = new ArrayList<>();
+// BAD: NPE from null unboxing
+Map<String, Integer> counts = new HashMap<>();
+counts.put("a", 1);
+int count = counts.get("missing"); // NPE!
+// counts.get("missing") returns null (Integer)
+// int count = null; -> unboxing -> NPE
+
+// GOOD: handle null before unboxing
+Integer countObj = counts.get("missing");
+int count = (countObj != null) ? countObj : 0;
+
+// OR use getOrDefault:
+int count = counts.getOrDefault("missing", 0);
+// Returns int (autoboxed back from Integer 0)
+
+// BAD: loop allocates Integer on every iteration
+long sum = 0;
 for (int i = 0; i < 1_000_000; i++) {
-    list.add(i);  // autoboxes each int to Integer - 1M heap allocs
-}
-int sum = 0;
-for (Integer n : list) {
-    sum += n;     // unboxes each Integer back to int - 1M unboxes
+    Integer boxed = i;   // heap allocation each time
+    sum += boxed;        // unbox each time
 }
 
-// GOOD: Use primitive array or IntStream when boxing is unnecessary
-int[] array = new int[1_000_000];
-for (int i = 0; i < array.length; i++) {
-    array[i] = i;  // no boxing, contiguous memory, cache-friendly
+// GOOD: use primitive directly
+long sum = 0;
+for (int i = 0; i < 1_000_000; i++) {
+    sum += i;  // no allocation, direct add
 }
-int sum2 = Arrays.stream(array).sum();  // IntStream - no boxing
-
-// GOOD: IntStream avoids boxing entirely
-int sum3 = IntStream.range(0, 1_000_000).sum();
 ```
 
-> **Code walkthrough:** The BAD pattern generates 1 million Integer
-> allocations causing GC pressure. The `int[]` approach avoids
-> boxing entirely and benefits from cache-line locality (contiguous
-> memory). `IntStream.range()` is the idiomatic Java 8+ approach
-> for integer ranges - it uses primitive specializations internally,
-> so no boxing occurs anywhere in the pipeline.
+> **Code walkthrough:** Map.get() returns the wrapper type (Integer,
+> not int). If the key is absent, it returns null. Assigning null to
+> an int variable triggers unboxing: null.intValue() throws NPE.
+> getOrDefault() avoids this. The loop example shows the hidden cost
+> of autoboxing in tight loops: each Integer boxed is a new heap
+> object. For a million iterations, this is a million small allocations.
+> Using primitives directly avoids all allocation.
 
 ---
 
@@ -247,80 +258,417 @@ int sum3 = IntStream.range(0, 1_000_000).sum();
 
 **Junior / Mid (0-5 years):**
 
-> Java has 8 primitive types like int, long, double that hold raw
-> values. Each has a wrapper class like Integer, Long, Double that
-> is a full object. Autoboxing converts between them automatically.
-> The main gotcha: always use `.equals()` not `==` to compare
-> wrapper objects, and be careful with null wrappers that get
-> unboxed - they throw NPE.
+> Java has 8 primitive types (int, long, double, boolean, etc.) and
+> corresponding wrapper classes (Integer, Long, Double, Boolean).
+> Autoboxing converts between them automatically. Key trap: use equals()
+> not == to compare Integer/Long/etc. objects. Null wrapper unboxed
+> to primitive throws NPE.
 
-*Push deeper:* Integer cache range -128 to 127, and why autoboxing
-in loops can cause GC pressure.
+*Push deeper:* The Integer cache (-128 to 127) makes == work for
+small values but not large ones - this is the most common
+interview trap question.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> In production I watch for autoboxing in three scenarios: (1)
-> stream operations on large integer datasets - if the source is
-> `List<Integer>`, every operation boxes/unboxes; switch to IntStream
-> or primitive arrays for 5-10x speedup. (2) Map lookups where
-> a missing key returns null that then gets auto-unboxed - this is
-> a common NPE in counter patterns. (3) JVM escape analysis can
-> eliminate boxing entirely for confined Integer objects, but you
-> cannot rely on it - profile first.
+> I use primitives by default in fields and method signatures,
+> only switching to wrappers when null semantics are needed or
+> required by generics. In performance-sensitive code I avoid
+> autoboxing in loops and use primitive streams (IntStream, LongStream)
+> instead of Stream<Integer>. I always use Objects.equals() for
+> null-safe wrapper comparison. I scan for Optional<Integer> in code
+> reviews - it is often a sign of accidental boxing where a primitive
+> return with a boolean flag would be cleaner.
 
-*Push deeper:* Project Valhalla's value types will eventually
-allow `List<int>` without boxing - the JVM spec changes needed
-for this, and timeline considerations.
+*Push deeper:* Java has no user-defined value types yet (JEP 401,
+"Project Valhalla" preview in Java 22). When it ships, int-sized
+value types (coordinates, money amounts) can be stored in arrays
+without boxing - eliminating the last major performance gap between
+Java and C++.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "int and Integer are interchangeable" | Integer can be null; int cannot. Unboxing null Integer throws NPE. Using == on Integer checks reference identity, not value | Null pointer exceptions from Map.get() returning Integer; wrong == comparison |
+| "Autoboxing is always free / zero-cost" | Each autobox allocates a heap object (outside the -128/127 cache). In loops, this creates GC pressure | Performance problems in numeric processing code that uses Integer/Long instead of int/long |
+| "Integer.valueOf(x) == Integer.valueOf(x) is always true" | Only for x in [-128, 127]. Outside that range: false | Tests passing with small values but production failures with large IDs or counts |
 
-- "What is autoboxing?"
-- "What are Java's primitive types?"
+---
 
-🗣️ "Autoboxing is the automatic conversion from a primitive type
-to its wrapper object and back. Java's 8 primitives are: byte,
-short, int, long, float, double, char, boolean. The compiler
-inserts `Integer.valueOf(x)` for boxing and `integer.intValue()`
-for unboxing. The key practical issue: comparing boxed types with
-`==` tests object identity, not value equality - always use
-`.equals()` for boxed comparisons."
+### 🚨 Failure Modes and Diagnosis
 
-#### Mechanism
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| NPE on unboxing | NullPointerException at an int assignment or arithmetic | Map.get() or method returns null Integer; unboxing to int | Stack trace shows unboxing line; enable null checks | Use getOrDefault(), orElse(0), or explicit null check before unboxing |
+| Wrong == comparison | Subtle logic bug: two equal Integers compare as not-equal | == used instead of .equals() on wrapper objects | Add unit test with values > 127; add SonarLint rule | Replace == with Objects.equals() or .equals() |
+| GC pressure from boxing | High allocation rate in profiler; frequent young-gen GC | Autoboxing in hot loops (Integer arithmetic) | async-profiler allocation view: shows Integer.valueOf() in hotspot | Switch to primitive arrays (int[]) or IntStream |
 
-- "What is the Integer cache and what range does it cover?"
+---
 
-🗣️ "The Integer cache is a pool of pre-allocated Integer objects
-for values -128 to 127. `Integer.valueOf()` returns cached instances
-for values in this range, and new instances outside it. This
-is why `Integer a = 100; Integer b = 100; a == b` is true (cached
-instances are identical), but `Integer a = 200; Integer b = 200;
-a == b` is false (different instances). The upper bound can be
-extended with `-XX:AutoBoxCacheMax`, but -128 is fixed."
+### 🎯 Interview Deep-Dive
 
-#### Comparison
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Name 8 primitives; explain autoboxing; Integer cache |
+| Mid | 4 min | NPE trap; == vs equals; IntStream for performance |
+| Senior | 6 min | GC impact; Valhalla context; when to use wrappers |
+| Staff | 8 min | Discuss value types (Valhalla) and their implications |
 
-- "int vs Integer - when do you use each?"
+---
 
-🗣️ "I use int by default for numeric computation - it is faster,
-has no null, and avoids GC pressure. I use Integer when I need to
-store it in a collection, use it as a generic type parameter, or
-represent an absent value with null. For performance-critical
-code with large integer datasets, I avoid `List<Integer>` in favour
-of `int[]` or IntStream - the boxing overhead is measurable in
-GC profiling."
+**Q1** [CONCEPTUAL] [JUNIOR]
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Integer cache, == trap, autoboxing bytecode. |
-| Hiring Manager   | Lead with common NPE scenario - production impact. |
-| Bar Raiser       | GC pressure measurement, escape analysis, Valhalla timeline. |
-| Peer Engineer    | "The cache trap catches everyone at least once in production..." |
+"What are the 8 primitive types in Java and their default values?"
+
+**Answer:**
+
+The 8 primitives and their defaults (for instance fields; local
+variables have no default and must be initialized):
+
+```
+Type     Size     Default   Range
+boolean  1 bit    false     true / false
+byte     8 bits   0         -128 to 127
+short    16 bits  0         -32,768 to 32,767
+int      32 bits  0         -2^31 to 2^31-1
+long     64 bits  0L        -2^63 to 2^63-1
+float    32 bits  0.0f      ~3.4e38
+double   64 bits  0.0d      ~1.7e308
+char     16 bits  '\u0000'  0 to 65535 (Unicode)
+```
+
+Practical memory: for 32-bit vs 64-bit: the JVM packs fields
+in memory. An int object field costs 4 bytes. An Integer wrapper
+costs 16 bytes (12 bytes header + 4 bytes value, aligned to 8).
+For a class with 10 int fields vs 10 Integer fields: 40 bytes
+vs 160 bytes.
+
+Default value trap: instance fields get defaults; local variables
+DO NOT. This code fails to compile:
+```java
+int x; System.out.println(x); // ERROR: x may not be initialized
+```
+
+*What separates good from great:* char is unsigned (0 to 65535),
+unlike byte and short which are signed. char can hold any Unicode
+code point in the Basic Multilingual Plane. For Unicode above
+U+FFFF (emoji, rare scripts), you need a String or two chars
+(a surrogate pair).
+
+---
+
+**Q2** [DEBUGGING] [MID]
+
+"Why does this code produce unexpected results?"
+
+```java
+Integer a = 200; Integer b = 200;
+System.out.println(a == b);  // false?
+```
+
+**Answer:**
+
+This is the Integer cache trap. Integer.valueOf() caches instances
+for -128 to 127. For values outside that range, it creates a new
+object every call.
+
+`Integer a = 200` compiles to `Integer a = Integer.valueOf(200)`.
+Since 200 > 127, this creates a new Integer object.
+`Integer b = 200` compiles to `Integer b = Integer.valueOf(200)`.
+This also creates a new Integer object - a different one.
+
+`a == b` tests whether a and b are the same object reference.
+They are not (different objects), so the result is false.
+
+Fix: use equals():
+```java
+System.out.println(a.equals(b)); // true
+System.out.println(Objects.equals(a, b)); // true, null-safe
+```
+
+Production impact: this bug appears when:
+- Using Integer as Map keys and checking with == instead of containsKey
+- Checking Integer return values with == in service responses
+- Unit tests using small test values that always pass (< 128)
+  but production code fails with large order IDs or counts
+
+*What separates good from great:* The cache upper bound can
+be changed with the JVM flag `-XX:AutoBoxCacheMax=N`. Some teams
+set it to 1000 for applications that work with small sequential
+IDs. This is fragile and not recommended; use equals().
+
+---
+
+**Q3** [TRADE-OFF] [MID]
+
+"When should you use int vs Integer in method parameters?"
+
+**Answer:**
+
+Use int (primitive) for method parameters when:
+1. null is not a valid value (most cases)
+2. The method is called frequently (avoid boxing overhead)
+3. The parameter represents a pure numeric value
+
+Use Integer (wrapper) when:
+1. null must be expressible (e.g., optional database ID)
+2. The parameter must be stored in a collection or generic type
+3. Implementing an interface that requires an Object parameter
+
+```java
+// GOOD: primitive for pure numeric operations
+double calculateTax(double price, int taxRatePercent) {
+    return price * taxRatePercent / 100.0;
+}
+// Callers don't need to box: calculateTax(100.0, 20)
+
+// GOOD: wrapper when null is meaningful
+Optional<Integer> findUserAge(String userId) {
+    // Returns empty if user not found, not 0 (which could be valid)
+    return userRepository.findAge(userId);
+}
+
+// BAD: unnecessary wrapper in value method
+// Forces boxing at every call site
+double calculateTax(Double price, Integer taxRatePercent) {
+    return price * taxRatePercent / 100.0;
+    // Hidden NPE risk if price or taxRatePercent is null
+}
+```
+
+Rule of thumb: method parameters should be primitives unless null
+is semantically meaningful. Return types: primitive when the
+method always has a value; Optional<Integer> or Integer when
+absent is a real outcome.
+
+*What separates good from great:* In JPA entities and Spring
+MVC DTOs, Integer (wrapper) is common because null means "not
+provided" or "not loaded." For service layer business logic,
+primitives are preferred. The boundary between these two worlds
+is where NPEs from unboxing tend to occur.
+
+---
+
+**Q4** [CONCEPTUAL] [JUNIOR]
+
+"What is autoboxing and when can it cause a NullPointerException?"
+
+**Answer:**
+
+Autoboxing is the automatic conversion from primitive to wrapper
+(boxing) or wrapper to primitive (unboxing) by the compiler.
+
+```java
+// Autoboxing (primitive -> wrapper):
+Integer i = 42;     // compiler: Integer.valueOf(42)
+List<Integer> list = new ArrayList<>();
+list.add(5);        // compiler: list.add(Integer.valueOf(5))
+
+// Unboxing (wrapper -> primitive):
+int x = i;         // compiler: i.intValue()
+int sum = list.get(0) + list.get(1);  // unbox both
+```
+
+NPE from unboxing: when a wrapper is null and is assigned to
+a primitive or used in arithmetic:
+```java
+Integer value = null;    // valid: Integer can be null
+int x = value;           // NPE: value.intValue() on null
+
+// Common scenario:
+Map<String, Integer> map = new HashMap<>();
+int count = map.get("key"); // NPE if "key" not present!
+// map.get() returns null; unboxing null -> NPE
+// FIX: int count = map.getOrDefault("key", 0);
+```
+
+NPE from conditional:
+```java
+Integer i = null;
+boolean b = (i == 10);   // NPE: i is unboxed to compare
+// FIX: use Integer.valueOf(10).equals(i)
+// or: i != null && i == 10
+```
+
+*What separates good from great:* Autoboxing NPEs appear in stack
+traces at the line with the unboxing operation, not at the line
+where null was introduced. This makes them harder to diagnose.
+Enable null analysis in your IDE (IntelliJ: @NotNull/@Nullable
+annotations) to catch them at compile time.
+
+---
+
+**Q5** [PRODUCTION] [SENIOR]
+
+"How does autoboxing affect GC in a high-throughput service?"
+
+**Answer:**
+
+Autoboxing in hot paths creates short-lived heap objects. The GC
+must collect them. In high-throughput services (10K+ req/sec),
+this shows up as:
+
+Symptom: Young generation GC frequency increases; latency P99
+shows GC pause spikes. Allocation rate in JFR is high.
+
+Diagnosis:
+```bash
+# async-profiler allocation profiling:
+./profiler.sh -e alloc -d 30 -f alloc.html <pid>
+# Look for Integer.valueOf(), Long.valueOf() in hotspots
+```
+
+Common sources:
+1. Numeric computations with Integer/Long fields in POJOs
+2. `Map<String, Integer>` counters in request handlers
+3. `Stream<Integer>` instead of `IntStream`
+4. Database result sets returning Integer for nullable columns
+   that are always present
+
+Fix pattern:
+```java
+// BAD: boxing in stream
+List<Integer> values = ...;
+int sum = values.stream()
+    .mapToInt(Integer::intValue)  // or use IntStream
+    .sum();
+
+// GOOD: primitive stream - zero boxing
+int[] arr = ...;
+int sum = IntStream.of(arr).sum();
+
+// BAD: Map<String, Integer> counter (boxes per increment)
+Map<String, Integer> counts = new HashMap<>();
+counts.merge("key", 1, Integer::sum); // boxes each time
+
+// GOOD: MutableInt from Apache Commons, or LongAdder
+Map<String, LongAdder> counts = new ConcurrentHashMap<>();
+counts.computeIfAbsent("key", k -> new LongAdder()).increment();
+```
+
+*What separates good from great:* The JVM JIT can sometimes
+eliminate autoboxing through escape analysis (if the boxed value
+does not escape to the heap). But this is not reliable. Explicit
+use of primitive types in hot paths is more predictable than
+relying on JIT optimization.
+
+---
+
+**Q6** [COMPARISON] [MID]
+
+"What is the difference between IntStream and Stream<Integer>
+and which should you prefer?"
+
+**Answer:**
+
+`IntStream` is a specialized stream for primitive int values.
+`Stream<Integer>` is a generic stream that boxes each int into
+an Integer object.
+
+```java
+// Stream<Integer>: boxes every value
+List<Integer> numbers = List.of(1, 2, 3, 4, 5);
+int sum1 = numbers.stream()
+    .mapToInt(Integer::intValue)  // unbox to get IntStream
+    .sum();  // no boxing in sum()
+
+// IntStream: no boxing at any step
+int sum2 = IntStream.rangeClosed(1, 5).sum();
+
+// Converting between:
+IntStream intStream = numbers.stream()
+    .mapToInt(Integer::intValue);  // Stream<Integer> -> IntStream
+Stream<Integer> boxedStream = IntStream.of(1,2,3)
+    .boxed();  // IntStream -> Stream<Integer>
+
+// Specialized terminal operations only in IntStream:
+IntSummaryStatistics stats = IntStream.of(1,2,3,4,5)
+    .summaryStatistics();
+// stats.getMin(), getMax(), getAverage(), getSum(), getCount()
+```
+
+Prefer IntStream for:
+- Numeric computations (sum, average, statistics)
+- Generating ranges (IntStream.range, rangeClosed)
+- Array processing (Arrays.stream(int[]))
+
+Prefer Stream<Integer> when:
+- Elements need to be stored in a List<Integer>
+- Elements may be null
+- Working with methods that return Optional (OptionalInt is
+  available but less ergonomic for some use cases)
+
+*What separates good from great:* LongStream and DoubleStream
+exist for the same reason. Always prefer specialized primitive
+streams for numeric processing. The transition point between
+primitive and object streams (mapToInt / boxed) is where
+boxing/unboxing occurs - minimize these transitions.
+
+---
+
+**Q7** [CONCEPTUAL] [JUNIOR]
+
+"Why can you not use int as a type parameter (List<int>)?"
+
+**Answer:**
+
+Generics in Java require reference types (objects). Primitives
+are not objects in Java's type system. `List<int>` is a compile
+error; `List<Integer>` is correct.
+
+Root cause: type erasure. Generic type parameters are erased to
+Object at compile time. `List<String>` becomes `List` at runtime;
+the JVM works with Object references. Since int is not an Object,
+it cannot be substituted where Object is expected.
+
+```java
+// FAILS:
+List<int> numbers = new ArrayList<>();  // compile error
+
+// WORKS:
+List<Integer> numbers = new ArrayList<>();
+numbers.add(42);  // autoboxing: Integer.valueOf(42)
+int x = numbers.get(0);  // unboxing: intValue()
+
+// WORKS: primitive array (not generic)
+int[] numbers = {1, 2, 3};  // no boxing, no generics
+
+// WORKS: primitive collection (Apache Commons / Eclipse)
+IntArrayList numbers = new IntArrayList(); // no boxing
+numbers.add(42); // direct int storage
+```
+
+Future: Project Valhalla (JEP 401) aims to allow `List<int>`
+through value types. When finalized, Java arrays and collections
+will be able to store primitives directly without boxing.
+
+*What separates good from great:* This limitation makes Java
+numeric code verbose and less efficient than C# (which has
+value types and List<int> support). Knowing this motivates
+the use of primitive arrays (int[], long[]) and libraries
+like Eclipse Collections for high-performance numeric work.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ keyword. Comparison table is required for ★★☆ and above.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ keyword. System Design is required for ★★★ and above.)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: primitive types are tabular, not a visual mechanism.)*
 
 ---
 
@@ -328,9 +676,8 @@ GC profiling."
 
 # Reference Types and Pass-by-Value
 
-**Interview Weight:** high - One of Java's most reliably asked
-interview questions. Every interviewer knows this is a common
-misconception. Getting it wrong signals a foundational gap.
+**Interview Weight:** critical - One of the most-asked Java interview
+questions. Almost every Java interview includes this as a baseline check.
 
 ---
 
@@ -338,52 +685,45 @@ misconception. Getting it wrong signals a foundational gap.
 
 **30 seconds:**
 
-> Java is always pass-by-value. For primitives, the value itself
-> is copied. For objects, the value of the reference (a memory
-> address) is copied. This means you cannot make a method
-> re-point the caller's variable to a different object. But you
-> CAN mutate the object the reference points to - because the
-> copy of the reference still points to the same heap object.
+> Java is always pass-by-value. For primitives, the value itself is
+> copied. For objects, the reference (memory address) is copied - not
+> the object. This means calling code can modify the object's state
+> through the reference copy, but cannot make the caller's variable
+> point to a different object. Java has no pass-by-reference.
 
 **3 minutes (Senior):**
 
-> The confusion comes from conflating two things: the reference
-> variable and the object it points to. When you call a method with
-> an object, Java copies the reference value (a pointer). The
-> method has its own copy of that pointer. If the method sets its
-> parameter to a new object (`param = new Foo()`), the caller's
-> variable is unchanged - the method only changed its local copy
-> of the pointer.
+> This is the most commonly misunderstood Java concept. When you pass
+> an object to a method, you pass a copy of the reference - the value
+> that points to the object in memory. Both the caller's variable and
+> the method's parameter point to the same object. Modifying the
+> object's fields is visible to the caller (both see the same object).
+> But assigning a new object to the parameter (`param = new Foo()`)
+> only changes the local copy; the caller's variable still points to
+> the original object.
 >
-> But if the method calls a mutating method on the object
-> (`param.setName("x")`), the caller sees the change - because
-> both the caller's variable and the method's parameter point to
-> the same heap object. One mutation, two viewers.
+> Contrast with true pass-by-reference (C++ `int& x`): in pass-by-
+> reference, assigning to the parameter changes the caller's variable.
+> Java never does this. Every method parameter is a copy.
 >
-> This distinction matters for three things in production: (1)
-> defensive copying - if you do not copy mutable objects passed
-> to your API, callers can mutate state through the reference.
-> (2) builder patterns - you need a fresh copy if you want
-> immutable results. (3) null checks - passing null is passing
-> the null value as the reference; the callee receives null and
-> must handle it.
-
-**Framework:** PRIMITIVE (value copied) → OBJECT (reference
-copied, object shared) → MUTATION (visible through copied
-reference) → REASSIGNMENT (only local, invisible to caller)
+> The practical implication: methods that modify object fields have
+> side effects visible to callers. This is why defensive copying
+> matters for immutability - if you return an internal array, the
+> caller can modify it through the reference.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking whether Java passes objects by
-reference or by value."
+**(1) Restate:** "Pass-by-value in Java - the question is what gets
+copied when you pass an argument to a method."
 
-**(2) First principles:** "Every method call needs its own scope.
-Variables are either copied (pass-by-value) or shared (pass-by-
-reference). Java always copies - the question is what it copies."
+**(2) First principles:** "In any language, method calls must copy
+something to the stack. Java always copies the variable's actual bits:
+primitives = the number, objects = the memory address."
 
-**(3) Bridge:** "In C, this is the difference between passing
-a struct by value vs passing a pointer by value. Java always
-passes the pointer by value."
+**(3) Bridge:** "Imagine handing someone a photocopy of your house
+key. They can open your house and rearrange furniture (modify object
+state). But if they make a new key and set it on fire, your original
+copy is unaffected (reassigning the parameter doesn't affect the caller)."
 
 ---
 
@@ -391,161 +731,180 @@ passes the pointer by value."
 
 **What it is:**
 
-In Java, all method arguments are passed by value. For primitive
-types (int, long, etc.), the actual bit value is copied. For
-reference types (all objects), the reference (a pointer-like
-value containing the object's heap address) is copied. The
-object itself is not copied.
+Java's method parameter passing mechanism: every argument is passed
+as a copy of the original value. For primitives, this copies the
+value. For objects, this copies the reference (the pointer to the
+object), not the object itself.
 
 **The problem it solves:**
 
-Pass-by-reference semantics (where the method can re-seat the
-caller's variable) cause subtle action-at-a-distance bugs. Java's
-choice (pass-by-value, always) makes caller semantics predictable:
-a method cannot replace the object you passed it - only mutate
-the existing object if it is mutable.
+Programmers coming from C++ may expect pass-by-reference semantics.
+Understanding pass-by-value is essential for reasoning about side
+effects, mutability, and defensive copying.
 
 **How it works:**
 
-```java
-// Primitive: value is copied
-void increment(int x) {
-    x++;           // only the local copy is incremented
-}
-int n = 5;
-increment(n);
-// n is still 5 - the copy was incremented, not the original
+```
+PRIMITIVE (pass by value of the int):
 
-// Object: reference (pointer) is copied
-void rename(StringBuilder sb) {
-    sb.append(" Jr.");  // mutates the shared object - VISIBLE to caller
-}
-void reassign(StringBuilder sb) {
-    sb = new StringBuilder("different");  // only local re-seat - INVISIBLE
-}
-StringBuilder name = new StringBuilder("Alice");
-rename(name);
-// name is now "Alice Jr." - mutation visible through copied reference
-reassign(name);
-// name is still "Alice Jr." - local reassignment not visible
+  void triple(int x) { x = x * 3; }
+  int a = 5;
+  triple(a);
+  // a is still 5; method got a copy of 5
+  // method's x was 5, changed to 15, discarded on return
+
+OBJECT REFERENCE (pass by value of the reference):
+
+  void addToList(List<String> list) {
+      list.add("added");  // modifies the OBJECT (both see this)
+  }
+  void replaceList(List<String> list) {
+      list = new ArrayList<>();  // only changes local copy
+  }
+
+  List<String> myList = new ArrayList<>();
+  addToList(myList);
+  // myList now contains "added" - method modified same object
+
+  replaceList(myList);
+  // myList still contains "added" - replacement invisible to caller
+
+MEMORY MODEL:
+  myList variable: [0x1234] (address of the ArrayList)
+  Method frame: list = [0x1234] (COPY of the address)
+  list.add("x"): modifies object at 0x1234 (both see it)
+  list = new ArrayList(): method's copy now points to 0x9999
+                          myList still points to 0x1234
 ```
 
 **The key insight:**
 
-"Pass-by-reference" would mean the method can change WHICH object
-your variable points to. Java does not allow this. "Pass-by-value
-of a reference" means the method can change WHAT IS IN the object
-your variable points to (via mutation). This is a crucial
-distinction that interviewers use to probe whether you understand
-the JVM memory model.
+"Pass by reference" would mean passing the address of the variable
+itself (allowing reassignment). Java passes the address of the
+object. The terminology is exact: the value being passed is the
+reference (address), but it is passed by value (copied). Hence:
+"pass-by-value-of-the-reference" = "effectively pass-by-reference
+for object mutations but not for reassignment."
 
 **When to use it:**
 
-Awareness of this rule directly drives API design decisions:
-- Return a new modified copy from methods (functional style) to
-  avoid caller surprises
-- Accept defensive copies of mutable parameters in constructors
-- Use `final` parameters to signal immutability intent (though
-  final only prevents reassignment, not mutation)
+Understanding pass-by-value is essential when:
+- Designing methods that should not have side effects (use defensive copies)
+- Understanding why method calls can modify external state
+- Explaining why returning a new object vs modifying an existing one
+  has different semantics
 
 **When NOT to use it:**
 
-When you need output parameters (returning multiple values from
-a method), use a dedicated return type (record, pair, list)
-rather than hoping to use the reference mutation as a return
-mechanism.
+*(Not applicable - this is a language semantics concept, not a design choice.)*
+
+**Alternatives:**
+
+Languages with actual pass-by-reference:
+- C++: `void modify(int& x)` - can reassign caller's variable
+- C#: `ref` and `out` keyword - explicit pass-by-reference
+- Java workarounds: return a new value, use AtomicReference as a wrapper,
+  use single-element arrays int[1] (hack)
 
 **First-principles derivation:**
 
-Any runtime needs a calling convention. Three options: pass by
-value (copies), pass by reference (aliased variable), or pass
-by pointer (copy of the address). Java chose to pass everything
-by value. For objects, the "value" is the heap address (what Java
-calls a reference). This gives deterministic caller semantics
-(method cannot reseat caller's variable) while still enabling
-mutation through shared references.
+Method calls work by pushing arguments onto the call stack frame.
+The stack stores values: for int, it stores the integer bits. For
+a reference, it stores the memory address (64-bit pointer on JVM 64).
+The called method gets its own stack frame with copies of these
+values. Modifying the copied address does not affect the original
+copy in the caller's frame. This is the mechanical basis for
+Java's "always pass-by-value" rule.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: The classic misconception - can a method swap two variables?**
+**Example 1: The swap demonstration**
 
 ```java
-// BAD assumption: Java passes objects by reference, so swap works
-void swap(StringBuilder a, StringBuilder b) {
-    StringBuilder temp = a;
-    a = b;           // reassigns LOCAL copy of reference
-    b = temp;        // reassigns LOCAL copy of reference
-    // Caller's references are unchanged
+// BAD understanding: expecting swap to work
+void swap(String a, String b) {
+    String temp = a;
+    a = b;        // only changes method's local copy
+    b = temp;     // only changes method's local copy
 }
-
-StringBuilder x = new StringBuilder("X");
-StringBuilder y = new StringBuilder("Y");
+String x = "hello";
+String y = "world";
 swap(x, y);
-System.out.println(x);  // prints "X" - not swapped!
-System.out.println(y);  // prints "Y" - not swapped!
+// x is still "hello", y is still "world"
+// The references were copied; reassigning copies has no effect
 
-// GOOD: To swap, use an array or wrapper (passes the container
-// by reference effectively, because you mutate the container)
-void swap(StringBuilder[] arr, int i, int j) {
-    StringBuilder temp = arr[i];
-    arr[i] = arr[j];    // mutates the shared array - visible to caller
+// GOOD: if you need swap semantics, return a result
+String[] swap(String a, String b) {
+    return new String[]{b, a};
+}
+String[] result = swap(x, y);
+x = result[0]; y = result[1];  // caller updates its variables
+
+// OR: use an array (single reference to a shared array)
+void swapArray(String[] arr, int i, int j) {
+    String temp = arr[i];
+    arr[i] = arr[j];   // modifies the OBJECT (array)
     arr[j] = temp;
 }
-StringBuilder[] arr = { new StringBuilder("X"), new StringBuilder("Y") };
-swap(arr, 0, 1);
-System.out.println(arr[0]);  // prints "Y" - swapped!
+// Works because arr is a reference to the same array
 ```
 
-> **Code walkthrough:** The swap method receives copies of the
-> references to X and Y. Reassigning the local parameter variables
-> only affects the method's local copies - the caller's `x` and
-> `y` still point to the original objects. The array version works
-> because `arr` is a copy of the reference to the array object,
-> and mutating the array's elements is visible to the caller.
+> **Code walkthrough:** The failed swap shows that reassigning the
+> parameter variable (a = b) only changes the method's local copy of
+> the reference; the caller's variables x and y are unaffected. The
+> array-based swap works because arr is a reference to the same array
+> object; modifying arr[i] modifies the shared object's content. The
+> distinction is: modifying the reference (assignment) = invisible to
+> caller; modifying the referenced object's content = visible to caller.
 
-**Example 2: Defensive copying for API safety**
+**Example 2: Defensive copying for immutability**
 
 ```java
-// BAD: Constructor stores mutable reference - caller can mutate state
-class DateRange {
-    private final Date start;  // Date is mutable!
-    private final Date end;
+// BAD: returning internal array - caller can mutate it
+class Config {
+    private final int[] ports = {8080, 8443};
 
-    DateRange(Date start, Date end) {
-        this.start = start;  // stores original reference
-        this.end = end;
+    int[] getPorts() {
+        return ports;  // reference to internal array!
     }
 }
+Config config = new Config();
+int[] ports = config.getPorts();
+ports[0] = 9999;  // modifies Config's internal array!
 
-Date d = new Date();
-DateRange range = new DateRange(d, d);
-d.setTime(0);  // caller mutates Date - range.start also changes!
+// GOOD: defensive copy - caller gets own copy
+class Config {
+    private final int[] ports = {8080, 8443};
 
-// GOOD: Defensive copy in constructor
-class DateRangeSafe {
-    private final Date start;
-    private final Date end;
-
-    DateRangeSafe(Date start, Date end) {
-        this.start = new Date(start.getTime());  // defensive copy
-        this.end   = new Date(end.getTime());
+    int[] getPorts() {
+        return ports.clone();  // copy, not the original
     }
+}
+Config config = new Config();
+int[] ports = config.getPorts();
+ports[0] = 9999;  // modifies only the copy; Config unchanged
 
-    Date getStart() {
-        return new Date(start.getTime());  // defensive copy on read too
+// GOOD: for collections, use unmodifiable view
+class Config {
+    private final List<Integer> ports =
+        new ArrayList<>(List.of(8080, 8443));
+
+    List<Integer> getPorts() {
+        return Collections.unmodifiableList(ports);
+        // caller can read but not modify
     }
 }
 ```
 
-> **Code walkthrough:** Without defensive copies, `DateRange` breaks
-> its immutability guarantee because the caller retains a reference
-> to the same mutable `Date` object. Defensive copies in the
-> constructor and getter break this aliasing - any mutation by the
-> caller only affects their own copy. This pattern is why Effective
-> Java's Item 50 ("Make defensive copies when needed") is
-> interview-standard knowledge.
+> **Code walkthrough:** The bad Config returns a direct reference to
+> its internal array. The caller can modify Config's state through this
+> reference, violating the encapsulation. Defensive copying returns a
+> new array; the caller's modifications only affect the copy.
+> Collections.unmodifiableList() is an efficient alternative that
+> throws UnsupportedOperationException on mutation attempts. Both
+> approaches prevent unintended mutation through reference sharing.
 
 ---
 
@@ -553,79 +912,411 @@ class DateRangeSafe {
 
 **Junior / Mid (0-5 years):**
 
-> Java is always pass-by-value. For primitives, the value is
-> copied. For objects, a copy of the reference (memory address)
-> is passed. This means the method can mutate the object the
-> reference points to, but cannot make the caller's variable
-> point to a different object.
+> Java is always pass-by-value. For objects, the value being passed
+> is the reference (memory address), not the object. You can modify
+> the object through the reference copy, but you cannot make the
+> caller's variable point to a different object. Swap functions do
+> not work in Java because reassigning the parameter has no effect
+> on the caller.
 
-*Push deeper:* Explain what defensive copying is and when it
-is needed.
+*Push deeper:* Defensive copying: if a class returns its internal
+state via reference, callers can mutate the internal state. Return
+a copy or an unmodifiable view for true encapsulation.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> The pass-by-value semantic drives how I design APIs. Mutable
-> objects passed to constructors need defensive copies, or the
-> caller can break invariants through the shared reference. This
-> comes up constantly with Date, arrays, and custom mutable
-> collections. The modern answer is to use immutable types
-> (records, `List.of()`, `Instant` instead of `Date`) to make
-> the aliasing question irrelevant - if the object cannot be
-> mutated, sharing the reference is safe.
+> I use this understanding daily when designing APIs. Methods that
+> accept collections and add to them have side effects; methods that
+> accept collections and return a new collection are more predictable.
+> For value objects and domain models, I use records (Java 16+) for
+> immutability or return defensive copies from getters. I flag
+> returning-internal-state patterns in code review as potential
+> bugs.
 
-*Push deeper:* Discuss how value types (Project Valhalla) would
-change this - value types would always be copied, eliminating
-aliasing for value semantics without requiring defensive copies.
+*Push deeper:* The String class is immutable specifically to prevent
+reference aliasing problems: multiple variables can safely share
+the same String object because none can modify it. This is the
+model for all immutable value objects.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "Java passes objects by reference" | Java passes the reference value (address) by value. Reassigning a parameter does not affect the caller's variable | Writing swap functions or "out parameter" patterns expecting them to work |
+| "Primitives and objects are passed differently" | Both are passed by value of the variable's content. For primitives that's the number; for objects that's the address | Confused about which operations have side effects |
+| "final method parameters prevent mutation" | final on a parameter prevents reassigning the variable, not modifying the referenced object | Expecting final List param to prevent add() calls |
 
-- "Is Java pass-by-value or pass-by-reference?"
-- "What happens when you pass an object to a method?"
+---
 
-🗣️ "Java is strictly pass-by-value. When you pass an object,
-you pass a copy of the reference - the value of the pointer to
-that object. The method can use the reference to mutate the object's
-state, and those mutations are visible to the caller. But the method
-cannot make the caller's variable point to a different object.
-That is the key distinction: mutation is shared, reassignment is local."
+### 🚨 Failure Modes and Diagnosis
 
-#### Mechanism
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Unexpected state mutation | Object state changes unexpectedly after passing to a method | Method modified the referenced object's fields/contents | Code review: trace all modifications in the method | Defensive copy on entry or return; use immutable types |
+| Swap function doesn't work | Variables not swapped after calling swap method | Reassigning local reference copies does not affect caller | Test: print variables before and after - caller is unchanged | Return new values; use an array wrapper; use out-parameter object |
 
-- "Why can't a swap method work in Java?"
+---
 
-🗣️ "A swap method receives copies of the two references. When it
-reassigns the local parameters, it only changes the local copies
-of those pointers. The caller's variables still point to the
-original objects. To actually swap from a method's perspective,
-you would need to pass a mutable container - like an array or
-a wrapper object - so the method can mutate the container's
-contents, which are visible to the caller."
+### 🎯 Interview Deep-Dive
 
-#### Comparison
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Define pass-by-value; explain for primitives vs objects |
+| Mid | 4 min | Swap example; defensive copying; String immutability |
+| Senior | 6 min | API design implications; immutability patterns |
+| Staff | 8 min | Defensive copying in domain modeling; mutability risk at scale |
 
-- "How does Java's model differ from C++'s pass-by-reference?"
+---
 
-🗣️ "In C++, passing by reference `(Type& param)` creates a true
-alias - the parameter IS the same variable as the caller's
-argument. Any assignment to the parameter changes the caller's
-variable. In Java, there is no equivalent; you always get a copy.
-The closest Java equivalent to C++ pass-by-reference semantics
-is to pass a single-element array or a mutable wrapper - the method
-mutates the container, and the caller sees the change through
-the shared container reference."
+**Q1** [CONCEPTUAL] [JUNIOR]
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Reference vs object, reassignment vs mutation. |
-| Hiring Manager   | Defensive copying - practical API safety. |
-| Bar Raiser       | Valhalla value types, aliasing in concurrent code. |
-| Peer Engineer    | "The swap question trips up seniors too - the subtle part is..." |
+"Is Java pass-by-reference or pass-by-value?"
+
+**Answer:**
+
+Java is strictly pass-by-value. Always. No exceptions.
+
+For primitives: the value of the primitive is copied.
+```java
+void increment(int x) { x++; }
+int a = 5;
+increment(a);
+// a is still 5; the method received a copy of 5
+```
+
+For objects: the value of the reference (the memory address)
+is copied. The method receives a copy of the address pointing
+to the same object.
+```java
+void modify(StringBuilder sb) {
+    sb.append("!");  // modifies the shared object - visible to caller
+}
+void replace(StringBuilder sb) {
+    sb = new StringBuilder("new"); // modifies only the local copy
+}
+StringBuilder str = new StringBuilder("hello");
+modify(str);   // str is now "hello!"
+replace(str);  // str is still "hello!" - caller unaffected
+```
+
+The confusion: "pass-by-value-of-the-reference" feels like
+pass-by-reference for mutations. The distinction becomes clear only
+when you try to reassign the parameter.
+
+*What separates good from great:* The Java Language Specification
+(JLS 8.4.1) uses the exact term "pass by value." Citing the JLS
+shows understanding of the formal definition, not just intuition.
+
+---
+
+**Q2** [DEBUGGING] [MID]
+
+"A method is supposed to sort a list passed to it. Why might
+the caller not see the sorted result?"
+
+**Answer:**
+
+If the method reassigns the parameter instead of sorting in-place,
+the caller's reference is unaffected.
+
+```java
+// BAD: replaces the reference (caller doesn't see it)
+void sortList(List<String> list) {
+    list = new ArrayList<>(list); // creates a local copy
+    Collections.sort(list);       // sorts the local copy
+}  // sorted copy discarded at method end!
+
+// Caller's list is unchanged - sort was done on a temporary copy
+
+// GOOD: sort in-place (modifies the same object)
+void sortList(List<String> list) {
+    Collections.sort(list); // sorts the referenced object
+}
+// Caller's list is sorted - both references see the sorted state
+
+// GOOD: return sorted copy (explicit - no side effect on caller)
+List<String> sorted(List<String> list) {
+    return list.stream().sorted().collect(Collectors.toList());
+}
+// Caller decides whether to use the sorted copy
+```
+
+The root cause: the method created a new local list and sorted
+that, not the original. The assignment `list = new ArrayList<>(list)`
+made the local parameter point to a new object. The original
+object (the caller's list) was not touched.
+
+*What separates good from great:* This is a method design question.
+Methods that sort/modify in-place should document this as a side
+effect. Methods that want to avoid side effects should return a
+new sorted list. The Java standard library convention: sort in-place
+(Collections.sort(), List.sort()) returns void; stream operations
+that don't modify return a new stream. Follow this pattern.
+
+---
+
+**Q3** [TRADE-OFF] [MID]
+
+"When should a method defensively copy its input vs use it directly?"
+
+**Answer:**
+
+Defensive copying on input is warranted when:
+
+1. The parameter is part of the object's state (stored in a field):
+```java
+class Schedule {
+    private final List<String> events;
+
+    Schedule(List<String> events) {
+        // GOOD: defensive copy; caller can't mutate internal state
+        this.events = new ArrayList<>(events);
+        // BAD: this.events = events; // caller's list is our list
+    }
+}
+```
+
+2. The class makes an immutability guarantee:
+Any mutable parameter stored as a field violates immutability
+unless defensively copied.
+
+3. The parameter may be mutated by a concurrent caller:
+Even non-final collections can be mutated by other threads
+while the method runs.
+
+Avoid defensive copying when:
+1. The object is transient (not stored, processed and discarded)
+2. The input is already immutable (String, record, unmodifiable List)
+3. Performance is critical and the method's contract allows aliasing
+
+Rule of thumb: if a constructor parameter is stored as a field,
+always defensively copy mutable inputs. If a method parameter
+is processed but not stored, copying is usually unnecessary.
+
+*What separates good from great:* Java records automatically create
+a defensive copy of their fields if you implement a compact
+constructor with explicit copies. For value objects that are
+conceptually immutable, records with defensive copying in the
+compact constructor are the modern pattern.
+
+---
+
+**Q4** [CONCEPTUAL] [JUNIOR]
+
+"What does 'String is immutable' mean in Java?"
+
+**Answer:**
+
+String immutability means: once a String object is created, its
+character content cannot be changed. There is no method on String
+that modifies the string in-place. All String methods that seem
+to change the string (replace, toUpperCase, substring) return a
+new String object.
+
+```java
+String s = "hello";
+String upper = s.toUpperCase(); // creates NEW String "HELLO"
+// s is still "hello"
+
+s = upper; // s now points to "HELLO"
+// The "hello" string still exists in memory (until GC)
+// We changed what s POINTS TO, not the string object itself
+
+// Proof:
+String a = "hello";
+String b = a;           // b points to same String object as a
+a = a.toUpperCase();    // a now points to new "HELLO" object
+System.out.println(b);  // prints "hello" - b is unchanged
+// If String were mutable, b would print "HELLO"
+```
+
+Why immutable: security (strings used as keys in HashMap are
+safe from mutation), thread safety (no synchronization needed
+for shared strings), string pool (same literal safely shared).
+
+*What separates good from great:* String's internal char array
+(or byte array in Java 9+ compact strings) is private and final.
+Even via reflection: final fields can be changed with reflection
+but the JVM may not honor the change for strings due to JIT
+optimization. In practice, String is practically immutable.
+
+---
+
+**Q5** [PRODUCTION] [MID]
+
+"How does pass-by-value behavior affect designing thread-safe code?"
+
+**Answer:**
+
+Pass-by-value is directly relevant to thread safety in two ways:
+
+1. Primitive method parameters are inherently thread-safe
+   (each thread has its own copy on its own stack).
+
+2. Object references passed to methods: if two threads call
+   the same method with the same object reference, both threads
+   can modify the object simultaneously. Thread safety is required
+   in the object, not in the passing mechanism.
+
+```java
+// Thread-unsafe: two threads share same list
+List<String> shared = new ArrayList<>();
+
+void addToList(String item) {
+    shared.add(item); // BAD: shared mutable state
+}
+// Two threads calling addToList() concurrently = data race
+
+// Thread-safe pattern 1: don't share (thread-local)
+ThreadLocal<List<String>> local = new ThreadLocal<>() {
+    @Override protected List<String> initialValue() {
+        return new ArrayList<>();
+    }
+};
+
+// Thread-safe pattern 2: synchronize on the object
+synchronized void addToList(String item) {
+    shared.add(item);
+}
+
+// Thread-safe pattern 3: immutable inputs only
+void processItems(List<String> items) {
+    // Process items from caller
+    // items is a snapshot: List.copyOf(original) passed in
+    // No mutation possible: List.copyOf returns unmodifiable
+    items.forEach(this::process);
+}
+```
+
+The passing mechanism itself does not create thread-safety:
+both threads get their own copy of the reference, both pointing
+to the same mutable object. Thread safety must be in the
+object's implementation.
+
+*What separates good from great:* Immutable objects (String,
+record with only primitive/immutable fields, List.of()) are
+automatically thread-safe because no thread can modify them.
+This is the design basis for all functional/actor concurrency
+models: eliminate mutation, eliminate the need for synchronization.
+
+---
+
+**Q6** [COMPARISON] [MID]
+
+"How does Java's pass-by-value compare to C++'s pass-by-reference?"
+
+**Answer:**
+
+C++ allows explicit pass-by-reference using the `&` syntax.
+This is fundamentally different from Java:
+
+C++ pass-by-reference (int& x):
+- The method receives a reference to the caller's variable itself
+- Assigning to the parameter (x = 42) changes the caller's variable
+- Commonly used for output parameters and avoiding copies
+
+Java - no pass-by-reference:
+- Methods always receive a copy of the value
+- For objects, the copy is the reference (address)
+- Assigning to the parameter (x = new Foo()) does NOT affect caller
+
+```java
+// Java: cannot implement a true out-parameter like C++ int& x
+
+// C++ equivalent patterns in Java:
+
+// Option 1: Return value (preferred)
+int computeDouble(int x) { return x * 2; }
+
+// Option 2: AtomicInteger wrapper (unusual but possible)
+void modifyViaWrapper(AtomicInteger x) {
+    x.set(x.get() * 2);
+}
+
+// Option 3: Single-element array (hack)
+void modifyViaArray(int[] x) {
+    x[0] = x[0] * 2; // modifies the array element
+}
+
+// These workarounds indicate: Java does not support out params.
+// Design code to return values instead.
+```
+
+The C# `ref` and `out` keywords explicitly add pass-by-reference.
+Java intentionally omits this to simplify the language model:
+every method parameter is always a copy, making reasoning
+about mutation straightforward.
+
+*What separates good from great:* C++ move semantics and Java
+reference semantics are entirely different concepts. Move in
+C++ transfers ownership to avoid copying. Java always copies
+references (cheap, 8 bytes) and never moves ownership.
+The concepts are orthogonal.
+
+---
+
+**Q7** [CONCEPTUAL] [JUNIOR]
+
+"What is a reference type in Java?"
+
+**Answer:**
+
+A reference type is any type that is not a primitive. References
+include classes (String, Integer, ArrayList), interfaces, enums,
+and arrays. A variable of reference type stores a reference
+(pointer/address) to an object on the heap, not the object itself.
+
+```
+PRIMITIVE variable:      REFERENCE variable:
+  int x = 42;              String s = "hello";
+  Stack: [42]              Stack: [0x1234]  <- address
+                           Heap:  [0x1234] -> "hello" object
+
+REFERENCE = address:
+  String a = "hello"; // a holds address of "hello" object
+  String b = a;       // b holds SAME address (same object)
+  a == b;             // true: same address
+  a.equals(b);        // true: same content
+
+  a = "world";        // a now holds address of new "world" object
+  b;                  // still holds original "hello" address
+  // Note: "hello" object may be in String pool - special case
+```
+
+null is a valid reference value: it means "this variable holds no
+address" (points to nothing). Using null reference throws NPE.
+
+Reference equality (==) checks if two variables hold the same
+address. Value equality (.equals()) checks if the referenced
+objects have the same logical content.
+
+*What separates good from great:* In Java, arrays are reference
+types: `int[]` is a reference to an array object on the heap, not
+a stack value. This is why passing an int[] to a method allows
+the method to modify array elements (it has the reference to the
+same array object).
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ keyword. Comparison table is required for ★★☆ and above.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ keyword. System Design is required for ★★★ and above.)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: pass-by-value is prose-explainable; the ASCII diagram in Concept Explanation is sufficient.)*
 
 ---
 
@@ -633,10 +1324,8 @@ the shared container reference."
 
 # Access Modifiers
 
-**Interview Weight:** medium - Foundational knowledge tested
-at junior level. At senior level, interviewers pivot to design
-implications: when does package-private make sense, when should
-you widen or narrow visibility?
+**Interview Weight:** medium - Foundation for understanding encapsulation
+and API design. Frequently checked in code review questions.
 
 ---
 
@@ -644,49 +1333,44 @@ you widen or narrow visibility?
 
 **30 seconds:**
 
-> Java has four access levels: public (anyone), protected (same
-> package + subclasses), package-private/default (same package only,
-> no keyword), and private (same class only). The principle is
-> least-privilege: expose only what clients genuinely need. Private
-> by default, widen only when necessary.
+> Java has four access levels: private (same class only), package-private
+> (default, same package), protected (same package + subclasses), and
+> public (everywhere). The principle: use the most restrictive access
+> level that still works. private for implementation details, public
+> only for intentional API. Exposing more than necessary makes code
+> harder to change later.
 
 **3 minutes (Senior):**
 
-> Access modifiers are the primary API surface control mechanism
-> in Java. The rule I follow: start with private, widen only when
-> you have a concrete reason. Package-private is the most
-> under-appreciated level - it allows collaboration between classes
-> in a package while hiding implementation from external code,
-> without the coupling of inheritance (protected).
+> Access modifiers implement encapsulation: they control which code
+> can see and use each member. The hierarchy is private -> package-
+> private -> protected -> public, each level wider than the previous.
 >
-> Protected is often a design smell: it couples the superclass to
-> subclasses in ways that are hard to change. If you make a field
-> protected, every subclass can see it, and you cannot easily
-> refactor it without checking all subclasses. Use protected for
-> template method patterns where the extension point is deliberate.
+> In practice: I default everything to private and open access only
+> when a legitimate consumer exists. package-private is useful for
+> intra-package collaborators that should not be part of the public API.
+> protected is specifically for inheritance - subclasses can call
+> protected methods but external code cannot. public is the API surface:
+> changing a public method signature is a breaking change.
 >
-> In practice, the module system (Java 9+) adds a layer above this:
-> even public types in a module are not visible outside the module
-> unless explicitly exported. This gives you public-within-module
-> semantics, which maps to the package-private concept but at a
-> coarser granularity.
-
-**Framework:** PRIVATE (class) → PACKAGE-PRIVATE (package) →
-PROTECTED (package + subclasses) → PUBLIC (everyone) →
-DESIGN PRINCIPLE (minimal exposure)
+> The key design principle: minimal API surface. Every public method
+> or field becomes a contract that must be maintained. Code with narrow
+> APIs (mostly private, few public methods) is easier to refactor,
+> test, and maintain. Treat public as a declaration: "I commit to
+> maintaining this forever."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about Java access modifiers
-- the four visibility levels."
+**(1) Restate:** "Access modifiers - let me cover the four levels
+and when to use each."
 
-**(2) First principles:** "Encapsulation requires restricting
-who can see internal state. You need levels from most to least
-restrictive to match different sharing needs."
+**(2) First principles:** "Encapsulation requires controlling who can
+see implementation details. Access modifiers are the mechanism.
+The default should be private; open only when needed."
 
-**(3) Bridge:** "This is universal to OOP - C++ has private,
-protected, public. Java adds the implicit package-private level
-that has no keyword."
+**(3) Bridge:** "Think of it as layers of an onion: private = core
+(only you), package-private = team, protected = family, public = world.
+Open to the world only what you intend to support forever."
 
 ---
 
@@ -694,165 +1378,147 @@ that has no keyword."
 
 **What it is:**
 
-Access modifiers control visibility of classes, methods, fields,
-and constructors. Four levels:
-
-| Modifier | Class | Package | Subclass | World |
-|----------|-------|---------|----------|-------|
-| `private` | yes | no | no | no |
-| (none) | yes | yes | no | no |
-| `protected` | yes | yes | yes | no |
-| `public` | yes | yes | yes | yes |
+Access modifiers control the visibility and accessibility of classes,
+methods, fields, and constructors in Java.
 
 **The problem it solves:**
 
-Without visibility control, any code can access any field,
-breaking encapsulation and creating tight coupling. Access modifiers
-enforce the API/implementation boundary: the public interface is
-the contract; the private implementation can be changed freely.
+Without access control, all code in a program can access all fields
+and methods. This violates encapsulation: callers depend on
+implementation details that may change. Access modifiers enforce
+information hiding.
 
 **How it works:**
 
-```java
-public class BankAccount {
-    private double balance;   // private: hidden from all outside code
-    private List<Tx> history; // private: internal implementation detail
+```
+ACCESS LEVELS (least to most visible):
 
-    // package-private: visible to test classes in same package
-    // without making it part of the public API
-    double getBalanceRaw() { return balance; }
+private         class only
+  |
+(package-private) package only (no keyword = default)
+  |
+protected       package + subclasses
+  |
+public          everywhere
 
-    protected void onWithdraw(double amount) {
-        // protected: subclass extension point (template method)
-        // Called by withdraw() to allow subclass customization
-    }
+EXAMPLE:
+  package com.example.order;
 
-    public void deposit(double amount) {  // public: stable API
-        if (amount <= 0) throw new IllegalArgumentException();
-        balance += amount;
-        onWithdraw(amount);  // can be overridden
-    }
-}
+  public class Order {
+      private Long id;           // only Order.java can access
+      String status;             // any class in com.example.order
+      protected BigDecimal total; // + subclasses outside package
+      public String getOrderRef();// anywhere
+  }
+
+  package com.example.payment;
+
+  class PaymentService {
+      void process(Order order) {
+          order.id;      // COMPILE ERROR (private)
+          order.status;  // COMPILE ERROR (package-private)
+          order.total;   // COMPILE ERROR (protected, not subclass)
+          order.getOrderRef();  // OK (public)
+      }
+  }
 ```
 
 **The key insight:**
 
-Package-private is a first-class design tool, not just a
-"forgotten to add public." It enables "friendly" classes within
-a package to collaborate on implementation details without those
-details leaking into the public API. This is the Java equivalent
-of C++'s `friend` - but at package granularity.
+The most important access level is the default (no modifier) =
+package-private. It is often overlooked: it limits visibility to
+the same package, enabling cohesive package design without exposing
+to the outside world. Packages should group related classes; package-
+private is the access level for intra-group communication.
 
 **When to use it:**
 
-- `private`: all fields (always), helper methods
-- package-private: inter-class collaboration within a package,
-  or test access (white-box tests in the same package)
-- `protected`: template method extension points (deliberate, not default)
-- `public`: API surface only
+- private: all fields (always), implementation methods, internal helpers
+- package-private (default): classes and methods that are implementation
+  details shared within a package (e.g., DAO + service in same package)
+- protected: methods designed for subclass extension (Template Method
+  pattern); use sparingly
+- public: the API surface: service interfaces, DTOs, factory methods,
+  utility methods intended for external use
 
 **When NOT to use it:**
 
-- Never make fields public (breaks encapsulation)
-- Avoid protected fields (coupling to subclasses)
-- Do not use public for implementation helpers (use package-private)
+- Do not make fields public (use getters/setters for encapsulation)
+- Do not use protected for general sharing; use package-private or
+  extract to a shared utility class
+- Do not default to public; every public member is a commitment
+
+**Alternatives:**
+
+- Java 9+ modules (JPMS): module-level encapsulation via exports;
+  you can have public classes that are only accessible within the
+  module (not exported)
+- Sealed classes: control which classes can extend
 
 **First-principles derivation:**
 
-Any module system needs to express: "visible to self," "visible
-to allies," "visible to children," and "visible to all." Java's
-four levels map exactly to these four scopes. The absence of a
-keyword means package-private, not "forgot to add public" -
-this is intentional API design guidance built into the language.
+Information hiding (Parnas 1972) is a fundamental software engineering
+principle: each module should hide its implementation decisions from
+all other modules. Access modifiers are Java's mechanism for enforcing
+information hiding at the language level. The consequence of over-
+exposure: any internal field or method that is public becomes a
+dependency that external code relies on, making internal refactoring
+impossible without breaking callers.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Access modifier design for a domain class**
+**Example 1: Typical class access design**
 
 ```java
-// BAD: Too much exposure - internal state is public
-public class Order {
-    public List<Item> items;  // Anyone can add/remove items directly
-    public BigDecimal total;  // Anyone can set the total without validation
+// GOOD: proper access levels for a domain class
+public class BankAccount {
+    // Fields: always private; expose only via methods
+    private final String accountNumber; // immutable id
+    private BigDecimal balance;
 
-    public void recalculate() {
-        total = items.stream()
-                     .map(Item::getPrice)
-                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-}
-// External code can: order.items.clear(); order.total = BigDecimal.ZERO;
-// This bypasses recalculate() and breaks invariants
-
-// GOOD: Minimal exposure - invariants protected
-public class OrderSafe {
-    private final List<Item> items = new ArrayList<>();
-    private BigDecimal total = BigDecimal.ZERO;
-
-    public void addItem(Item item) {     // controlled mutation
-        Objects.requireNonNull(item);
-        items.add(item);
-        total = total.add(item.getPrice());  // invariant maintained
+    // Constructor: public (creating accounts is the API)
+    public BankAccount(String accountNumber, BigDecimal initial) {
+        this.accountNumber = accountNumber;
+        this.balance = initial;
     }
 
-    public List<Item> getItems() {       // defensive copy
-        return List.copyOf(items);
+    // Public API: deposit, withdraw, balance
+    public void deposit(BigDecimal amount) {
+        validatePositive(amount);
+        this.balance = this.balance.add(amount);
     }
 
-    public BigDecimal getTotal() { return total; }
-}
-```
-
-> **Code walkthrough:** The BAD pattern exposes mutable state
-> directly, allowing callers to corrupt the `total` invariant.
-> The GOOD pattern uses private state and controlled mutation points
-> (`addItem`) that maintain the invariant atomically. `getItems()`
-> returns an unmodifiable copy so callers cannot mutate the internal
-> list. This is the standard encapsulation pattern.
-
-**Example 2: Package-private for test access**
-
-```java
-// Production class in com.example.billing
-package com.example.billing;
-
-public class InvoiceCalculator {
-    // Package-private: not part of public API, but accessible
-    // to test classes in the same package
-    BigDecimal applyDiscount(BigDecimal price, int quantity) {
-        if (quantity >= 10) return price.multiply(new BigDecimal("0.9"));
-        return price;
+    public BigDecimal getBalance() {
+        return balance;
     }
 
-    public Invoice calculate(Order order) {
-        // ... uses applyDiscount internally
+    // Package-private: for use by AccountRepository in same package
+    void persist(Connection conn) { /* DB operations */ }
+
+    // Protected: for subclass extension
+    protected boolean validateOwnership(String userId) {
+        return true; // base implementation
     }
-}
 
-// Test class in same package (src/test/java/com/example/billing/)
-package com.example.billing;  // same package - can access package-private
-
-class InvoiceCalculatorTest {
-    @Test
-    void discountApplied() {
-        var calc = new InvoiceCalculator();
-        // Can access applyDiscount() directly for white-box testing
-        assertEquals(
-            new BigDecimal("90.0"),
-            calc.applyDiscount(new BigDecimal("100"), 10)
-        );
+    // Private: internal implementation detail
+    private void validatePositive(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
     }
 }
 ```
 
-> **Code walkthrough:** Placing the test in the same package as
-> production code (a common Maven/Gradle convention) gives it
-> access to package-private members without making them part of
-> the public API. This is the idiomatic Java approach to white-box
-> testing - the alternative (making things protected or public just
-> for tests) unnecessarily widens the API.
+> **Code walkthrough:** Fields are private (never expose raw balance).
+> The public API is deposit, withdraw, getBalance - the intended
+> operations. persist is package-private: AccountRepository in the
+> same package can save the account but external code cannot call
+> persist directly. validateOwnership is protected: subclasses can
+> override the ownership check for special account types. validatePositive
+> is private: it is an implementation detail that should never be
+> called directly from outside.
 
 ---
 
@@ -860,81 +1526,437 @@ class InvoiceCalculatorTest {
 
 **Junior / Mid (0-5 years):**
 
-> Java has four access levels. Private: only within the class.
-> Default (no modifier): within the package. Protected: package
-> plus subclasses. Public: everywhere. The rule is least privilege:
-> make things as private as possible and only widen when there is
-> a reason.
-
-*Push deeper:* Explain the package-private use case for test
-access.
+> Four access levels: private (same class), package-private (same
+> package), protected (package + subclasses), public (everywhere).
+> Best practice: fields should be private; expose only what callers
+> need through public methods. Use the most restrictive level possible.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> I use package-private deliberately as a design tool. It allows
-> classes in a package to collaborate on internals without polluting
-> the public API. For example, parser and lexer in a package can
-> share internal AST structures package-privately. Protected is
-> a code smell unless you are deliberately designing for inheritance
-> (template method pattern). With Java 9+ modules, I can now also
-> express public-within-module semantics using module exports,
-> which is a coarser but more explicit alternative.
-
-*Push deeper:* Discuss the module system's `exports to` directive
-and how it creates "module-private" public APIs.
+> I treat public as a contract: any public method is a commitment to
+> maintain that signature. In code review, I flag unnecessary public
+> methods - they increase the API surface and make refactoring harder.
+> I use package-private extensively for intra-package collaborators
+> that should not be exposed. In Java 9+ module systems, I use exports
+> to limit which packages are accessible even within a large codebase.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "Protected means private + subclass access" | protected also allows access from all classes in the same package, not just subclasses | Accidental API surface in package-private classes |
+| "No modifier = private" | No modifier = package-private, visible to all classes in the same package | Exposing implementation details within the package |
+| "public fields with documentation are fine" | Public fields can be set directly (no validation), cannot be changed to getters without breaking API | Callers bypass validation; impossible to add logic later |
 
-- "What are Java's access modifiers?"
-- "What is the difference between protected and package-private?"
+---
 
-🗣️ "Java has four access levels. Private: only within the declaring
-class. Package-private (no keyword): any class in the same package.
-Protected: same package plus subclasses regardless of package.
-Public: any class in any package. The critical difference between
-protected and package-private: protected also includes subclasses
-across packages; package-private is strictly package-scoped.
-In practice, package-private is underused - it is the right
-default for implementation helpers that need inter-class access
-within a package."
+### 🚨 Failure Modes and Diagnosis
 
-#### Mechanism
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Breaking change in refactoring | Changing internal method name breaks external code | Internal method was public; external code depends on it | Check all callers of the changed method | Make the method package-private or private if only used internally |
+| Encapsulation violation | External code mutates object internals directly | Public field or getter returning mutable internal state | Code review; find field assignments from outside the class | Make field private; add copy-on-read getter |
 
-- "Why should fields almost always be private?"
+---
 
-🗣️ "Private fields allow you to change the internal representation
-without breaking callers. If `balance` is public, any code that
-reads `account.balance` breaks when you rename it or change its
-type. If it is private with a getter, you can change the
-representation while keeping the getter's return type stable.
-This is the core value of encapsulation: decouple the API from
-the implementation."
+### 🎯 Interview Deep-Dive
 
-#### Comparison
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Name 4 access levels; explain each with example |
+| Mid | 4 min | Design a class with appropriate access levels; explain the reasoning |
+| Senior | 6 min | API design principles; package-private; Java 9 modules |
+| Staff | 8 min | Access modifier patterns in large codebases; module system |
 
-- "When would you use protected over package-private?"
+---
 
-🗣️ "Protected makes sense when you are designing for deliberate
-inheritance - you want subclasses to be able to override or access
-a method, and those subclasses might live in different packages.
-The template method pattern is the canonical example: a base class
-provides an algorithm skeleton and exposes protected hooks for
-subclass customization. Outside of template method and similar
-patterns, I prefer package-private because it avoids the coupling
-to subclasses that protected introduces."
+**Q1** [CONCEPTUAL] [JUNIOR]
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Exact visibility rules per modifier. |
-| Hiring Manager   | Encapsulation value - maintainability impact. |
-| Bar Raiser       | Module system's `exports to`, protected as design smell. |
-| Peer Engineer    | "Package-private is the most underused visibility level..." |
+"What is the default access level in Java (no modifier)?"
+
+**Answer:**
+
+The default access level (no modifier keyword) is package-private.
+A class, method, or field with no modifier is accessible only from
+within the same package.
+
+```java
+// File: com/example/order/Order.java
+package com.example.order;
+
+class OrderHelper { // no modifier = package-private
+    void validate(Order order) { ... } // package-private method
+}
+
+// com/example/order/OrderService.java - SAME package: OK
+OrderHelper helper = new OrderHelper(); // accessible
+
+// com/example/payment/PaymentService.java - DIFFERENT package
+OrderHelper helper = new OrderHelper(); // COMPILE ERROR
+```
+
+Package-private is not the same as private:
+- private: only the declaring class
+- package-private: all classes in the same package
+
+Common use: helper classes and utility methods that are
+implementation details of a package but needed by multiple
+classes within that package. For example, a DAO class might
+have a package-private `Connection getConnection()` method
+that only the repository classes in the same package should use.
+
+*What separates good from great:* The package in Java is not just
+a namespace - it is an encapsulation boundary. Packages group
+related classes; package-private enables intra-group collaboration
+without exposing implementation details to the whole application.
+This is the basis for layered architecture (controller package,
+service package, repository package) with clear visibility rules.
+
+---
+
+**Q2** [COMPARISON] [MID]
+
+"When would you use protected vs package-private?"
+
+**Answer:**
+
+The choice depends on whether extension via subclassing is intended:
+
+Package-private: use when multiple classes in the same package
+need access but external code should not. The typical use: classes
+in the same layer (e.g., multiple repositories sharing a base
+method, multiple service classes sharing a utility class in the
+service package).
+
+Protected: use when subclasses outside the package need access.
+Protected enables the Template Method pattern: define the algorithm
+skeleton in the base class, let subclasses override specific steps:
+
+```java
+// GOOD: protected for Template Method (extension point)
+public abstract class ReportGenerator {
+    // Public template method
+    public final Report generate(ReportRequest req) {
+        var data = fetchData(req);     // may be overridden
+        var formatted = format(data);  // may be overridden
+        return new Report(formatted);
+    }
+
+    // Protected extension points for subclasses
+    protected Data fetchData(ReportRequest req) {
+        return defaultFetch(req); // default implementation
+    }
+
+    protected String format(Data data) {
+        return data.toString();   // default implementation
+    }
+
+    // Private: not an extension point
+    private Data defaultFetch(ReportRequest req) { ... }
+}
+
+// Subclass in different package:
+class PdfReportGenerator extends ReportGenerator {
+    @Override
+    protected String format(Data data) {
+        return toPdfFormat(data); // subclass customizes formatting
+    }
+    // Cannot touch defaultFetch (private)
+}
+```
+
+Rule: if no subclassing is planned, use package-private. Protected
+is a design decision to support extension. "Design for extension or
+prohibit it" (Effective Java, Item 19) means protected should be
+deliberate.
+
+*What separates good from great:* Protected members of a class are
+part of its API for subclasses. They are as much a commitment as
+public members, but only visible to the subclass population. Changing
+a protected method signature breaks subclasses just as a public method
+change breaks callers.
+
+---
+
+**Q3** [TRADE-OFF] [SENIOR]
+
+"What are the risks of making too many things public?"
+
+**Answer:**
+
+Over-exposure via public has three concrete risks:
+
+Risk 1: Breaking changes are expensive.
+Once public, a method is a contract. Callers depend on the signature.
+Renaming, changing parameters, or removing it breaks callers. With
+public, you must maintain backward compatibility or version the API.
+With private, you can refactor freely.
+
+Risk 2: Unintended usage.
+If an internal utility method is public, external code will find
+and use it. Now that "internal" method cannot be changed. Production
+codebases often have public methods that exist only because some
+caller once needed them, and now the whole organization depends on
+them.
+
+Risk 3: Reduced testability paradox.
+A common mistake: making things public "for testing." This violates
+encapsulation to serve tests. Correct approach: test through the
+public API; the public API is the contract. If private methods are
+complex enough to need direct testing, they should be extracted to
+a separate class with its own public API.
+
+Measurement: API surface size = number of public methods and classes.
+Smaller API surface = easier to maintain. Checkstyle or Sonar rules
+can enforce access level discipline.
+
+*What separates good from great:* In a microservices or multi-module
+build, public at the class level is not the same as public at the
+module/service level. Java 9 modules add a second layer: a class
+can be public within its module but not exported to other modules.
+This is the correct tool for large-scale encapsulation.
+
+---
+
+**Q4** [DEBUGGING] [MID]
+
+"How would you refactor a class where everything is public to
+improve encapsulation?"
+
+**Answer:**
+
+Step-by-step approach:
+
+Step 1: Find all public members:
+```bash
+# Count public methods (indicator of over-exposure):
+javap -p MyClass.class | grep "public"
+```
+
+Step 2: For each public method/field, find all callers:
+In IntelliJ: Right-click method -> Find Usages. In Maven:
+if it's in a different JAR, check all dependent JARs.
+
+Step 3: Classify each public member:
+- Called only within the same class: make private
+- Called only within the same package: make package-private
+- Called only from subclasses: make protected
+- Called from outside: keep public (it IS the API)
+
+Step 4: Make the change and run tests:
+Each access reduction is a non-breaking change (reduces access;
+callers still work). Test green after each change.
+
+Step 5: For public fields specifically:
+Make field private and add getter. If a setter is needed,
+add validation in the setter. Record the type if only readable.
+
+Common finding: 30-40% of "public" methods in a typical service
+class are actually only called by the same class or test code.
+Making them private immediately improves the class's encapsulation.
+
+*What separates good from great:* Automated tools help: PMD
+rule "UnusedModifier" finds unnecessary access levels. IntelliJ's
+"Inspect Code" can suggest lowering access where the usage pattern
+allows it. Running this analysis before each major refactoring
+reduces the API surface and improves maintainability.
+
+---
+
+**Q5** [CONCEPTUAL] [JUNIOR]
+
+"Can you have a private constructor? What is it used for?"
+
+**Answer:**
+
+Yes. A private constructor prevents instantiation of a class from
+outside that class. Two common uses:
+
+1. Utility classes (all static methods, no instance needed):
+```java
+public final class MathUtils {
+    // Prevent instantiation: this class is not meant to be used
+    // as an object. All methods are static.
+    private MathUtils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+    public static int add(int a, int b) { return a + b; }
+}
+// MathUtils utils = new MathUtils(); // COMPILE ERROR
+MathUtils.add(1, 2); // OK: static method
+```
+
+2. Singleton pattern:
+```java
+public class Database {
+    private static final Database INSTANCE = new Database();
+
+    private Database() {
+        // Only Database itself can create an instance
+        // (via the static initializer above)
+    }
+
+    public static Database getInstance() {
+        return INSTANCE;
+    }
+}
+// Nobody can call new Database() except Database itself
+```
+
+3. Builder pattern (inner builder creates the outer class):
+```java
+public class Request {
+    private final String url;
+    private Request(Builder b) { this.url = b.url; }
+
+    public static class Builder {
+        private String url;
+        public Builder url(String url) { this.url = url; return this; }
+        public Request build() { return new Request(this); }
+    }
+}
+Request r = new Request.Builder().url("https://example.com").build();
+```
+
+*What separates good from great:* Private constructor + static
+factory methods is a more flexible pattern than public constructors.
+Static factories can return subtypes, return cached instances, and
+have meaningful names (Collections.emptyList() vs new ArrayList()).
+Effective Java Item 1 advocates for static factory methods over
+constructors.
+
+---
+
+**Q6** [PRODUCTION] [MID]
+
+"How does access modifier choice affect testing strategy?"
+
+**Answer:**
+
+Access modifiers define what is testable through the public API
+vs what requires workarounds:
+
+Public API testing (preferred):
+```java
+// Test the public API only - tests are implementation-independent
+@Test
+void processOrderShouldDeductInventory() {
+    Order order = new Order("ITEM-1", 2);
+    orderService.process(order);  // calls public method
+    assertThat(inventory.getQuantity("ITEM-1")).isEqualTo(8);
+    // Internal methods not tested directly; tested through behavior
+}
+```
+
+The anti-pattern: making private methods public for testing:
+```java
+// BAD: public only because a test needs it
+public void internalValidate(Order order) { ... }
+// Now external code can call it; the method becomes part of the API
+// Even though it was never meant to be an API endpoint
+```
+
+Better approach: if private logic is complex enough to need
+dedicated testing, extract it to a separate class with its own
+public API:
+```java
+// Extract to a testable class with public API
+public class OrderValidator {
+    public ValidationResult validate(Order order) { ... }
+}
+// Now test OrderValidator independently
+// OrderService uses it privately: private final OrderValidator validator;
+```
+
+Reflection access in tests (use sparingly):
+```java
+// For truly private state that cannot be observed via public API:
+ReflectionTestUtils.setField(service, "privateField", mockValue);
+// This is a code smell - consider if the design needs improvement
+```
+
+*What separates good from great:* Test-driven design naturally leads
+to appropriate access levels: if you can only test through the public
+API, you naturally keep internal methods private. When you find
+yourself reaching for reflection or making things public for tests,
+it is a signal that the design needs a new class extraction.
+
+---
+
+**Q7** [CONCEPTUAL] [JUNIOR]
+
+"What is the difference between protected and public in inheritance?"
+
+**Answer:**
+
+The difference is visibility outside the class hierarchy:
+
+public: accessible from any class in any package.
+protected: accessible from the same package AND from subclasses
+in any package.
+
+```java
+package com.example.base;
+public class Animal {
+    public String name;         // accessible anywhere
+    protected int heartRate;    // accessible in subclasses
+}
+
+package com.example.zoo;
+// Different package, but subclass of Animal:
+class Dog extends Animal {
+    void checkVitals() {
+        name = "Rex";       // OK: public
+        heartRate = 75;     // OK: protected (we are a subclass)
+    }
+}
+
+// Different package, NOT a subclass:
+class ZooManager {
+    void check(Animal a) {
+        a.name = "Leo";     // OK: public
+        a.heartRate = 70;   // COMPILE ERROR: protected, not subclass
+    }
+
+    void checkDog(Dog d) {
+        d.heartRate = 70;   // COMPILE ERROR: still protected; not inherited
+    }
+}
+```
+
+Note: accessing a protected member from a different package requires
+being a subclass AND accessing through a reference of the subclass
+type (or its own type). A ZooManager cannot access Dog's inherited
+heartRate even though Dog is a subclass.
+
+*What separates good from great:* The protected member access rule
+in the JLS is subtle: accessing a protected instance member from a
+different package is only allowed through a reference of the same
+class or a subclass. `((Animal) dog).heartRate` in ZooManager would
+fail even though `heartRate` is protected. This is to prevent
+unrelated subclasses from accessing each other's protected state.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ keyword. Comparison table is required for ★★☆ and above.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ keyword. System Design is required for ★★★ and above.)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: access modifiers are tabular, not a visual mechanism.)*
 
 ---
 
@@ -942,10 +1964,8 @@ to subclasses that protected introduces."
 
 # Static vs Instance Context
 
-**Interview Weight:** high - A foundational Java question that
-often reveals whether someone truly understands the object model.
-Common at junior level; extends to complex questions about
-classloading at senior level.
+**Interview Weight:** medium - Tested as a prerequisite for discussing
+singleton patterns, factory methods, and Spring DI context.
 
 ---
 
@@ -953,54 +1973,44 @@ classloading at senior level.
 
 **30 seconds:**
 
-> Static members (fields and methods) belong to the class itself -
-> shared across all instances, accessible without creating an object.
-> Instance members belong to a specific object - each instance has
-> its own copy of instance fields, and instance methods operate on
-> `this`. The fundamental rule: static methods cannot access instance
-> members directly, because there is no `this` reference in a static
-> context.
+> Static members belong to the class, not to any instance. There is
+> one copy per class, shared by all instances. Instance members belong
+> to individual objects; each instance has its own copy. static methods
+> cannot access instance fields or call instance methods without an
+> object reference, because there is no "this" in static context.
 
 **3 minutes (Senior):**
 
-> Static fields are initialized once when the class is loaded by
-> the classloader. Instance fields are initialized per constructor
-> call. This means static fields are shared state - a single
-> mutation is visible to all instances and all threads. In concurrent
-> systems, mutable static state is a class of bugs.
+> The distinction is about where state lives. Instance fields: each
+> new object created with `new Foo()` gets its own private copy.
+> Modifying one instance's field does not affect another's. Static fields:
+> one copy per class, shared by all instances and by code that accesses
+> the class without an instance. This makes static fields effectively
+> global variables - powerful but dangerous in multithreaded environments.
 >
-> Static methods are useful for utility operations (Math.sqrt),
-> factory methods (Integer.valueOf, List.of), and operations that
-> are logically associated with the class but not with any instance.
-> Overusing static methods is a sign of procedural code in an OOP
-> language - if you cannot inject or mock a static method in a test,
-> that is a design smell.
+> Static methods are useful for pure functions (no side effects, no state)
+> and factory methods. They are required when no instance context makes
+> sense: Math.sqrt(4.0) does not need a Math object. The limitation:
+> static methods cannot be overridden (they can be hidden, which is
+> different and often confusing). This makes static methods harder to
+> mock and test.
 >
-> The interesting corner case: a static initializer block runs once
-> when the class is loaded. If it throws an exception, the class
-> is marked as failed and all subsequent attempts to use it throw
-> ExceptionInInitializerError - a production failure mode that is
-> hard to diagnose because the error is thrown at every use point,
-> not just the first initialization.
-
-**Framework:** STATIC (class-level, shared, no `this`) →
-INSTANCE (object-level, per-instance, `this` available) →
-DESIGN (factory, utility, singleton) →
-TRAPS (mutable static state, concurrent access, init errors)
+> Common mistake: mutable static fields in a Spring service. Spring beans
+> are singletons but their instance fields are instance-scoped. If a
+> static field accumulates state, all requests share it, creating race
+> conditions.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about the difference between
-static and instance methods and fields."
+**(1) Restate:** "Static vs instance - let me cover where state lives and
+what you can access in each context."
 
-**(2) First principles:** "A class serves two roles: a blueprint
-for instances, and a namespace for class-level operations. Static
-members live in the namespace; instance members live in the
-blueprint."
+**(2) First principles:** "A class is a blueprint. Instances are houses
+built from it. Static = painted on the blueprint (one copy, shared).
+Instance = furniture in each house (per-instance)."
 
-**(3) Bridge:** "In Python, this maps to class methods (decorated
-with @classmethod) and instance methods. The `self` / `this`
-parameter is the difference."
+**(3) Bridge:** "Static fields are like a scoreboard shared by all
+players. Instance fields are each player's individual score card."
 
 ---
 
@@ -1008,162 +2018,153 @@ parameter is the difference."
 
 **What it is:**
 
-Static members (`static` keyword) are associated with the class
-itself. They are allocated once when the class is loaded, shared
-by all instances, and accessible via `ClassName.member`.
-Instance members (no `static`) are associated with a specific
-object instance - each new object gets its own copies of instance
-fields.
+Static context: class-level members (fields, methods, blocks, nested
+classes) that belong to the class itself, not to any instance.
+Instance context: members that belong to individual objects (instances).
 
 **The problem it solves:**
 
-Some state and behavior is logically class-level (the count of
-all instances, a factory method, a mathematical constant).
-Instance-level members for these would waste memory (every
-instance storing the same constant) and make the semantics unclear.
-Static provides the class-level namespace.
+Some data and behavior is shared across all objects (class-level:
+a counter of all instances, a factory method, a constant). Other
+data is per-object (instance-level: an account balance, a name).
+The static/instance distinction expresses this design intent clearly.
 
 **How it works:**
 
-```java
-class Counter {
-    private static int totalCreated = 0;   // class-level, shared
-    private int id;                         // per-instance
+```
+CLASS (blueprint) vs INSTANCE (object):
 
-    public Counter() {
-        totalCreated++;         // OK: static field from anywhere
-        this.id = totalCreated; // OK: instance field from constructor
-    }
+  class Counter {
+      static int totalCreated = 0;  // ONE copy, shared
+      int count;                    // per-instance
 
-    public static int getTotal() {  // static method
-        // can access totalCreated (static) directly
-        // CANNOT access this.id - no 'this' in static context!
-        return totalCreated;
-    }
+      Counter() { totalCreated++; } // static field incremented
 
-    public int getId() {   // instance method - has 'this'
-        return this.id;    // OK: 'this' is available
-        // getTotal() is also accessible here
-    }
-}
+      void increment() { count++; }  // instance method
+      static int getTotal() { return totalCreated; } // static method
+  }
+
+  Counter c1 = new Counter();
+  Counter c2 = new Counter();
+
+  c1.increment();
+  c1.increment();
+  c2.increment();
+
+  c1.count = 2  // c1's own copy
+  c2.count = 1  // c2's own copy
+  Counter.totalCreated = 2  // shared: both increments counted
+
+STATIC METHOD RESTRICTION:
+  class Example {
+      int instanceField = 10;
+      static int staticField = 20;
+
+      static void staticMethod() {
+          System.out.println(staticField);   // OK
+          System.out.println(instanceField); // COMPILE ERROR
+          // No "this" in static context; which instance's field?
+      }
+  }
 ```
 
 **The key insight:**
 
-Calling an instance method on a null reference throws NullPointerException
-because `this` would be null. Static methods have no `this` - you
-cannot throw NPE by calling a static method via a null reference
-(though Java style-checkers warn against `nullRef.staticMethod()`
-because it is misleading).
+Static methods have no implicit `this` reference. They cannot access
+instance fields because there is no associated instance. This is
+not a restriction but a consequence: the JVM needs an instance
+to know which object's fields to access. A static method could
+still access instance fields if given an explicit object reference:
+`void staticMethod(Example e) { e.instanceField; }` - this is valid.
 
 **When to use it:**
 
-- Static: utility methods (Math, Collections), factory methods
-  (valueOf, of), constants (static final), singleton instance,
-  counter across all instances
-- Instance: any behavior that depends on object state, methods
-  that belong to the lifecycle of a specific object
+- static fields: constants (static final), shared counters, caches,
+  registries that should be class-wide
+- static methods: utility functions (Math.max, Collections.sort),
+  factory methods, methods that do not depend on instance state
+- static nested classes: when the nested class does not need to
+  access the outer instance
 
 **When NOT to use it:**
 
-- Avoid mutable static fields in production code - they are
-  shared across threads and across test cases (thread-safety and
-  test isolation problems)
-- Avoid static methods when you need to mock the behavior in
-  tests - static methods cannot be overridden and are hard to
-  intercept without bytecode manipulation (PowerMock)
-- Avoid static utility classes as a dumping ground (they become
-  procedural code and cannot be injected)
+- Do not use mutable static fields in multithreaded applications
+  without synchronization (they are global variables)
+- Do not use static methods for behavior that should be
+  polymorphic/overridable
+- Do not use static for Spring-managed beans: Spring DI replaces
+  the need for statics in most cases
+
+**Alternatives:**
+
+- Singleton Spring bean (@Bean + @Component with singleton scope):
+  one instance per application context; supports dependency injection
+- ThreadLocal: per-thread state (not static global state)
+- Functional interfaces + lambdas: pass behavior as parameters
+  instead of making static utility methods
 
 **First-principles derivation:**
 
-Every OOP language needs both class-level and instance-level
-operations. Without static: you need an instance to call a factory
-method (circular). Without instance: every object would share the
-same state (no encapsulation). The distinction is a fundamental
-requirement of the OOP memory model.
+Java compiles to bytecode with two instruction types: `invokevirtual`
+(instance method, dispatched based on the actual runtime type) and
+`invokestatic` (static method, resolved at compile time). `invokestatic`
+requires no object reference. This is why static methods are faster
+(no virtual dispatch, no null check) but not polymorphic
+(no runtime type dispatch).
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Static factory vs constructor (design pattern)**
+**Example 1: Static vs instance field mutation**
 
 ```java
-// BAD: Constructor exposes implementation type, cannot return cached
-public class Connection {
-    public Connection(String url) { ... }
-}
-// Caller: new Connection(url) - always creates a new object,
-// cannot return cached, cannot return subclass transparently
+// BAD: mutable static field in a service class (global mutable state)
+@Service
+public class OrderService {
+    private static int requestCount = 0;  // shared by ALL requests
 
-// GOOD: Static factory method - flexible and cache-aware
-public class Connection {
-    private static final Map<String, Connection> POOL = new HashMap<>();
-
-    private Connection(String url) { ... }  // private constructor
-
-    // Static factory: can return cached instance
-    public static Connection of(String url) {
-        return POOL.computeIfAbsent(url, Connection::new);
-    }
-
-    // Can return a subclass without changing the return type
-    public static Connection ofReadOnly(String url) {
-        return new ReadOnlyConnection(url);  // ReadOnlyConnection extends Connection
+    public Order processOrder(OrderRequest req) {
+        requestCount++;  // RACE CONDITION: multiple threads
+        // ...
     }
 }
-// Caller: Connection.of(url) - readable, can be cached
-```
+// Spring creates ONE OrderService instance (singleton)
+// All requests share the SAME requestCount field
+// Two threads incrementing simultaneously: lost updates
 
-> **Code walkthrough:** Static factory methods (Item 1 in Effective
-> Java) provide three advantages over constructors: they have names
-> (expressive), they can return cached instances, and they can return
-> subtypes. The private constructor forces callers to use the factory,
-> giving the class full control over instance creation. This pattern
-> underlies `Integer.valueOf`, `List.of`, `Optional.of`.
+// GOOD: use AtomicInteger for thread-safe static counter
+private static final AtomicInteger requestCount = new AtomicInteger(0);
+// OR: use Micrometer metrics (better for production)
+// OR: make it an instance field if it's per-request state
 
-**Example 2: Mutable static state causing test pollution**
+// GOOD: static for genuine constants
+@Service
+public class OrderService {
+    // Constants: static final - shared, immutable - safe
+    private static final int MAX_ITEMS = 100;
+    private static final Duration TIMEOUT = Duration.ofSeconds(30);
 
-```java
-// BAD: Mutable static field causes test isolation failure
-public class RequestCounter {
-    private static int count = 0;  // mutable static - shared across ALL tests
+    // Instance field: per-service-instance (OK for Spring singleton)
+    private final OrderRepository repository;
+    private final Clock clock;
 
-    public static void increment() { count++; }
-    public static int getCount() { return count; }
-}
-
-@Test void testA() {
-    RequestCounter.increment();
-    assertEquals(1, RequestCounter.getCount());  // passes
-}
-@Test void testB() {
-    // Runs after testA (or in parallel) - count is already 1
-    RequestCounter.increment();
-    assertEquals(1, RequestCounter.getCount());  // FAILS - count is 2!
-}
-
-// GOOD: Instance-level state, injected per test
-public class RequestCounter {
-    private int count = 0;  // instance field - isolated per instance
-    public void increment() { count++; }
-    public int getCount() { return count; }
-}
-
-@Test void testA() {
-    var counter = new RequestCounter();  // fresh instance per test
-    counter.increment();
-    assertEquals(1, counter.getCount());  // always passes
+    // Constructor injection (Spring manages the instance)
+    public OrderService(OrderRepository repo, Clock clock) {
+        this.repository = repo;
+        this.clock = clock;
+    }
 }
 ```
 
-> **Code walkthrough:** The BAD pattern uses mutable static state
-> that bleeds between test runs. Test A mutates the counter; test B
-> starts from a contaminated state. This is a production-quality
-> diagnosis: if your tests pass individually but fail in suite, check
-> for static mutable fields. The GOOD pattern uses instance state
-> so each test gets a fresh, isolated counter.
+> **Code walkthrough:** The bad example shows the most common static
+> field mistake in Spring applications: using a mutable static counter
+> in a service class. Spring creates one bean instance but all HTTP
+> request threads call the same instance concurrently. The static field
+> is shared globally, and ++ is not atomic. AtomicInteger fixes the
+> atomicity. Better: use Micrometer's counter (observable in production).
+> The good example shows the idiomatic pattern: static final for constants,
+> instance fields for dependencies injected by Spring.
 
 ---
 
@@ -1171,84 +2172,477 @@ public class RequestCounter {
 
 **Junior / Mid (0-5 years):**
 
-> Static members belong to the class, not to any instance.
-> Instance members belong to a specific object. Static methods
-> cannot use `this` because there is no instance context. Use
-> static for constants, utility methods, and factory methods.
-> Use instance for anything that depends on object state.
-
-*Push deeper:* Static initializers, when they run, and the
-ExceptionInInitializerError failure mode.
+> Static members belong to the class; instance members belong to
+> individual objects. Static fields are shared by all instances.
+> Static methods cannot access instance fields directly (no 'this').
+> Use static for constants, utility methods, and factory methods.
+> Use instance for data that varies per object.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> I treat mutable static state as a design smell requiring
-> justification. Static fields are globally shared - they break
-> test isolation and require synchronization in concurrent code.
-> The acceptable uses: static final constants (immutable), static
-> loggers (thread-safe by design), and carefully controlled
-> singletons. For everything else, I prefer instance state managed
-> through dependency injection - this gives testability and
-> lifecycle control that static state cannot provide.
-
-*Push deeper:* Class loading and static initialization timing -
-when a static field is initialized, what guarantees the JVM makes
-about static initialization visibility across threads, and the
-class initialization circularity problem.
+> I avoid mutable static fields in application code; they create
+> hidden global state that is hard to test and causes race conditions
+> in multithreaded environments. For shared singleton behavior in
+> Spring, I use Spring beans (singleton scope) which support injection
+> and are proxied correctly. Static methods are appropriate for pure
+> utility functions (no side effects, no state), but I prefer instance
+> methods for anything that might need to be mocked or overridden in
+> tests.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "static fields are per-class-loader, not truly global" | Static fields are per-class-loader, not per-JVM. In a standard application, one class loader = effectively global. In application servers with multiple classloaders, different apps get different statics | Unexpected isolation in multi-tenant applications |
+| "Calling a static method via an object reference (obj.staticMethod()) works fine" | It compiles and runs, but it is misleading: the object's runtime type is ignored; the declared type determines which static method is called | Confusion in static method "hiding" (not overriding) with inheritance |
+| "static nested class is the same as inner class" | static nested class has no reference to the outer class instance; inner class (non-static) has an implicit reference to the enclosing instance | Inner class can prevent outer instance from being GC-collected |
 
-- "What is the difference between static and instance methods?"
-- "Can a static method access instance variables?"
+---
 
-🗣️ "Static methods belong to the class and have no `this` reference.
-Instance methods belong to a specific object and have `this`.
-A static method cannot directly access instance variables because
-there is no object - there is no `this.field` to reference. It can
-access instance state only if passed an object reference as a
-parameter. This is why utility classes like Collections and Arrays
-work: they receive the target object as a method parameter."
+### 🚨 Failure Modes and Diagnosis
 
-#### Mechanism
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Race condition on static counter | Incorrect count under concurrent load | Non-atomic mutable static field | jstack shows multiple threads in same method; count is wrong under load | Use AtomicInteger/AtomicLong or Micrometer Counter |
+| State leaking between tests | Test fails when run after another test; passes alone | Mutable static field not reset between tests | Tests pass in isolation, fail in suite | Use @BeforeEach to reset, or eliminate mutable statics |
 
-- "When does a static initializer run?"
+---
 
-🗣️ "A static initializer block (or static field initializer)
-runs when the class is first loaded by the classloader - which
-happens on the first reference to the class: creating an instance,
-calling a static method, or accessing a static field. It runs
-exactly once per classloader. If the static initializer throws
-an exception, the class is permanently failed: every subsequent
-attempt to use the class throws ExceptionInInitializerError.
-This is a non-recoverable failure without restarting the JVM."
+### 🎯 Interview Deep-Dive
 
-#### Comparison
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Define static vs instance; which members can access which |
+| Mid | 4 min | Static in Spring services; thread safety; factory method pattern |
+| Senior | 6 min | When to prefer static vs singleton bean; testability implications |
+| Staff | 8 min | Static initialization order; classloader isolation; design patterns |
 
-- "When would you use a static method vs an instance method?"
+---
 
-🗣️ "I use static methods for three cases: utility operations
-that take all their input as parameters and have no state
-dependency (Math.sqrt, Collections.sort), factory methods where
-I want naming and caching control, and operations on a type that
-make no sense for a specific instance (Integer.parseInt). I use
-instance methods for anything that depends on the object's state.
-The practical test: if the method uses `this` to access fields,
-it should be an instance method. If it does not, it is a candidate
-for static - but think about whether testability and mockability
-matter before making that choice."
+**Q1** [CONCEPTUAL] [JUNIOR]
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | No `this` in static, static initializer timing. |
-| Hiring Manager   | Test isolation impact, design implications. |
-| Bar Raiser       | Classloader lifecycle, thread safety of static init. |
-| Peer Engineer    | "Mutable static state is the silent killer in test suites..." |
+"Can a static method call an instance method?"
+
+**Answer:**
+
+A static method can call an instance method only if it has an
+explicit object reference. It cannot call instance methods implicitly
+(no `this` in static context).
+
+```java
+class Calculator {
+    int lastResult;  // instance field
+
+    int add(int a, int b) {
+        lastResult = a + b;  // instance method: accesses instance field
+        return lastResult;
+    }
+
+    static int addStatic(int a, int b) {
+        // COMPILE ERROR: cannot access lastResult (instance field)
+        // lastResult = a + b;
+
+        // OK: instance method called via explicit reference
+        Calculator calc = new Calculator();
+        return calc.add(a, b);  // creates an instance, then calls it
+    }
+}
+```
+
+In practice: static methods calling instance methods via explicit
+references is rare and usually a design smell. It suggests the
+method should not be static, or the instance should be injected.
+
+Static block calling instance methods:
+```java
+class App {
+    private String name;
+
+    static {
+        // COMPILE ERROR: cannot access instance members
+        // name = "App";
+        // This works (via explicit instance):
+        App a = new App();
+        a.name = "App";  // but this is bizarre code
+    }
+}
+```
+
+*What separates good from great:* The static initialization block
+runs once when the class is first loaded. If it throws an exception,
+the class cannot be loaded (ExceptionInInitializerError). Complex
+logic in static blocks is a common source of cryptic startup failures.
+
+---
+
+**Q2** [DEBUGGING] [MID]
+
+"Why do mutable static fields cause problems in Spring applications?"
+
+**Answer:**
+
+Spring beans are singletons by default: one instance per application
+context, shared by all request-handling threads. Mutable static fields
+are shared by ALL instances (and all threads) simultaneously.
+
+```java
+@Service
+public class ReportService {
+    // WRONG: mutable static field in Spring service
+    private static Map<String, Report> reportCache = new HashMap<>();
+    // Multiple threads reading AND writing to this HashMap:
+    // - ConcurrentModificationException possible
+    // - Lost updates possible
+    // - Stale data possible
+
+    public Report getReport(String id) {
+        if (!reportCache.containsKey(id)) {
+            reportCache.put(id, generate(id));
+        }
+        return reportCache.get(id);
+    }
+}
+
+// CORRECT options:
+
+// Option 1: instance field + thread-safe collection
+@Service
+public class ReportService {
+    // ConcurrentHashMap: thread-safe; Spring singleton = shared instance
+    private final Map<String, Report> reportCache = new ConcurrentHashMap<>();
+}
+
+// Option 2: Spring Cache abstraction (recommended for caches)
+@Service
+public class ReportService {
+    @Cacheable("reports")
+    public Report getReport(String id) {
+        return generate(id);
+        // Spring manages the cache; you choose the implementation
+    }
+}
+
+// Option 3: Static constant (OK: immutable)
+private static final String REPORT_TEMPLATE = "template.html";
+// Immutable statics are always safe
+```
+
+The pattern to look for in code review: any `static` field that is
+not `final` in a Spring `@Service`, `@Component`, or `@Repository`.
+These are almost always bugs.
+
+*What separates good from great:* Static fields also persist across
+test executions if tests reuse the application context. A mutable
+static cache populated in test A pollutes test B. This causes
+test ordering dependencies - tests pass when run in a certain order
+and fail in others. Add @DirtiesContext or reset static fields in
+@BeforeEach to fix.
+
+---
+
+**Q3** [TRADE-OFF] [MID]
+
+"When should you use a static utility class vs a Spring service bean?"
+
+**Answer:**
+
+Static utility class: use when the behavior is purely functional
+(no state, no side effects, no dependencies on other beans, no I/O).
+
+```java
+// GOOD static utility: pure functions only
+public final class StringUtils {
+    private StringUtils() {}
+    public static boolean isPalindrome(String s) {
+        String rev = new StringBuilder(s).reverse().toString();
+        return s.equals(rev);
+    }
+}
+// No state, no dependencies, no configuration
+// Testing: call directly, no mocking needed
+```
+
+Spring service bean: use when the class has:
+- Dependencies on other beans (repository, config, other services)
+- Configuration (properties, timeouts, connection pools)
+- Life cycle management (init, destroy)
+- Needs to be mocked in tests
+- Needs AOP (transaction, security, caching)
+
+```java
+// GOOD Spring bean: has dependencies and AOP
+@Service
+@Transactional
+public class OrderService {
+    private final OrderRepository repo;     // injected
+    private final EmailService email;       // injected
+    private final ApplicationEventPublisher events; // injected
+
+    // @Transactional requires Spring proxy; static method cannot be proxied
+    public void placeOrder(Order order) { ... }
+}
+// OrderService.placeOrder() MUST be a bean for @Transactional to work
+```
+
+Rule of thumb: static = pure function (no dependencies). Bean =
+anything that interacts with the application context, database,
+external services, or other beans.
+
+*What separates good from great:* @Transactional, @Cacheable, @Secured,
+and other Spring AOP annotations work via proxy: Spring wraps the bean
+in a proxy that adds behavior before/after method calls. Static methods
+CANNOT be proxied. If you put @Transactional on a static method, it is
+silently ignored (no error; the method runs without a transaction).
+
+---
+
+**Q4** [CONCEPTUAL] [MID]
+
+"What is the order of static initialization in Java?"
+
+**Answer:**
+
+Static initialization follows a deterministic order:
+
+1. Static fields and blocks of the class are initialized top-to-bottom
+   in the order they appear in the source file.
+2. The parent class is initialized before the child class.
+3. All static initialization runs exactly once, when the class
+   is first loaded by the class loader.
+
+```java
+class Parent {
+    static String parentField = "parent init";
+    static {
+        System.out.println("Parent static block: " + parentField);
+        // Prints: "Parent static block: parent init"
+    }
+}
+
+class Child extends Parent {
+    static String childField = "child init";
+    static {
+        System.out.println("Child static block: " + childField);
+        // Prints AFTER parent: "Child static block: child init"
+    }
+}
+
+// First use of Child:
+Child c = new Child();
+// Output:
+// Parent static block: parent init
+// Child static block: child init
+```
+
+Initialization order trap:
+```java
+class Tricky {
+    static int x = compute(); // (1) x = compute() result
+    static int y = 10;        // (2) y = 10
+
+    static int compute() {
+        return y; // y is 0 at this point (not yet initialized!)
+    }
+}
+// Tricky.x = 0 (not 10!)
+// Reading y during compute() gets the default value (0)
+// because y is initialized AFTER x
+```
+
+*What separates good from great:* Forward references in static
+initializers are a rare but genuine source of bugs. The JVM
+initializes fields to their type's default (0, null, false)
+before any static initializer runs. A static method called during
+initialization can read an as-yet-uninitialized field's default
+value. This is why complex static initialization logic is fragile.
+
+---
+
+**Q5** [CONCEPTUAL] [JUNIOR]
+
+"Why can't you override a static method in Java?"
+
+**Answer:**
+
+Static methods are resolved at compile time based on the declared
+type, not the runtime type. This is called "static binding" or
+"early binding." Instance methods use "dynamic binding" (late
+binding): the JVM checks the actual runtime type to dispatch.
+
+```java
+class Animal {
+    static String speak() { return "..."; }          // static
+    String name()         { return "Animal"; }       // instance
+}
+class Dog extends Animal {
+    static String speak() { return "Woof"; }  // HIDES (not overrides)
+    @Override
+    String name()         { return "Dog"; }   // OVERRIDES
+}
+
+Animal a = new Dog(); // declared type: Animal; runtime type: Dog
+
+a.speak();  // "..." -- static: uses DECLARED type (Animal)
+a.name();   // "Dog" -- instance: uses RUNTIME type (Dog)
+
+Dog d = new Dog();
+d.speak();  // "Woof" -- declared type is Dog
+```
+
+Hiding vs overriding: static methods with the same signature in a
+subclass "hide" the parent's method. Calling via a parent reference
+gives the parent's version. Calling via a child reference gives the
+child's version. @Override on a static method is a compile error.
+
+Implication for testing: you cannot mock a static method with
+standard Mockito (which creates runtime subclass proxies using
+dynamic dispatch). Use Mockito.mockStatic() or PowerMock for
+static method testing, or better: refactor to use instance methods.
+
+*What separates good from great:* Static methods in interfaces
+(Java 8+) also cannot be inherited. An interface static method
+must be called via the interface type: `List.of(...)`, not via
+an implementing class. This is different from default methods,
+which are inherited.
+
+---
+
+**Q6** [PRODUCTION] [MID]
+
+"How does static vs instance context affect thread safety in a
+web application?"
+
+**Answer:**
+
+Web applications serve multiple HTTP requests concurrently,
+each on its own thread. The thread safety implications:
+
+Static fields: shared across ALL threads. If mutable: race condition.
+```java
+// DANGER: static list shared by all request threads
+static List<String> activeRequests = new ArrayList<>();
+// Request 1 and Request 2 both call add() concurrently:
+// ConcurrentModificationException or lost updates
+```
+
+Instance fields on Spring singletons: shared across all threads
+(Spring creates one bean instance).
+```java
+// @Service is singleton: one instance, many threads
+@Service
+class RequestHandler {
+    String currentUserId; // DANGER: shared by all request threads
+    // Request 1: currentUserId = "user1"
+    // Request 2: currentUserId = "user2" (overwrites during Request 1!)
+}
+```
+
+Instance fields on request-scoped beans: one per request (safe):
+```java
+@Component
+@RequestScope // Spring creates a new instance per HTTP request
+class RequestContext {
+    String userId; // safe: only one thread uses each instance
+}
+```
+
+Local variables: always thread-safe (each thread has its own stack frame).
+
+ThreadLocal: per-thread value in a static or instance field:
+```java
+static ThreadLocal<String> currentUser = new ThreadLocal<>();
+// Each thread has its own "currentUser" value
+// Effectively per-thread, declared as static (common pattern)
+```
+
+*What separates good from great:* The correct pattern for request
+context in Spring is RequestContextHolder (uses ThreadLocal internally)
+or @RequestScope beans. Never use mutable singleton-scoped bean state
+for request-specific data.
+
+---
+
+**Q7** [CONCEPTUAL] [JUNIOR]
+
+"What is a static initializer block and when do you use it?"
+
+**Answer:**
+
+A static initializer block is a block of code that runs once
+when the class is first loaded, before any instance is created:
+
+```java
+class DatabaseConfig {
+    static final Properties props;
+    static final String jdbcUrl;
+
+    // Static initializer: runs once at class loading
+    static {
+        props = new Properties();
+        try (InputStream is =
+             DatabaseConfig.class.getResourceAsStream("/db.properties")) {
+            props.load(is);
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+        jdbcUrl = props.getProperty("db.url");
+    }
+}
+// DatabaseConfig.jdbcUrl is available immediately when first accessed
+```
+
+Use cases:
+1. Complex initialization of static final fields (can't be done in a
+   single field declaration)
+2. Loading configuration from files at class load time
+3. Registering drivers or handlers (JDBC drivers register themselves
+   in static blocks)
+
+Dangers:
+- If the block throws an unchecked exception: the class loading fails
+  with ExceptionInInitializerError
+- Circular class dependencies in static initializers can deadlock
+- Long-running operations in static initializers delay startup
+
+Alternative for most use cases: @PostConstruct in Spring (runs after
+bean creation, not at class load time; easier to handle errors,
+supports injection).
+
+*What separates good from great:* The Initialization-on-Demand Holder
+pattern uses static nested class + static initializer for lazy singleton
+initialization that is both thread-safe and lazy without synchronization:
+```java
+class Singleton {
+    private Singleton() {}
+    private static class Holder {
+        static final Singleton INSTANCE = new Singleton();
+    }
+    public static Singleton getInstance() { return Holder.INSTANCE; }
+}
+// Holder class is not loaded until getInstance() is first called
+```
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ keyword. Comparison table is required for ★★☆ and above.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ keyword. System Design is required for ★★★ and above.)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: static vs instance is conceptual; the ASCII diagram in Concept Explanation is sufficient.)*
 
 ---
 
@@ -1256,9 +2650,8 @@ matter before making that choice."
 
 # Java Control Flow
 
-**Interview Weight:** medium - Basic at junior level but extends
-to nuanced questions about labeled breaks, exception control flow,
-and performance of switch patterns at senior level.
+**Interview Weight:** low - Basic syntax; only asked for junior roles.
+Tested as a prerequisite for discussing streams and lambdas.
 
 ---
 
@@ -1266,51 +2659,44 @@ and performance of switch patterns at senior level.
 
 **30 seconds:**
 
-> Java control flow includes: if/else (conditionals), switch
-> (multi-way branch), for/while/do-while loops, and break/continue
-> for loop control. Since Java 14, switch expressions can return
-> values with arrow syntax and `yield`. For/each (enhanced for
-> loop) iterates any Iterable. Key control flow in exceptions:
-> try/catch/finally and try-with-resources (Java 7+).
+> Java control flow includes: if-else for conditionals, switch (classic
+> and expression form from Java 14), for/while/do-while for loops, and
+> try-catch-finally for exception handling. Java 14+ switch expressions
+> use arrow syntax and are exhaustive. break and continue control loop
+> execution. Modern Java prefers streams and pattern matching to
+> complex if-else chains.
 
 **3 minutes (Senior):**
 
-> Beyond basics, the interview-level nuances: switch has traditionally
-> had fall-through semantics (break required to exit each case)
-> which is a source of bugs. Switch expressions (Java 14+) use
-> arrow syntax that is always exhaustive and never falls through.
-> For enums and sealed classes, switch expressions become type-safe
-> exhaustiveness checks at compile time.
+> I focus on the modern Java control flow features. Switch expressions
+> (Java 14+) are more powerful than classic switch: they return a value,
+> are exhaustive (compiler error if a case is missing), and use arrow
+> syntax that prevents fall-through. Pattern matching instanceof
+> (Java 16+) eliminates the cast after instanceof. Pattern matching in
+> switch (Java 21) is the union: handle different types in a switch
+> without explicit casting.
 >
-> For loop internals: the enhanced for loop calls `iterator()` on
-> the Iterable, then `hasNext()/next()` for each element. You cannot
-> remove elements from a collection in an enhanced for loop without
-> getting ConcurrentModificationException - use `Iterator.remove()`
-> explicitly or `removeIf()`.
+> For iteration: prefer streams for functional-style processing of
+> collections. Use enhanced for-each for simple iteration. Use
+> classic for loop only when you need the index. Avoid while loops
+> where a for-each or stream is cleaner.
 >
-> The `finally` block runs even when an exception is thrown, even
-> when `return` is called in the try block. If `finally` itself
-> has a `return`, that return overrides the return in try. This is
-> a classic interview trap. In production, use try-with-resources
-> rather than try/finally for resource cleanup.
-
-**Framework:** SEQUENTIAL (top-down) → CONDITIONAL (if/switch)
-→ ITERATION (for/while) → LOOP CONTROL (break/continue) →
-EXCEPTION FLOW (try/catch/finally)
+> Exception handling: always use try-with-resources for AutoCloseable
+> resources (JDBC Connection, InputStream). This ensures the resource
+> is closed even if an exception occurs. Never catch Exception broadly
+> without specific handling.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about Java's control flow
-constructs - the mechanisms for branching and looping."
+**(1) Restate:** "Java control flow - let me cover conditionals,
+loops, exception handling, and modern switch expressions."
 
-**(2) First principles:** "Any Turing-complete language needs
-sequential execution, conditional branching, and repetition.
-Java has all three plus exception-based flow for error paths."
+**(2) First principles:** "Control flow is how a program makes decisions.
+Three fundamental constructs: sequence (do this then that), selection
+(if this else that), and iteration (repeat while)."
 
-**(3) Bridge:** "This maps directly to structured programming -
-sequence, selection (if/switch), and iteration (loops). Java
-follows the same model as C, with additions like enhanced for
-and switch expressions."
+**(3) Bridge:** "Java has all three primitives plus exception handling
+(an alternate exit path) and modern functional alternatives (streams)."
 
 ---
 
@@ -1318,173 +2704,198 @@ and switch expressions."
 
 **What it is:**
 
-Control flow statements determine the order in which instructions
-execute: branching (if/else, switch), looping (for, while,
-do-while, enhanced-for), and exception handling (try/catch/finally,
-try-with-resources). Java also supports labeled break and continue
-for nested loop control.
+Control flow mechanisms that determine the order of statement
+execution: conditionals (if/switch), loops (for/while), exceptions
+(try/catch/finally), and the modern functional alternatives.
 
 **The problem it solves:**
 
-Sequential execution alone cannot express algorithms. Branching
-handles conditional logic; looping handles repetition; exception
-handling handles the error path. These primitives together allow
-the expression of any computation.
+Sequential execution alone cannot express decision-making or
+repetition. Control flow constructs express these patterns.
+Modern Java adds expression-form switch and pattern matching
+to reduce boilerplate in type-based dispatch.
 
 **How it works:**
 
-```java
-// Classic switch: fall-through requires break
-switch (day) {
-    case MONDAY:
-    case TUESDAY:
-        System.out.println("weekday");
-        break;      // required - without this, falls to WEDNESDAY case
-    case WEDNESDAY:
-        System.out.println("hump day");
-        break;
-    default:
-        System.out.println("other");
-}
+```
+CONDITIONALS:
+  if (condition) { ... } else if (...) { ... } else { ... }
 
-// Switch expression (Java 14+): exhaustive, no fall-through, returns value
-String label = switch (day) {
-    case MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY -> "weekday";
-    case SATURDAY, SUNDAY -> "weekend";
-    // No default needed - Day enum is exhaustive
-};
+  // Switch expression (Java 14+):
+  String result = switch (day) {
+      case MONDAY, TUESDAY -> "workday";
+      case SATURDAY, SUNDAY -> "weekend";
+      default -> "holiday";
+  };
+  // Arrow syntax: no fall-through, no break needed
+  // Expression: returns a value; can use yield for blocks
 
-// Enhanced for loop - uses Iterator internally
-for (String item : list) {
-    // list.remove(item) here throws ConcurrentModificationException!
-}
-// CORRECT: use removeIf for structural modification
-list.removeIf(item -> item.startsWith("A"));
+LOOPS:
+  for (int i = 0; i < 10; i++) { ... }
+  for (String s : collection) { ... }  // enhanced for-each
+  while (condition) { ... }
+  do { ... } while (condition);
+
+  // break: exit loop
+  // continue: skip to next iteration
+  // Labeled break: exit named outer loop
+  outer: for (...) {
+      for (...) {
+          if (found) break outer; // exits OUTER loop
+      }
+  }
+
+EXCEPTIONS:
+  try {
+      // code that may throw
+  } catch (IOException e) {
+      // handle IO errors
+  } catch (RuntimeException e) {
+      // handle runtime errors
+  } finally {
+      // always runs (cleanup)
+  }
+
+  // try-with-resources (Java 7+):
+  try (Connection conn = dataSource.getConnection();
+       Statement stmt = conn.createStatement()) {
+      stmt.executeQuery("SELECT 1");
+  } // conn and stmt closed automatically, even on exception
 ```
 
 **The key insight:**
 
-`finally` always runs, even after `return`. If you `return` from
-inside a try block, the `finally` block executes before the method
-actually returns. If `finally` has its own `return` statement, it
-silently suppresses both the original return value and any
-exception from the try/catch block. This is a subtle source of
-lost exceptions in production code.
+try-with-resources (Java 7) eliminates the most common resource
+leak bug in Java. Before it, every Connection/InputStream/OutputStream
+needed explicit null-checking + close() in a finally block. The
+AutoCloseable interface + try-with-resources makes resource cleanup
+automatic. Every class that manages a closeable resource should
+implement AutoCloseable.
 
 **When to use it:**
 
-- Switch expression over classic switch for multi-way branches:
-  it is exhaustive (compiler error if a case is missed) and
-  eliminates fall-through bugs
-- Enhanced for loop for iteration when you do not need the index
-- try-with-resources for any AutoCloseable resource (streams,
-  connections, files)
-- Iterator.remove() or Collection.removeIf() when removing during
-  iteration
+- if-else: for boolean conditions, null checks, simple branching
+- switch expression: for type dispatch or multi-way enum/constant branching
+- for-each: for iterating collections (preferred over index-based for)
+- streams: for transforming, filtering, aggregating collections
+- try-with-resources: for any AutoCloseable resource
 
 **When NOT to use it:**
 
-- Labeled breaks in deeply nested loops signal that the code
-  should be extracted to a method with a regular return
-- Classic switch with fall-through is a maintenance hazard in
-  most cases
-- Avoid `do-while` unless the loop must execute at least once
-  and this condition is a core invariant
+- Do not use traditional switch statement with fall-through (use
+  switch expression with arrow syntax)
+- Do not catch Exception or Throwable broadly unless re-throwing
+- Do not use break to exit from deeply nested logic (extract to method)
+
+**Alternatives:**
+
+- Streams API: filter/map/reduce as alternatives to imperative loops
+- Optional: instead of null checks with if-else
+- Pattern matching in switch (Java 21): type-safe dispatch without instanceof chains
 
 **First-principles derivation:**
 
-The minimal computation model (Turing machine) needs conditional
-branching and repetition. Java implements these through structured
-control flow (no gotos) to make code analyzable and maintainable.
-Switch expressions add compile-time exhaustiveness to avoid the
-"forgot a case" class of bugs that classic switch with fall-through
-enables.
+The three fundamental control structures (Böhm-Jacopini theorem, 1966):
+any algorithm can be expressed using only sequence, selection (if),
+and iteration (while). Java provides all three plus exception handling
+(non-local exit path for error conditions) and modern functional
+alternatives (streams as a declarative iteration abstraction).
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Switch expression for pattern matching (Java 21)**
+**Example 1: Classic switch vs switch expression**
 
 ```java
-// BAD: Classic switch - fall-through trap and no exhaustiveness
-String format(Object obj) {
-    switch (obj.getClass().getSimpleName()) {
-        case "Integer": return "int: " + obj;
-        case "String":  return "str: " + obj;
-        // Forgot Double - silently falls through to default
-        default: return "unknown";
-    }
+// BAD: classic switch with fall-through and imperative style
+String type;
+switch (status) {
+    case "PENDING":
+        type = "new";
+        break;              // easy to forget break
+    case "APPROVED":
+    case "PROCESSING":
+        type = "active";
+        break;
+    default:
+        type = "unknown";
 }
 
-// GOOD: Switch expression with pattern matching (Java 21+)
-// Compiler enforces exhaustiveness for sealed types
-String format(Object obj) {
+// GOOD: switch expression (Java 14+) - exhaustive, no fall-through
+String type = switch (status) {
+    case "PENDING"              -> "new";
+    case "APPROVED", "PROCESSING" -> "active";  // comma-separated cases
+    default                     -> "unknown";
+};
+// Expression: returns value directly. No fall-through. No break.
+
+// GOOD: switch with pattern matching (Java 21)
+String describe(Object obj) {
     return switch (obj) {
-        case Integer i -> "int: " + i;
-        case String s  -> "str: " + s;
-        case Double d  -> "dbl: " + d;
-        case null      -> "null";      // null handled explicitly
-        default        -> "unknown: " + obj.getClass().getSimpleName();
+        case Integer i when i > 0 -> "positive int: " + i;
+        case Integer i            -> "non-positive int: " + i;
+        case String s             -> "string: " + s;
+        case null                 -> "null";
+        default                   -> "other: " + obj;
     };
 }
-// Sealed type example - no default needed, compiler checks all cases:
-sealed interface Shape permits Circle, Rectangle {}
-double area(Shape s) {
-    return switch (s) {
-        case Circle c    -> Math.PI * c.r() * c.r();
-        case Rectangle r -> r.w() * r.h();
-        // No default: compiler verifies Circle and Rectangle are all cases
-    };
-}
+// Type dispatch without instanceof chains; compiler checks exhaustiveness
 ```
 
-> **Code walkthrough:** The BAD pattern uses string comparison of
-> class names (fragile and error-prone) with classic switch. The
-> GOOD pattern uses Java 21 pattern matching for switch: type
-> patterns bind directly, null is handled explicitly (avoiding NPE),
-> and sealed types get compile-time exhaustiveness checks. The
-> `area` example shows zero-default switch for sealed classes -
-> adding a new Shape subclass will cause a compile error, forcing
-> the developer to handle the new case.
+> **Code walkthrough:** Classic switch with fall-through is error-prone:
+> forgetting a break causes the next case to execute unintentionally.
+> Switch expressions use arrow syntax: each case is independent, no
+> fall-through, and the entire expression returns a value. The compiler
+> enforces exhaustiveness: if a case can be missing, you get a compile
+> error. Pattern matching in switch (Java 21) extends this to type
+> dispatch with guard clauses (when), replacing nested if-instanceof-cast
+> chains.
 
-**Example 2: finally trap and try-with-resources**
+**Example 2: try-with-resources (resource management)**
 
 ```java
-// BAD: finally return silently discards exception
-int dangerous() {
-    try {
-        throw new RuntimeException("important error");
-    } finally {
-        return 42;  // SWALLOWS the exception! Returns 42, exception lost.
+// BAD: manual resource cleanup (verbose, error-prone)
+Connection conn = null;
+Statement stmt = null;
+try {
+    conn = dataSource.getConnection();
+    stmt = conn.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT 1");
+    // use rs...
+} catch (SQLException e) {
+    log.error("DB error", e);
+} finally {
+    if (stmt != null) {
+        try { stmt.close(); } catch (SQLException e) { /* ignore */ }
+    }
+    if (conn != null) {
+        try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 }
 
-// BAD: Manual try/finally for resource cleanup
-InputStream in = new FileInputStream("file.txt");
-try {
-    process(in);
-} finally {
-    in.close();  // If process() throws AND close() throws,
-                 // the process() exception is suppressed
+// GOOD: try-with-resources (Java 7+) - automatic close
+try (Connection conn = dataSource.getConnection();
+     Statement stmt = conn.createStatement()) {
+    ResultSet rs = stmt.executeQuery("SELECT 1");
+    // use rs...
+} catch (SQLException e) {
+    log.error("DB error", e);
 }
-
-// GOOD: try-with-resources - resources closed automatically
-// Suppressed exceptions are attached, not lost
-try (InputStream in = new FileInputStream("file.txt")) {
-    process(in);
-}
-// in.close() is called here; if it throws, it is added as suppressed
-// exception on the primary exception - nothing is lost
+// conn and stmt are closed automatically at block end
+// Even if exception occurs: close() is called on both
+// Close order: reverse declaration order (stmt before conn)
 ```
 
-> **Code walkthrough:** `return` in `finally` is a trap that
-> silently discards any exception or return value from the `try`
-> block. The try-with-resources pattern (Java 7+) eliminates manual
-> `finally` for closeable resources. If both `process()` and
-> `in.close()` throw, the primary exception is the one from
-> `process()`; the close exception is attached as a suppressed
-> exception accessible via `e.getSuppressed()` - no data is lost.
+> **Code walkthrough:** The bad version has 10 lines of resource
+> cleanup that is easy to get wrong (what if stmt.close() throws?
+> The conn.close() would be skipped). try-with-resources replaces this
+> with a declaration in the try parentheses. Any class implementing
+> AutoCloseable (all JDBC types, streams, channels) can be used.
+> Close is called in reverse declaration order: stmt first, then conn.
+> If both an exception in the body and an exception in close() occur,
+> the body exception is propagated and the close exception is added as
+> a suppressed exception.
 
 ---
 
@@ -1492,79 +2903,467 @@ try (InputStream in = new FileInputStream("file.txt")) {
 
 **Junior / Mid (0-5 years):**
 
-> Java control flow includes if/else, switch, and loops (for,
-> while, do-while, enhanced for). Switch expressions (Java 14+)
-> use arrow syntax, do not fall through, and can return values.
-> try/catch/finally handles exceptions; try-with-resources
-> automatically closes resources.
-
-*Push deeper:* The ConcurrentModificationException when removing
-from a collection in an enhanced for loop, and how to fix it.
+> Java control flow: if-else, switch (classic and expression form),
+> for/while loops, and try-catch-finally. Key modern additions:
+> switch expressions (Java 14, arrow syntax, returns value), try-with-
+> resources (Java 7, automatic close), and pattern matching instanceof
+> (Java 16). Always use try-with-resources for JDBC, streams, files.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> I care about three non-obvious control flow behaviors in
-> production: (1) `finally` return silently discards exceptions -
-> never return from finally. (2) ConcurrentModificationException
-> from structural modification during enhanced-for - use removeIf
-> or stream + filter to collect. (3) Switch expression exhaustiveness
-> for sealed types is a powerful design tool: adding a new variant
-> to a sealed hierarchy becomes a compile error until all switch
-> expressions that pattern-match on it are updated - this is
-> refactoring safety at compile time.
-
-*Push deeper:* Enhanced switch with guards (when clauses in
-Java 21), labeled break/continue behavior, and why `do-while`
-is almost always the wrong choice.
+> I treat control flow choices as readability decisions. Prefer streams
+> for collection processing (more declarative). Prefer switch expressions
+> over if-else chains for type dispatch. Use pattern matching in switch
+> (Java 21) for polymorphic dispatch instead of instanceof chains.
+> Never use classic switch with fall-through. try-with-resources is
+> mandatory for all resources. I flag deep nesting (3+ levels) in
+> code review as a readability issue - extract to methods.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "finally always runs after try/catch" | finally runs in all normal cases. It does NOT run if System.exit() is called or if the JVM crashes. It runs even on exception. | Surprising behavior when using System.exit() to stop the application |
+| "switch expressions are just cleaner syntax" | Switch expressions enforce exhaustiveness at compile time - missing a case is a compile error with sealed types or enums. This is a genuine correctness improvement | Writing switch expressions for non-sealed types without a default case (compile error) |
+| "break exits the innermost loop" | break without a label exits only the INNERMOST enclosing loop or switch. Labeled break (break outer) exits the named loop | Unexpected behavior in nested loops - thinking break exits an outer loop |
 
-- "What is the difference between break and continue?"
-- "What is fall-through in a switch statement?"
+---
 
-🗣️ "Break exits the current loop or switch. Continue skips the
-rest of the current iteration and goes to the next one. Fall-through
-in a classic switch means execution continues into the next case
-if there is no break. This is intentional in some cases (multiple
-cases sharing the same body) but is a source of bugs when
-forgotten. Switch expressions (Java 14+) eliminate fall-through
-entirely - each arrow case is independent."
+### 🚨 Failure Modes and Diagnosis
 
-#### Mechanism
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Resource leak | Connection/stream not closed; connection pool exhausted | try-catch without finally close, or no try-with-resources | profiler heap dump: open connections; or connection pool monitor | Use try-with-resources for all AutoCloseable resources |
+| Switch fall-through | Unexpected code execution in switch | Classic switch with missing break | Code review; test shows case executes next case's code | Use switch expression with arrow syntax |
 
-- "What happens if you throw an exception inside a try block
-  that has a finally clause?"
+---
 
-🗣️ "The finally block always executes, even when an exception is
-thrown in the try block. After the finally block completes, the
-exception propagates to the caller. If the finally block itself
-throws an exception, the original exception is suppressed -
-this is why manual try/finally for multiple resources is risky.
-Try-with-resources handles this: if both the body and close()
-throw, the body exception propagates and the close exception is
-added as a suppressed exception."
+### 🎯 Interview Deep-Dive
 
-#### Comparison
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Basic if/for/switch syntax; try-catch |
+| Mid | 4 min | Switch expressions; try-with-resources; streams vs loops |
+| Senior | 6 min | Pattern matching in switch; exception handling design |
+| Staff | 8 min | Control flow in domain model design; readable vs clever |
 
-- "Classic switch vs switch expression - when to use each?"
+---
 
-🗣️ "Switch expressions are strictly superior for almost all cases:
-they eliminate fall-through bugs, are exhaustive for enums and
-sealed types (compile error if a case is missing), and can return
-values cleanly with yield or arrow syntax. I use classic switch
-only when maintaining pre-Java 14 code or when intentional
-fall-through is needed for a specific reason. In new code, switch
-expressions are the default."
+**Q1** [CONCEPTUAL] [JUNIOR]
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Switch exhaustiveness, finally semantics, ConcurrentModException. |
-| Hiring Manager   | Practical impact of try-with-resources on resource leaks. |
-| Bar Raiser       | Pattern matching guards, labeled break/continue scope. |
-| Peer Engineer    | "The finally return trap caught us once in a database layer..." |
+"What is try-with-resources and why should you use it?"
+
+**Answer:**
+
+try-with-resources is a Java 7 feature for automatic resource
+management. Resources declared in the try(...) clause are closed
+automatically when the block exits - whether normally or via exception.
+
+A resource must implement AutoCloseable (which has one method:
+`void close() throws Exception`).
+
+```java
+// Any AutoCloseable works:
+try (InputStream is = new FileInputStream("file.txt");
+     BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        System.out.println(line);
+    }
+} // br and is closed here, in reverse order (br first, then is)
+// Even if readLine() throws: both resources are closed
+```
+
+Why use it:
+1. Correctness: resources are ALWAYS closed, even on exception
+2. Simplicity: no need for manual null checks and close() calls in finally
+3. Multiple resources: declared comma-separated, closed in reverse order
+4. Suppressed exceptions: if close() throws while an exception is already
+   in progress, the close exception is added as a suppressed exception
+   (not silently swallowed)
+
+When NOT to use it: when the resource lifetime extends beyond the
+method (e.g., a Connection managed by a connection pool across multiple
+methods). In that case, the pool manages the lifecycle.
+
+*What separates good from great:* Custom classes can implement
+AutoCloseable. This enables try-with-resources for any resource:
+HTTP clients, thread pool executors, even logical transactions:
+```java
+try (Transaction tx = database.beginTransaction()) {
+    doWork(tx);
+    tx.commit();
+} // tx.rollback() if commit was not called (or exception occurred)
+```
+
+---
+
+**Q2** [COMPARISON] [MID]
+
+"When should you use a for-each loop vs streams?"
+
+**Answer:**
+
+Both iterate over collections, but they have different trade-offs:
+
+for-each loop: choose when:
+1. Simple iteration with side effects (printing, accumulating to
+   an external variable, modifying a list in place)
+2. Needing to break early (streams don't support early exit cleanly)
+3. Checked exceptions in the loop body (streams require catching or
+   sneaky throw)
+4. Sequential processing where order is not guaranteed by stream
+
+```java
+// GOOD: for-each for side effects and early exit
+for (Order order : orders) {
+    if (order.isExpired()) break; // can't do this cleanly in streams
+    processor.process(order);    // throws checked ProcessingException
+}
+```
+
+Streams: choose when:
+1. Transformation: filter, map, reduce
+2. Parallel processing: .parallelStream() for CPU-bound work
+3. Collecting to a new collection (Collectors)
+4. Composing multiple operations in a readable pipeline
+
+```java
+// GOOD: streams for transformation pipeline
+List<String> activeNames = orders.stream()
+    .filter(Order::isActive)
+    .map(Order::getCustomerName)
+    .distinct()
+    .sorted()
+    .collect(Collectors.toList());
+```
+
+Rule: if you're building a new collection or transforming data,
+use streams. If you're iterating for side effects or need
+early exit, use for-each.
+
+*What separates good from great:* Streams are lazy: intermediate
+operations (filter, map) do not execute until a terminal operation
+(collect, forEach, findFirst) is called. This enables short-circuit
+evaluation: `stream.filter(p).findFirst()` stops after the first
+match. For-each is not lazy: it processes all elements.
+
+---
+
+**Q3** [TRADE-OFF] [MID]
+
+"What are the trade-offs of checked vs unchecked exceptions?"
+
+**Answer:**
+
+Java has two exception categories:
+- Checked: must be declared in throws or caught. Example: IOException.
+- Unchecked (RuntimeException): do not need to be declared. Example: NPE.
+
+Checked exceptions pros:
+- Force callers to handle error conditions at compile time
+- Document expected failure modes in the method signature
+- Appropriate for recoverable failures (file not found, network timeout)
+
+Checked exceptions cons:
+- Verbose: every layer must catch or re-declare
+- Pollute interfaces: lambdas cannot throw checked exceptions directly
+- Often misused: many checked exceptions become "catch, log, ignore"
+
+```java
+// BAD: checked exception swallowed (worse than unchecked!)
+try {
+    doSomething(); // throws IOException
+} catch (IOException e) {
+    // silently ignored - now you have no idea what happened
+}
+
+// GOOD: wrap in unchecked to propagate
+try {
+    doSomething();
+} catch (IOException e) {
+    throw new ServiceException("Failed to process", e);
+    // Preserves original exception as cause
+}
+```
+
+Unchecked exceptions: use for programming errors (NPE,
+IllegalArgumentException, IllegalStateException) and for
+failures the caller cannot meaningfully handle.
+
+Modern Java consensus: Spring uses unchecked exceptions throughout
+(DataAccessException is unchecked). This enables clean interface
+design while still providing exception hierarchy for specific handling.
+
+*What separates good from great:* The JDK's checked exception history
+is mixed: FileInputStream throws IOException (reasonable: it can be
+handled). But SQLException for every JDBC operation became verbose.
+Modern APIs (HTTP client, Kafka client) use unchecked exceptions.
+The trend is away from checked exceptions in library APIs.
+
+---
+
+**Q4** [DEBUGGING] [MID]
+
+"How do you handle the case where close() throws an exception
+inside try-with-resources?"
+
+**Answer:**
+
+In try-with-resources, if both the body and close() throw exceptions,
+the body exception is propagated. The close() exception is attached
+as a "suppressed exception":
+
+```java
+try (MyResource r = new MyResource()) {
+    throw new RuntimeException("body exception");
+    // r.close() is called in finally
+    // If r.close() also throws, the close exception is
+    // attached to the body exception as suppressed
+}
+
+// Read both:
+try {
+    // ...try-with-resources
+} catch (RuntimeException e) {
+    System.out.println("Main: " + e.getMessage()); // body exception
+    for (Throwable suppressed : e.getSuppressed()) {
+        System.out.println("Suppressed: " + suppressed.getMessage());
+    }
+}
+```
+
+Old (pre-Java 7) behavior without try-with-resources was WORSE:
+if both body and finally threw, the body exception was LOST (finally
+exception replaced it). try-with-resources preserves both.
+
+Production example: a database statement close() that throws after
+a transaction rollback. The rollback exception is what you want to
+see; the close exception should not shadow it. Suppressed exceptions
+preserve this priority.
+
+*What separates good from great:* When implementing AutoCloseable:
+make close() idempotent (calling it twice does nothing). If close()
+must throw, use a checked exception only if the caller can realistically
+handle it. Most resource close() implementations should log but not
+rethrow non-critical close failures.
+
+---
+
+**Q5** [CONCEPTUAL] [MID]
+
+"Explain the enhanced switch expression syntax in Java 14+"
+
+**Answer:**
+
+Switch expressions (Java 14, final) add three improvements to the
+classic switch statement:
+
+1. Returns a value:
+```java
+// Classic statement: assigns in each case
+String result;
+switch (status) { case A: result = "a"; break; ... }
+
+// Expression: switch returns a value directly
+String result = switch (status) {
+    case A -> "a";
+    case B -> "b";
+    default -> "other";
+};
+```
+
+2. Arrow syntax prevents fall-through:
+```java
+// Classic: fall-through without break
+switch (x) {
+    case 1: case 2: doSomething(); break; // need break or falls through
+
+// Expression: comma-separated cases, no fall-through
+switch (x) {
+    case 1, 2 -> doSomething();
+}
+```
+
+3. Exhaustiveness enforced by compiler:
+```java
+enum Status { ACTIVE, INACTIVE, SUSPENDED }
+
+// Classic: no compiler error if case is missing
+// Expression: compiler error if Status.SUSPENDED has no case
+String label = switch (status) {
+    case ACTIVE -> "active";
+    case INACTIVE -> "inactive";
+    // COMPILE ERROR if SUSPENDED is missing (for enum types)
+    case SUSPENDED -> "suspended";
+};
+```
+
+4. yield for block cases:
+```java
+int result = switch (code) {
+    case 1 -> 10;
+    case 2 -> {
+        int temp = compute();
+        yield temp * 2; // yield returns the value from a block
+    }
+    default -> 0;
+};
+```
+
+*What separates good from great:* Pattern matching in switch (Java 21)
+extends this to type patterns with guard clauses. Combined with sealed
+classes, the compiler ensures all subtypes are handled - creating
+algebraic data type dispatch that is checked for completeness at
+compile time.
+
+---
+
+**Q6** [PRODUCTION] [MID]
+
+"What is the most common resource leak in Java applications and
+how do you prevent it?"
+
+**Answer:**
+
+The most common resource leak in Java production applications:
+database connections not returned to the connection pool.
+
+Mechanism:
+```java
+// DANGER: connection never closed on exception path
+Connection conn = dataSource.getConnection(); // taken from pool
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM orders");
+// If stmt.executeQuery() throws: conn is never closed/returned!
+processResults(rs);
+conn.close(); // returns connection to pool - NEVER REACHED on exception
+```
+
+Effect: after N requests that hit this code path on exceptions,
+the pool is empty. All subsequent requests wait for a connection
+until timeout (HikariCP default: 30 seconds). Service appears to
+hang intermittently.
+
+Diagnosis:
+```bash
+# HikariCP metrics (Actuator endpoint):
+GET /actuator/metrics/hikaricp.connections.pending
+# Pending count growing = leak
+
+# Thread dump: threads waiting in HikariCP.getConnection()
+jstack <pid> | grep "HikariCP\|getConnection" -A 3
+```
+
+Prevention:
+```java
+// CORRECT: try-with-resources for all JDBC
+try (Connection conn = dataSource.getConnection();
+     PreparedStatement stmt = conn.prepareStatement(sql)) {
+    stmt.setLong(1, orderId);
+    try (ResultSet rs = stmt.executeQuery()) {
+        return mapResults(rs);
+    }
+} // conn, stmt, rs all closed automatically
+```
+
+Spring JdbcTemplate / Spring Data eliminate this entirely: they
+manage connections automatically.
+
+*What separates good from great:* HikariCP has a leak detection
+threshold: `leakDetectionThreshold=2000` (ms). If a connection
+is not returned within 2 seconds, HikariCP logs a stack trace
+showing exactly where the connection was acquired. Enable this
+in all non-production environments to catch leaks during development.
+
+---
+
+**Q7** [CONCEPTUAL] [JUNIOR]
+
+"What is the difference between break and continue?"
+
+**Answer:**
+
+Both control loop iteration, but they do different things:
+
+break: exits the loop entirely. Code after the loop runs next.
+continue: skips the rest of the current iteration. The loop
+continues with the next iteration.
+
+```java
+// break example:
+for (int i = 0; i < 10; i++) {
+    if (i == 5) break; // exit loop when i reaches 5
+    System.out.print(i + " "); // prints: 0 1 2 3 4
+}
+System.out.println("after loop"); // prints: "after loop"
+
+// continue example:
+for (int i = 0; i < 10; i++) {
+    if (i % 2 == 0) continue; // skip even numbers
+    System.out.print(i + " "); // prints: 1 3 5 7 9
+}
+System.out.println("after loop"); // prints: "after loop"
+
+// Labeled break (exit outer loop):
+outer:
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        if (j == 1) break outer; // exits BOTH loops
+        System.out.print(i + "," + j + " "); // prints: 0,0 only
+    }
+}
+```
+
+In streams: `break` is approximated by `findFirst()` or `limit()`.
+`continue` is approximated by `filter()`. Streams are more readable
+for these patterns:
+```java
+// break equivalent: stop after first match
+Optional<Order> first = orders.stream()
+    .filter(Order::isPending)
+    .findFirst();
+
+// continue equivalent: skip even numbers
+IntStream.range(0, 10)
+    .filter(i -> i % 2 != 0)
+    .forEach(System.out::println);
+```
+
+*What separates good from great:* break in a switch inside a loop
+only breaks the switch, not the loop. This surprises developers
+expecting break to exit the loop:
+```java
+for (String s : list) {
+    switch (s) {
+        case "stop": break; // breaks the SWITCH, not the for loop!
+    }
+}
+// Use labeled break to exit the for loop from inside the switch
+```
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ keyword. Comparison table is required for ★★☆ and above.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ keyword. System Design is required for ★★★ and above.)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: control flow is better explained in prose and code examples.)*
+
+---
+
+---

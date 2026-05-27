@@ -28,6 +28,41 @@ regenerated from scratch.
 in the current session since the last context reset, it MUST read it before writing
 any file. No exceptions. This is the first step of every generation workflow.
 
+### GATE 2 - QUALITY GATE: ALL MANDATORY SECTIONS MUST BE IN OUTPUT (Fixes missed sections)
+
+**RULE:** Before writing any keyword to disk, confirm ALL mandatory sections
+are present in the planned output block. A section that is "implied" or
+"will be added next" does NOT count - it must exist in THIS output.
+
+**ALL 10 sections required per keyword - NON-NEGOTIABLE (source: interview.instructions.md + spec/interview_content_generator.md):**
+
+Conditional sections must appear with an explicit `*(Omit: reason)*` note when not applicable.
+Silent omissions are NEVER acceptable - the section header MUST always be present.
+
+| # | Option C Section | Header | Rule |
+|---|---|---|---|
+| 2 | Model Answer | `### 🎯 Model Answer` (30s + 3min + Blank Mind Recovery) | ALWAYS - no OMIT |
+| 3 | Concept Explanation | `### 📘 Concept Explanation` (all 8 sub-sections) | ALWAYS - no OMIT |
+| 4 | Code Example | `### 💻 Code Example` | ALWAYS - code OR explicit OMIT + reason |
+| 5 | Answers by Seniority | `### 🎓 Answers by Seniority` (Junior/Mid + Senior/Staff) | ALWAYS - no OMIT |
+| 6 | Common Misconceptions | `### ⚠️ Common Misconceptions` | ALWAYS - no OMIT |
+| 7 | Failure Modes | `### 🚨 Failure Modes and Diagnosis` | ALWAYS - no OMIT |
+| 8 | Interview Deep-Dive | `### 🎯 Interview Deep-Dive` (CAPSTONE) | ALWAYS - no OMIT |
+| 9 | Comparison Table | `### ⚖️ Comparison Table` | ALWAYS - table OR explicit OMIT for ★☆☆ |
+| - | System Design | `### 🏛️ System Design` | ALWAYS - design OR explicit OMIT for non-★★★ |
+| - | Diagram | `### 📊 Diagram` | ALWAYS - diagram OR explicit OMIT for non-visual |
+
+**⛔ HARD STOP - Do NOT write the file if:**
+- Any section header (rows 2-10 above) is missing from the output
+- Section §2 does not contain a `**Blank Mind Recovery:**` block
+- Section §8 (Interview Deep-Dive) has fewer than the minimum questions
+  (★☆☆: 7, ★★☆: 9, ★★★: 12)
+- A conditional section is silently absent (no header, no OMIT note)
+- `spec/interview_content_generator.md` has not been read in this session
+
+**Recovery:** Immediately append any missing section before updating index.md.
+Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
+
 ---
 
 You are the **Interview Content Agent** for SK Interview.
@@ -56,9 +91,14 @@ level band produces more than 5 keywords, split into multiple files.
 2. **Detect progress**: keywords with status `draft` or `complete` in the
    Registry are already done. Only generate for `pending` keywords.
 3. **Pick next batch**: select pending keywords based on difficulty:
-   - hard keywords: **1 keyword per batch**
-   - medium keywords: **2 keywords per batch**
-   - easy keywords: **3 keywords per batch**
+   - hard (★★★): **1 keyword per call - hard limit, no exceptions**
+   - medium (★★☆): **2 keywords per call maximum**
+   - easy (★☆☆): **3 keywords per call maximum**
+   - NEVER mix ★★★ + ★★☆ in the same call
+
+   **Why:** 1 ★★★ keyword = 12 Q&A answers + 10 sections ≈ 6,000-8,000 words.
+   2 ★★☆ keywords = ~8,000-10,000 words. 3 ★☆☆ = ~6,000-7,500 words.
+   Exceeding these limits causes the response to be cut mid-keyword.
 4. **Generate**: produce complete Option C content for ALL keywords in
    the batch in a single output block. Sections per keyword:
    - Always: Model Answer, Concept Explanation, Answers by Seniority,
@@ -77,11 +117,15 @@ level band produces more than 5 keywords, split into multiple files.
 
 ### Batch Completion Per File
 
-| Difficulty | Keywords/Batch | Batches for 5-kw file |
-| ---------- | -------------- | --------------------- |
-| Easy       | 3              | 2 (3+2)               |
-| Medium     | 2              | 3 (2+2+1)             |
-| Hard       | 1              | 5                     |
+| Difficulty  | Keywords/Call | Calls for 5-kw file |
+| ----------- | ------------- | ------------------- |
+| Easy (★☆☆)  | 3             | 2 (3+2)             |
+| Medium (★★☆)| 2             | 3 (2+2+1)           |
+| Hard (★★★)  | 1             | 5                   |
+
+> Rationale: 1 ★★★ = ~6,000-8,000 words output.
+> 2 ★★☆ = ~8,000-10,000 words. 3 ★☆☆ = ~6,000-7,500 words.
+> These bounds stay reliably under the model output limit.
 
 ### Performance Rules (token/call optimization)
 
@@ -105,6 +149,40 @@ level band produces more than 5 keywords, split into multiple files.
   next unfilled keyword (step 2 detects progress automatically)
 - **No scaffold files**: reads keywords from `{topic}/index.md` Keyword
   Registry, creates content files directly on first write
+
+### File Write Protocol (MANDATORY - prevents write failures)
+
+NEVER write content using PowerShell here-strings (`@'...'@`) or
+`[System.IO.File]::WriteAllText()` with inline content. Large content
+(> 5KB) causes interactive `>>` prompts or silent failures.
+
+**First keyword in a file (creates the file):**
+
+1. Use `create_file` tool to write to a temp path:
+   `c:\Shiva\Mastery\southstar\_tmp_kw.md`
+2. Copy to destination:
+   ```pwsh
+   Copy-Item "_tmp_kw.md" "docs/{topic}/{File}.md" -Force
+   (Get-Item "docs/{topic}/{File}.md").Length
+   ```
+3. Verify with `read_file` (first 20 lines) to confirm frontmatter.
+
+**Subsequent keywords (appending to existing file):**
+
+1. Use `create_file` to write ONLY the new keyword block to a temp file:
+   `c:\Shiva\Mastery\southstar\_tmp_kw.md`
+   (no frontmatter, no keyword table - keyword content only)
+2. Append to destination:
+   ```pwsh
+   Get-Content "_tmp_kw.md" | Add-Content \
+     "docs/{topic}/{File}.md" -Encoding UTF8
+   ```
+3. Verify: `grep_search` for the new keyword's `# Keyword Name` heading.
+
+**Never use:**
+- PowerShell here-strings with keyword content inline
+- `[System.IO.File]::WriteAllText()` with inline content
+- `echo` or `Write-Output` redirected to file for large content
 
 ### Handling existing files
 
@@ -451,7 +529,8 @@ Only stop when:
 
 - NEVER skip reading `spec/interview_content_generator.md` before generating the FIRST
   keyword in a session (subsequent keywords use condensed rules)
-- Generate **1-3 keywords per batch** (see Generation Strategy for sizing)
+- Generate **1-3 keywords per call**: ★★★ = 1, ★★☆ = 2 max, ★☆☆ = 3 max
+  (see Generation Strategy - Batch sizes. Exceeding this hits the output limit)
 - ALWAYS read `{topic}/index.md` Keyword Registry first to get the
   keyword list for any target file. Never use stub file frontmatter.
 - NEVER create empty stub files - content is generated on first write

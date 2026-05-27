@@ -120,5 +120,5 @@ at 3 AM.
 
 | #   | Keyword                                | Difficulty | Status  |
 | --- | -------------------------------------- | ---------- | ------- |
-| 1   | ORM Anti-Pattern Recognition           | ★★☆        | pending |
-| 2   | Hibernate Interview Mental Model       | ★★☆        | pending |
+| 1   | ORM Anti-Pattern Recognition           | ★★☆        | draft   |
+| 2   | Hibernate Interview Mental Model       | ★★☆        | draft   |

@@ -20,6 +20,18 @@
     R12 Interview Deep-Dive min question count (7/9/12 by difficulty)
     R13 No '19 sections' language in spec files (correct: 8 Option C)
     R14 No old file naming patterns in spec files
+    R15 Consecutive bold-label lines separated by blank line
+    R16 No real-looking secret strings (AWS, Stripe, GitHub PAT, Google API)
+    R17 QRC box-drawing characters form proper closed boxes
+    R18 No verbatim paragraph duplication within a file
+    R19 Blank Mind Recovery block format (bold labels, separate paragraphs)
+    R20 Keyword navigation block present within 30 lines after frontmatter
+    R21 ALL 10 sections present per keyword (NON-NEGOTIABLE):
+        Model Answer, Concept Explanation, Code Example, Answers by Seniority,
+        Common Misconceptions, Failure Modes and Diagnosis, Interview Deep-Dive,
+        Comparison Table, System Design, Diagram.
+        Conditional sections need explicit OMIT note if not applicable.
+        HARD STOP if any section header missing.
 
 .PARAMETER FileList
   Path to a text file containing one staged file path per line. Used by

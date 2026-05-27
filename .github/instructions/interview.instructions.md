@@ -27,6 +27,41 @@ regenerated from scratch.
 in the current session since the last context reset, it MUST read it before writing
 any file. No exceptions. This is the first step of every generation workflow.
 
+### GATE 2 - QUALITY GATE: ALL MANDATORY SECTIONS MUST BE IN OUTPUT (Fixes missed sections)
+
+**RULE:** Before writing any keyword to disk, confirm ALL mandatory sections
+are present in the planned output block. A section that is "implied" or
+"will be added next" does NOT count - it must exist in THIS output.
+
+**ALL 10 sections required per keyword - NON-NEGOTIABLE (source: interview.instructions.md + spec/interview_content_generator.md):**
+
+Conditional sections must appear with an explicit `*(Omit: reason)*` note when not applicable.
+Silent omissions are NEVER acceptable - the section header MUST always be present.
+
+| # | Option C Section | Header | Rule |
+|---|---|---|---|
+| 2 | Model Answer | `### 🎯 Model Answer` (30s + 3min + Blank Mind Recovery) | ALWAYS - no OMIT |
+| 3 | Concept Explanation | `### 📘 Concept Explanation` (all 8 sub-sections) | ALWAYS - no OMIT |
+| 4 | Code Example | `### 💻 Code Example` | ALWAYS - code OR explicit OMIT + reason |
+| 5 | Answers by Seniority | `### 🎓 Answers by Seniority` (Junior/Mid + Senior/Staff) | ALWAYS - no OMIT |
+| 6 | Common Misconceptions | `### ⚠️ Common Misconceptions` | ALWAYS - no OMIT |
+| 7 | Failure Modes | `### 🚨 Failure Modes and Diagnosis` | ALWAYS - no OMIT |
+| 8 | Interview Deep-Dive | `### 🎯 Interview Deep-Dive` (CAPSTONE) | ALWAYS - no OMIT |
+| 9 | Comparison Table | `### ⚖️ Comparison Table` | ALWAYS - table OR explicit OMIT for ★☆☆ |
+| - | System Design | `### 🏛️ System Design` | ALWAYS - design OR explicit OMIT for non-★★★ |
+| - | Diagram | `### 📊 Diagram` | ALWAYS - diagram OR explicit OMIT for non-visual |
+
+**⛔ HARD STOP - Do NOT write the file if:**
+- Any section header (rows 2-10 above) is missing from the output
+- Section §2 does not contain a `**Blank Mind Recovery:**` block
+- Section §8 (Interview Deep-Dive) has fewer than the minimum questions
+  (★☆☆: 7, ★★☆: 9, ★★★: 12)
+- A conditional section is silently absent (no header, no OMIT note)
+- `spec/interview_content_generator.md` has not been read in this session
+
+**Recovery:** Immediately append any missing section before updating index.md.
+Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
+
 ---
 
 # Interview Mastery Dictionary - Auto-Loaded Instructions
@@ -172,9 +207,38 @@ This format is intentional for L0/L1 and is NOT checked by R19.
 
 - UTF-8 without BOM
 - Always use `pwsh` (PowerShell 7+), NEVER `powershell.exe`
-- `[System.Text.UTF8Encoding]::new($false)` for file writing
+- `[System.Text.UTF8Encoding]::new($false)` only for small writes (< 2KB)
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
 - No emojis in YAML frontmatter
+
+### File Write Protocol (MANDATORY - prevents silent failures)
+
+NEVER write keyword content using PowerShell here-strings (`@'...'@`)
+or `[System.IO.File]::WriteAllText()` with inline content.
+Large content (> 5KB) triggers interactive `>>` prompts or silently fails.
+
+**Writing a new file (first keyword):**
+
+1. `create_file` tool -> `_tmp_kw.md` (workspace root)
+2. `Copy-Item "_tmp_kw.md" "docs/{topic}/{File}.md" -Force`
+3. Verify: `read_file` first 20 lines
+
+**Appending to existing file (subsequent keywords):**
+
+1. `create_file` tool -> `_tmp_kw.md` (keyword block only, no frontmatter)
+2. `Get-Content "_tmp_kw.md" | Add-Content "docs/{topic}/{File}.md" -Encoding UTF8`
+3. Verify: `grep_search` for new keyword heading in the target file
+
+### Batch Size Limits (HARD CAP - prevents output length overflow)
+
+| Difficulty | Keywords/Call | Reason |
+| ---------- | ------------- | ------ |
+| Hard (★★★)  | 1             | 12 Q&As + 10 sections ≈ 6,000-8,000 words |
+| Medium (★★☆)| 2 max         | 9 Q&As each + 10 sections ≈ 8,000-10,000 words |
+| Easy (★☆☆)  | 3 max         | 7 Q&As each ≈ 6,000-7,500 words total |
+
+> Violating these limits causes the model response to be cut off mid-keyword,
+> producing incomplete output that fails Gate 2 validation.
 
 ## Quality Constitution (Non-Negotiable)
 

@@ -89,11 +89,14 @@ southstar/
 - BAD pattern before GOOD pattern in all code examples
 - Every `###` heading preceded by `---` with blank lines
 
-### YAML (when used in docs/)
+### YAML (frontmatter in docs/)
 
-- Jekyll/just-the-docs does not require frontmatter; use only when
-  overriding page title, setting nav order, or nesting pages
-- If used, file MUST start at byte 0 with `---` (no BOM, no whitespace)
+- **Navigation frontmatter is required** for just-the-docs sidebar rendering.
+  Without it, pages render as plain Markdown with no sidebar entry.
+  Required fields: `layout`, `title`, `parent`, `grand_parent`, `nav_order`, `permalink`
+- **Project metadata fields are optional** (`keywords`, `status`, `difficulty_range`,
+  `version`, `topic`, `subtopic`). Add only when used by generation scripts.
+- File MUST start at byte 0 with `---` (no BOM, no whitespace)
 - Double-quote any title value containing `: ` (colon + space)
 - just-the-docs nav keys: `nav_order`, `parent`, `has_children`,
   `grand_parent`, `nav_exclude`, `search_exclude`
@@ -117,6 +120,39 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 - Do NOT `git push`
 
 ## Content Quality Constitution (Non-Negotiable)
+
+<!-- Canonical source: .github/instructions/interview.instructions.md -->
+<!-- Duplicated here intentionally: this file loads in ALL sessions, not only docs/spec/scripts edits. -->
+<!-- When interview.instructions.md is auto-loaded both copies are visible; when it is not (e.g. non-docs session), this copy enforces the rules. -->
+
+### GATE 2 - QUALITY GATE: MANDATORY SECTION CHECKLIST (HARD STOP)
+
+Before writing ANY keyword to disk, ALL 10 sections below must exist in the output.
+A section that is "implied" or "will be added next" does NOT count.
+Validator rule R21 enforces this at pre-commit.
+
+Conditional sections must appear with an explicit `*(Omit: reason)*` note when
+not applicable. Silent omissions are NEVER acceptable.
+
+| # | Option C Section | Header | Required |
+|---|---|---|---|
+| 2 | Model Answer | `### 🎯 Model Answer` (30s + 3min + Blank Mind Recovery) | **ALWAYS - no OMIT** |
+| 3 | Concept Explanation | `### 📘 Concept Explanation` (all 8 sub-sections) | **ALWAYS - no OMIT** |
+| 4 | Code Example | `### 💻 Code Example` | **ALWAYS** - code OR explicit OMIT + reason |
+| 5 | Answers by Seniority | `### 🎓 Answers by Seniority` (Junior/Mid + Senior/Staff) | **ALWAYS - no OMIT** |
+| 6 | Common Misconceptions | `### ⚠️ Common Misconceptions` | **ALWAYS - no OMIT** |
+| 7 | Failure Modes | `### 🚨 Failure Modes and Diagnosis` | **ALWAYS - no OMIT** |
+| 8 | Interview Deep-Dive | `### 🎯 Interview Deep-Dive` | **ALWAYS (CAPSTONE) - no OMIT** |
+| 9 | Comparison Table | `### ⚖️ Comparison Table` | **ALWAYS** - table OR explicit OMIT for ★☆☆ |
+| - | System Design | `### 🏛️ System Design` | **ALWAYS** - design OR explicit OMIT for non-★★★ |
+| - | Diagram | `### 📊 Diagram` | **ALWAYS** - diagram OR explicit OMIT for non-visual |
+
+**⛔ HARD STOP triggers:**
+- Any section header (rows 2-10 above) missing from the output
+- Section §2 missing `**Blank Mind Recovery:**` block
+- Section §8 questions below minimum (★☆☆:7, ★★☆:9, ★★★:12)
+- A conditional section silently absent (no header, no OMIT note)
+- `spec/interview_content_generator.md` not read in this session
 
 Every keyword entry MUST pass the Quality Constitution.
 Full details in `spec/interview_content_generator.md` Section 6.
@@ -196,9 +232,9 @@ genuinely excellent'?"_ If uncertain: rewrite. Masterclass = target.
   keywords use the condensed rules in
   `.github/instructions/interview.instructions.md` (auto-loaded)
 - When generating a NEW topic from scratch: read `spec/topics_generator.md` for the
-  full keyword generation spec (34 rules, 31 checks), and `spec/topics_registry.md` for
+  full keyword generation spec (37 rules, 36 checks), and `spec/topics_registry.md` for
   the level-coverage framework, then generate keywords covering L0-L6 + META
 - When asked to generate/create/upgrade entries, apply all rules
   automatically without confirmation
 - When editing files under `docs/`, `spec/`, or `scripts/`, the interview
-  instructions auto-load with the 15-section structure and Q&A rules
+  instructions auto-load with the 8-section Option C structure and Q&A rules

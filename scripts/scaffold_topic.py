@@ -364,7 +364,7 @@ def build_file_scaffold(file_path: Path, fm: dict) -> str:
     subtopic = fm.get("subtopic", "Unknown")
     keywords = fm.get("_keywords", [])
     difficulty = fm.get("difficulty_range", "mixed")
-    version = 3  # target version
+    version = 1  # target version (SPEC_VERSION = 1, v1.0)
 
     # Build YAML
     kw_yaml = "\n".join(f"  - {kw}" for kw in keywords)

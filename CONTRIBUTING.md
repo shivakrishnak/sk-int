@@ -75,7 +75,7 @@ feat: add interview Angular - batch 1 (Foundations, Components, Directives, Rout
 - [ ] `bundle exec jekyll build` passes
       (or `bundle exec jekyll build --baseurl /sk-int` for local preview)
 - [ ] `markdownlint docs/**/*.md spec/**/*.md` passes
-- [ ] Every new keyword has all 19 sections
+- [ ] Every new keyword has all 8 Option C sections
 - [ ] Every code example follows BAD-before-GOOD
 - [ ] Interview Deep-Dive has the minimum question count (easy=7, medium=9, hard=12)
 - [ ] No em dashes, no `c:\ASK\` paths, no BOM

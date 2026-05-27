@@ -31,7 +31,7 @@
 ### M3 - File-level generation causes output limit timeouts
 
 - Cause: all 5 keywords in one pass = 15,000-25,000 words
-- Fix: keyword-batch strategy - 1 per batch (hard), 2 (medium), 3 (easy)
+- Fix: keyword-batch strategy - 1 per call (hard), 2 (medium), 3 (easy)
 
 ### M4 - Frontmatter as keyword source breaks when frontmatter is absent
 
@@ -56,12 +56,16 @@
 - The 19 CGR items are CONTENT RULES for what goes inside 8 output sections
 - Never say "generate 19 sections" - say "generate 8 Option C sections"
 
-### M8 - Quality rules duplicated across 4 files (resolved)
+### M8 - Quality rules: intentional dual-source (copilot-instructions + interview.instructions)
 
 - Quality Constitution, Code Examples, 10-Point Standard, Forbidden Patterns
-  were duplicated verbatim in agent.md, instructions.md, both prompt files
-- Fix: single source in interview.instructions.md; all others reference it
-- Verification: grep "Quality Constitution" should only appear in instructions.md
+  are present in BOTH copilot-instructions.md AND interview.instructions.md
+- This is INTENTIONAL: copilot-instructions.md always loads (all contexts);
+  interview.instructions.md loads for docs/spec/scripts edits
+- Canonical source: interview.instructions.md (full detail)
+- Reinforcement copy: copilot-instructions.md (loads in all sessions)
+- Both prompt files reference interview.instructions.md without duplicating full text
+- Do NOT remove from copilot-instructions.md - it serves sessions without a docs/ file open
 
 ---
 
@@ -69,9 +73,9 @@
 
 ### O1 - Keyword-batch sizing (exact numbers, non-negotiable)
 
-- hard keywords: 1 per batch
-- medium keywords: 2 per batch
-- easy keywords: 3 per batch
+- hard (★★★): 1 per call
+- medium (★★☆): 2 per call
+- easy (★☆☆): 3 per call
 
 ### O2 - File write pattern
 

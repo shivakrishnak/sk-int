@@ -1,29 +1,38 @@
 ---
-layout: default
 title: "Java Concurrency - L2 Concurrent Collections"
 parent: "Java Concurrency"
 nav_order: 4
 permalink: /java-concurrency/l2-concurrent-collections/
+topic: Java Concurrency
+subtopic: L2 Concurrent Collections
+keywords:
+  - ConcurrentHashMap
+  - CopyOnWriteArrayList
+  - BlockingQueue Implementations
+  - ConcurrentLinkedQueue
+  - Concurrent Collections Design
+difficulty_range: medium
+status: in-progress
+version: 1
 ---
 
-## Keywords in This File
-{: .no_toc }
+# Java Concurrency - L2 Concurrent Collections
 
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [ConcurrentHashMap](#concurrenthashmap) | high |
-| 2 | [CopyOnWriteArrayList](#copyonwritearraylist) | high |
-| 3 | [BlockingQueue Implementations](#blockingqueue-implementations) | high |
-| 4 | [ConcurrentLinkedQueue](#concurrentlinkedqueue) | high |
-| 5 | [Concurrent Collections Design](#concurrent-collections-design) | high |
+| # | Keyword | Difficulty |
+| --- | --- | --- |
+| 1 | [ConcurrentHashMap](#concurrenthashmap) | ★★☆ |
+| 2 | [CopyOnWriteArrayList](#copyonwritearraylist) | ★★☆ |
+| 3 | [BlockingQueue Implementations](#blockingqueue-implementations) | ★★☆ |
+| 4 | [ConcurrentLinkedQueue](#concurrentlinkedqueue) | ★★☆ |
+| 5 | [Concurrent Collections Design](#concurrent-collections-design) | ★★☆ |
 
 ---
 
 # ConcurrentHashMap
 
-**Interview Weight:** high - The most important concurrent data
-structure. Interviewers test segment locking, atomic compound
-operations, and the Java 8 structural changes.
+**Interview Weight:** critical - The most-used concurrent collection.
+Tests understanding of segment/stripe locking, compute* methods,
+and when to use it vs synchronized HashMap.
 
 ---
 
@@ -31,138 +40,210 @@ operations, and the Java 8 structural changes.
 
 **30 seconds:**
 
-> `ConcurrentHashMap` is a thread-safe map with significantly better
-> throughput than `Collections.synchronizedMap()` because it uses
-> bucket-level locking instead of full-map locking. In Java 8 it
-> moved from 16 segments to per-bucket CAS/synchronized for writes.
-> Critical: `get/put` are thread-safe, but compound operations like
-> "check-then-put" are NOT atomic unless you use the provided atomic
-> methods: `putIfAbsent()`, `computeIfAbsent()`, `merge()`,
-> `compute()`.
+> ConcurrentHashMap provides thread-safe HashMap access without
+> a global lock. In Java 8+, it uses fine-grained synchronization:
+> synchronized on individual buckets for writes; reads are lock-free
+> (volatile + CAS). Compound operations (computeIfAbsent, merge,
+> compute) are atomic per key. Never use synchronized HashMap or
+> Collections.synchronizedMap() for concurrent access - ConcurrentHashMap
+> is dramatically better.
 
 **3 minutes (Senior):**
 
-> In Java 7, `ConcurrentHashMap` used 16 segments (fixed), each a
-> mini-`ReentrantLock`-guarded `HashMap`. The default concurrency
-> level of 16 allowed 16 concurrent writes to different segments.
-> In Java 8, this was replaced with per-bucket CAS for single-entry
-> buckets and synchronized(bucket) for multi-entry buckets. Empty
-> bucket insert uses CAS (no lock at all); non-empty bucket uses
-> `synchronized(bucket)`, which is a very short lock. This allows
-> effective parallelism equal to the number of buckets (millions),
-> not just 16.
+> Java 8 ConcurrentHashMap replaced segment-based locking (Java 7)
+> with per-bucket (per-node) locking. Write operations synchronize
+> on the head node of the bucket; other buckets proceed in parallel.
+> Read operations are lock-free: the table is an array of volatile
+> references; reading a chain is wait-free.
 >
-> The compound operation pitfall is critical in production. These
-> patterns are NOT atomic:
-> ```java
-> if (!map.containsKey(k)) map.put(k, v);  // race window between check and put
-> map.put(k, map.get(k) + 1);              // not atomic: read/increment/write
-> ```
-> Use `putIfAbsent()`, `computeIfAbsent()`, `merge()`, or `compute()`
-> which are internally atomic.
+> The compound atomic operations are critical: computeIfAbsent(key,
+> func) atomically checks if key exists and, if not, calls func and
+> inserts the result - the check-and-insert is not split. putIfAbsent,
+> compute, merge all operate atomically per key. This eliminates the
+> check-then-act race that plagues HashMap + synchronized wrappers.
 >
-> `ConcurrentHashMap` does not allow `null` keys or values
-> (unlike `HashMap`). This is intentional: `get(key)` returning
-> `null` is ambiguous in a concurrent context - does the key not
-> exist, or does it map to `null`? In `HashMap` you disambiguate
-> with `containsKey()`, but that is a two-operation check that is
-> not thread-safe on a concurrent map.
+> Performance: size() is an approximation (cells merged via
+> LongAdder-style CounterCell array). For exact counts, maintain a
+> separate AtomicLong. Null keys and null values are not allowed
+> (unlike HashMap) - a deliberate design choice to distinguish "key
+> not present" from "key maps to null."
+
+**Framework:** COMPOUND OP needed? -> compute*/merge/putIfAbsent
+Single read? -> get (lock-free). Batch iteration? -> entrySet()
+(weakly consistent - may or may not reflect concurrent changes)
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "ConcurrentHashMap: thread-safe HashMap with
+per-bucket locking and lock-free reads."
+
+**(2) First principles:** "HashMap has buckets. Writes to different
+buckets don't conflict. Lock per bucket, not the whole map."
+
+**(3) Bridge:** "Like a library with 1000 shelves: locking one shelf
+for reshelving doesn't block readers at other shelves."
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+ConcurrentHashMap: a thread-safe hash map that provides full
+concurrency for reads and high concurrency for writes. Java 8+:
+per-node (bucket-head) synchronized writes; volatile-array reads
+(lock-free).
+
+**The problem it solves:**
+
+HashMap is not thread-safe: concurrent modifications cause infinite
+loops (Java 7), data corruption, or ConcurrentModificationException.
+Collections.synchronizedMap(HashMap) is thread-safe but serializes
+ALL operations (reads and writes share one lock) - no parallelism.
+ConcurrentHashMap allows parallel reads + concurrent writes to
+different buckets.
+
+**How it works:**
+
+```
+INTERNAL STRUCTURE:
+  Node[] table  <- volatile reference array (one slot per bucket)
+  Each slot: linked list (or TreeNode when > 8 entries)
+
+READ (lock-free):
+  1. Compute hash: bucket = hash % table.length
+  2. Read volatile table[bucket]  <- no lock
+  3. Traverse linked list comparing keys
+  Returns value or null  <- wait-free for existing keys
+
+WRITE (per-bucket synchronized):
+  1. Compute bucket
+  2. synchronized(table[bucket]) { insert/update }
+  Other buckets proceed concurrently
+
+COMPOUND OPERATION (atomic per key):
+  computeIfAbsent(key, k -> expensiveCreate(k)):
+    synchronized(bucket) {
+        if (table.get(key) == null) {
+            table.put(key, expensiveCreate(k)); // atomic check+insert
+        }
+    }
+    // Only called once even with 100 concurrent callers for same key
+
+NULL POLICY:
+  map.get("key") returns null for two cases in HashMap:
+    1. key not present
+    2. key maps to null value
+  ConcurrentHashMap: null value not allowed -> unambiguous absence
+```
+
+**The key insight:**
+
+computeIfAbsent() is the most important API for avoiding race
+conditions. Pattern: lazy initialization of a per-key resource:
+`cache.computeIfAbsent(userId, id -> loadUserFromDB(id))`.
+Without computeIfAbsent, a check-then-put race could call the loader
+twice, wasting resources or causing duplicate side effects.
+
+**When to use it:**
+
+- Any shared map accessed from multiple threads
+- Cache with lazy initialization (computeIfAbsent)
+- Frequency counters (merge: compute counts)
+- Read-heavy lookup tables
+
+**When NOT to use it:**
+
+- Do not use when the entire map must be locked for a multi-step
+  operation: computeIfAbsent is atomic per key but two separate
+  operations on different keys are not atomic together
+- Do not use null values: not permitted (NullPointerException)
+- Do not rely on size() for accurate counts under concurrent modification
+
+**Alternatives:**
+
+- Guava Cache (with expiry, eviction, loading): built on CHM
+- Caffeine: high-performance concurrent cache with W-TinyLFU eviction
+- ReadWriteLock + HashMap: when all-or-nothing map locking is needed
+
+**First-principles derivation:**
+
+The key insight in Java 8 CHM: bucket granularity maximizes write
+parallelism (N buckets = N concurrent writers), while volatile reads
+make reads non-blocking. The default initial capacity (16 buckets)
+gives 16-way write parallelism. Load factor (0.75) triggers resize
+at 75% occupancy; resize doubles table size. CAS on the first node
+of a bucket prevents the lock if the bucket is empty - only a
+non-empty bucket requires synchronized.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Atomic compound operations**
+**Example 1: BAD (synchronized HashMap) vs GOOD (ConcurrentHashMap + computeIfAbsent)**
 
 ```java
-ConcurrentHashMap<String, Integer> wordCount = new ConcurrentHashMap<>();
+// BAD: synchronized HashMap - serializes all access
+Map<String, List<Event>> eventMap =
+    Collections.synchronizedMap(new HashMap<>());
 
-// BAD: Race condition - check-then-put is two operations
-if (!wordCount.containsKey(word)) {        // Thread A checks: absent
-    wordCount.put(word, 1);                // Thread B also put(word, 1)
-}                                          // Two threads: one write lost
+// Race condition: two threads both see null for "user1",
+// both create new list, second overwrites first
+eventMap.get("user1");  // returns null
+// context switch here
+eventMap.put("user1", new ArrayList<>());  // BAD: race!
 
-// BAD: Read-modify-write race
-int current = wordCount.getOrDefault(word, 0);
-wordCount.put(word, current + 1);  // not atomic: lost update possible
+// GOOD: ConcurrentHashMap with computeIfAbsent
+ConcurrentHashMap<String, List<Event>> eventMap =
+    new ConcurrentHashMap<>();
 
-// GOOD: Atomic compound operations (Java 8+)
-// putIfAbsent: put only if key absent (returns existing or null)
-wordCount.putIfAbsent(word, 0);
-
-// merge: atomically combine with existing value
-wordCount.merge(word, 1, Integer::sum);
-// If absent: put(word, 1)
-// If present: put(word, existing + 1)
-
-// computeIfAbsent: compute value only if absent (lazy init)
-Map<String, List<String>> groups = new ConcurrentHashMap<>();
-groups.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
-// Atomic: creates list only if key absent, then returns it
-
-// compute: always compute new value
-wordCount.compute(word, (k, v) -> v == null ? 1 : v + 1);
-
-// forEach with concurrency level (Java 8+)
-wordCount.forEach(
-    4,                                // parallelism threshold
-    (k, v) -> System.out.println(k + "=" + v)
+// Atomic: check+create+insert in one synchronized per-bucket op
+List<Event> events = eventMap.computeIfAbsent(
+    "user1",
+    k -> new CopyOnWriteArrayList<>()  // thread-safe list
 );
+events.add(newEvent);
+// If two threads call computeIfAbsent("user1") simultaneously:
+// exactly one creates the list; the other gets the existing one
 ```
 
-> **Code walkthrough:** `merge()` is the most concise word-count
-> increment: if the key is absent, set to 1; if present, apply
-> `Integer::sum` atomically. `computeIfAbsent()` for grouping creates
-> the list only once - subsequent calls for the same key return the
-> existing list. All these methods use `synchronized(bucket)` internally
-> for the check+modify+put, making them atomic.
+> **Code walkthrough:** The synchronized HashMap get+put is a check-
+> then-act race: both threads see null, both create a new list, the
+> second overwrites the first (events from first thread are lost).
+> computeIfAbsent is atomic per key: the check (key absent?) and the
+> insert are a single synchronized operation on the bucket. Only one
+> thread executes the function even with 1000 concurrent callers for
+> the same key. The returned list is the canonical one for that key.
 
-**Example 2: Size tracking and iteration**
+**Example 2: merge() for frequency counter**
 
 ```java
-ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+// Word frequency counter with concurrent merge
+ConcurrentHashMap<String, Integer> wordCount =
+    new ConcurrentHashMap<>();
 
-// size() is approximate during concurrent modification
-// Use mappingCount() for large maps (returns long, not int)
-long approxSize = users.mappingCount();
+// Thread-safe frequency increment with merge:
+// merge(key, value, remappingFunction):
+//   if key absent: put(key, value)
+//   if key present: put(key, remappingFunction(existing, value))
+// All atomic per key
+wordCount.merge(word, 1, Integer::sum);
+// Equivalent atomic effect:
+//   count = wordCount.get(word)
+//   wordCount.put(word, count == null ? 1 : count + 1)
+// No race - merge is atomic
 
-// Iteration is weakly consistent: reflects state at or after
-// the iterator was created; does not throw ConcurrentModificationException
-for (Map.Entry<String, User> entry : users.entrySet()) {
-    // safe to call users.put() concurrently during this iteration
-    process(entry.getValue());
-}
-
-// Search with early termination (parallel for large maps)
-String found = users.search(
-    4,                          // parallelism threshold
-    (key, user) -> user.isAdmin() ? key : null
-);  // returns first non-null result or null
+// Same with compute:
+wordCount.compute(word, (k, v) -> v == null ? 1 : v + 1);
 ```
 
-> **Code walkthrough:** `size()` on `ConcurrentHashMap` is not
-> guaranteed to be accurate during concurrent modifications - it is
-> a snapshot that may be stale immediately. `mappingCount()` is
-> more accurate for large maps (uses the Java 8 internal counter
-> cells). Iteration is weakly consistent: you will see elements
-> that existed at iteration start but may miss elements added after
-> the iterator was created.
-
----
-
-### ⚖️ Comparison
-
-| | ConcurrentHashMap | Collections.synchronizedMap | Hashtable |
-|--|-------------------|----------------------------|-----------|
-| Lock granularity | per-bucket | full map | full map |
-| Concurrent reads | yes, no lock | serialized | serialized |
-| Null keys/values | no | depends on backing map | no |
-| Iteration | weakly consistent | must externally lock | same |
-| Java version | Java 5+ | Java 2+ | Java 1 (legacy) |
-
-**The deciding factor:** Use `ConcurrentHashMap` for all concurrent
-map needs. Use `synchronizedMap` only when wrapping legacy code.
-Never use `Hashtable` in new code.
+> **Code walkthrough:** merge() performs a read-modify-write atomically
+> per key. The remapping function (Integer::sum) is called inside the
+> per-bucket synchronized block. No two threads can concurrently
+> modify the count for the same word. Under concurrent access, every
+> word increment is captured. This replaces the common (but wrong)
+> pattern: `count = map.get(w); map.put(w, count == null ? 1 : count+1)`
+> which is a race.
 
 ---
 
@@ -170,51 +251,211 @@ Never use `Hashtable` in new code.
 
 **Junior / Mid (0-5 years):**
 
-> `ConcurrentHashMap` is thread-safe and much faster than
-> `synchronizedMap` because it uses per-bucket locking instead of
-> locking the whole map. Use `merge()`, `computeIfAbsent()`, and
-> `putIfAbsent()` for atomic compound operations.
-
-*Push deeper:* Why can't you use `containsKey()` + `put()` safely?
+> ConcurrentHashMap is thread-safe HashMap. Reads are lock-free;
+> writes lock only the affected bucket. Much better than synchronized
+> HashMap. Key methods: computeIfAbsent (atomic create-if-absent),
+> putIfAbsent, merge (atomic read-modify-write). Null keys and values
+> not allowed.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> The difference between Java 7 and Java 8 internals matters for
-> lock analysis. In Java 8, inserts to empty buckets use CAS (zero-
-> lock). The segment model limitation (16 max concurrency) is gone.
-> For metrics collection with high-contention counters, I use
-> `LongAdder` per map entry rather than atomic map values. I also
-> size `ConcurrentHashMap` explicitly at construction to avoid
-> resizing under load.
+> I use CHM's compute* methods for all conditional operations - they
+> eliminate check-then-act races. For high-frequency counters on
+> many keys, CHM.merge() or LongAdder per key is preferred. I know
+> that CHM.size() is approximate under concurrent modification; for
+> accurate counts, I maintain a separate AtomicLong. For a read-heavy
+> cache with eviction, Caffeine is better than CHM (W-TinyLFU
+> eviction, reference-based expiry, async loading).
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Mechanism
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "ConcurrentHashMap is fully consistent" | Weakly consistent: iteration may not reflect all concurrent changes | Business logic that relies on exact iteration state |
+| "get+put is atomic in CHM" | Only compute*/merge/putIfAbsent are atomic; get then put is still a race | Race conditions on check-then-act patterns |
+| "CHM allows null values" | Null values and null keys throw NullPointerException | NullPointerException on put(key, null) |
+| "synchronized HashMap and CHM perform similarly" | CHM is dramatically faster under concurrent access (no global lock) | Performance problem if choosing synchronized HashMap |
 
-- "How does ConcurrentHashMap achieve better throughput than
-  Collections.synchronizedMap()?"
+---
 
-🗣️ "`Collections.synchronizedMap()` wraps every operation with a
-synchronized block on the entire map - all reads and writes
-serialize on a single lock. `ConcurrentHashMap` uses bucket-level
-locking: in Java 8, reads use no lock (volatile reads), inserts
-to empty buckets use CAS (no lock), and inserts to non-empty
-buckets use `synchronized(bucket)` - a very short lock on just
-one bucket. Concurrent reads to different buckets never block each
-other, and concurrent writes to different buckets don't block each
-other either. The effective parallelism scales with the number of
-buckets."
+### 🚨 Failure Modes and Diagnosis
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Java 8 bucket CAS vs Java 7 segments, compound ops. |
-| Hiring Manager   | Why null values are not allowed - design reasoning. |
-| Bar Raiser       | mappingCount(), forEach parallelism, weakly consistent iteration. |
-| Peer Engineer    | "We had a lost update bug using containsKey+put on ConcurrentHashMap..." |
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Duplicate initialization | Two objects created for one key; wasted resources or side effects | Manual get+putIfAbsent instead of computeIfAbsent | Log inside creation function: should fire once per key | Replace with computeIfAbsent |
+| NullPointerException on put | NPE at put(key, null) | CHM does not allow null values | Stack trace shows CHM.put | Use Optional wrapper or sentinel value instead of null |
+| Size drift | size() returns inaccurate count | size() aggregates CounterCells; approximate under concurrent modification | Add assertion: size after N puts == N (fails under concurrency) | Maintain separate AtomicLong for exact count if needed |
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Thread-safe; vs synchronized Map; null restriction |
+| Mid | 4 min | computeIfAbsent atomic; per-bucket locking; size() approximate |
+| Senior | 8 min | Java 8 internals; compute*/merge; Caffeine vs CHM |
+| Staff | 12 min | Resize protocol; CAS vs sync in buckets; design concurrent cache |
+
+---
+
+**Q1** [CONCEPTUAL] [JUNIOR]
+
+"Why is ConcurrentHashMap preferred over Collections.synchronizedMap()?"
+
+**Answer:**
+
+Collections.synchronizedMap() wraps a HashMap with a single
+mutex (the map itself). Every operation - get, put, remove,
+containsKey, iteration - acquires the same lock. Result: even
+concurrent reads serialize. 100 reader threads get the same
+throughput as 1 reader thread.
+
+ConcurrentHashMap (Java 8+):
+- Reads are lock-free: volatile table array, wait-free for key lookup
+- Writes lock only the affected bucket (of ~16-N buckets)
+  Different buckets proceed in parallel
+- compute/merge/putIfAbsent are atomic per key
+
+Performance under 100 concurrent readers: CHM reads are non-blocking,
+all 100 read in parallel. synchronizedMap: 100 reads serialize.
+
+Additionally, CHM's compute methods eliminate the check-then-act
+race that requires external synchronization with synchronizedMap:
+```java
+// synchronizedMap: STILL requires external sync for compound ops:
+synchronized(syncMap) {
+    if (!syncMap.containsKey(k)) syncMap.put(k, v);
+}
+// CHM: atomic, no external sync needed:
+chm.putIfAbsent(k, v);
+```
+
+*What separates good from great:* Pointing out that synchronizedMap
+still requires external synchronization for compound operations -
+it does not eliminate races, only serializes individual method calls.
+
+---
+
+**Q2** [DEBUGGING] [SENIOR]
+
+"You have a ConcurrentHashMap cache with computeIfAbsent, and the
+loader function is being called more than once for the same key.
+What's wrong?"
+
+**Answer:**
+
+Likely cause: recursive update or lambda that triggers a CHM
+structural modification.
+
+CHM.computeIfAbsent documentation says: if the computation modifies
+the same map (e.g., the lambda calls compute or put on the same CHM),
+the computation may be retried. This is because the lambda runs
+inside a synchronized bucket block, and re-entrant modification
+can cause resize or rehash, breaking the block.
+
+```java
+// BUG: recursive computeIfAbsent triggers loader multiple times
+cache.computeIfAbsent(key, k -> {
+    // WRONG: modifying the same map inside the function
+    cache.put("otherKey", computeOther());  // re-entrant!
+    return loadFromDB(k);
+});
+```
+
+Fix: never modify the CHM inside the mapping function.
+
+Other cause: the lambda throws a RuntimeException on first call
+(no entry created), and a subsequent call creates the entry.
+Add logging inside the function to see how many times it fires
+and whether it throws.
+
+Third cause: multiple CHM instances or scope confusion (function
+logs to different instance than the one checked).
+
+Diagnostic:
+```java
+cache.computeIfAbsent(key, k -> {
+    log.warn("Creating entry for key: {}", k);  // count calls
+    Thread.dumpStack();  // show caller
+    return loadFromDB(k);
+});
+```
+
+*What separates good from great:* Knowing the CHM restriction that
+the mapping function must not modify the map.
+
+---
+
+### ⚖️ Comparison Table
+
+| Feature | HashMap | SynchronizedMap | ConcurrentHashMap | Caffeine |
+| --- | --- | --- | --- | --- |
+| Thread-safe | No | Yes (global lock) | Yes (per-bucket) | Yes |
+| Read concurrency | N/A | Serial | Parallel (lock-free) | Parallel |
+| Compute atomicity | No | Requires external sync | Yes | Yes |
+| Null values | Yes | Yes | No | No |
+| Eviction/TTL | No | No | No | Yes |
+| Size accuracy | Exact | Exact | Approximate | Approximate |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L2 keyword. Distributed caching with Redis/Memcached and
+cache invalidation patterns appear in L5 files.)*
+
+---
+
+### 📊 Diagram
+
+```
+JAVA 8 CONCURRENTHASHMAP INTERNAL:
+
+table[] (volatile Node[]):
+  [0] -> Node(k1,v1) -> Node(k3,v3)
+  [1] -> null
+  [2] -> Node(k2,v2)
+  ...
+
+READ (lock-free):
+  hash(key) -> index=0
+  Read volatile table[0] -> traverse chain
+  No lock acquired
+
+WRITE (per-bucket synchronized):
+  Thread A: hash(k1) -> index=0
+    synchronized(table[0]) { update k1 }
+  Thread B: hash(k2) -> index=2
+    synchronized(table[2]) { update k2 }
+  A and B run CONCURRENTLY (different buckets)
+```
+
+```mermaid
+flowchart TD
+    A[get key] --> B[hash → bucket index]
+    B --> C[read volatile table-index]
+    C --> D[traverse chain - no lock]
+    D --> E[return value]
+
+    F[put key] --> G[hash → bucket index]
+    G --> H[synchronized on bucket head]
+    H --> I[insert/update in chain]
+    I --> J[release bucket lock]
+```
+
+> **Diagram walkthrough:** Reads go directly to the volatile table
+> array and traverse the chain without acquiring any lock. Two
+> concurrent reads proceed completely independently. Writes lock only
+> the bucket's head node: Thread A locking bucket 0 and Thread B
+> locking bucket 2 proceed in parallel. Only two writes targeting
+> the same bucket serialize. With 16+ buckets, write contention is
+> distributed across buckets, giving near-linear throughput scaling
+> with thread count up to N=bucket-count.
 
 ---
 
@@ -222,9 +463,9 @@ buckets."
 
 # CopyOnWriteArrayList
 
-**Interview Weight:** high - Tests understanding of the copy-on-
-write trade-off: safe concurrent iteration vs expensive mutation.
-Interviewers want to know when this is appropriate.
+**Interview Weight:** medium - Tests knowledge of the copy-on-write
+pattern, its trade-offs, and when it is appropriate vs when it is
+catastrophic.
 
 ---
 
@@ -232,101 +473,182 @@ Interviewers want to know when this is appropriate.
 
 **30 seconds:**
 
-> `CopyOnWriteArrayList` (COWAL) is a thread-safe list where every
-> mutation (add, set, remove) creates a new copy of the underlying
-> array. Reads use the current snapshot with zero locking. The
-> trade-off: concurrent iteration is safe and lock-free (iterates
-> the snapshot at iteration start), but mutation is O(n) in time
-> and memory because of the copy. Use it for read-heavy lists that
-> are very rarely mutated.
+> CopyOnWriteArrayList creates a fresh copy of the underlying array
+> on every write (add, remove, set). Reads are lock-free: they
+> always see a stable snapshot. Write cost: O(n) for every mutation.
+> Use only when reads dramatically outnumber writes and the list is
+> small. Never use for high-write scenarios.
 
 **3 minutes (Senior):**
 
-> COWAL iterators never throw `ConcurrentModificationException`
-> because they iterate a frozen snapshot of the array from when
-> the iterator was created. Elements added after the iterator was
-> created are not visible to it. This makes COWAL iterators safe
-> for concurrent access but potentially stale.
+> The copy-on-write mechanism: the internal array reference is
+> volatile. A write acquires a lock, copies the entire array,
+> modifies the copy, then publishes the copy atomically via
+> volatile write. Any concurrent read that started before the
+> write sees the old array snapshot to completion. Reads never block.
 >
-> The write cost is real: a list with 10,000 elements copies all
-> 10,000 on each mutation. If mutations are frequent, this is
-> both CPU-intensive (copying) and GC-intensive (discarding old
-> arrays). A `ConcurrentHashMap` or a `ReadWriteLock`-guarded
-> list is more appropriate for lists with frequent mutations.
+> Use cases: event listener lists (rarely changed, frequently
+> iterated), whitelist/blacklist sets (updated occasionally,
+> checked on every request), configuration callbacks. All of these
+> share: many more reads than writes, list size is small (< few
+> hundred elements).
 >
-> The ideal use case: a list of event listeners or subscribers that
-> is set up once (or very rarely modified) and iterated by many
-> threads to dispatch events. Adding a listener creates one copy;
-> all concurrent event dispatches read the snapshot lock-free.
-> Another ideal case: configuration lists that reload rarely but
-> are read thousands of times per second.
+> When CopyOnWriteArrayList kills performance: high-write rate with
+> large lists. Each add() copies the entire array O(n). 1000 threads
+> adding to a 10,000-element list = 10,000 copies per second =
+> 10 billion element copies per second. Immediate OOM or extreme GC.
+> For high-write concurrent lists: use LinkedBlockingDeque,
+> ConcurrentLinkedDeque, or a synchronized structure.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "CopyOnWriteArrayList: read-optimized by sacrificing
+write performance."
+
+**(2) First principles:** "Readers see a consistent snapshot. How?
+Writes copy the data first, then atomically swap the reference. Reads
+use the old reference - immutable snapshot."
+
+**(3) Bridge:** "Like a shared document: to edit, you photocopy
+the whole document, edit your copy, then replace the original.
+Readers of the original never see partial edits."
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+CopyOnWriteArrayList: a thread-safe List where all write operations
+(add, set, remove) copy the internal array, modify the copy, and
+publish the copy via volatile write. Reads are always against a stable
+array snapshot and never block.
+
+**The problem it solves:**
+
+Concurrent read + write on a list. ConcurrentModificationException
+from iterating while another thread mutates. CopyOnWrite eliminates
+this: iterators hold a reference to the array snapshot at iterator
+creation time; mutations produce new arrays, not affecting live
+iterators.
+
+**How it works:**
+
+```
+INTERNAL STATE:
+  volatile Object[] array;  // current array
+  final ReentrantLock lock; // for writes only
+
+READ (lock-free):
+  Object[] snapshot = array;  // read volatile reference
+  return snapshot[index];     // read from snapshot, no lock
+
+WRITE (lock + copy):
+  lock.lock();
+  try {
+      Object[] current = array;
+      Object[] copy = Arrays.copyOf(current, current.length+1);
+      copy[copy.length-1] = element;
+      array = copy;  // volatile write - atomic publish
+  } finally { lock.unlock(); }
+
+ITERATION:
+  Iterator holds reference to array snapshot at creation time.
+  Concurrent mutations create new arrays.
+  Iterator never throws ConcurrentModificationException.
+  Iterator may not reflect concurrent adds (snapshot behavior).
+```
+
+**The key insight:**
+
+Iterators reflect the state of the list at the time the iterator
+was created. They never see subsequent modifications. This is
+"snapshot iteration" - useful when you need stable iteration over
+a rarely-changing list but do not need real-time freshness.
+
+**When to use it:**
+
+- Event listener registries: add/remove listeners rarely, fire
+  events (iterate) frequently
+- Observer pattern implementations
+- Small immutable-ish shared lists: config entries, feature flags
+
+**When NOT to use it:**
+
+- High write rate: O(n) copy on every write - catastrophic for
+  large lists or frequent mutations
+- Large lists (> few hundred elements): copy overhead dominates
+- If you need read freshness during iteration: CopyOnWriteArrayList
+  iteration reflects snapshot, not live state
+
+**Alternatives:**
+
+- CopyOnWriteArraySet: same pattern for Set semantics
+- ConcurrentLinkedDeque: concurrent linked deque, O(1) add/remove
+- LinkedBlockingDeque: bounded blocking concurrent deque
+- Collections.synchronizedList() with manual sync on iteration
+
+**First-principles derivation:**
+
+CopyOnWrite is a form of multi-version concurrency control (MVCC) -
+the same technique databases use for snapshot isolation. Each write
+creates a new version; readers hold a reference to their version
+until done. Version cleanup is via GC (old arrays are garbage
+collected when no readers reference them). This trades memory/write
+cost for zero-cost reads and full read parallelism.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Event listener dispatch - ideal COWAL use case**
+**Example 1: BAD (ArrayList + synchronized) vs GOOD (CopyOnWriteArrayList for listeners)**
 
 ```java
+// BAD: synchronized ArrayList - listeners can't fire while adding
 public class EventBus {
-    // Listeners added/removed rarely; dispatched frequently
-    private final CopyOnWriteArrayList<EventListener> listeners
-        = new CopyOnWriteArrayList<>();
+    private final List<EventListener> listeners =
+        Collections.synchronizedList(new ArrayList<>());
 
-    public void addListener(EventListener listener) {
-        listeners.add(listener);    // O(n): creates copy of array
+    public void addListener(EventListener l) {
+        listeners.add(l);  // acquires lock
     }
 
-    public void removeListener(EventListener listener) {
-        listeners.remove(listener); // O(n): creates copy of array
-    }
-
-    public void dispatch(Event event) {
-        // Iteration: zero locking, safe even if add/remove concurrent
-        for (EventListener listener : listeners) {  // iterates snapshot
-            listener.onEvent(event);
+    public void fireEvent(Event e) {
+        synchronized(listeners) {  // required for safe iteration
+            // ALL event processing serialized - contention!
+            for (EventListener l : listeners) l.onEvent(e);
         }
-        // New listeners added during dispatch are NOT seen by this iteration
-        // This is intentional: prevents ConcurrentModificationException
     }
 }
 
-// BAD: Using COWAL for a frequently mutated list
-// This would create a new array copy on every cache miss, search result add, etc.
-CopyOnWriteArrayList<SearchResult> results = new CopyOnWriteArrayList<>();
-for (Document doc : documents) {
-    if (matches(doc, query)) {
-        results.add(doc.toResult());  // O(n) copy every add!
+// GOOD: CopyOnWriteArrayList - reads (fireEvent) never block
+public class EventBus {
+    private final CopyOnWriteArrayList<EventListener> listeners =
+        new CopyOnWriteArrayList<>();
+
+    public void addListener(EventListener l) {
+        listeners.add(l);  // copies array, O(n)
+        // only called rarely - acceptable cost
+    }
+
+    public void fireEvent(Event e) {
+        // Iteration is lock-free: uses snapshot at call time
+        // Multiple threads can fire events concurrently
+        for (EventListener l : listeners) {
+            l.onEvent(e);  // no lock held during listener invocation
+        }
     }
 }
-// Better: use ArrayList in a single thread, or Collections.synchronizedList()
-// if truly needed concurrently with locks
 ```
 
-> **Code walkthrough:** The event bus pattern is the canonical COWAL
-> use case. Listener registration is rare (add/remove are O(n)).
-> Dispatch is frequent (every event = one iteration of the snapshot).
-> The snapshot semantics are correct for event dispatch: if a
-> listener is removed during dispatch, it still receives the current
-> event (it was in the snapshot). The bad example shows the anti-
-> pattern: adding to COWAL in a loop creates O(n) copies on every
-> iteration.
-
----
-
-### ⚖️ Comparison
-
-| | CopyOnWriteArrayList | Collections.synchronizedList | ArrayList + ReadWriteLock |
-|--|----------------------|------------------------------|---------------------------|
-| Read cost | O(1), no lock | O(1), acquires lock | O(1), read lock |
-| Write cost | O(n), array copy | O(n), holds lock | O(n), write lock |
-| Iteration | snapshot, no lock | needs external sync | needs read lock |
-| ConcurrentModException | never | possible without external sync | never (with lock) |
-| Use case | rare write, many reads | balanced read/write | balanced read/write |
-
-**The deciding factor:** Use COWAL when writes are very rare
-(setup once, read forever). Use `ReadWriteLock`-guarded ArrayList
-for balanced read/write with safe iteration.
+> **Code walkthrough:** The synchronized version holds the listeners
+> lock for the entire event dispatch loop. If a listener takes 10ms,
+> all concurrent event dispatchers wait. With CopyOnWriteArrayList,
+> fireEvent() reads the current array snapshot and iterates without
+> any lock. 100 concurrent event dispatchers all proceed in parallel.
+> The tradeoff: if a listener is added during iteration, it is not
+> visible to in-progress iterators - but for event buses, this is
+> acceptable (the listener will be called on the next event).
 
 ---
 
@@ -334,45 +656,149 @@ for balanced read/write with safe iteration.
 
 **Junior / Mid (0-5 years):**
 
-> `CopyOnWriteArrayList` is thread-safe for reads with no locking.
-> Writes create a new copy. Safe for iteration - never throws
-> `ConcurrentModificationException`. Use for read-heavy lists that
-> are rarely modified.
+> CopyOnWriteArrayList copies the array on every write. Reads are
+> lock-free and see a snapshot. Perfect for read-heavy, rarely-written
+> lists. Terrible for write-heavy: O(n) copy on every add.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> I use COWAL specifically for event listener registries and
-> configuration lists - write-once-read-many patterns. The memory
-> overhead (keeping old array alive until GC) is acceptable when
-> writes are rare. For any list that gets mutations at non-trivial
-> frequency, I use `ReadWriteLock`-guarded ArrayList or a different
-> data structure.
+> I use CopyOnWriteArrayList only for event listener patterns where
+> listeners are added/removed rarely and iterated frequently. For
+> anything with moderate write rates: LinkedBlockingDeque or a
+> ConcurrentLinkedDeque. The snapshot iteration semantics mean
+> listeners added during fireEvent() are not called for that event;
+> this is usually acceptable. Memory footprint doubles temporarily
+> during each write (old + new array both live until GC).
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Trade-off
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "CopyOnWrite is always thread-safe for all operations" | Compound ops (addIfAbsent) are atomic; individual get then add is still a race | Race conditions on manual check-then-add |
+| "CopyOnWriteArrayList is suitable for any concurrent list" | Write-heavy scenarios cause massive GC pressure and OOM | Using it for a high-frequency event queue |
+| "Iteration reflects live mutations" | Iterators hold snapshot - concurrent mutations are NOT visible during iteration | Business logic that relies on real-time list state during iteration |
 
-- "What is the trade-off of CopyOnWriteArrayList?"
+---
 
-🗣️ "Every mutation (add, set, remove) copies the entire underlying
-array. For a list with N elements, that is O(n) time and O(n)
-memory per mutation. Iteration is zero-cost and lock-free because
-it reads a snapshot. So `CopyOnWriteArrayList` is optimal when:
-reads are very frequent, mutations are very rare (or happen only
-at startup), and iteration does not need to see concurrent mutations.
-For lists with frequent writes, the copy overhead makes it worse
-than `Collections.synchronizedList()` or a `ReadWriteLock`-guarded list."
+### 🚨 Failure Modes and Diagnosis
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Copy semantics, iterator snapshot, O(n) write cost. |
-| Hiring Manager   | When appropriate: listener registries, config lists. |
-| Bar Raiser       | Memory impact (double array during copy), CopyOnWriteArraySet. |
-| Peer Engineer    | "We used COWAL for search results (mutated millions of times) - GC exploded..." |
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| GC pressure / OOM | Frequent GC, heap exhausted | High write rate to large CopyOnWrite list | Heap dump: many Object[] arrays; GC logs showing frequent collection | Switch to ConcurrentLinkedDeque or LinkedBlockingDeque |
+| Stale read during iteration | Listener not called for an event | Listener added after iterator snapshot was taken | Log listener list size before/after fire | Acceptable by design; document the eventual-consistency semantics |
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Copy-on-write concept; read-heavy use case |
+| Mid | 4 min | O(n) write cost; snapshot iteration; event listener pattern |
+| Senior | 7 min | Memory impact; when NOT to use; alternatives |
+
+---
+
+**Q1** [TRADE-OFF] [MID]
+
+"When would CopyOnWriteArrayList be a performance disaster?"
+
+**Answer:**
+
+When writes are frequent or the list is large:
+
+Write cost: every add/set/remove copies the entire array O(n).
+For a list of 10,000 elements, every add creates a new 10,000-element
+array. 100 adds/second = 1,000,000 element copies/second.
+
+Worst case: high-write rate + large list:
+- 1000 threads concurrently adding to a 100,000-element list
+- Each add: copy 100,000 references = ~800KB allocation
+- 1000 adds = 800MB/s allocation rate
+- GC cannot keep up: OOM, or constant full-GC pauses
+
+Indicators it is wrong:
+- List grows unboundedly (logs, events, metrics)
+- Write rate > 10% of total operations
+- List size > few hundred elements
+
+Correct alternatives:
+- Queue / buffer pattern: LinkedBlockingQueue (bounded) or
+  ConcurrentLinkedQueue (unbounded, O(1) add/poll)
+- ConcurrentLinkedDeque: concurrent deque, O(1) add at either end
+- Striped collections: partition by key to reduce per-partition rate
+
+*What separates good from great:* Providing the concrete worst-case
+scenario (high-write + large list) and the alternative collections.
+
+---
+
+### ⚖️ Comparison Table
+
+| Feature | ArrayList+synchronized | CopyOnWriteArrayList | ConcurrentLinkedDeque |
+| --- | --- | --- | --- |
+| Read cost | Lock acquired | Lock-free (snapshot) | Lock-free |
+| Write cost | O(1) append | O(n) copy | O(1) |
+| Iteration | Must hold lock | Snapshot (no CME) | Weakly consistent |
+| Use case | Low concurrency | Read-heavy, rare writes | Balanced read/write |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L2 keyword. MVCC at database scale and distributed observer
+patterns appear in L5 files.)*
+
+---
+
+### 📊 Diagram
+
+```
+COPY-ON-WRITE MECHANISM:
+
+State: array -> [A, B, C]
+
+Write (add D):
+  lock acquired
+  newArray = copy([A, B, C]) + D = [A, B, C, D]
+  volatile array = newArray   <- atomic reference swap
+  lock released
+
+Reader (started before write):
+  snapshot = [A, B, C]    <- holds old reference
+  iterates [A, B, C]      <- never sees D
+
+Reader (started after write):
+  snapshot = [A, B, C, D] <- sees new array
+  iterates [A, B, C, D]
+```
+
+```mermaid
+sequenceDiagram
+    participant W as Writer Thread
+    participant R as Reader Thread
+    participant M as volatile array ref
+
+    R->>M: read array ref → [A,B,C]
+    Note over R: starts iterating [A,B,C]
+    W->>W: copy [A,B,C] → [A,B,C,D]
+    W->>M: volatile write: new array [A,B,C,D]
+    Note over R: still iterating OLD snapshot [A,B,C] - no CME
+    Note over R: completes iteration, GC reclaims old array
+```
+
+> **Diagram walkthrough:** The reader captures the old array reference
+> before the write completes. The write atomically swaps the volatile
+> reference to the new array. The reader's snapshot is now orphaned -
+> no new readers will see it - but the in-progress reader iterates
+> it safely to completion. When the reader releases the snapshot
+> reference, the old array becomes garbage-collectible. This is
+> multi-version concurrency: the write creates a new version;
+> in-progress readers finish against their version.
 
 ---
 
@@ -380,9 +806,9 @@ than `Collections.synchronizedList()` or a `ReadWriteLock`-guarded list."
 
 # BlockingQueue Implementations
 
-**Interview Weight:** high - The standard solution for producer-
-consumer. Tests knowledge of bounded vs unbounded queues and the
-blocking semantics.
+**Interview Weight:** high - Core producer-consumer primitive.
+Tests knowledge of implementations, their characteristics, and
+when to use each.
 
 ---
 
@@ -390,149 +816,182 @@ blocking semantics.
 
 **30 seconds:**
 
-> `BlockingQueue` is the standard Java producer-consumer interface.
-> `put()` blocks when the queue is full; `take()` blocks when the
-> queue is empty. Key implementations: `ArrayBlockingQueue` (bounded,
-> array, fair optionally), `LinkedBlockingQueue` (optionally bounded,
-> better throughput via separate head/tail locks), `PriorityBlockingQueue`
-> (unbounded, priority-ordered), `SynchronousQueue` (zero capacity,
-> handoff only), `DelayQueue` (elements available only after delay).
+> BlockingQueue is the standard Java interface for thread-safe
+> producer-consumer channels. put() blocks if full; take() blocks
+> if empty. Key implementations: ArrayBlockingQueue (bounded, array),
+> LinkedBlockingQueue (optionally bounded, linked nodes),
+> PriorityBlockingQueue (ordered), SynchronousQueue (zero capacity
+> handoff). Use LinkedBlockingQueue for thread pools; ArrayBlockingQueue
+> for bounded backpressure.
 
 **3 minutes (Senior):**
 
-> `ArrayBlockingQueue` vs `LinkedBlockingQueue`: the critical
-> production difference is back-pressure. `ArrayBlockingQueue`
-> with a fixed capacity applies back-pressure: producers block
-> when full, preventing memory exhaustion. `LinkedBlockingQueue`
-> with default capacity is effectively unbounded (`Integer.MAX_VALUE`)
-> - producers never block, and the queue grows until OOM under
-> sustained overload. Always specify a capacity for `LinkedBlockingQueue`
-> in production: `new LinkedBlockingQueue<>(1000)`.
+> The choice of implementation depends on: bounded vs unbounded,
+> fairness, ordering, and performance needs.
 >
-> `LinkedBlockingQueue` has higher throughput than `ArrayBlockingQueue`
-> because it uses two separate locks (head lock for take, tail lock
-> for put), allowing concurrent put and take. `ArrayBlockingQueue`
-> uses a single lock for both.
+> ArrayBlockingQueue: fixed capacity. Useful for backpressure
+> (producers slow down or fail-fast when full). Uses one lock for
+> both read and write - slightly simpler but more contention than
+> LinkedBlockingQueue.
 >
-> `SynchronousQueue` has no capacity at all - it is a direct handoff
-> channel. A put blocks until a take arrives and vice versa.
-> This is the queue used by `Executors.newCachedThreadPool()` -
-> submitted tasks are handed off directly to a (potentially newly
-> created) thread with zero queue buffering.
+> LinkedBlockingQueue: optionally bounded (Integer.MAX_VALUE if
+> unspecified). Uses two locks (head lock for take, tail lock for
+> put) - allows simultaneous read and write from different ends.
+> Used internally by Executors.newFixedThreadPool() and
+> newCachedThreadPool().
 >
-> For the four operations on `BlockingQueue`:
-> - `offer(e)`: non-blocking, returns false if full
-> - `put(e)`: blocks until space available (or interrupted)
-> - `poll()`: non-blocking, returns null if empty
-> - `take()`: blocks until element available (or interrupted)
+> SynchronousQueue: zero capacity. put() blocks until a thread
+> calls take(); take() blocks until a thread calls put(). Direct
+> handoff - no buffering. Used by Executors.newCachedThreadPool()
+> for direct task dispatch to available threads.
+>
+> PriorityBlockingQueue: unbounded, priority-ordered. Elements
+> must be Comparable or constructor takes Comparator. Useful for
+> task prioritization.
+>
+> Performance: non-blocking poll()/offer() for time-sensitive code.
+> Bounded queues enable backpressure: a full queue signals producers
+> to slow down or apply load shedding.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "BlockingQueue: thread-safe producer-consumer queue
+with blocking semantics."
+
+**(2) First principles:** "Producer needs consumer. If queue full:
+producer waits. If queue empty: consumer waits. BlockingQueue
+implements this protocol."
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+BlockingQueue: an interface extending Queue with blocking put()
+and take() operations. Provides four sets of APIs:
+- Throws exception: add/remove/element
+- Returns special value: offer/poll/peek (non-blocking)
+- Blocks: put/take (blocking)
+- Times out: offer(e, t, unit)/poll(t, unit) (timed)
+
+**The problem it solves:**
+
+Producer threads generate work; consumer threads process it. Rates
+may differ. BlockingQueue decouples producers from consumers with
+a safe buffer. Blocking semantics handle rate mismatch automatically:
+fast producers block when consumers can't keep up (backpressure).
+
+**How it works:**
+
+```
+ARRAY BLOCKING QUEUE:
+  ArrayBlockingQueue<Task> q = new ArrayBlockingQueue<>(100);
+  // Capacity=100 enforces backpressure
+
+  Producer: q.put(task);   // blocks if q.size()==100
+            q.offer(task, 100, MILLIS); // try 100ms, return false
+  Consumer: Task t = q.take(); // blocks if empty
+            Task t = q.poll(100, MILLIS); // try 100ms, return null
+
+IMPLEMENTATION COMPARISON:
+  ArrayBlockingQueue:  1 lock (head+tail share), fixed array, bounded
+  LinkedBlockingQueue: 2 locks (separate head, tail), linked nodes
+                       optionally bounded (default: MAX_VALUE)
+  SynchronousQueue:    0 capacity - direct thread-to-thread handoff
+  PriorityBlockingQueue: unbounded, heap-ordered, no null
+
+THREAD POOL USAGE:
+  newFixedThreadPool:  LinkedBlockingQueue (unbounded - tasks queue)
+  newCachedThreadPool: SynchronousQueue (direct dispatch, no queue)
+  newSingleThreadExec: LinkedBlockingQueue (unbounded)
+```
+
+**The key insight:**
+
+SynchronousQueue has zero capacity. When a producer calls put(),
+it blocks until a consumer thread calls take(). This creates a
+direct hand-off: no buffering, tasks are never queued. This is
+why newCachedThreadPool grows unboundedly: there is no queue to
+absorb excess tasks; each task forces a new thread if no idle
+thread is available.
+
+**When to use it:**
+
+- ArrayBlockingQueue: when capacity limits are needed for backpressure
+- LinkedBlockingQueue: general producer-consumer (default for pools)
+- SynchronousQueue: direct task dispatch; task-per-request executor
+- PriorityBlockingQueue: priority-ordered task processing
+
+**When NOT to use it:**
+
+- Do not leave LinkedBlockingQueue unbounded in a production executor:
+  tasks will queue indefinitely, consuming heap
+- Do not use SynchronousQueue if producers run faster than consumers:
+  producers block; use a bounded ArrayBlockingQueue instead
+
+**Alternatives:**
+
+- Disruptor (LMAX): lock-free ring buffer for ultra-high-throughput
+- Reactive Streams (Flux/Mono): back-pressure aware, non-blocking
+
+**First-principles derivation:**
+
+ArrayBlockingQueue uses one ReentrantLock with two Conditions
+(notFull for producers, notEmpty for consumers). LinkedBlockingQueue
+uses two ReentrantLocks: takeLock (head side) and putLock (tail side).
+These can be held simultaneously (take and put do not conflict),
+allowing a producer and a consumer to proceed in parallel.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Producer-consumer with bounded queue**
+**Example 1: Bounded queue for backpressure**
 
 ```java
-// Bounded queue: producer blocks when full (back-pressure)
-BlockingQueue<LogEvent> logQueue = new LinkedBlockingQueue<>(1000);
+// GOOD: bounded ArrayBlockingQueue with backpressure
+int capacity = 1000; // queue can buffer 1000 tasks
+BlockingQueue<Task> queue =
+    new ArrayBlockingQueue<>(capacity);
 
-// Producer thread: application code logging events
-class LogProducer implements Runnable {
-    public void run() {
+// Producer: blocks if queue is full (backpressure!)
+ExecutorService producer = Executors.newSingleThreadExecutor();
+producer.submit(() -> {
+    for (Task task : tasks) {
+        try {
+            queue.put(task);  // blocks if queue full
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
+    }
+});
+
+// Consumer pool: takes from queue
+ExecutorService consumers = Executors.newFixedThreadPool(8);
+for (int i = 0; i < 8; i++) {
+    consumers.submit(() -> {
         while (!Thread.currentThread().isInterrupted()) {
-            LogEvent event = collectEvent();
             try {
-                logQueue.put(event);       // blocks if queue full
+                Task t = queue.take();  // blocks if empty
+                processTask(t);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
-    }
-}
-
-// Consumer thread: writes events to disk/remote
-class LogConsumer implements Runnable {
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                LogEvent event = logQueue.take();  // blocks if empty
-                writeToSink(event);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // drain remaining events before shutdown
-                List<LogEvent> remaining = new ArrayList<>();
-                logQueue.drainTo(remaining);
-                remaining.forEach(this::writeToSink);
-                break;
-            }
-        }
-    }
-}
-
-// Non-blocking offer/poll for timeout-based producers
-boolean accepted = logQueue.offer(event, 100, TimeUnit.MILLISECONDS);
-if (!accepted) {
-    droppedCount.increment();  // back-pressure: drop or circuit-break
+    });
 }
 ```
 
-> **Code walkthrough:** `put()` blocks when the queue reaches 1,000
-> events - this is back-pressure in action. The producer slows
-> down when the consumer cannot keep up, preventing OOM. The consumer
-> uses `take()` to block efficiently without polling. On interrupt,
-> the consumer drains remaining events before exiting - ensuring
-> all buffered events are written. `offer(event, 100ms)` implements
-> a deadline: if the queue is full after 100ms, the event is dropped
-> with a counter increment.
-
-**Example 2: SynchronousQueue and DelayQueue**
-
-```java
-// SynchronousQueue: thread pool handoff (newCachedThreadPool uses this)
-SynchronousQueue<Runnable> handoff = new SynchronousQueue<>();
-// Thread A: put(task)  - blocks until Thread B takes it
-// Thread B: take()     - blocks until Thread A puts a task
-// Zero buffering: direct producer-to-consumer handoff
-
-// DelayQueue: tasks executable after a delay
-class RetryTask implements Delayed {
-    private final long executeAt;  // System.nanoTime() + delay
-    public long getDelay(TimeUnit unit) {
-        return unit.convert(executeAt - System.nanoTime(),
-                            TimeUnit.NANOSECONDS);
-    }
-    public int compareTo(Delayed other) { /* compare executeAt */ }
-}
-DelayQueue<RetryTask> retryQueue = new DelayQueue<>();
-retryQueue.put(new RetryTask(System.nanoTime() + RETRY_DELAY_NANOS));
-// take() blocks until the first element's delay has expired
-RetryTask task = retryQueue.take();  // returns when task is due
-```
-
-> **Code walkthrough:** `SynchronousQueue` is a zero-capacity
-> rendezvous point - `put()` blocks until `take()` arrives. This
-> creates maximum back-pressure: the producer cannot continue until
-> the consumer is ready. `DelayQueue` is the standard mechanism for
-> scheduled retry, timeout-based eviction from caches, or rate-
-> limited task scheduling.
-
----
-
-### ⚖️ Comparison
-
-| Queue | Capacity | Lock | Use Case |
-|-------|----------|------|----------|
-| ArrayBlockingQueue | fixed | single | Bounded FIFO, fair option |
-| LinkedBlockingQueue | optional | two (head/tail) | Bounded FIFO, higher throughput |
-| SynchronousQueue | 0 | transfer | Direct handoff, CachedThreadPool |
-| PriorityBlockingQueue | unbounded | single | Priority task scheduling |
-| DelayQueue | unbounded | single | Scheduled/retry tasks |
-
-**The deciding factor:** Always bound `LinkedBlockingQueue` in
-production. Choose `LinkedBlockingQueue` for throughput.
-`ArrayBlockingQueue` for fair guaranteed ordering.
-`SynchronousQueue` for no buffering.
+> **Code walkthrough:** The ArrayBlockingQueue(1000) caps the
+> pending task buffer at 1000. When all 8 consumers are busy and
+> 1000 tasks are already queued, the producer's put() blocks until
+> a consumer takes a task. This is backpressure: the upstream
+> producer is slowed to the consumer's processing rate. Without
+> a bounded queue, a fast producer with slow consumers would queue
+> millions of tasks, exhausting heap.
 
 ---
 
@@ -540,45 +999,149 @@ production. Choose `LinkedBlockingQueue` for throughput.
 
 **Junior / Mid (0-5 years):**
 
-> `BlockingQueue` is the producer-consumer interface. `put()` blocks
-> when full; `take()` blocks when empty. Main implementations:
-> `LinkedBlockingQueue` (optionally bounded), `ArrayBlockingQueue`
-> (bounded), `SynchronousQueue` (zero capacity handoff).
+> BlockingQueue has put() (blocks if full) and take() (blocks if
+> empty). Main implementations: ArrayBlockingQueue (bounded),
+> LinkedBlockingQueue (optionally bounded), SynchronousQueue (zero
+> capacity). Used for producer-consumer decoupling. Much better than
+> manual wait/notify.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> In production, I always set a capacity on `LinkedBlockingQueue`.
-> An unbounded queue can cause OOM under sustained load - the producer
-> outpaces the consumer but never blocks. The queue grows until
-> heap exhaustion. Bounded queues with `offer(timeout)` give you
-> a circuit-breaker point to shed load. I also instrument `queue.size()`
-> as a metric - a queue growing toward capacity is an early warning
-> of consumer lag.
+> I choose implementation based on bounded vs unbounded and
+> handoff semantics. ArrayBlockingQueue for explicit backpressure
+> (capacity must be sized to load). LinkedBlockingQueue for general
+> use (but always size it in production - unbounded = OOM under
+> backlog). SynchronousQueue only for direct-dispatch executors
+> where the thread pool is also sized appropriately.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "LinkedBlockingQueue is bounded by default" | Default capacity is Integer.MAX_VALUE (effectively unbounded) | Heap exhaustion when consumers can't keep up |
+| "SynchronousQueue has one slot" | Zero capacity - no element is ever stored; direct handoff only | Surprising blocking behavior if no consumer is waiting |
+| "offer() is always non-blocking" | offer() without timeout is non-blocking; offer(timeout) blocks up to timeout | Using wrong offer() variant |
 
-- "What is the difference between put() and offer() on a BlockingQueue?"
+---
 
-🗣️ "`put(e)` is a blocking call: it waits indefinitely until space
-is available in the queue. `offer(e)` is non-blocking: it returns
-false immediately if the queue is full. There is also `offer(e, timeout, unit)`:
-it waits up to the timeout and returns false if still full. Use
-`put()` for producers that should block under load (back-pressure).
-Use `offer(timeout)` for producers that need to enforce a deadline
-and drop or circuit-break when the queue is overwhelmed."
+### 🚨 Failure Modes and Diagnosis
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | put vs offer vs add, ArrayBlocking vs LinkedBlocking, two-lock design. |
-| Hiring Manager   | Back-pressure and OOM prevention - production safety. |
-| Bar Raiser       | TransferQueue, drainTo(), SynchronousQueue in CachedThreadPool. |
-| Peer Engineer    | "Unbounded LinkedBlockingQueue caused our service's OOM at 3 AM..." |
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Unbounded queue growth | Heap exhaustion; OOM | LinkedBlockingQueue without capacity limit; consumers too slow | jmap -heap: queue size growing; Grafana: queue.size() metric | Add capacity limit to queue constructor; add more consumers |
+| SynchronousQueue blocking | Producer threads all BLOCKED; no throughput | Consumers cannot keep up; SynchronousQueue has no buffer | jstack: producer threads WAITING in SynchronousQueue.transfer | Switch to ArrayBlockingQueue with bounded buffer |
+| Lost tasks on shutdown | Tasks not processed after shutdownNow() | Tasks still in queue; executor discards queue on shutdown | Log queue.size() at shutdown; use awaitTermination | Drain queue manually before shutdown |
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | put/take; blocked if full/empty; main implementations |
+| Mid | 4 min | ArrayBlocking vs LinkedBlocking; SynchronousQueue; thread pool connection |
+| Senior | 7 min | Backpressure sizing; dual-lock in LinkedBlockingQueue; Disruptor |
+
+---
+
+**Q1** [COMPARISON] [SENIOR]
+
+"Why does newCachedThreadPool use SynchronousQueue?"
+
+**Answer:**
+
+newCachedThreadPool is designed to create a new thread for every
+submitted task IF no idle thread is available. SynchronousQueue
+makes this happen automatically.
+
+SynchronousQueue behavior: put(task) blocks until a thread calls
+take(task). If no thread calls take(), the executor creates a new
+thread (the thread count is unbounded). When a thread finishes its
+task, it tries to take() from the queue - if a task arrives quickly,
+the thread handles it directly (cached). If the thread waits more
+than 60 seconds with no task, it exits (cache eviction).
+
+The key insight: there is NO buffer. Tasks are never "pending in
+a queue" - they are either being processed or the producer is
+blocked. This makes the pool automatically sized to the current load:
+- Load increases: tasks arrive faster than threads can take them;
+  SynchronousQueue blocks producers; executor creates new threads
+- Load decreases: threads have no tasks; 60s keepAlive expires;
+  threads exit
+
+This is appropriate for: short-lived tasks with unpredictable bursts.
+Inappropriate for: long-running tasks (unbounded thread creation under
+load can exceed OS thread limits; OutOfMemoryError).
+
+*What separates good from great:* Explaining that SynchronousQueue
+FORCES thread creation (no buffer to absorb tasks) and the thread
+expiry mechanism (60s keepAlive).
+
+---
+
+### ⚖️ Comparison Table
+
+| Queue | Capacity | Ordering | Locks | Use In |
+| --- | --- | --- | --- | --- |
+| ArrayBlockingQueue | Fixed | FIFO | 1 (read+write share) | Bounded backpressure |
+| LinkedBlockingQueue | Optional | FIFO | 2 (head, tail separate) | General pools |
+| SynchronousQueue | 0 | N/A (handoff) | CAS | newCachedThreadPool |
+| PriorityBlockingQueue | Unbounded | Priority | 1 | Priority tasks |
+| DelayQueue | Unbounded | Delay order | 1 | Scheduled tasks |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L2 keyword. Message queue architecture (Kafka, RabbitMQ,
+backpressure with reactive streams) appears in L5 files.)*
+
+---
+
+### 📊 Diagram
+
+```
+PRODUCER-CONSUMER WITH BLOCKINGQUEUE:
+
+Producer (fast)   BlockingQueue    Consumer (slower)
+    |            [capacity=100]         |
+    +--put()-->  [##########99]         |
+    |            [##########99]  <--take()--+
+    |            [##########98]         |
+    |            ...                    |
+    +--put()-->  [##########100]        |  <- full!
+    |  BLOCKED   (backpressure)         |
+    |            [##########99]  <--take()--+
+    |  UNBLOCKED                        |
+```
+
+```mermaid
+flowchart LR
+    P[Producer put] --> B{Queue full?}
+    B -->|Yes| W[Block WAITING]
+    B -->|No| E[Enqueue element]
+    W --> B
+    C[Consumer take] --> D{Queue empty?}
+    D -->|Yes| V[Block WAITING]
+    D -->|No| F[Dequeue element]
+    E --> G{Waiting consumers?}
+    G -->|Yes| H[Signal consumer]
+    F --> I{Waiting producers?}
+    I -->|Yes| J[Signal producer]
+```
+
+> **Diagram walkthrough:** The capacity diagram shows backpressure
+> in action: the producer fills the queue to capacity (100) and
+> then blocks. Only when a consumer takes an element does the queue
+> drop below capacity, signaling the producer to resume. This is
+> automatic rate matching: the producer is throttled to the consumer's
+> processing speed. The flowchart shows the blocking and signaling
+> protocol for both put() and take(), matching the wait/notifyAll
+> pattern discussed in the L1 file.
 
 ---
 
@@ -586,9 +1149,9 @@ and drop or circuit-break when the queue is overwhelmed."
 
 # ConcurrentLinkedQueue
 
-**Interview Weight:** high - Tests knowledge of non-blocking,
-lock-free queue for high-throughput scenarios. Interviewers probe
-the difference from BlockingQueue.
+**Interview Weight:** medium - Non-blocking lock-free queue.
+Tests knowledge of lock-free algorithms and when to prefer
+ConcurrentLinkedQueue over BlockingQueue.
 
 ---
 
@@ -596,119 +1159,158 @@ the difference from BlockingQueue.
 
 **30 seconds:**
 
-> `ConcurrentLinkedQueue` is a non-blocking, lock-free, unbounded
-> thread-safe FIFO queue implemented using CAS operations on a
-> linked list. Key difference from `BlockingQueue`: it never blocks.
-> `poll()` returns null if empty (never waits). `offer()` always
-> returns true (unbounded). Use it for high-throughput task dispatch
-> where producers and consumers run concurrently and you want
-> non-blocking semantics.
+> ConcurrentLinkedQueue is a lock-free, unbounded, non-blocking
+> concurrent queue. It uses CAS operations on node references.
+> It never blocks: poll() returns null if empty (no blocking).
+> Best for low-latency pipelines where blocking is unacceptable.
+> Unlike BlockingQueue, it provides no blocking semantics - callers
+> must handle the empty/null case explicitly.
 
 **3 minutes (Senior):**
 
-> `ConcurrentLinkedQueue` uses Michael-Scott queue algorithm: a
-> linked list with CAS-based head and tail updates. Inserts CAS
-> the tail pointer; removes CAS the head pointer. Multiple threads
-> can insert and remove simultaneously without locking. The
-> performance characteristic: very low overhead under low-to-moderate
-> contention; under very high contention, CAS retries increase.
+> ConcurrentLinkedQueue implements a non-blocking queue algorithm
+> (Michael-Scott queue): enqueue CASes the tail.next pointer;
+> dequeue CASes the head pointer. If a CAS fails (contention),
+> the operation retries. No thread ever blocks; failed CAS operations
+> retry immediately.
 >
-> The non-blocking nature is both the strength and the constraint.
-> There is no `take()` method - you call `poll()` and get null if
-> empty. If you need blocking semantics (wait for an element), you
-> must poll in a loop with sleep - a busy-wait anti-pattern. Use
-> `LinkedBlockingQueue` instead when you need blocking.
+> Use cases: work queues where latency matters more than throughput
+> (gaming, trading, real-time event processing), multi-producer
+> multi-consumer scenarios where blocking would cause cascading
+> delays, and as an intermediate buffer where the consumer checks
+> periodically (poll in a loop) rather than blocking.
 >
-> `size()` is O(n) - it traverses the list to count. Never call
-> `size()` in production in a loop; use `isEmpty()` for existence
-> checks (O(1)).
->
-> Typical use: high-throughput event processing where the producer
-> never needs to block on the consumer, and the consumer polls
-> continuously. Also used in the `ForkJoinPool` work-stealing
-> deques.
+> Limitations: unbounded (no backpressure - heap can grow without
+> limit), no blocking API (cannot sleep waiting for items), size()
+> is O(n) - traverses the entire queue. For most producer-consumer
+> patterns, BlockingQueue is simpler and sufficient. ConcurrentLinkedQueue
+> for latency-critical or non-blocking architectures.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "ConcurrentLinkedQueue: lock-free non-blocking queue."
+
+**(2) First principles:** "CAS on head/tail pointers. No lock = no
+blocking. Retry on CAS failure."
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+ConcurrentLinkedQueue: an unbounded, thread-safe, non-blocking FIFO
+queue. Implemented using Michael-Scott non-blocking queue algorithm.
+Operations use CAS on internal node pointers.
+
+**The problem it solves:**
+
+Blocking queues (BlockingQueue) suspend threads that find the queue
+empty. For latency-sensitive systems, thread suspension introduces
+OS scheduler latency (microseconds). ConcurrentLinkedQueue never
+suspends; callers busy-check or periodically poll.
+
+**How it works:**
+
+```
+MICHAEL-SCOTT NON-BLOCKING ENQUEUE:
+  Node newNode = new Node(value);
+  while (true) {
+      Node t = tail;
+      Node next = t.next;
+      if (next == null) {
+          // tail is last node - try to enqueue
+          if (t.next.CAS(null, newNode)) {  // CAS tail.next
+              tail.CAS(t, newNode);  // advance tail (best effort)
+              return;
+          }
+      } else {
+          // another thread added; help advance tail
+          tail.CAS(t, next);
+      }
+  }
+
+KEY OPERATIONS:
+  offer(e)  - enqueue (non-blocking, always succeeds)
+  poll()    - dequeue or null if empty (non-blocking)
+  peek()    - see head without removing
+  isEmpty() - check (weakly consistent)
+  size()    - O(n) - traverses entire queue
+```
+
+**The key insight:**
+
+size() is O(n) in ConcurrentLinkedQueue (it traverses the queue).
+Never call size() in a hot path or tight loop. Use isEmpty() (O(1))
+to check emptiness.
+
+**When to use it:**
+
+- Work pipelines where producers and consumers run continuously
+  (no need to block)
+- Low-latency dispatch where OS thread park/unpark is too slow
+- Multiple producers, multiple consumers, no capacity needed
+
+**When NOT to use it:**
+
+- When you need blocking (consumers sleeping until work arrives):
+  use BlockingQueue
+- When you need backpressure (bounded capacity): use ArrayBlockingQueue
+- When you need size() often: O(n) size is expensive
+
+**Alternatives:**
+
+- ArrayBlockingQueue/LinkedBlockingQueue: blocking with capacity
+- LinkedTransferQueue: combines non-blocking and blocking; can hand
+  off directly to a waiting consumer
+
+**First-principles derivation:**
+
+The Michael-Scott algorithm maintains two CAS pointers: head (for
+dequeue) and tail (for enqueue). Each operation CAS on exactly one
+pointer and retries if contended. A key design: even partially-
+completed operations are "helped" by other threads (if tail.next
+is non-null, another thread advances tail). This prevents ABA-style
+stuck states.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Non-blocking producer-consumer**
+**Example 1: BAD (polling with size()) vs GOOD (isEmpty() + poll)**
 
 ```java
-ConcurrentLinkedQueue<Event> eventQueue = new ConcurrentLinkedQueue<>();
+// BAD: size() is O(n) - expensive in hot path
+ConcurrentLinkedQueue<Task> queue = new ConcurrentLinkedQueue<>();
 
-// Producer: non-blocking, never waits
-void produceEvents() {
-    while (running) {
-        Event e = generateEvent();
-        eventQueue.offer(e);  // always returns true (unbounded)
-        // Producer never blocks, never slows down for the consumer
-        // Risk: if consumer is slow, memory grows unbounded
+// Production thread:
+while (true) {
+    if (queue.size() > 0) {       // O(n) traversal each check!
+        Task t = queue.poll();    // may return null if concurrent poll
+        if (t != null) process(t);
     }
 }
 
-// Consumer: poll-based (non-blocking)
-void consumeEvents() {
-    while (running) {
-        Event e = eventQueue.poll();  // returns null if empty
-        if (e == null) {
-            // Empty: brief sleep to avoid CPU spin
-            LockSupport.parkNanos(1_000_000L);  // 1ms park
-            continue;
-        }
-        processEvent(e);
-    }
-}
-
-// BAD: Busy-wait without sleep - 100% CPU on empty queue
-// while (running) {
-//     Event e = eventQueue.poll();
-//     if (e != null) processEvent(e);
-//     // If queue empty: spins 100M times/second, pegs CPU
-// }
-
-// GOOD alternative: batch drain to reduce overhead
-List<Event> batch = new ArrayList<>(100);
-while (running) {
-    // Drain up to 100 events atomically (not truly atomic, but fast)
-    Event e;
-    int count = 0;
-    while ((e = eventQueue.poll()) != null && count++ < 100) {
-        batch.add(e);
-    }
-    if (!batch.isEmpty()) {
-        processBatch(batch);
-        batch.clear();
+// GOOD: isEmpty() is O(1), poll() returns null safely
+while (true) {
+    Task t = queue.poll();        // returns null if empty
+    if (t != null) {
+        process(t);
     } else {
-        LockSupport.parkNanos(100_000L);  // 0.1ms if empty
+        // queue empty - back off or spin
+        Thread.onSpinWait();      // CPU hint for spin-wait
+        // or: Thread.sleep(1) for lower CPU usage
     }
 }
 ```
 
-> **Code walkthrough:** `ConcurrentLinkedQueue` is truly non-blocking:
-> `offer()` never blocks (unbounded). `poll()` returns null immediately
-> if empty. The consumer must handle the null case without busy-
-> waiting. The batch drain pattern is more efficient: draining
-> multiple elements per iteration amortizes the per-element
-> overhead. The `parkNanos` sleep prevents CPU spinning when the
-> queue is consistently empty.
-
----
-
-### ⚖️ Comparison
-
-| | ConcurrentLinkedQueue | LinkedBlockingQueue |
-|--|----------------------|---------------------|
-| Blocking | never | put() blocks when full, take() blocks when empty |
-| Bound | unbounded | optionally bounded |
-| Empty check | poll() returns null | take() blocks |
-| Size | O(n) - avoid | O(1) approximate |
-| Use case | Non-blocking high-throughput | Producer-consumer with back-pressure |
-| Algorithm | CAS linked list | Two-lock linked list |
-
-**The deciding factor:** Need blocking semantics or back-pressure
-= `LinkedBlockingQueue`. Need non-blocking, low-latency, non-blocking
-dequeue = `ConcurrentLinkedQueue`.
+> **Code walkthrough:** size() traverses the entire linked list to
+> count nodes - O(n). Calling it on every iteration of a tight loop
+> with a million-element queue is catastrophic. poll() is O(1) and
+> returns null when empty - the pattern `t = poll(); if (t != null)
+> process(t)` is the correct idiom. Thread.onSpinWait() is a CPU hint
+> (Java 9+) that tells the CPU this is a spin-wait loop, enabling
+> energy-efficient spinning (PAUSE instruction on x86).
 
 ---
 
@@ -716,44 +1318,154 @@ dequeue = `ConcurrentLinkedQueue`.
 
 **Junior / Mid (0-5 years):**
 
-> `ConcurrentLinkedQueue` is a thread-safe, non-blocking queue.
-> `offer()` adds elements without blocking. `poll()` removes
-> and returns the head or null if empty. Unlike `BlockingQueue`,
-> it never blocks.
+> ConcurrentLinkedQueue is a non-blocking lock-free queue. offer()
+> always succeeds (unbounded). poll() returns null if empty. Never
+> blocks. Use when you don't need blocking; use BlockingQueue when
+> you do. Key gotcha: size() is O(n).
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> I use `ConcurrentLinkedQueue` in event-processing pipelines where
-> I want zero blocking overhead at the producer. The consumer runs
-> on a dedicated thread polling in a tight loop with minimal sleep.
-> For throughput monitoring, I track queue depth (polling size() is
-> too expensive - I maintain a separate AtomicLong counter) as a
-> consumer lag metric.
+> I use ConcurrentLinkedQueue in event-driven or reactive pipelines
+> where the consumer thread is always running and polling. For latency-
+> critical hot paths (trading systems, game servers), the absence of
+> OS park/unpark overhead is significant. For most CRUD services,
+> LinkedBlockingQueue is simpler. I know that LinkedTransferQueue
+> combines non-blocking and blocking modes and is often the best of
+> both worlds.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Definition
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "ConcurrentLinkedQueue is bounded" | Unbounded - grows indefinitely if consumers can't keep up | OOM under backlog |
+| "size() is O(1)" | size() is O(n) - traverses queue | Performance hotspot in tight loops |
+| "poll() blocks if empty" | poll() returns null immediately if empty | NullPointerException if result not null-checked |
 
-- "When would you use ConcurrentLinkedQueue vs BlockingQueue?"
+---
 
-🗣️ "`ConcurrentLinkedQueue` when I need non-blocking semantics:
-the producer should never wait, and the consumer handles empty-
-queue gracefully by polling with backoff. `BlockingQueue` when I
-need back-pressure: the producer should block when the consumer
-is overwhelmed, preventing OOM from queue growth. Most production
-producer-consumer systems benefit from back-pressure, so
-`BlockingQueue` with a bounded capacity is the safer default."
+### 🚨 Failure Modes and Diagnosis
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | CAS-based implementation, size() O(n), non-blocking contract. |
-| Hiring Manager   | Trade-off vs BlockingQueue, when to use each. |
-| Bar Raiser       | Michael-Scott queue algorithm, work-stealing deques. |
-| Peer Engineer    | "Non-blocking queue + busy-wait consumer burned 100% CPU on quiet servers..." |
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Memory growth | Heap increases unboundedly | Producers faster than consumers; no capacity limit | Monitor queue size (track enqueue/dequeue rates) | Switch to bounded BlockingQueue with backpressure |
+| High CPU in empty queue | CPU at 100% despite no work | Tight poll() loop with no back-off | CPU profiler shows Thread.poll() loop | Add Thread.onSpinWait() or Thread.sleep(1) in empty case |
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Non-blocking; poll returns null; unbounded |
+| Mid | 4 min | CAS internals; vs BlockingQueue; size() cost |
+| Senior | 7 min | Michael-Scott algorithm; LinkedTransferQueue; use in reactive |
+
+---
+
+**Q1** [COMPARISON] [MID]
+
+"ConcurrentLinkedQueue vs LinkedBlockingQueue - when do you choose each?"
+
+**Answer:**
+
+ConcurrentLinkedQueue: choose when:
+- Consumer is always running (event loop, reactive thread)
+- Latency matters: blocking and OS park/unpark introduce microseconds;
+  CAS retry is nanoseconds
+- Non-blocking API fits: caller can handle null and retry
+
+LinkedBlockingQueue: choose when:
+- Consumer should sleep when no work is available (blocking take())
+- Capacity bounding is needed (provide capacity in constructor)
+- Simpler code: blocking semantics reduce explicit null-check loops
+
+Performance comparison: under high contention with two locks
+(head lock + tail lock), LinkedBlockingQueue allows simultaneous
+enqueue and dequeue. ConcurrentLinkedQueue uses single-pointer CAS
+but is fully non-blocking. For throughput-heavy pipelines, both
+perform similarly; CLQ wins on latency tail (P99) because no thread
+ever blocks.
+
+Typical use:
+- Thread pool task queue: LinkedBlockingQueue (pool threads block
+  waiting for tasks)
+- Reactive event pipeline: ConcurrentLinkedQueue (event loop polls)
+- High-frequency trading: ConcurrentLinkedQueue or Disruptor
+
+*What separates good from great:* Knowing that LinkedTransferQueue
+(Java 7+) is a better choice when you want both non-blocking and
+blocking modes with direct handoff capability.
+
+---
+
+### ⚖️ Comparison Table
+
+| Feature | ConcurrentLinkedQueue | LinkedBlockingQueue | ArrayBlockingQueue |
+| --- | --- | --- | --- |
+| Blocking | No | Yes | Yes |
+| Bounded | No | Optional | Yes |
+| size() | O(n) | O(1) | O(1) |
+| Backpressure | No | Yes (bounded) | Yes |
+| Latency | Lowest (CAS) | Low (lock) | Low (lock) |
+| Use case | Non-blocking pipeline | Thread pool queue | Bounded backpressure |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L2 keyword. Lock-free ring buffer (Disruptor), non-blocking
+IO event loops, and reactive backpressure appear in L4-L5 files.)*
+
+---
+
+### 📊 Diagram
+
+```
+MICHAEL-SCOTT NON-BLOCKING QUEUE:
+
+Before enqueue(D):
+  [sentinel] --> [A] --> [B] --> [C]
+   head                           tail
+
+Enqueue(D) - CAS tail.next:
+  [sentinel] --> [A] --> [B] --> [C] --> [D]
+   head                        tail
+
+Advance tail:
+  [sentinel] --> [A] --> [B] --> [C] --> [D]
+   head                                tail(updated)
+
+Dequeue():
+  CAS head to first real node (A)
+  Return A's value
+```
+
+```mermaid
+sequenceDiagram
+    participant T1 as Thread A (enqueue)
+    participant T2 as Thread B (enqueue)
+    participant Q as Queue tail
+
+    T1->>Q: read tail=C
+    T2->>Q: read tail=C
+    T1->>Q: CAS(C.next, null→D) SUCCESS
+    T2->>Q: CAS(C.next, null→E) FAIL (C.next is now D!)
+    T2->>Q: help advance tail to D
+    T2->>Q: read tail=D
+    T2->>Q: CAS(D.next, null→E) SUCCESS
+```
+
+> **Diagram walkthrough:** Two threads concurrently try to enqueue.
+> Thread A wins the CAS to append D to tail C. Thread B's CAS fails
+> because C.next is no longer null. Thread B "helps" by advancing
+> the tail pointer to D (the algorithm helps partially-complete
+> operations to prevent stuck states). Then B retries, appending E
+> after D. No data is lost; both enqueues complete. This is the core
+> of non-blocking algorithm design: help others rather than blocking.
 
 ---
 
@@ -761,9 +1473,9 @@ producer-consumer systems benefit from back-pressure, so
 
 # Concurrent Collections Design
 
-**Interview Weight:** high - Staff-level synthesis question.
-Tests ability to articulate the design principles behind concurrent
-collections and apply them to new scenarios.
+**Interview Weight:** medium - Tests ability to choose the right
+collection for the concurrency context, and knowledge of the
+design principles behind these collections.
 
 ---
 
@@ -771,102 +1483,171 @@ collections and apply them to new scenarios.
 
 **30 seconds:**
 
-> Concurrent collections follow three design patterns: (1) Lock
-> striping - divide the data into independent segments, each with
-> its own lock (ConcurrentHashMap). (2) Copy-on-write - mutations
-> create a new copy, reads operate on the current snapshot (COWAL).
-> (3) Non-blocking algorithms - CAS-based operations without locks
-> (`ConcurrentLinkedQueue`, `AtomicInteger`). The right choice
-> depends on read/write ratio, need for blocking semantics,
-> and consistency requirements.
+> Choosing a concurrent collection: identify the access pattern
+> (read-heavy, write-heavy, or balanced), the operation type
+> (compound atomic or individual), capacity requirements (bounded
+> or unbounded), and blocking semantics needed. Map of these
+> dimensions to the correct collection, then verify with load testing.
 
 **3 minutes (Senior):**
 
-> Every concurrent collection design trades some property for
-> another. `ConcurrentHashMap` trades memory (overhead of per-bucket
-> sync objects) and iteration consistency (weakly consistent) for
-> concurrent-write throughput. `CopyOnWriteArrayList` trades write
-> performance (O(n) copy) for zero-cost, lock-free reads and safe
-> iteration. `BlockingQueue` trades potential blocking (producers
-> pause) for bounded memory and back-pressure. `ConcurrentLinkedQueue`
-> trades blocking capability for zero-lock throughput.
+> The three design axes: (1) Synchronization strategy - lock-based
+> (ConcurrentHashMap per-bucket, BlockingQueue), lock-free/CAS
+> (ConcurrentLinkedQueue, AtomicInteger), or copy-on-write
+> (CopyOnWriteArrayList). (2) Blocking vs non-blocking - BlockingQueue
+> sleeps threads; ConcurrentLinkedQueue returns null. (3) Bounded
+> vs unbounded - bounded provides backpressure and heap protection.
 >
-> The collection `fail-fast` vs `fail-safe` distinction:
-> `ArrayList`, `HashMap`, and standard collections throw
-> `ConcurrentModificationException` if modified during iteration
-> (fail-fast). Concurrent collections (`ConcurrentHashMap`,
-> `CopyOnWriteArrayList`) use weakly consistent iterators that
-> never throw (fail-safe but may not reflect recent mutations).
+> Common pitfall: using a thread-safe collection but accessing it
+> via non-atomic compound operations. ConcurrentHashMap is thread-safe;
+> get(k) + put(k, v+1) is not - use merge() instead. Collections
+> provide atomic individual operations; compound logic must use the
+> atomic compound methods (compute*, merge, putIfAbsent).
 >
-> Design principle: the right concurrent collection eliminates
-> the need for external synchronization entirely. If you find
-> yourself writing `synchronized (map) { ... }` around a
-> `ConcurrentHashMap` operation, either the operation should be
-> expressed as `merge()`, `computeIfAbsent()`, etc., or you need
-> a different data structure entirely.
+> Design principle: prefer higher-level abstractions. Prefer BlockingQueue
+> over wait/notify. Prefer ConcurrentHashMap over synchronized HashMap.
+> Prefer ExecutorService over raw threads. The JDK concurrent collections
+> are written by concurrency experts, tested at scale, and handle
+> corner cases that manual implementations miss.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "Choosing the right concurrent collection for the
+access pattern and semantics needed."
+
+**(2) First principles:** "What access pattern? Read-heavy, write-heavy,
+or mixed? Blocking or non-blocking? Bounded or unbounded?"
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+The java.util.concurrent package provides a set of concurrent
+collection implementations covering common patterns. Each is designed
+for a specific access pattern and makes explicit trade-offs.
+
+**The problem it solves:**
+
+Manual synchronization is error-prone: developers miss compound
+operation races, use wrong lock objects, or choose inefficient
+lock granularity. The concurrent collections encode proven,
+correct, efficient implementations.
+
+**How it works:**
+
+```
+COLLECTION SELECTION DECISION TREE:
+
+Map:
+  Thread-safe? -> ConcurrentHashMap (atomic compound ops)
+  All-or-nothing iteration? -> synchronizedMap with external lock
+
+List:
+  Read-heavy, rare writes, no blocking? -> CopyOnWriteArrayList
+  Write-heavy or large? -> ConcurrentLinkedDeque
+  Producer-consumer? -> BlockingQueue implementation
+
+Queue:
+  Need blocking? -> LinkedBlockingQueue or ArrayBlockingQueue
+  Need backpressure? -> ArrayBlockingQueue (bounded)
+  Non-blocking, latency? -> ConcurrentLinkedQueue
+  Priority ordered? -> PriorityBlockingQueue
+
+Counter:
+  Low contention? -> AtomicInteger/AtomicLong
+  High contention (10+ threads)? -> LongAdder
+
+COMPOUND OPERATION PATTERN:
+  WRONG: if (!map.containsKey(k)) map.put(k, v);  // race!
+  RIGHT: map.putIfAbsent(k, v);                   // atomic
+
+  WRONG: v = map.get(k); map.put(k, f(v));        // race!
+  RIGHT: map.compute(k, (key, val) -> f(val));     // atomic
+```
+
+**The key insight:**
+
+Thread-safe collections provide atomic individual operations.
+Compound logic requires the atomic compound methods. Calling two
+thread-safe methods in sequence is NOT atomic unless both are part
+of an atomic compound operation (compute, merge, putIfAbsent, etc.).
+
+**When to use each design strategy:**
+
+- Per-bucket locking (ConcurrentHashMap): balanced read/write access
+  to a map; fine-grained write parallelism
+- Copy-on-write (CopyOnWriteArrayList): read-dominant with rare writes
+- Non-blocking CAS (ConcurrentLinkedQueue): low-latency pipelines
+- Blocking (BlockingQueue): producer-consumer decoupling with
+  potential rate mismatch
+
+**When NOT to use each:**
+
+- Per-bucket: when all-or-nothing map consistency is needed
+  (lock the whole map externally)
+- Copy-on-write: write-heavy; high memory churn
+- Non-blocking: when backpressure is needed
+- Blocking: when latency is critical
+
+**Alternatives:**
+
+For specialized needs: Disruptor (ultra-high-throughput ring buffer),
+Caffeine (concurrent cache), reactive streams (back-pressure pipeline).
+
+**First-principles derivation:**
+
+All concurrent collections reduce to: (1) isolation of shared state
+into minimal lockable units (per-bucket, per-node), (2) CAS for
+single-word atomicity, (3) volatile for visibility without locking,
+(4) copy-on-write for read isolation. No single mechanism is best
+for all access patterns; choosing the right one requires understanding
+the pattern first.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Choosing the right concurrent collection**
+**Example 1: Common wrong patterns vs correct patterns**
 
 ```java
-// Scenario: Metrics counters, updated from many threads, read periodically
+// WRONG PATTERN 1: non-atomic compound check-then-put on CHM
+ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+// Race: both threads see map.get("x")==null, both put
+if (map.get("x") == null) map.put("x", 1);  // RACE!
+// CORRECT:
+map.putIfAbsent("x", 1);
+// Or if init is expensive:
+map.computeIfAbsent("x", k -> expensiveInit(k));
 
-// BAD: Synchronized HashMap - all operations serialize
-Map<String, Long> metrics = new HashMap<>();
-synchronized (metrics) {
-    metrics.merge("requests", 1L, Long::sum);
-}
-// BAD: ConcurrentHashMap with external synchronization
-ConcurrentHashMap<String, Long> m = new ConcurrentHashMap<>();
-synchronized (m) { m.put("k", m.getOrDefault("k", 0L) + 1); }
-// External sync defeats ConcurrentHashMap purpose
+// WRONG PATTERN 2: manual increment on CHM value
+Integer count = map.get(key);
+map.put(key, count == null ? 1 : count + 1);  // RACE!
+// CORRECT:
+map.merge(key, 1, Integer::sum);
 
-// GOOD: ConcurrentHashMap with atomic merge
-ConcurrentHashMap<String, LongAdder> metrics2 = new ConcurrentHashMap<>();
-metrics2.computeIfAbsent("requests", k -> new LongAdder()).increment();
-// ConcurrentHashMap for safe creation, LongAdder for high-contention increment
+// WRONG PATTERN 3: CopyOnWrite for write-heavy task queue
+List<Task> tasks = new CopyOnWriteArrayList<>();
+tasks.add(task);  // O(n) copy every time! Memory pressure
+// CORRECT for task queue:
+BlockingQueue<Task> tasks = new LinkedBlockingQueue<>(1000);
+tasks.put(task);
 
-// GOOD: For read-heavy config, CopyOnWriteArrayList for listeners,
-//       BlockingQueue for pipeline, CLQ for non-blocking dispatch:
-
-// Read-heavy lookup (cache-like):
-ConcurrentHashMap<String, Config> config = new ConcurrentHashMap<>();
-
-// Event listener registry (set-once, read-many):
-CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<>();
-
-// Task pipeline with back-pressure:
-LinkedBlockingQueue<Task> pipeline = new LinkedBlockingQueue<>(500);
-
-// High-throughput event dispatch (no back-pressure):
-ConcurrentLinkedQueue<Event> events = new ConcurrentLinkedQueue<>();
+// WRONG PATTERN 4: size() check on ConcurrentLinkedQueue
+if (queue.size() > 0) processNext();  // O(n) size!
+// CORRECT:
+Task t = queue.poll();
+if (t != null) process(t);
 ```
 
-> **Code walkthrough:** The metrics pattern combines `ConcurrentHashMap`
-> (thread-safe map creation) with `LongAdder` (thread-safe high-
-> contention counter per key). This is the standard pattern for
-> metrics collection. Each tool handles the part it is best at:
-> map operations at the ConcurrentHashMap level, high-contention
-> counting at the LongAdder level.
-
----
-
-### ⚖️ Comparison
-
-| Collection | Pattern | Read Perf | Write Perf | Blocking | Best For |
-|------------|---------|-----------|------------|----------|----------|
-| ConcurrentHashMap | Lock striping | O(1), no lock | O(1), per-bucket | no | Thread-safe map |
-| CopyOnWriteArrayList | Copy-on-write | O(1), no lock | O(n), copies all | no | Rare-write list |
-| LinkedBlockingQueue | Two-lock list | O(1), read lock | O(1), write lock | yes | Bounded P-C queue |
-| ConcurrentLinkedQueue | CAS linked | O(1), no lock | O(1), CAS | no | Non-blocking queue |
-| AtomicInteger | CAS | O(1) | O(1), CAS retry | no | Single variable |
-
-**The deciding factor:** Match the pattern to the workload:
-read-heavy → lock striping or copy-on-write. Write-heavy → atomic/CAS.
-Need blocking semantics → BlockingQueue.
+> **Code walkthrough:** Four patterns, four mistakes. Pattern 1:
+> get+put on CHM is a check-then-act race; use putIfAbsent or
+> computeIfAbsent. Pattern 2: get+put is a read-modify-write race;
+> use merge() for atomic increment. Pattern 3: CopyOnWrite is O(n)
+> per write; task queues need BlockingQueue. Pattern 4: size() on
+> CLQ is O(n) traversal; use poll() and null-check. Each mistake
+> is a race condition or performance bug that will appear in production.
 
 ---
 
@@ -874,44 +1655,240 @@ Need blocking semantics → BlockingQueue.
 
 **Junior / Mid (0-5 years):**
 
-> Java concurrent collections use three patterns: lock striping
-> (ConcurrentHashMap), copy-on-write (COWAL), and non-blocking CAS
-> (CLQ, Atomic types). Choose based on read/write ratio and whether
-> you need blocking semantics.
+> Choose by access pattern: read-heavy map -> ConcurrentHashMap.
+> Producer-consumer -> BlockingQueue. Read-heavy list -> CopyOnWrite.
+> High-contention counter -> LongAdder. Always use atomic compound
+> methods (computeIfAbsent, merge) instead of manual get+put.
 
 ---
 
 **Senior / Staff (5+ years):**
 
-> When designing a concurrent component, I ask: what is the read/
-> write ratio? What are the consistency requirements for iteration?
-> Is back-pressure needed? From those answers, the collection choice
-> follows. I never add external synchronization to concurrent
-> collections - if I need an external lock, the collection is wrong
-> for the use case.
+> My selection framework: identify (1) read/write ratio, (2) compound
+> operation needs, (3) blocking vs non-blocking, (4) bounded vs
+> unbounded. Then match to the collection. I verify under realistic
+> concurrency with jcstress or load tests. I avoid manual lock-based
+> implementations when a JDK concurrent collection exists - the JDK
+> implementations handle corner cases (resize, ABA, spurious wakeup)
+> that manual code misses.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
 
-#### Deep Dive
+| Misconception | Reality | Risk |
+| --- | --- | --- |
+| "Using a concurrent collection makes my code thread-safe" | Concurrent collections are individually atomic; compound multi-step operations still need atomic methods | Race conditions on check-then-act patterns |
+| "I should add synchronized to methods using ConcurrentHashMap" | Adding synchronized blocks defeats the purpose; use CHM's atomic methods | Performance back to serial; also doesn't fix compound races |
+| "Collections.synchronizedX and concurrent collections are equivalent" | synchronizedX uses a global lock; concurrent collections use fine-grained locking | Huge performance difference under concurrent access |
 
-- "Why should you never synchronize externally on ConcurrentHashMap?"
+---
 
-🗣️ "External synchronization on `ConcurrentHashMap` defeats its
-purpose. `ConcurrentHashMap` is designed so that individual atomic
-operations (get, put, merge, computeIfAbsent) are thread-safe without
-external locking. Adding `synchronized (map) { map.put(...) }` creates
-a full-map lock, degrading performance to `synchronizedMap` levels.
-If you find yourself needing external sync, it means the compound
-operation you need is not available natively. In that case, use
-the `compute()` or `merge()` methods instead, which are internally
-atomic. If the operation is truly complex, `synchronized` on a
-dedicated lock with an inner `HashMap` may be clearer."
+### 🚨 Failure Modes and Diagnosis
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Three patterns, weakly consistent vs fail-fast, design principles. |
-| Hiring Manager   | Choosing the right tool for a given scenario. |
-| Bar Raiser       | SkipList-based collections (ConcurrentSkipListMap), wait-free vs lock-free. |
-| Peer Engineer    | "We added synchronized around our ConcurrentHashMap and wondered why it was slow..." |
+| Failure | Symptom | Root Cause | Diagnostic | Fix |
+| --- | --- | --- | --- | --- |
+| Double initialization in cache | Expensive computation called twice for same key | Manual get+put instead of computeIfAbsent | Log inside creation function | Use computeIfAbsent |
+| Lost counter increments | Metric counts slightly wrong | Manual get+put for increment | Load test: final count != expected | Use merge(key, 1, Integer::sum) |
+| Deadlock with synchronized wrapper | Application hangs | External synchronized block + internal lock in synchronizedMap | jstack: circular lock dependency | Use ConcurrentHashMap; no external sync needed |
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Level | Time | Expected Depth |
+| --- | --- | --- |
+| Junior | 2 min | Which collection for which use case |
+| Mid | 4 min | Compound operation races; collection selection framework |
+| Senior | 8 min | Trade-off analysis; design a thread-safe component from scratch |
+| Staff | 12 min | Design a concurrent task graph; collection choice under SLA |
+
+---
+
+**Q1** [ARCHITECTURE] [STAFF]
+
+"Design a thread-safe LRU cache with a maximum size."
+
+**Answer:**
+
+Requirements: O(1) get/put, evict least-recently-used when full,
+thread-safe.
+
+Design:
+
+```java
+public class LRUCache<K, V> {
+    private final int maxSize;
+    private final ReentrantLock lock = new ReentrantLock();
+
+    // LinkedHashMap with access-order for LRU tracking
+    private final LinkedHashMap<K, V> map;
+
+    public LRUCache(int maxSize) {
+        this.maxSize = maxSize;
+        // accessOrder=true: put/get moves entry to tail
+        this.map = new LinkedHashMap<K, V>(
+            maxSize, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<K,V> e) {
+                return size() > maxSize; // evict when over limit
+            }
+        };
+    }
+
+    public V get(K key) {
+        lock.lock();
+        try { return map.get(key); }  // moves to tail (LRU update)
+        finally { lock.unlock(); }
+    }
+
+    public void put(K key, V value) {
+        lock.lock();
+        try { map.put(key, value); }  // evicts eldest if full
+        finally { lock.unlock(); }
+    }
+}
+```
+
+Trade-offs:
+- Single lock: serializes all access. Under high read concurrency,
+  this is a bottleneck.
+- Better: segment the cache (partition by key hash into N segments,
+  each with its own LRU + lock). N-way parallelism.
+- Production: Caffeine (Java) implements W-TinyLFU (a better eviction
+  policy than LRU) with fully lock-free reads and fine-grained writes.
+  Use Caffeine in production; implement the above for interviews.
+
+ConcurrentHashMap-based approach: store entries in CHM (lock-free reads).
+Track access order with a ConcurrentLinkedDeque (move key to front on
+access). Evict by polling the deque. Problem: CHM update and deque
+update are not atomic - difficult to implement correctly without a lock.
+
+*What separates good from great:* Knowing that Caffeine exists and why
+it uses W-TinyLFU (higher hit rate than LRU for most cache access patterns)
+while still being able to implement the simple version.
+
+---
+
+**Q2** [TRADE-OFF] [SENIOR]
+
+"When would you use the Disruptor (LMAX) instead of a BlockingQueue?"
+
+**Answer:**
+
+The Disruptor is a lock-free ring buffer with ultra-high throughput
+(millions of events/second) and ultra-low latency (sub-microsecond).
+
+Key differences:
+
+1. Pre-allocated ring buffer: no object allocation per event (reduces
+   GC pressure). Events are pre-allocated slots in a ring.
+
+2. Single writer principle: typically one producer writes to the ring;
+   consumers read from it via sequence counters (CAS on counter).
+   No dequeue - consumers read at their own pace.
+
+3. Cache line padding: Disruptor pads sequence counters to avoid
+   false sharing (multiple sequence counters sharing a cache line
+   would cause cache invalidation storms on every update).
+
+4. Multiple consumer topologies: consumers can be chained (C2 reads
+   after C1 processes) or parallel (C1 and C2 read the same events).
+
+Use Disruptor when:
+- Throughput > 10 million events/second
+- P99 latency < 1 microsecond required
+- Event processing pipeline with defined topology
+- GC pause is unacceptable (financial trading, real-time gaming)
+
+Use BlockingQueue when:
+- Standard producer-consumer pattern
+- Throughput < 1 million events/second
+- Simplicity matters
+
+*What separates good from great:* Knowing cache line padding as a
+Disruptor design choice and the pre-allocation vs per-event allocation difference.
+
+---
+
+### ⚖️ Comparison Table
+
+| Collection | Access Pattern | Blocking | Bounded | Compound Atomic | Key Trade-off |
+| --- | --- | --- | --- | --- | --- |
+| ConcurrentHashMap | Map (read/write) | No | No | Yes (compute*) | No null values |
+| CopyOnWriteArrayList | List (read-heavy) | No | No | Yes (addIfAbsent) | O(n) writes |
+| LinkedBlockingQueue | Queue (producer-consumer) | Yes | Optional | N/A | Head+tail locks |
+| ConcurrentLinkedQueue | Queue (low-latency) | No | No | N/A | size() is O(n) |
+| LongAdder | Counter (high-contention) | No | No | N/A | sum() approximate |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L2 keyword. Distributed concurrent systems design (event
+sourcing, CQRS, distributed actor systems) appears in L5 files.)*
+
+---
+
+### 📊 Diagram
+
+```
+COLLECTION SELECTION MAP:
+
+Need a thread-safe MAP?
+  -> ConcurrentHashMap (atomic compute*/merge)
+
+Need a thread-safe LIST?
+  Read >> Write? -> CopyOnWriteArrayList
+  Write common?  -> ConcurrentLinkedDeque or BlockingDeque
+
+Need a thread-safe QUEUE?
+  Need blocking?    -> BlockingQueue (Array/Linked)
+  Need backpressure? -> ArrayBlockingQueue (bounded)
+  Non-blocking?     -> ConcurrentLinkedQueue
+  Priority?         -> PriorityBlockingQueue
+
+Need a COUNTER?
+  Low contention?  -> AtomicInteger/AtomicLong
+  High contention? -> LongAdder
+```
+
+```mermaid
+mindmap
+  root((Concurrent Collections))
+    Map
+      ConcurrentHashMap
+        per-bucket locking
+        compute/merge atomic
+        no null values
+    List
+      CopyOnWriteArrayList
+        O(n) write
+        lock-free read
+        snapshot iteration
+    Queue
+      BlockingQueue
+        ArrayBlockingQueue bounded
+        LinkedBlockingQueue general
+        SynchronousQueue handoff
+      Non-blocking
+        ConcurrentLinkedQueue
+        no backpressure
+    Counter
+      AtomicInteger
+        CAS based
+      LongAdder
+        high contention
+```
+
+> **Diagram walkthrough:** The selection map organizes choices by
+> data structure (Map, List, Queue, Counter) and the key decision
+> factors (blocking vs non-blocking, read/write ratio, backpressure).
+> The mindmap shows the full taxonomy with key properties at a glance.
+> Each leaf node summarizes the most important characteristic: CHM
+> has atomic compute methods, CopyOnWrite has O(n) write cost, CLQ
+> has no backpressure, LongAdder scales under high contention.
+
+---
+
+---

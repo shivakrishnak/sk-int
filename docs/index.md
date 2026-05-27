@@ -23,7 +23,7 @@ Misconceptions, Failure Modes, Interview Deep-Dive (7-12 full Q&A).
 | ----- | ------ | ----- | -------- | ------ |
 | [Java Language](java-language/) | java-language/ | 10 | 42 | pending |
 | [Java Core](java-core/) | java-core/ | 10 | 44 | pending |
-| [Java Concurrency](java-concurrency/) | java-concurrency/ | 9 | 39 | pending |
+| [Java Concurrency](java-concurrency/) | java-concurrency/ | 9 | 39 | complete |
 | [Java JVM](java-jvm/) | java-jvm/ | 8 | 34 | pending |
 | [Java Performance](java-performance/) | java-performance/ | 8 | 33 | pending |
 | [Spring](spring/) | spring/ | 10 | 43 | pending |
