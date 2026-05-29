@@ -1,127 +1,171 @@
 ---
-title: "Design Patterns and SOLID"
-nav_order: 12
+layout: default
+title: "Design Patterns"
+parent: "SK Interview"
+nav_order: 4
 has_children: true
+permalink: /design-patterns/
 ---
 
-# Design Patterns and SOLID
+# Design Patterns
 
-Design patterns, SOLID principles, and object-oriented design for Java
-backend systems. GoF creational, structural, and behavioral patterns
-with enterprise patterns (Repository, DTO, Service Layer), anti-patterns,
-refactoring strategies, and architecture-level pattern decisions.
+Interview reference for GoF patterns, SOLID principles, architectural
+patterns, and design thinking. Covers L0 orientation through L5 architecture
+with META skills for recognizing and applying patterns in real codebases.
+
+---
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Design Patterns - L0 Orientation](Design%20Patterns%20-%20L0%20Orientation.md) | L0 | 4 | pending |
-| [Design Patterns - L1 Foundations](Design%20Patterns%20-%20L1%20Foundations.md) | L1 | 5 | pending |
-| [Design Patterns - L2 Creational and Structural](Design%20Patterns%20-%20L2%20Creational%20and%20Structural.md) | L2 | 5 | pending |
-| [Design Patterns - L2 Behavioral](Design%20Patterns%20-%20L2%20Behavioral.md) | L2 | 5 | draft |
-| [Design Patterns - L3 Enterprise Patterns](Design%20Patterns%20-%20L3%20Enterprise%20Patterns.md) | L3 | 5 | complete |
-| [Design Patterns - L3 Advanced Patterns](Design%20Patterns%20-%20L3%20Advanced%20Patterns.md) | L3 | 5 | complete |
-| [Design Patterns - L4 Production Depth](Design%20Patterns%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Design Patterns - L5 Architecture](Design%20Patterns%20-%20L5%20Architecture.md) | L5 | 4 | complete |
-| [Design Patterns - L6 Theory](Design%20Patterns%20-%20L6%20Theory.md) | L6 | 3 | complete |
-| [Design Patterns - META Patterns](Design%20Patterns%20-%20META%20Patterns.md) | META | 3 | complete |
+| File | Level | Keywords | Difficulty | Status |
+|------|-------|----------|------------|--------|
+| [Design Patterns - L0 Orientation.md](Design Patterns - L0 Orientation.md) | L0 | 3 | ★☆☆ | complete |
+| [Design Patterns - L1 Creational.md](Design Patterns - L1 Creational.md) | L1 | 3 | ★☆☆ | complete |
+| [Design Patterns - L1 Structural.md](Design Patterns - L1 Structural.md) | L1 | 3 | ★☆☆ | complete |
+| [Design Patterns - L1 Behavioral.md](Design Patterns - L1 Behavioral.md) | L1 | 3 | ★☆☆ | complete |
+| [Design Patterns - L2 Creational.md](Design Patterns - L2 Creational.md) | L2 | 2 | ★★☆ | complete |
+| [Design Patterns - L2 Structural.md](Design Patterns - L2 Structural.md) | L2 | 2 | ★★☆ | complete |
+| [Design Patterns - L2 Behavioral.md](Design Patterns - L2 Behavioral.md) | L2 | 2 | ★★☆ | complete |
+| [Design Patterns - L2 State and Chain.md](Design Patterns - L2 State and Chain.md) | L2 | 2 | ★★☆ | complete |
+| [Design Patterns - L3 Advanced Behavioral.md](Design Patterns - L3 Advanced Behavioral.md) | L3 | 2 | ★★☆ | complete |
+| [Design Patterns - L3 Anti-patterns.md](Design Patterns - L3 Anti-patterns.md) | L3 | 2 | ★★☆ | complete |
+| [Design Patterns - L3 Decision Framework.md](Design Patterns - L3 Decision Framework.md) | L3 | 2 | ★★☆ | complete |
+| [Design Patterns - L4 Dynamic Proxy.md](Design Patterns - L4 Dynamic Proxy.md) | L4 | 1 | ★★★ | complete |
+| [Design Patterns - L4 Plugin Architecture.md](Design Patterns - L4 Plugin Architecture.md) | L4 | 1 | ★★★ | complete |
+| [Design Patterns - L4 Security Patterns.md](Design Patterns - L4 Security Patterns.md) | L4 | 1 | ★★★ | complete |
+| [Design Patterns - L5 SOLID.md](Design Patterns - L5 SOLID.md) | L5 | 1 | ★★★ | complete |
+| [Design Patterns - L5 Architectural.md](Design Patterns - L5 Architectural.md) | L5 | 1 | ★★★ | complete |
+| [Design Patterns - L6 Theory.md](Design Patterns - L6 Theory.md) | L6 | 2 | ★★☆ | complete |
+| [Design Patterns - META Patterns.md](Design Patterns - META Patterns.md) | META | 3 | ★☆☆ | complete |
 
-**Keywords:** 44 | **Files:** 10 | **Status:** pending
+**Total: 36 keywords, 18 files**
 
 ---
 
 ## Keyword Registry
 
-### Design Patterns - L0 Orientation
+### Design Patterns - L0 Orientation.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Why Design Patterns Exist                   | ★☆☆        | pending |
-| 2   | Gang of Four Pattern Catalog Overview       | ★☆☆        | pending |
-| 3   | OOP Design Principles Landscape             | ★☆☆        | pending |
-| 4   | Pattern Language and Pattern Thinking       | ★☆☆        | pending |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-001 | What Are Design Patterns | ★☆☆ | 1 | draft |
+| DP-002 | GoF Pattern Categories | ★☆☆ | 1 | draft |
+| DP-003 | Pattern Anatomy and Recognition | ★☆☆ | 1 | draft |
 
-### Design Patterns - L1 Foundations
+### Design Patterns - L1 Creational.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | SOLID Principles Overview                   | ★☆☆        | pending |
-| 2   | Single Responsibility Principle             | ★☆☆        | pending |
-| 3   | Open-Closed Principle                       | ★☆☆        | pending |
-| 4   | Liskov Substitution Principle               | ★☆☆        | pending |
-| 5   | Interface Segregation and Dependency Inversion | ★☆☆     | pending |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-004 | Singleton Pattern | ★☆☆ | 2 | draft |
+| DP-005 | Factory Method Pattern | ★☆☆ | 2 | draft |
+| DP-006 | Builder Pattern | ★☆☆ | 2 | draft |
 
-### Design Patterns - L2 Creational and Structural
+### Design Patterns - L1 Structural.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Singleton Pattern                           | ★★☆        | pending |
-| 2   | Factory Method and Abstract Factory         | ★★☆        | pending |
-| 3   | Builder Pattern                             | ★★☆        | pending |
-| 4   | Adapter Pattern                             | ★★☆        | pending |
-| 5   | Decorator Pattern                           | ★★☆        | pending |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-007 | Decorator Pattern | ★☆☆ | 2 | draft |
+| DP-008 | Adapter Pattern | ★☆☆ | 2 | draft |
+| DP-009 | Facade Pattern | ★☆☆ | 2 | draft |
 
-### Design Patterns - L2 Behavioral
+### Design Patterns - L1 Behavioral.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Strategy Pattern                            | ★★☆        | draft |
-| 2   | Observer Pattern                            | ★★☆        | draft |
-| 3   | Template Method Pattern                     | ★★☆        | draft |
-| 4   | Iterator and Composite Patterns             | ★★☆        | draft |
-| 5   | Facade and Proxy Patterns                   | ★★☆        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-010 | Observer Pattern | ★☆☆ | 2 | draft |
+| DP-011 | Strategy Pattern | ★☆☆ | 2 | draft |
+| DP-012 | Template Method Pattern | ★☆☆ | 2 | draft |
 
-### Design Patterns - L3 Enterprise Patterns
+### Design Patterns - L2 Creational.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Repository Pattern                          | ★★☆        | draft |
-| 2   | Service Layer and Domain Model              | ★★☆        | draft |
-| 3   | DTO and Value Object Patterns               | ★★☆        | draft |
-| 4   | Unit of Work Pattern                        | ★★☆        | draft |
-| 5   | Dependency Injection Pattern Internals      | ★★☆        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-013 | Abstract Factory Pattern | ★★☆ | 3 | draft |
+| DP-014 | Prototype Pattern | ★★☆ | 3 | draft |
 
-### Design Patterns - L3 Advanced Patterns
+### Design Patterns - L2 Structural.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Command and Chain of Responsibility         | ★★☆        | draft |
-| 2   | State and Mediator Patterns                 | ★★☆        | draft |
-| 3   | Visitor and Bridge Patterns                 | ★★☆        | draft |
-| 4   | Prototype and Flyweight Patterns            | ★★☆        | draft |
-| 5   | Pattern Combinations in Java Frameworks     | ★★☆        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-015 | Proxy Pattern | ★★☆ | 3 | draft |
+| DP-016 | Composite Pattern | ★★☆ | 3 | draft |
 
-### Design Patterns - L4 Production Depth
+### Design Patterns - L2 Behavioral.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Design Pattern Anti-Patterns and Abuse      | ★★★        | draft |
-| 2   | Refactoring to Patterns                     | ★★★        | draft |
-| 3   | Refactoring Away from Patterns              | ★★★        | draft |
-| 4   | Pattern-Related Code Smells Diagnosis       | ★★★        | draft |
-| 5   | Security Patterns and Secure Design Principles | ★★★     | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-017 | Command Pattern | ★★☆ | 3 | draft |
+| DP-018 | Iterator Pattern | ★★☆ | 3 | draft |
 
-### Design Patterns - L5 Architecture
+### Design Patterns - L2 State and Chain.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Pattern Selection at Architecture Scale     | ★★★        | draft |
-| 2   | Microservices Design Patterns               | ★★★        | draft |
-| 3   | Pattern Evolution and Modernization         | ★★★        | draft |
-| 4   | Design Principles Beyond SOLID              | ★★★        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-019 | State Pattern | ★★☆ | 3 | draft |
+| DP-020 | Chain of Responsibility Pattern | ★★☆ | 3 | draft |
 
-### Design Patterns - L6 Theory
+### Design Patterns - L3 Advanced Behavioral.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Formal Pattern Language Theory              | ★★★        | draft |
-| 2   | Category Theory and Design Patterns         | ★★★        | draft |
-| 3   | Pattern Research and Classification Systems | ★★★        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-021 | Mediator Pattern | ★★☆ | 3 | draft |
+| DP-022 | Visitor Pattern | ★★☆ | 3 | draft |
 
-### Design Patterns - META Patterns
+### Design Patterns - L3 Anti-patterns.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Pattern Selection Decision Framework        | ★★★        | draft |
-| 2   | SOLID Violation Detection Mental Model      | ★★★        | draft |
-| 3   | Composition over Inheritance Thinking       | ★★★        | draft |
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-023 | Design Pattern Anti-patterns | ★★☆ | 3 | draft |
+| DP-024 | Singleton Anti-pattern | ★★☆ | 3 | draft |
+
+### Design Patterns - L3 Decision Framework.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-025 | When to Use Design Patterns | ★★☆ | 3 | draft |
+| DP-026 | Pattern Selection Framework | ★★☆ | 3 | draft |
+
+### Design Patterns - L4 Dynamic Proxy.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-027 | Dynamic Proxy and AOP | ★★★ | 5 | draft |
+
+### Design Patterns - L4 Plugin Architecture.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-028 | Plugin Architecture with Factory and Strategy | ★★★ | 5 | draft |
+
+### Design Patterns - L4 Security Patterns.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-029 | Security Design Patterns | ★★★ | 5 | draft |
+
+### Design Patterns - L5 SOLID.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-030 | SOLID Principles | ★★★ | 4 | pending |
+
+### Design Patterns - L5 Architectural.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-031 | Architectural Patterns | ★★★ | 4 | pending |
+
+### Design Patterns - L6 Theory.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-032 | GoF Origins and Pattern Language | ★★☆ | 3 | draft |
+| DP-033 | DDD Tactical Patterns | ★★☆ | 3 | draft |
+
+### Design Patterns - META Patterns.md
+
+| ID | Keyword | Difficulty | Weight | Status |
+|----|---------|------------|--------|--------|
+| DP-034 | Pattern Recognition in Code | ★☆☆ | 2 | draft |
+| DP-035 | Patterns vs Over-engineering | ★☆☆ | 2 | draft |
+| DP-036 | Refactoring to Patterns | ★☆☆ | 2 | draft |

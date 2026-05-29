@@ -1,113 +1,148 @@
 ---
-title: "DevOps and CI/CD"
-nav_order: 16
+layout: default
+title: "DevOps CI/CD"
+parent: "SK Interview"
+nav_order: 11
 has_children: true
+permalink: /devops-cicd/
 ---
 
-# DevOps and CI/CD
+# DevOps CI/CD
 
-DevOps culture, CI/CD pipelines (GitHub Actions, Jenkins), Git branching
-strategies, deployment patterns (blue-green, canary, rolling), Infrastructure
-as Code, secret management, feature flags, GitOps, and platform engineering.
+Interview-focused reference for DevOps and CI/CD concepts.
+From pipeline fundamentals to enterprise-scale delivery governance,
+supply chain security, and internal developer platform design.
+Covers all seniority levels from junior to staff/principal.
+
+## Keyword Registry
+
+### DevOps CI/CD - L0 Orientation.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | What Is CI/CD | complete |
+| 2 | DevOps Culture and the Three Ways | complete |
+| 3 | DevOps Toolchain Ecosystem | complete |
+
+### DevOps CI/CD - L1 Core Concepts.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Continuous Integration Fundamentals | complete |
+| 2 | Continuous Delivery vs Continuous Deployment | complete |
+| 3 | Branching Strategies and Trunk-Based Development | complete |
+
+### DevOps CI/CD - L1 Pipeline Fundamentals.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Pipeline Stages and Gates | complete |
+| 2 | Build Artifacts and Artifact Registries | complete |
+| 3 | Environment Promotion and Configuration Management | complete |
+
+### DevOps CI/CD - L2 Pipeline Patterns.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Pipeline as Code | complete |
+| 2 | Test Automation in CI | complete |
+
+### DevOps CI/CD - L2 Deployment Patterns.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Docker Integration in CI/CD | complete |
+| 2 | Deployment Strategies - Blue-Green and Canary | complete |
+
+### DevOps CI/CD - L2 Infrastructure and Monitoring.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Infrastructure as Code in CI/CD | complete |
+| 2 | Monitoring and Observability in CD | complete |
+
+### DevOps CI/CD - L3 GitOps and Release Management.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | GitOps | complete |
+| 2 | Feature Flags and Progressive Delivery | complete |
+
+### DevOps CI/CD - L3 Security and Data.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Secrets Management in Pipelines | complete |
+| 2 | Database Migrations in CI/CD | complete |
+
+### DevOps CI/CD - L3 Scale and Architecture.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Monorepo CI/CD Strategies | complete |
+| 2 | CI/CD for Microservices and Polyrepo | complete |
+
+### DevOps CI/CD - L4 Pipeline Performance.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Pipeline Performance and Parallelization | complete |
+
+### DevOps CI/CD - L4 Supply Chain Security.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Supply Chain Security and SBOM | complete |
+
+### DevOps CI/CD - L4 Anti-patterns.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | CI/CD Anti-patterns and Recovery | complete |
+
+### DevOps CI/CD - L4 Rollback Strategies.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Rollback Strategies and Release Failure Recovery | complete |
+
+### DevOps CI/CD - L5 Platform Engineering.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Internal Developer Platform Design | complete |
+
+### DevOps CI/CD - L5 Enterprise Scale.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | CI/CD at Enterprise Scale and Governance | complete |
+
+### DevOps CI/CD - META Thinking Patterns.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Feedback Loop Optimization Mental Model | complete |
+| 2 | DevOps as a Learning Organization | complete |
+| 3 | Toil and Automation Decision Framework | complete |
 
 ## Files
 
 | File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [DevOps - L0 Orientation](DevOps%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [DevOps - L1 Foundations](DevOps%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [DevOps - L2 CI Pipelines](DevOps%20-%20L2%20CI%20Pipelines.md) | L2 | 5 | complete |
-| [DevOps - L2 Deployment Strategies](DevOps%20-%20L2%20Deployment%20Strategies.md) | L2 | 5 | complete |
-| [DevOps - L3 Advanced Practices](DevOps%20-%20L3%20Advanced%20Practices.md) | L3 | 5 | complete |
-| [DevOps - L4 Production Depth](DevOps%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [DevOps - L5 Architecture](DevOps%20-%20L5%20Architecture.md) | L5 | 3 | complete |
-| [DevOps - L6 Theory](DevOps%20-%20L6%20Theory.md) | L6 | 2 | complete |
-| [DevOps - META Patterns](DevOps%20-%20META%20Patterns.md) | META | 3 | complete |
-
-**Keywords:** 37 | **Files:** 9 | **Status:** complete
-
----
-
-## Keyword Registry
-
-### DevOps - L0 Orientation
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | DevOps Culture and Principles               | ★☆☆        | pending |
-| 2   | CI/CD Pipeline Overview                     | ★☆☆        | pending |
-| 3   | Version Control Strategy                    | ★☆☆        | pending |
-| 4   | Deployment Landscape and Environments       | ★☆☆        | pending |
-
-### DevOps - L1 Foundations
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Git Branching Strategies                    | ★☆☆        | pending |
-| 2   | CI Pipeline Fundamentals                    | ★☆☆        | pending |
-| 3   | Artifact Management and Versioning          | ★★☆        | pending |
-| 4   | Environment Configuration Management        | ★★☆        | pending |
-| 5   | Build Tools in CI (Maven and Gradle)        | ★★☆        | pending |
-
-### DevOps - L2 CI Pipelines
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | GitHub Actions Pipeline Design              | ★★☆        | pending |
-| 2   | Jenkins Pipeline as Code                    | ★★☆        | pending |
-| 3   | Automated Testing in CI                     | ★★☆        | pending |
-| 4   | Code Quality Gates and Static Analysis      | ★★☆        | pending |
-| 5   | Build Caching and Optimization              | ★★☆        | pending |
-
-### DevOps - L2 Deployment Strategies
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Blue-Green Deployment                       | ★★☆        | pending |
-| 2   | Canary and Progressive Rollout              | ★★☆        | pending |
-| 3   | Rolling Updates and Rollbacks               | ★★☆        | pending |
-| 4   | Feature Flags and Dark Launches             | ★★☆        | pending |
-| 5   | Secret Management and Vault                 | ★★☆        | pending |
-
-### DevOps - L3 Advanced Practices
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | GitOps Workflow and ArgoCD                  | ★★★        | pending |
-| 2   | Infrastructure as Code Patterns             | ★★★        | pending |
-| 3   | Multi-Environment Pipeline Design           | ★★★        | pending |
-| 4   | DevSecOps and Security in Pipelines         | ★★★        | pending |
-| 5   | Observability Integration in CI/CD          | ★★★        | pending |
-
-### DevOps - L4 Production Depth
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | CI/CD Anti-Patterns                         | ★★★        | pending |
-| 2   | Pipeline Performance Optimization           | ★★★        | pending |
-| 3   | Incident Response Automation                | ★★★        | pending |
-| 4   | Deployment Failure Diagnosis                | ★★★        | pending |
-| 5   | Release Engineering Best Practices          | ★★★        | pending |
-
-### DevOps - L5 Architecture
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Platform Engineering                        | ★★★        | pending |
-| 2   | CI/CD Architecture at Scale                 | ★★★        | pending |
-| 3   | Release Strategy and Governance             | ★★★        | pending |
-
-### DevOps - META Patterns
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Deployment Decision Framework               | ★★★        | pending |
-| 2   | CI/CD Maturity Model                        | ★★★        | pending |
-| 3   | DevOps Transformation Mental Model          | ★★★        | pending |
-
-### DevOps - L6 Theory
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Continuous Delivery Theory and DORA Research | ★★★        | pending |
-| 2   | Deployment Safety Formal Models             | ★★★        | pending |
+|------|-------|----------|--------|
+| DevOps CI/CD - L0 Orientation.md | L0 | 3 | complete |
+| DevOps CI/CD - L1 Core Concepts.md | L1 | 3 | complete |
+| DevOps CI/CD - L1 Pipeline Fundamentals.md | L1 | 3 | complete |
+| DevOps CI/CD - L2 Pipeline Patterns.md | L2 | 2 | complete |
+| DevOps CI/CD - L2 Deployment Patterns.md | L2 | 2 | complete |
+| DevOps CI/CD - L2 Infrastructure and Monitoring.md | L2 | 2 | complete |
+| DevOps CI/CD - L3 GitOps and Release Management.md | L3 | 2 | complete |
+| DevOps CI/CD - L3 Security and Data.md | L3 | 2 | complete |
+| DevOps CI/CD - L3 Scale and Architecture.md | L3 | 2 | complete |
+| DevOps CI/CD - L4 Pipeline Performance.md | L4 | 1 | complete |
+| DevOps CI/CD - L4 Supply Chain Security.md | L4 | 1 | complete |
+| DevOps CI/CD - L4 Anti-patterns.md | L4 | 1 | complete |
+| DevOps CI/CD - L4 Rollback Strategies.md | L4 | 1 | complete |
+| DevOps CI/CD - L5 Platform Engineering.md | L5 | 1 | complete |
+| DevOps CI/CD - L5 Enterprise Scale.md | L5 | 1 | complete |
+| DevOps CI/CD - META Thinking Patterns.md | META | 3 | complete |

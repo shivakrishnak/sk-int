@@ -87,7 +87,6 @@ southstar/
     topics_registry.md        Topic registry
     README.md
   scripts/                    Automation (excluded from build)
-    scaffold_topic.py         Scaffold generator (Python 3.14)
     generate_topics.ps1
     generate_content.ps1
     validate.ps1
@@ -98,7 +97,6 @@ southstar/
 | Prompt              | Purpose                                       |
 | ------------------- | --------------------------------------------- |
 | `@generate-entries` | Generate keyword content (keyword-batch mode) |
-| `@scaffold`         | Run scaffold generator (optional)             |
 
 ## Content Structure - Option C Hybrid (8 Sections per Keyword)
 
@@ -441,16 +439,6 @@ git add docs/
 git commit -m "feat: add interview <Topic> - batch <N>"
 ```
 
-## Scaffold Workflow (optional)
-
-Scaffolding is no longer required for content generation. The agent
-reads keywords from `{topic}/index.md` Keyword Registry and generates
-content directly. Use scaffold only to preview file structure:
-
-1. **Scaffold (optional):** `& "$env:USERPROFILE\.local\bin\python3.14.exe" scripts/scaffold_topic.py <topic>`
-2. **Generate content:** Use `@generate-entries` prompt or `/interview` agent
-3. **Keyword-batch:** Agent generates 1-3 keywords per pass, appends to file, auto-continues
-
 ## Generation Workflows
 
 **Existing topic:** `Generate interview mastery content: Topic: Java, File: Java - Collections.md`
@@ -523,7 +511,7 @@ Before creating `docs/{topic}/`:
 - One folder per main topic under `docs/` (lowercase, hyphens)
 - Each folder has `index.md` listing sub-topic files
 - Sub-topic files: `{Topic} - {Subtopic}.md`
-- Each file contains 3-5 keywords (HARD CAP: 5)
+- File cap by difficulty: ★★★=1 keyword, ★★☆=2 keywords, ★☆☆=3 keywords
 - Separator in filenames: SPACE-HYPHEN-SPACE (never em dash)
 
 ## Keyword Level Coverage (MANDATORY)
@@ -541,21 +529,23 @@ Every interview topic MUST cover ALL knowledge levels:
 | L6    | 🔬   | Creator      | 2-3    | Theory, specification, research         |
 | META  | 🧠   | Meta-Skills  | 2-3    | Transferable thinking patterns          |
 
-**Max 5 keywords per file, min 3.** Split into multiple files if a
-level has more than 5 keywords.
+**Keywords per file by difficulty: ★★★=1, ★★☆=2, ★☆☆=3.**
+Split into multiple files when a level exceeds its cap. File limit
+equals batch size — every file completes in one generation call.
 
 **File structure per topic:**
 
-- `{Topic} - L0 Orientation.md` for L0 keywords (up to 5)
-- `{Topic} - L1 Foundations.md` for L1 keywords (up to 5)
-- `{Topic} - L2 {Subtopic}.md` for L2 keywords (5 per file, split by subtopic)
-- `{Topic} - L3 {Subtopic}.md` for L3 keywords (5 per file, split by subtopic)
-- `{Topic} - L4 {Subtopic}.md` for L4 keywords (5 per file, split by subtopic)
-- `{Topic} - L5 Architecture.md` for L5 keywords (3-5)
-- `{Topic} - L6 Theory.md` for L6 keywords (3+), or combine with META if each level < 3
-- `{Topic} - META Patterns.md` for META keywords (3-5)
+- `{Topic} - L0 {Subtopic}.md` for L0 keywords (★☆☆: 3 per file)
+- `{Topic} - L1 {Subtopic}.md` for L1 keywords (★☆☆: 3 per file)
+- `{Topic} - L2 {Subtopic}.md` for L2 keywords (★★☆: 2 per file, split by subtopic)
+- `{Topic} - L3 {Subtopic}.md` for L3 keywords (★★☆: 2 per file, split by subtopic)
+- `{Topic} - L4 {Subtopic}.md` for L4 keywords (★★★: 1 per file, named by concept)
+- `{Topic} - L5 {Subtopic}.md` for L5 keywords (★★★: 1 per file, named by concept)
+- `{Topic} - L6 {Subtopic}.md` for L6 keywords (★★☆: 2 per file)
+- `{Topic} - META {Subtopic}.md` for META keywords (★☆☆: 3 per file)
 
-A topic missing any level is INCOMPLETE. Always verify before generating.
+File names must be descriptive noun phrases for the content inside.
+Never use sequence numbers ("Part 1", "Part 2") as subtopic names.
 
 ---
 

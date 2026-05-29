@@ -1,123 +1,148 @@
 ---
+layout: default
 title: "JPA"
-nav_order: 8
+parent: "SK Interview"
+nav_order: 12
 has_children: true
+permalink: /jpa/
 ---
 
 # JPA
 
-Java Persistence API: EntityManager, persistence context, JPQL, Criteria
-API, relationships, transactions, locking, and Spring Data JPA. From
-entity lifecycle to diagnosing N+1 and OSIV anti-patterns in production.
+Java Persistence API and Hibernate: entity mapping, relationships,
+JPQL, Spring Data JPA, caching, transactions, N+1 diagnosis, and
+production ORM patterns.
 
 ## Files
 
 | File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [JPA - L0 Orientation](JPA%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [JPA - L1 Foundations](JPA%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [JPA - L2 Relationships](JPA%20-%20L2%20Relationships.md) | L2 | 5 | complete |
-| [JPA - L2 Querying](JPA%20-%20L2%20Querying.md) | L2 | 5 | complete |
-| [JPA - L3 Transactions and Locking](JPA%20-%20L3%20Transactions%20and%20Locking.md) | L3 | 5 | complete |
-| [JPA - L3 Spring Data JPA](JPA%20-%20L3%20Spring%20Data%20JPA.md) | L3 | 5 | complete |
-| [JPA - L4 Production Depth](JPA%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [JPA - L5 Architecture](JPA%20-%20L5%20Architecture.md) | L5 | 3 | complete |
-| [JPA - L6 Theory](JPA%20-%20L6%20Theory.md) | L6 | 2 | complete |
-| [JPA - META Patterns](JPA%20-%20META%20Patterns.md) | META | 2 | complete |
-
-**Keywords:** 41 | **Files:** 10 | **Status:** complete
-
----
+|------|-------|----------|--------|
+| JPA - L0 Orientation.md | L0 | 3 | complete |
+| JPA - L1 Entity Mapping.md | L1 | 3 | complete |
+| JPA - L1 Queries.md | L1 | 3 | complete |
+| JPA - L2 Fetch Strategies.md | L2 | 2 | complete |
+| JPA - L2 Transactions.md | L2 | 2 | complete |
+| JPA - L2 Performance.md | L2 | 2 | complete |
+| JPA - L3 Locking.md | L3 | 2 | complete |
+| JPA - L3 Caching.md | L3 | 2 | complete |
+| JPA - L3 Schema.md | L3 | 2 | complete |
+| JPA - L4 Internals.md | L4 | 1 | complete |
+| JPA - L4 Anti-Patterns.md | L4 | 1 | complete |
+| JPA - L4 Production.md | L4 | 1 | complete |
+| JPA - L5 Architecture.md | L5 | 1 | complete |
+| JPA - L5 Migration.md | L5 | 1 | complete |
+| JPA - L6 Theory.md | L6 | 2 | complete |
+| JPA - META Patterns.md | META | 3 | complete |
 
 ## Keyword Registry
 
-### JPA - L0 Orientation
+### JPA - L0 Orientation.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | JPA Overview and Purpose               | ★☆☆        | draft   |
-| 2   | JPA vs JDBC vs Hibernate               | ★☆☆        | draft   |
-| 3   | JPA Provider Landscape                 | ★☆☆        | draft   |
-| 4   | Spring Data JPA vs JPA                 | ★☆☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 1 | What JPA Is and Why It Exists: ORM vs JDBC | ★☆☆ | complete |
+| 2 | JPA vs Hibernate vs Spring Data JPA: The Ecosystem | ★☆☆ | complete |
+| 3 | Setting Up JPA: EntityManagerFactory and Persistence Context | ★☆☆ | complete |
 
-### JPA - L1 Foundations
+### JPA - L1 Entity Mapping.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | EntityManager and Persistence Context  | ★☆☆        | draft   |
-| 2   | Entity Annotations @Entity @Id @Column | ★☆☆        | draft   |
-| 3   | Entity Lifecycle States                | ★★☆        | draft   |
-| 4   | JPQL Basics                            | ★☆☆        | draft   |
-| 5   | JPA Configuration and persistence.xml  | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 4 | Entity Basics: @Entity, @Id, @Column, and @Table | ★☆☆ | complete |
+| 5 | Relationship Mappings: @OneToOne, @OneToMany, @ManyToMany | ★☆☆ | complete |
+| 6 | Inheritance Mapping Strategies: TABLE_PER_CLASS, JOINED, SINGLE_TABLE | ★☆☆ | complete |
 
-### JPA - L2 Relationships
+### JPA - L1 Queries.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | OneToMany and ManyToOne                | ★★☆        | draft   |
-| 2   | ManyToMany and Join Tables             | ★★☆        | draft   |
-| 3   | Fetch Types EAGER vs LAZY              | ★★☆        | draft   |
-| 4   | Cascade Types and Orphan Removal       | ★★☆        | draft   |
-| 5   | Embeddable and Embedded                | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 7 | JPQL Fundamentals: Entity Queries and Named Queries | ★☆☆ | complete |
+| 8 | Criteria API Basics: Type-Safe Dynamic Queries | ★☆☆ | complete |
+| 9 | Spring Data JPA: Repository and Query Method Derivation | ★☆☆ | complete |
 
-### JPA - L2 Querying
+### JPA - L2 Fetch Strategies.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | JPQL Advanced Queries                  | ★★☆        | draft   |
-| 2   | JPA Criteria API                       | ★★★        | draft   |
-| 3   | Named Queries                          | ★★☆        | draft   |
-| 4   | Native Queries and Result Mapping      | ★★☆        | draft   |
-| 5   | DTO Projections                        | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 10 | Lazy vs Eager Loading: FetchType and LazyInitializationException | ★★☆ | complete |
+| 11 | N+1 Problem: Detection, Diagnosis, and Fix | ★★☆ | complete |
 
-### JPA - L3 Transactions and Locking
+### JPA - L2 Transactions.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | JPA Transaction Management             | ★★★        | draft   |
-| 2   | Optimistic Locking with @Version       | ★★★        | draft   |
-| 3   | Pessimistic Locking Types              | ★★★        | draft   |
-| 4   | Flush Modes and Synchronization        | ★★★        | draft   |
-| 5   | JPA Callbacks and Entity Listeners     | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 12 | JPA Transactions: @Transactional and Persistence Context Lifecycle | ★★☆ | complete |
+| 13 | Entity Lifecycle: Managed, Detached, Removed, and Persist Cascades | ★★☆ | complete |
 
-### JPA - L3 Spring Data JPA
+### JPA - L2 Performance.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Repository Interface Hierarchy         | ★★☆        | draft   |
-| 2   | Query Derivation Method Naming         | ★★☆        | draft   |
-| 3   | @Query and Custom JPQL                 | ★★☆        | draft   |
-| 4   | Pagination and Sorting                 | ★★☆        | draft   |
-| 5   | Spring Data JPA Projections            | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 14 | JPA Query Performance: Named Queries, Projections, and DTO Mapping | ★★☆ | complete |
+| 15 | Batch Operations: saveAll, Bulk Update/Delete with @Query | ★★☆ | complete |
 
-### JPA - L4 Production Depth
+### JPA - L3 Locking.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | N+1 Select Anti-Pattern                | ★★★        | draft   |
-| 2   | Open Session in View Anti-Pattern      | ★★★        | draft   |
-| 3   | Persistence Context Size Management    | ★★★        | draft   |
-| 4   | JPA Performance Tuning Strategies      | ★★★        | draft   |
-| 5   | JPA Security Native Queries and Data Exposure | ★★★  | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 16 | Optimistic Locking: @Version and Conflict Resolution | ★★☆ | complete |
+| 17 | Pessimistic Locking: LockModeType and Deadlock Avoidance | ★★☆ | complete |
 
-### JPA - L5 Architecture
+### JPA - L3 Caching.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | JPA in Domain-Driven Design            | ★★★        | draft   |
-| 2   | CQRS with JPA Read Models              | ★★★        | draft   |
-| 3   | JPA Multi-tenancy Architecture         | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 18 | First-Level Cache: Persistence Context as Cache | ★★☆ | complete |
+| 19 | Second-Level Cache: EhCache, Caffeine, and Cache Region Strategy | ★★☆ | complete |
 
-### JPA - L6 Theory
+### JPA - L3 Schema.md
 
-| #   | Keyword                                          | Difficulty | Status  |
-| --- | ------------------------------------------------ | ---------- | ------- |
-| 1   | Persistence Context Theory                       | ★★★        | draft   |
-| 2   | JPA Specification vs Implementation Design       | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 20 | Schema Generation and Database Migration: Liquibase vs Flyway with JPA | ★★☆ | complete |
+| 21 | Advanced Mapping: @Embeddable, @ElementCollection, and Converter | ★★☆ | complete |
 
-### JPA - META Patterns
+### JPA - L4 Internals.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | JPA Anti-Pattern Catalog               | ★★☆        | draft   |
-| 2   | ORM Selection Decision Framework       | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 22 | Hibernate Session Internals: Flush Modes and Write-Behind Cache | ★★★ | complete |
+
+### JPA - L4 Anti-Patterns.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 23 | JPA Anti-Patterns: N+1, Cartesian Product, and Cross Join at Scale | ★★★ | complete |
+
+### JPA - L4 Production.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 24 | JPA Production Diagnostics: Query Logging, Slow Query Analysis, Connection Pool Tuning | ★★★ | complete |
+
+### JPA - L5 Architecture.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 25 | JPA at Scale: Aggregates, Repository Pattern, and Domain Model Design | ★★★ | complete |
+
+### JPA - L5 Migration.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 26 | JPA Migration Strategy: EclipseLink to Hibernate, Hibernate 5 to 6 | ★★★ | complete |
+
+### JPA - L6 Theory.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 27 | JPA Specification vs Implementation: JSR 338 and Provider Contracts | ★★☆ | complete |
+| 28 | Object-Relational Impedance Mismatch: Theoretical Foundations | ★★☆ | complete |
+
+### JPA - META Patterns.md
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 29 | JPA Decision Framework: When ORM Helps and When It Hurts | ★☆☆ | complete |
+| 30 | Repository Pattern vs Active Record vs Service Layer | ★☆☆ | complete |
+| 31 | JPA Testing Strategy: @DataJpaTest and Test Database Management | ★☆☆ | complete |

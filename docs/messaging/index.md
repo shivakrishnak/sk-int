@@ -1,125 +1,148 @@
 ---
-title: "Messaging and Event-Driven"
-nav_order: 15
+layout: default
+title: "Messaging"
+parent: "SK Interview"
+nav_order: 13
 has_children: true
+permalink: /messaging/
 ---
 
-# Messaging and Event-Driven
+# Messaging
 
-Apache Kafka, RabbitMQ, event-driven architecture, pub/sub patterns,
-event sourcing, CQRS, Saga pattern, outbox pattern, dead letter queues,
-schema evolution (Avro/Protobuf), and exactly-once semantics.
+Interview-focused reference for message-driven architecture concepts.
+From asynchronous communication fundamentals to exactly-once semantics,
+saga patterns, and enterprise event mesh architecture.
+Covers all seniority levels from junior to staff/principal.
+
+## Keyword Registry
+
+### Messaging - L0 Orientation.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | What Is Message-Driven Architecture | draft |
+| 2 | Synchronous vs Asynchronous Communication | draft |
+| 3 | Message Broker Ecosystem Overview | draft |
+
+### Messaging - L1 Core Concepts.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Message Queues and Topics | draft |
+| 2 | Point-to-Point vs Publish-Subscribe | draft |
+| 3 | Message Producers and Consumers | draft |
+
+### Messaging - L1 Reliability Fundamentals.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Message Serialization and Schema | draft |
+| 2 | Queue Depth and Backpressure | draft |
+| 3 | Message Acknowledgment and At-Least-Once Delivery | draft |
+
+### Messaging - L2 Error Handling Patterns.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Dead Letter Queues and Poison Message Handling | draft |
+| 2 | Message Routing and Filtering | draft |
+
+### Messaging - L2 Consumer Patterns.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Consumer Groups and Competing Consumers | draft |
+| 2 | Message Ordering Guarantees | draft |
+
+### Messaging - L2 Broker Selection.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | RabbitMQ vs Kafka - Choosing a Broker | draft |
+| 2 | Request-Reply Pattern | draft |
+
+### Messaging - L3 Delivery Semantics.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Exactly-Once Delivery Semantics | draft |
+| 2 | Idempotent Consumers | draft |
+
+### Messaging - L3 Event-Driven Architecture.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Event-Driven Architecture Patterns | draft |
+| 2 | Message Schema Evolution and Compatibility | draft |
+
+### Messaging - L3 Distributed Transactions.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Saga Pattern and Distributed Transactions via Messaging | draft |
+| 2 | Message Security and Authorization | draft |
+
+### Messaging - L4 Performance Tuning.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Message Queue Performance Tuning | draft |
+
+### Messaging - L4 Anti-patterns.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Messaging Anti-patterns and Failure Recovery | draft |
+
+### Messaging - L4 High Availability.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Messaging High Availability and Disaster Recovery | draft |
+
+### Messaging - L4 Consumer Lag.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Consumer Lag Management and Diagnosis | draft |
+
+### Messaging - L5 Enterprise Architecture.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Event Mesh and Enterprise Messaging Architecture | draft |
+
+### Messaging - L5 Global Scale.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Messaging at Scale - Multi-Region and Global Patterns | draft |
+
+### Messaging - META Thinking Patterns.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Temporal Decoupling Mental Model | draft |
+| 2 | Async Mental Model - Fire and Forget vs Correlation ID | draft |
+| 3 | CAP Theorem Applied to Messaging | draft |
 
 ## Files
 
 | File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Messaging - L0 Orientation](Messaging%20-%20L0%20Orientation.md) | L0 | 4 | draft   |
-| [Messaging - L1 Foundations](Messaging%20-%20L1%20Foundations.md) | L1 | 5 | draft   |
-| [Messaging - L2 Kafka](Messaging%20-%20L2%20Kafka.md) | L2 | 5 | draft   |
-| [Messaging - L2 RabbitMQ and Patterns](Messaging%20-%20L2%20RabbitMQ%20and%20Patterns.md) | L2 | 5 | draft   |
-| [Messaging - L3 Event Patterns](Messaging%20-%20L3%20Event%20Patterns.md) | L3 | 5 | draft   |
-| [Messaging - L3 Advanced Integration](Messaging%20-%20L3%20Advanced%20Integration.md) | L3 | 5 | draft   |
-| [Messaging - L4 Production Depth](Messaging%20-%20L4%20Production%20Depth.md) | L4 | 5 | draft   |
-| [Messaging - L5 Architecture](Messaging%20-%20L5%20Architecture.md) | L5 | 4 | draft   |
-| [Messaging - L6 Theory](Messaging%20-%20L6%20Theory.md) | L6 | 2 | draft   |
-| [Messaging - META Patterns](Messaging%20-%20META%20Patterns.md) | META | 3 | draft   |
-
-**Keywords:** 43 | **Files:** 10 | **Status:** complete
-
----
-
-## Keyword Registry
-
-### Messaging - L0 Orientation
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Event-Driven Architecture Overview          | ★☆☆        | draft   |
-| 2   | Messaging Systems Landscape                 | ★☆☆        | draft   |
-| 3   | Synchronous vs Asynchronous Communication   | ★☆☆        | draft   |
-| 4   | Pub/Sub vs Point-to-Point Queues            | ★☆☆        | draft   |
-
-### Messaging - L1 Foundations
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Message Queue Fundamentals                  | ★☆☆        | draft   |
-| 2   | Apache Kafka Core Concepts                  | ★☆☆        | draft   |
-| 3   | RabbitMQ Core Concepts                      | ★☆☆        | draft   |
-| 4   | Message Serialization Formats               | ★★☆        | draft   |
-| 5   | Message Delivery Guarantees                 | ★★☆        | draft   |
-
-### Messaging - L2 Kafka
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kafka Producers and Consumer API            | ★★☆        | draft   |
-| 2   | Kafka Topics Partitions and Offsets         | ★★☆        | draft   |
-| 3   | Consumer Groups and Rebalancing             | ★★☆        | draft   |
-| 4   | Kafka Configuration and Tuning              | ★★☆        | draft   |
-| 5   | Message Ordering Guarantees in Kafka        | ★★☆        | draft   |
-
-### Messaging - L2 RabbitMQ and Patterns
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | RabbitMQ Exchanges and Routing              | ★★☆        | draft   |
-| 2   | Dead Letter Queues and Retry                | ★★☆        | draft   |
-| 3   | Message Acknowledgment Patterns             | ★★☆        | draft   |
-| 4   | Poison Message Handling                     | ★★☆        | draft   |
-| 5   | Message TTL Priority and Expiry             | ★★☆        | draft   |
-
-### Messaging - L3 Event Patterns
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Event Sourcing Pattern                      | ★★★        | draft   |
-| 2   | Outbox Pattern                              | ★★★        | draft   |
-| 3   | Saga Pattern for Distributed Transactions   | ★★★        | draft   |
-| 4   | CQRS with Event-Driven Architecture         | ★★★        | draft   |
-| 5   | Exactly-Once Semantics                      | ★★★        | draft   |
-
-### Messaging - L3 Advanced Integration
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kafka Streams Processing                    | ★★★        | draft   |
-| 2   | Schema Evolution with Avro and Protobuf     | ★★★        | draft   |
-| 3   | Kafka Connect and Integration Patterns      | ★★★        | draft   |
-| 4   | Reactive Messaging with SmallRye            | ★★★        | draft   |
-| 5   | Event Store Design and Implementation       | ★★★        | draft   |
-
-### Messaging - L4 Production Depth
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kafka Performance Tuning                    | ★★★        | draft   |
-| 2   | Consumer Lag Diagnosis and Resolution       | ★★★        | draft   |
-| 3   | Message Loss Prevention Strategies          | ★★★        | draft   |
-| 4   | Messaging Anti-Patterns                     | ★★★        | draft   |
-| 5   | Event-Driven Security Patterns              | ★★★        | draft   |
-
-### Messaging - L5 Architecture
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Event-Driven Architecture at Scale          | ★★★        | draft   |
-| 2   | Event Mesh and Multi-Cluster Kafka          | ★★★        | draft   |
-| 3   | Messaging Platform Migration                | ★★★        | draft   |
-| 4   | Event-Driven Microservices Orchestration    | ★★★        | draft   |
-
-### Messaging - L6 Theory
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Distributed Ordering and Consensus Theory   | ★★★        | draft   |
-| 2   | Event-Driven Formal Models                  | ★★★        | draft   |
-
-### Messaging - META Patterns
-
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Event-Driven Decision Framework             | ★★★        | draft   |
-| 2   | Messaging Pattern Selection Model           | ★★★        | draft   |
-| 3   | Eventual Consistency Mental Model           | ★★★        | draft   |
+|------|-------|----------|--------|
+| Messaging - L0 Orientation.md | L0 | 3 | complete |
+| Messaging - L1 Core Concepts.md | L1 | 3 | complete |
+| Messaging - L1 Reliability Fundamentals.md | L1 | 3 | complete |
+| Messaging - L2 Error Handling Patterns.md | L2 | 2 | complete |
+| Messaging - L2 Consumer Patterns.md | L2 | 2 | complete |
+| Messaging - L2 Broker Selection.md | L2 | 2 | complete |
+| Messaging - L3 Delivery Semantics.md | L3 | 2 | complete |
+| Messaging - L3 Event-Driven Architecture.md | L3 | 2 | complete |
+| Messaging - L3 Distributed Transactions.md | L3 | 2 | complete |
+| Messaging - L4 Performance Tuning.md | L4 | 1 | complete |
+| Messaging - L4 Anti-patterns.md | L4 | 1 | complete |
+| Messaging - L4 High Availability.md | L4 | 1 | complete |
+| Messaging - L4 Consumer Lag.md | L4 | 1 | complete |
+| Messaging - L5 Enterprise Architecture.md | L5 | 1 | complete |
+| Messaging - L5 Global Scale.md | L5 | 1 | complete |
+| Messaging - META Thinking Patterns.md | META | 3 | complete |

@@ -3150,30 +3150,35 @@ KEYWORDS PER LEVEL: no fixed ceiling.
   may have 40+ L3 keywords; a micro-topic may have only 3.
   Generate as many as the topic genuinely requires.
 
-KEYWORDS PER FILE: HARD CAP of 5 (non-negotiable).
-  Every content file must contain 3-5 keywords. No file may
-  exceed 5 keywords regardless of level or topic. This limit
-  exists because larger files degrade content quality and risk
-  generation timeout.
+KEYWORDS PER FILE: DIFFICULTY-BASED CAP (non-negotiable).
+  File cap equals generation batch size. Every file completes in
+  exactly 1 call. Cap is set by the difficulty of keywords inside:
 
-  When a level has K keywords and K > 5, split into multiple
-  files named by subtopic (noun phrases, not sequence numbers):
-    CORRECT: {Topic} - L3 Collections.md   (5 kw)
-             {Topic} - L3 Streams.md       (5 kw)
-             {Topic} - L3 Generics.md      (4 kw)
+  | Difficulty | Cap | Levels        | Output per file     |
+  |------------|-----|---------------|---------------------|
+  | ★☆☆ easy   |  3  | PRE, L0, L1, META | ~6,000-7,500 words  |
+  | ★★☆ medium |  2  | L2, L3, L6    | ~8,000-10,000 words |
+  | ★★★ hard   |  1  | L4, L5        | ~6,000-8,000 words  |
+
+  Files must never mix difficulty levels.
+  When a level has K keywords and K > cap, split into multiple
+  files named by descriptive noun phrases (not sequence numbers):
+    CORRECT: {Topic} - L3 Stream Operations.md   (2 kw)
+             {Topic} - L3 Collectors and Reduction.md  (2 kw)
+             {Topic} - L4 GC Tuning.md           (1 kw)
     WRONG:   {Topic} - L3 Part 1.md
              {Topic} - L3 Part 2.md
 
-  File cap (all levels — always 5):
-    PRE  -> 5 per file (dependency map format)
-    L0   -> 5 per file
-    L1   -> 5 per file
-    L2   -> 5 per file
-    L3   -> 5 per file
-    L4   -> 5 per file
-    L5   -> 5 per file
-    L6   -> 5 per file
-    META -> 5 per file
+  File cap by level:
+    PRE  -> 3 per file (★☆☆ dependency map format)
+    L0   -> 3 per file (★☆☆)
+    L1   -> 3 per file (★☆☆)
+    L2   -> 2 per file (★★☆)
+    L3   -> 2 per file (★★☆)
+    L4   -> 1 per file (★★★)
+    L5   -> 1 per file (★★★)
+    L6   -> 2 per file (★★☆)
+    META -> 3 per file (★☆☆)
 
 GENERATION TRIGGER (for @interview agent):
 

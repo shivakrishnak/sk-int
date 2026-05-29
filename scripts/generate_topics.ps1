@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Interview Mastery Dictionary - Keyword Generator & Folder Scaffolding
+    Interview Mastery Dictionary - Keyword Generator
 .DESCRIPTION
     Generates keyword lists for interview topics, groups them into
     sub-topic files, and creates folder/index/stub structure.
@@ -511,4 +511,4 @@ Interview mastery content for $Topic - complete knowledge, zero to mastery.
     Write-Host "CREATED index: $Topic/index.md" -ForegroundColor Green
 }
 
-Write-Host "`n=== TOPIC SCAFFOLDED ===" -ForegroundColor Magenta
+Write-Host "`n=== TOPIC KEYWORDS GENERATED ===" -ForegroundColor Magenta

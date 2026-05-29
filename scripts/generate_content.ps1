@@ -34,7 +34,7 @@
     - @generate-entries (or scripts/generate_topics.ps1): Prompt file
       for category/tier keyword processing
     - spec/interview.md: Content generation spec
-    - scripts/generate_topics.ps1: Keyword scaffolding
+    - scripts/generate_topics.ps1: Keyword generation
 
 .PARAMETER Mode
     Operation mode:
@@ -732,7 +732,7 @@ function Invoke-SubtopicMode {
         Update-TopicIndex -TopicName $Topic
     }
 
-    Write-Host "`n=== SUBTOPIC SCAFFOLDED ===" -ForegroundColor Magenta
+    Write-Host "`n=== SUBTOPIC KEYWORDS GENERATED ===" -ForegroundColor Magenta
 }
 
 # ── Main Execution ─────────────────────────────────────────

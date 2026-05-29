@@ -1,32 +1,42 @@
 ---
+layout: default
 title: "Java Language"
-nav_order: 1
+parent: "SK Interview"
+nav_order: 10
 has_children: true
+permalink: /java-language/
 ---
 
 # Java Language
 
-Core Java language features: type system, object-oriented programming,
-generics, lambda expressions, streams, and modern Java (Java 8 - Java 21+).
-Every keyword entry prepares you to answer any interview question at any
-seniority level without needing another source.
+Interview-focused notes for Java language features, type system, OOP patterns,
+modern Java (records, sealed classes, pattern matching, virtual threads), generics,
+reflection, and language evolution from Java 8 through Java 21 LTS.
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Java Language - L0 Orientation](Java%20Language%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Java Language - L1 Foundations](Java%20Language%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Java Language - L2 Object Model](Java%20Language%20-%20L2%20Object%20Model.md) | L2 | 3 | draft |
-| [Java Language - L2 Generics and Types](Java%20Language%20-%20L2%20Generics%20and%20Types.md) | L2 | 4 | draft |
-| [Java Language - L2 Functional](Java%20Language%20-%20L2%20Functional.md) | L2 | 5 | draft |
-| [Java Language - L3 Type System Depth](Java%20Language%20-%20L3%20Type%20System%20Depth.md) | L3 | 5 | draft |
-| [Java Language - L3 Modern Java](Java%20Language%20-%20L3%20Modern%20Java.md) | L3 | 5 | draft |
-| [Java Language - L4 Language Internals](Java%20Language%20-%20L4%20Language%20Internals.md) | L4 | 4 | draft |
-| [Java Language - L5 Architecture](Java%20Language%20-%20L5%20Architecture.md) | L5 | 3 | draft |
-| [Java Language - META Patterns](Java%20Language%20-%20META%20Patterns.md) | META | 3 | draft |
-
-**Keywords:** 41 | **Files:** 10 | **Status:** draft
+| nav_order | File | Level | Difficulty | Keywords | Status |
+|-----------|------|-------|------------|----------|--------|
+| 1 | Java Language - L0 Orientation.md | L0 | ★☆☆ | 3 | complete |
+| 2 | Java Language - L1 Core Types.md | L1 | ★☆☆ | 3 | complete |
+| 3 | Java Language - L1 OOP Basics.md | L1 | ★☆☆ | 3 | complete |
+| 4 | Java Language - L2 Collections and Generics.md | L2 | ★★☆ | 2 | complete |
+| 5 | Java Language - L2 Lambdas and Streams.md | L2 | ★★☆ | 2 | complete |
+| 6 | Java Language - L2 OOP Patterns.md | L2 | ★★☆ | 2 | complete |
+| 7 | Java Language - L2 Modern Java Features.md | L2 | ★★☆ | 2 | complete |
+| 8 | Java Language - L3 Type System.md | L3 | ★★☆ | 2 | complete |
+| 9 | Java Language - L3 Functional Programming.md | L3 | ★★☆ | 2 | complete |
+| 10 | Java Language - L3 Exception Handling.md | L3 | ★★☆ | 2 | complete |
+| 11 | Java Language - L3 Modern Language Features.md | L3 | ★★☆ | 2 | complete |
+| 12 | Java Language - L4 Reflection and Proxies.md | L4 | ★★★ | 1 | complete |
+| 13 | Java Language - L4 Annotation Processing.md | L4 | ★★★ | 1 | complete |
+| 14 | Java Language - L4 Generics Internals.md | L4 | ★★★ | 1 | complete |
+| 15 | Java Language - L4 Virtual Threads API.md | L4 | ★★★ | 1 | complete |
+| 16 | Java Language - L4 Module System.md | L4 | ★★★ | 1 | complete |
+| 17 | Java Language - L5 Language Version Strategy.md | L5 | ★★★ | 1 | complete |
+| 18 | Java Language - L5 JPMS Architecture.md | L5 | ★★★ | 1 | complete |
+| 19 | Java Language - L6 Theory.md | L6 | ★★☆ | 2 | complete |
+| 20 | Java Language - META Patterns.md | META | ★☆☆ | 3 | complete |
 
 ---
 
@@ -34,91 +44,138 @@ seniority level without needing another source.
 
 ### Java Language - L0 Orientation
 
-| #   | Keyword                          | Difficulty | Status  |
-| --- | -------------------------------- | ---------- | ------- |
-| 1   | Java Ecosystem Overview          | ★☆☆        | complete |
-| 2   | Java Platform Architecture       | ★☆☆        | complete |
-| 3   | Java Compilation and Bytecode    | ★☆☆        | complete |
-| 4   | Java Version History and LTS     | ★☆☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 1 | Java Language History and Platform Evolution | ★☆☆ | complete |
+| 2 | Java Design Goals: WORA Safety and OOP | ★☆☆ | complete |
+| 3 | JDK vs JRE vs Language Specification | ★☆☆ | complete |
 
-### Java Language - L1 Foundations
+### Java Language - L1 Core Types
 
-| #   | Keyword                           | Difficulty | Status  |
-| --- | --------------------------------- | ---------- | ------- |
-| 1   | Primitive Types and Autoboxing    | ★☆☆        | complete |
-| 2   | Reference Types and Pass-by-Value | ★☆☆        | complete |
-| 3   | Access Modifiers                  | ★☆☆        | complete |
-| 4   | Static vs Instance Context        | ★☆☆        | complete |
-| 5   | Java Control Flow                 | ★☆☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 4 | Primitive Types and Wrapper Classes | ★☆☆ | complete |
+| 5 | Control Flow and Iteration Constructs | ★☆☆ | complete |
+| 6 | Arrays and String Fundamentals | ★☆☆ | complete |
 
-### Java Language - L2 Object Model
+### Java Language - L1 OOP Basics
 
-| #   | Keyword                                                | Difficulty | Status  |
-| --- | ------------------------------------------------------ | ---------- | ------- |
-| 1   | Classes, Abstract Classes, and Interfaces              | ★★☆        | complete |
-| 2   | Inheritance, Overriding, and the Diamond Problem       | ★★☆        | complete |
-| 3   | The Object Class: equals, hashCode, toString, and clone| ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 7 | Class and Object Fundamentals | ★☆☆ | complete |
+| 8 | Methods, Parameters, and Overloading | ★☆☆ | complete |
+| 9 | Access Modifiers and Encapsulation | ★☆☆ | complete |
 
-### Java Language - L2 Generics and Types
+### Java Language - L2 Collections and Generics
 
-| #   | Keyword                                         | Difficulty | Status  |
-| --- | ----------------------------------------------- | ---------- | ------- |
-| 1   | Generics: Type Parameters, Bounds, and Type Safety | ★★☆     | draft   |
-| 2   | Wildcards and PECS: Producer Extends Consumer Super | ★★★    | draft   |
-| 3   | Enums: State Machines, Abstract Methods, EnumMap   | ★★☆     | draft   |
-| 4   | Autoboxing, Unboxing, and the Integer Cache Trap   | ★★☆     | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 10 | Collections Framework: List, Set, Map | ★★☆ | complete |
+| 11 | Generics and Type Erasure | ★★☆ | complete |
 
-### Java Language - L2 Functional
+### Java Language - L2 Lambdas and Streams
 
-| #   | Keyword                                                          | Difficulty | Status  |
-| --- | ---------------------------------------------------------------- | ---------- | ------- |
-| 1   | Lambda Expressions: Syntax, Capture Rules, and Effectively Final | ★★☆        | draft   |
-| 2   | Functional Interfaces: Predicate, Function, Consumer, Supplier   | ★★☆        | draft   |
-| 3   | Method References: Four Kinds and When Each Applies              | ★★☆        | draft   |
-| 4   | Streams API: Lazy Evaluation, Pipelines, and Terminal Operations | ★★☆        | draft   |
-| 5   | Optional: The Null-Safety Pattern and When NOT to Use It         | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 12 | Lambda Expressions and Method References | ★★☆ | complete |
+| 13 | Streams API and Functional Pipelines | ★★☆ | complete |
 
-### Java Language - L3 Type System Depth
+### Java Language - L2 OOP Patterns
 
-| #   | Keyword                                                    | Difficulty | Status  |
-| --- | ---------------------------------------------------------- | ---------- | ------- |
-| 1   | Records: Value Semantics and Compact Constructors          | ★★☆        | draft   |
-| 2   | Sealed Classes: Exhaustive Polymorphism and ADTs           | ★★☆        | draft   |
-| 3   | Pattern Matching: instanceof, Switch Expressions, Deconstruction | ★★☆  | draft   |
-| 4   | Annotations: Retention, Target, and Custom Processors      | ★★☆        | draft   |
-| 5   | Covariance, Contravariance, and Wildcard Capture           | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 14 | Inheritance, Polymorphism, and Method Dispatch | ★★☆ | complete |
+| 15 | Interfaces and Abstract Classes | ★★☆ | complete |
 
-### Java Language - L3 Modern Java
+### Java Language - L2 Modern Java Features
 
-| #   | Keyword                                                    | Difficulty | Status  |
-| --- | ---------------------------------------------------------- | ---------- | ------- |
-| 1   | Text Blocks: Indentation Stripping and Incidental Whitespace | ★☆☆      | draft   |
-| 2   | Switch Expressions: Exhaustiveness, Arrow Syntax, and Yield  | ★★☆      | draft   |
-| 3   | var: Local Variable Type Inference and Its Limits            | ★★☆      | draft   |
-| 4   | Default and Static Interface Methods: Evolution Without Breaking | ★★☆  | draft   |
-| 5   | Structured Concurrency and Scoped Values (Java 21+)          | ★★★      | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 16 | Records and Data Classes | ★★☆ | complete |
+| 17 | Optional and Null Safety Patterns | ★★☆ | complete |
 
-### Java Language - L4 Language Internals
+### Java Language - L3 Type System
 
-| #   | Keyword                                                    | Difficulty | Status  |
-| --- | ---------------------------------------------------------- | ---------- | ------- |
-| 1   | Type Erasure: Heap Pollution, Bridge Methods, Unchecked Warnings | ★★★  | draft   |
-| 2   | Immutability: Defensive Copies, Unmodifiable Views         | ★★★        | draft   |
-| 3   | Reflection: Class, Method, Field - Power, Cost, Security   | ★★★        | draft   |
-| 4   | String Pool and Interning: Memory Footprint at Scale       | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 18 | Sealed Classes and Pattern Matching | ★★☆ | complete |
+| 19 | Generics Wildcards and Bounded Types | ★★☆ | complete |
 
-### Java Language - L5 Architecture
+### Java Language - L3 Functional Programming
 
-| #   | Keyword                                                    | Difficulty | Status  |
-| --- | ---------------------------------------------------------- | ---------- | ------- |
-| 1   | Backward Compatibility: The Java Social Contract and Its Costs | ★★★    | draft   |
-| 2   | Java Language Specification: Type System Formal Rules      | ★★★        | draft   |
-| 3   | Java Platform Module System: Encapsulation at Module Level | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 20 | Functional Interfaces and Composition | ★★☆ | complete |
+| 21 | Stream Collectors and Reduction Operations | ★★☆ | complete |
+
+### Java Language - L3 Exception Handling
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 22 | Exception Hierarchy: Checked vs Unchecked | ★★☆ | complete |
+| 23 | Exception Anti-patterns and Best Practices | ★★☆ | complete |
+
+### Java Language - L3 Modern Language Features
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 24 | Switch Expressions and Pattern Matching Switch | ★★☆ | complete |
+| 25 | Text Blocks and String Templates | ★★☆ | complete |
+
+### Java Language - L4 Reflection and Proxies
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 26 | Reflection API and Dynamic Proxies | ★★★ | complete |
+
+### Java Language - L4 Annotation Processing
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 27 | Annotation Processing and Compile-Time Code Generation | ★★★ | complete |
+
+### Java Language - L4 Generics Internals
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 28 | Generics Internals: Bridge Methods and Heap Pollution | ★★★ | complete |
+
+### Java Language - L4 Virtual Threads API
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 29 | Virtual Threads and Structured Concurrency API | ★★★ | complete |
+
+### Java Language - L4 Module System
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 30 | Java Module System: JPMS and module-info.java | ★★★ | complete |
+
+### Java Language - L5 Language Version Strategy
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 31 | Java Version Upgrade Strategy: 8 to 21 LTS Migration | ★★★ | complete |
+
+### Java Language - L5 JPMS Architecture
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 32 | JPMS Migration: Classpath to Module Path Architecture | ★★★ | complete |
+
+### Java Language - L6 Theory
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 33 | Java Type System: Covariance, Contravariance, and PECS | ★★☆ | complete |
+| 34 | JLS Subtleties and Language Specification Edge Cases | ★★☆ | complete |
 
 ### Java Language - META Patterns
 
-| #   | Keyword                                                        | Difficulty | Status  |
-| --- | -------------------------------------------------------------- | ---------- | ------- |
-| 1   | The Billion-Dollar Mistake: Java Null Safety History and Lessons | ★★☆      | draft   |
-| 2   | API Design Principles: Effective Java Distilled                | ★★☆        | draft   |
-| 3   | The Expression Problem: Extensibility Trade-offs in OOP vs FP  | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 35 | Language Feature Adoption Decision Framework | ★☆☆ | complete |
+| 36 | Effective Java Mental Model: Bloch's Principles | ★☆☆ | complete |
+| 37 | Java API Design Principles and Backward Compatibility | ★☆☆ | complete |
+

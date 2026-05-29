@@ -21,23 +21,23 @@ Misconceptions, Failure Modes, Interview Deep-Dive (7-12 full Q&A).
 
 | Topic | Folder | Files | Keywords | Status |
 | ----- | ------ | ----- | -------- | ------ |
-| [Java Language](java-language/) | java-language/ | 10 | 42 | pending |
-| [Java Core](java-core/) | java-core/ | 10 | 44 | pending |
-| [Java Concurrency](java-concurrency/) | java-concurrency/ | 9 | 39 | complete |
-| [Java JVM](java-jvm/) | java-jvm/ | 8 | 34 | pending |
-| [Java Performance](java-performance/) | java-performance/ | 8 | 33 | pending |
-| [Spring](spring/) | spring/ | 10 | 43 | pending |
-| [Hibernate](hibernate/) | hibernate/ | 10 | 41 | pending |
-| [JPA](jpa/) | jpa/ | 10 | 41 | pending |
-| [Micronaut](micronaut/) | micronaut/ | 10 | 43 | complete |
-| [Quarkus](quarkus/) | quarkus/ | 10 | 43 | complete |
-| [GraalVM](graalvm/) | graalvm/ | 10 | 34 | complete |
-| [Design Patterns and SOLID](design-patterns/) | design-patterns/ | 10 | 44 | pending |
-| [REST API Design and HTTP](rest-api/) | rest-api/ | 10 | 43 | pending |
-| [Database and SQL](database-sql/) | database-sql/ | 10 | 44 | pending |
-| [Messaging and Event-Driven](messaging/) | messaging/ | 10 | 43 | pending |
-| [DevOps and CI/CD](devops-cicd/) | devops-cicd/ | 9 | 37 | pending |
-| [Docker and Containers](docker/) | docker/ | 9 | 37 | pending |
-| [Kubernetes](kubernetes/) | kubernetes/ | 10 | 44 | pending |
-| [Microservices](microservices/) | microservices/ | 10 | 44 | pending |
-| [System Design](system-design/) | system-design/ | 10 | 44 | pending |
+| Database SQL | docs/database-sql/ | 24 | 46 | complete |
+| Design Patterns | docs/design-patterns/ | 18 | 36 | complete |
+| DevOps CI/CD | docs/devops-cicd/ | 16 | 30 | complete |
+| Distributed Systems | docs/distributed-systems/ | 23 | 41 | complete |
+| Docker | docs/docker/ | 16 | 30 | complete |
+| Hibernate | docs/hibernate/ | 13 | 25 | complete |
+| Java Concurrency | docs/java-concurrency/ | 16 | 31 | complete |
+| Java Core | docs/java-core/ | 17 | 34 | complete |
+| Java JVM | docs/java-jvm/ | 18 | 32 | complete |
+| Java Language | docs/java-language/ | 20 | 37 | complete |
+| Java Performance | docs/java-performance/ | 17 | 29 | complete |
+| JPA | docs/jpa/ | 16 | 30 | complete |
+| Kafka | docs/kafka/ | 17 | 30 | complete |
+| Kubernetes | docs/kubernetes/ | 18 | 32 | complete |
+| Messaging | docs/messaging/ | 16 | 30 | complete |
+| Microservices | docs/microservices/ | 16 | 30 | complete |
+| REST API | docs/rest-api/ | 12 | 25 | complete |
+| Spring | docs/spring/ | 17 | 32 | complete |
+| System Design | docs/system-design/ | 11 | 21 | complete |
+

@@ -1,1248 +1,1275 @@
 ---
+layout: default
 title: "Java Concurrency - L5 Architecture"
 parent: "Java Concurrency"
-nav_order: 8
+grand_parent: "SK Interview"
+nav_order: 14
 permalink: /java-concurrency/l5-architecture/
-topic: Java Concurrency
-subtopic: L5 Architecture
-keywords:
-  - Concurrency Architecture Patterns
-  - Thread Safety Design Strategies
-  - Distributed Locking Strategies
-difficulty_range: hard
-status: complete
-version: 1
 ---
 
 # Java Concurrency - L5 Architecture
 
-| # | Keyword | Difficulty |
-| --- | --- | --- |
-| 1 | [Concurrency Architecture Patterns](#concurrency-architecture-patterns) | ★★★ |
-| 2 | [Thread Safety Design Strategies](#thread-safety-design-strategies) | ★★★ |
-| 3 | [Distributed Locking Strategies](#distributed-locking-strategies) | ★★★ |
-
----
-
-# Concurrency Architecture Patterns
-
-**Interview Weight:** high (L5) - Tests ability to choose and
-design system-level concurrency architectures. Staff-level question.
-
----
+## Concurrency Architecture Decisions
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Key concurrency architecture patterns: Actor model (isolated state
-> per actor, message passing), Event Loop (single-threaded event
-> dispatch, non-blocking), Pipeline (stages connected by queues),
-> and Thread-per-Request (blocking IO, simple). Modern Java: virtual
-> threads + Thread-per-Request gives reactive-level scalability with
-> the simplest architecture.
+> Concurrency architecture is the set of decisions that determine HOW
+> a system handles concurrent work: thread model (platform vs virtual),
+> execution model (blocking vs reactive), data access pattern (shared
+> state vs message passing), and back-pressure strategy. These decisions
+> are made at design time and are expensive to change. Getting them right
+> requires understanding the workload type (CPU-bound vs I/O-bound vs
+> mixed), the expected concurrency level, and the failure tolerance
+> required.
 
 **3 minutes (Senior):**
+> The fundamental tension in concurrency architecture is utilization vs
+> simplicity. Reactive/non-blocking maximizes CPU utilization for I/O-bound
+> work but makes code harder to reason about. Thread-per-task is simple
+> but wastes CPU if threads block on I/O.
+>
+> Virtual threads (Java 21) changed the calculus: virtual threads are
+> cheap enough (~1KB stack vs 1MB platform thread) to run one per task
+> even for I/O-bound work, reclaiming the simplicity of thread-per-task
+> while getting near-reactive CPU utilization.
+>
+> Key decisions: (1) Thread model: platform threads (CPU-bound tasks,
+> fixed count) vs virtual threads (I/O-bound tasks, unbounded). (2)
+> Coordination: shared state with locks (simple, but contention) vs
+> message passing with queues (higher throughput, harder debugging).
+> (3) Work isolation: separate thread pools per workload type to prevent
+> I/O-bound tasks from starving CPU-bound tasks. (4) Back-pressure:
+> bounded queues reject overflow rather than allowing unbounded memory
+> growth.
 
-> Actor model (Akka, Erlang OTP): each actor has private state,
-> processes one message at a time. No shared mutable state eliminates
-> lock-based synchronization entirely. Actors communicate only via
-> messages. Fault tolerance: supervisor hierarchies restart failed
-> actors. Scale: actors distribute across machines natively.
->
-> Event Loop (Node.js, Netty, Vert.x): single thread handles all
-> IO events via non-blocking callbacks. No threads = no locking.
-> Limitation: one blocking call blocks the entire loop. CPU-bound
-> work must be offloaded to a thread pool.
->
-> Pipeline pattern (Disruptor, Kafka Streams): data flows through
-> stages, each processed by a dedicated thread. Each stage owns
-> its data; no locks between stages. Between stages: lock-free
-> ring buffers (Disruptor) or queues. Extremely high throughput
-> for sequential processing.
->
-> Choice: Actor for complex stateful distributed systems. Event loop
-> for IO-heavy, low-latency services. Pipeline for ordered
-> high-throughput processing. Thread-per-Request + Virtual Threads
-> for standard CRUD services.
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
+
+*Adapting up:* Discuss the Reactor pattern (Project Reactor / RxJava)
+vs the CSP model (Kotlin Coroutines channels) vs Actor model (Akka),
+the LMAX Disruptor for ultra-low-latency, and the operational implications
+of each model on debugging, distributed tracing, and circuit breaker
+integration.
+
+*Adapting down:* "Concurrency architecture answers: how do you handle
+many requests at once? Option 1: one waiter per table (thread per request).
+Option 2: one waiter handles all tables at once using callbacks (event
+loop / reactive). Virtual threads give you the appearance of Option 1
+(code simplicity) with the efficiency of Option 2."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "Concurrency patterns: Actor (message passing),
-Event Loop (single thread, non-blocking), Pipeline (stage queues),
-Thread-per-Request."
+**(1) Restate:** "You are asking about architecture-level decisions for
+handling concurrency in a Java system. Let me structure this as: thread
+model, execution model, data sharing model, and resilience design."
 
-**(2) First principles:** "All concurrency problems come from
-shared mutable state. Eliminate sharing (Actor, Pipeline) or
-eliminate mutability (immutable data) to eliminate the problem."
+**(2) First principles:** "From first principles: a computer has N CPU
+cores. The concurrency architecture determines how threads are mapped
+to those cores, how work is distributed to threads, and how threads
+coordinate without stepping on each other."
+
+**(3) Bridge:** "Concurrency architecture is like designing a restaurant.
+Do you assign one chef per table (simple, but expensive if the kitchen
+has 200 tables and only 8 stove burners)? Or use a centralized kitchen
+that handles all tables with a queue (efficient, but the queue can back
+up and the chef must juggle multiple tasks)?"
 
 ---
 
 ### 📘 Concept Explanation
 
 **What it is:**
+Concurrency architecture is the collection of design decisions that
+govern how a Java application creates, manages, and coordinates concurrent
+work. It encompasses: thread model, task distribution, state management,
+back-pressure, and failure isolation.
 
-Concurrency architecture patterns: system-level designs that
-structure how threads, state, and work interact to achieve
-correctness and scalability.
+**Why it matters:**
+Wrong concurrency architecture causes:
+- Thread starvation (I/O tasks monopolize pool shared with CPU tasks)
+- Memory pressure (unbounded thread creation for incoming requests)
+- Deadlocks (wrong coordination primitives)
+- Cascading failures (pool exhaustion propagates upstream)
+- Debugging nightmares (reactive chains without structured context)
 
-**The problem it solves:**
-
-Low-level synchronization (locks, semaphores) is error-prone and
-hard to reason about at scale. Architecture patterns provide
-higher-level abstractions that make concurrency correctness a
-structural property rather than a per-class burden.
-
-**How it works:**
-
+**The core decision framework:**
 ```
-ACTOR MODEL (Akka):
-  class OrderActor extends AbstractActor {
-      private OrderState state;  // PRIVATE - no sharing
+Is the work CPU-bound or I/O-bound?
+  CPU-bound: fixed-size thread pool (N = CPU cores +1)
+             Platform threads, no more than cores (avoid context switch)
+  I/O-bound: larger thread pool OR virtual threads OR reactive
+             Task spends most time waiting, not computing
 
-      @Override public Receive createReceive() {
-          return receiveBuilder()
-              .match(PlaceOrder.class, msg -> {
-                  state = state.applyOrder(msg);
-                  // No locks needed: only this actor touches state
-                  sender().tell(new OrderConfirmed(msg.id), self());
-              }).build();
-      }
-  }
+What is the expected concurrency level?
+  100s:  Platform threads fine (1MB each, 100 = 100MB)
+  10Ks:  Virtual threads (Java 21) or reactive (NIO-based)
+  100Ks: Reactive (Project Reactor, Vert.x) or virtual threads
 
-EVENT LOOP (Vert.x):
-  vertx.createHttpServer()
-       .requestHandler(req -> {
-           // Runs on single event loop thread
-           // Non-blocking: callbacks only
-           dbClient.get(req.param("id"))  // non-blocking
-               .onSuccess(result ->
-                   req.response().end(result.toString()))
-               .onFailure(err ->
-                   req.response().setStatusCode(500).end());
-       }).listen(8080);
+How do threads/tasks coordinate?
+  Read-heavy:  ReadWriteLock, StampedLock, CopyOnWrite
+  Write-heavy: Lock striping, queue-based (LMAX Disruptor)
+  State-free:  Thread-local state, immutable data structures
 
-PIPELINE (Disruptor):
-  // Producer -> RingBuffer -> Consumer1 -> Consumer2 -> Consumer3
-  // Each stage on its own thread; no locks; cache-line padded slots
-  RingBuffer<Event> ringBuffer =
-      disruptor.getRingBuffer();
-  long seq = ringBuffer.next();     // claim slot
-  ringBuffer.get(seq).setValue(42); // write (no lock)
-  ringBuffer.publish(seq);          // make visible
+What is the failure model?
+  Task failure:    CompletableFuture exception handling
+  Pool exhaustion: Circuit breaker, bounded queue with rejection policy
+  Timeout:         ScheduledExecutorService, CompletableFuture.orTimeout()
 ```
 
-**The key insight:**
+**Java concurrency evolution timeline:**
 
-The Actor model does not eliminate concurrency - it eliminates
-shared mutable state. Actors run concurrently; their internal state
-is sequential. Bugs become message protocol bugs (easier to reason)
-rather than lock ordering bugs (notoriously hard to reason).
+| Java | Feature | Impact |
+|---|---|---|
+| 1.0 | synchronized, Thread | Foundation - but unmanaged |
+| 5.0 | java.util.concurrent | ExecutorService, locks, queues |
+| 7 | ForkJoinPool | Parallel work-stealing for divide-and-conquer |
+| 8 | CompletableFuture | Async composition without explicit threads |
+| 9 | reactive streams | Standardized back-pressure protocol |
+| 19 | Virtual threads preview | Million-thread I/O concurrency |
+| 21 | Virtual threads GA | Platform threads for CPU, virtual for I/O |
+| 21 | Structured Concurrency | Scoped lifetime for async task groups |
 
-**When to use it:**
+**Platform threads vs virtual threads:**
+```
+Platform thread:
+  ~1MB stack (configurable via -Xss)
+  OS-scheduled (context switch ~10 microseconds)
+  JVM limit: OS limits (~10,000-100,000 per JVM, practical)
+  Best for: CPU-bound work, OS/native library calls
 
-- Actor: stateful distributed systems, event sourcing, game servers
-- Event Loop: high-concurrency IO (HTTP proxy, API gateway, chat)
-- Pipeline: ordered stream processing, ETL, financial matching engines
-- Thread-per-Request + VT: standard web services, CRUD APIs
-
-**When NOT to use it:**
-
-- Do not use Actor for CPU-bound algorithms: message overhead
-  and mailbox processing adds latency
-- Do not use Event Loop for CPU-heavy requests: blocks the loop
-- Do not use Pipeline for irregular/dynamic workloads: stage sizes
-  are hard to balance
-
-**Alternatives:**
-
-- CSP (Communicating Sequential Processes): Kotlin channels,
-  Go channels - message passing without actor location transparency
-- Dataflow: RxJava, Reactor - data-flow DAG with reactive streams
-
-**First-principles derivation:**
-
-All architectures address the fundamental problem: shared mutable
-state causes race conditions. Solutions: (1) eliminate sharing
-(actor, thread-local, immutable), (2) eliminate mutation (functional,
-immutable data), (3) serialize access (event loop, serial executor).
-Each architecture makes a different trade-off between simplicity,
-throughput, and latency.
+Virtual thread (Java 21):
+  ~KB stack (grows dynamically)
+  JVM-scheduled (unmounts from carrier thread on blocking I/O)
+  Limit: millions per JVM
+  Best for: I/O-bound work (HTTP clients, DB queries, file I/O)
+  NOT suitable: CPU-bound (just uses a platform carrier thread)
+```
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Pipeline with ArrayBlockingQueue**
+> **Code walkthrough:** The BAD example uses a single shared unbounded
+> thread pool for all work types, causing CPU and I/O tasks to compete.
+> The GOOD example segregates workloads into separate pools with bounded
+> queues and uses virtual threads for I/O-bound tasks in Java 21.
 
 ```java
-// GOOD: Three-stage pipeline
-// Stage 1 (parser) -> Stage 2 (validator) -> Stage 3 (writer)
-BlockingQueue<String> rawQ    = new ArrayBlockingQueue<>(1000);
-BlockingQueue<Record> parsedQ = new ArrayBlockingQueue<>(1000);
-BlockingQueue<Record> validQ  = new ArrayBlockingQueue<>(1000);
+// BAD: one shared pool for all work types
+ExecutorService sharedPool = Executors.newFixedThreadPool(20);
 
-// Stage 1: Parse (1 thread)
-Executors.newSingleThreadExecutor().submit(() -> {
-    for (String line : source) {
-        rawQ.put(line);       // blocks if rawQ full (backpressure)
-    }
-});
-
-// Stage 2: Validate (2 threads for parallelism)
-for (int i = 0; i < 2; i++) {
-    Executors.newSingleThreadExecutor().submit(() -> {
-        while (true) {
-            String raw = rawQ.take();  // blocks if empty
-            Record r = parse(raw);
-            parsedQ.put(r);
-        }
-    });
-}
-
-// Stage 3: Write (1 thread - single writer to DB)
-Executors.newSingleThreadExecutor().submit(() -> {
-    while (true) {
-        Record r = parsedQ.take();
-        if (validate(r)) validQ.put(r);
-    }
-});
+// CPU-bound and I/O-bound tasks compete for the SAME 20 threads
+sharedPool.submit(() -> encryptData(payload));        // CPU-bound
+sharedPool.submit(() -> callExternalApi(request));    // I/O-bound (blocks)
+sharedPool.submit(() -> queryDatabase(query));        // I/O-bound (blocks)
+// I/O tasks block their threads; CPU tasks starve
+// If all 20 threads are blocked on I/O, CPU tasks queue indefinitely
 ```
 
-> **Code walkthrough:** Each stage runs on its own thread(s). Data
-> flows downstream through bounded BlockingQueues. Backpressure is
-> natural: if Stage 3 (writer) is slow, validQ fills up, blocking
-> Stage 2, which causes parsedQ to fill, blocking Stage 1. No locks
-> needed because each stage owns its data while processing it. The
-> queue is the handoff point: the only synchronization needed is the
-> queue's own thread-safe put/take. This pattern scales by adding
-> threads to bottleneck stages.
+```java
+// GOOD: segregated thread pools by workload type (Java 17)
+// CPU-bound pool: N = cores (maximize compute, no context switch waste)
+int cpuCores = Runtime.getRuntime().availableProcessors();
+ExecutorService cpuPool = new ThreadPoolExecutor(
+    cpuCores, cpuCores, 0, SECONDS,
+    new LinkedBlockingQueue<>(1000),
+    new ThreadFactoryBuilder().setNameFormat("cpu-worker-%d").build(),
+    new ThreadPoolExecutor.CallerRunsPolicy());
+
+// I/O-bound pool: N = 4x cores (threads block on I/O, not CPU)
+ExecutorService ioPool = new ThreadPoolExecutor(
+    cpuCores * 4, cpuCores * 8, 60, SECONDS,
+    new LinkedBlockingQueue<>(10000),
+    new ThreadFactoryBuilder().setNameFormat("io-worker-%d").build(),
+    new ThreadPoolExecutor.AbortPolicy());
+
+// Route by workload type:
+cpuPool.submit(() -> encryptData(payload));
+ioPool.submit(() -> callExternalApi(request));
+ioPool.submit(() -> queryDatabase(query));
+```
+
+```java
+// BEST (Java 21+): virtual threads for I/O, platform pool for CPU
+// CPU-bound: same fixed pool as above
+ExecutorService cpuPool = Executors.newFixedThreadPool(cpuCores);
+
+// I/O-bound: virtual thread executor (unlimited, mounted on carrier pool)
+ExecutorService ioExecutor =
+    Executors.newVirtualThreadPerTaskExecutor();
+
+// Each virtual thread: ~2KB, unmounts from carrier when blocking on I/O
+// Carrier pool = ForkJoinPool.commonPool() (N = CPU cores)
+// 1000 virtual threads waiting on DB = 1000 virtual, 8 carriers (8-core machine)
+
+// Structured concurrency (Java 21 preview / 23 second preview):
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    var userFuture = scope.fork(() -> fetchUser(userId));
+    var orderFuture = scope.fork(() -> fetchOrders(userId));
+    scope.join().throwIfFailed(); // wait for both or cancel all
+    return new UserWithOrders(userFuture.get(), orderFuture.get());
+}
+```
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
+> I know that ExecutorService manages thread pools and avoids creating
+> threads directly. I'd use Executors.newFixedThreadPool for CPU work
+> and a larger pool for I/O work. In Java 21, I'd use virtual threads
+> for I/O-bound tasks because they're cheap and don't block OS threads.
+> CompletableFuture lets me chain async operations without nested callbacks.
+> I always use bounded queues to prevent memory issues if tasks back up.
 
-> Architecture patterns for concurrency: Actor (private state, messages),
-> Event Loop (single thread, non-blocking), Pipeline (stages + queues),
-> Thread-per-Request. Each eliminates shared mutable state differently.
-> Choice depends on workload: IO-heavy = event loop, stateful distributed
-> = actors, ordered streaming = pipeline.
+*Push deeper:* How do you decide the thread pool size for an I/O-bound
+service, and how would that change with virtual threads?
 
 ---
 
 **Senior / Staff (5+ years):**
+> My architecture decisions start with workload classification. For CPU-
+> bound: fixed pool at CPU count + work-stealing (ForkJoinPool). For
+> I/O-bound in Java 21+: virtual threads (code is synchronous, JVM handles
+> the unmounting). I isolate workloads into separate pools to prevent
+> noisy-neighbor starvation. I use bounded queues everywhere with calibrated
+> rejection policies (CallerRunsPolicy for self-throttling, AbortPolicy
+> for explicit circuit breaking). I never share a pool between fast and
+> slow operations. For fan-out calls (call 5 services, combine results):
+> StructuredTaskScope with ShutdownOnFailure for automatic cancellation
+> semantics. For metrics aggregation: LongAdder per thread, periodic
+> aggregation.
 
-> I select architecture before selecting primitives. For new Java
-> services: Thread-per-Request + Virtual Threads (simple, scales).
-> For high-throughput ordered processing: pipeline with Disruptor
-> (lock-free ring buffer, 100M+ msg/sec). For distributed stateful
-> systems: Akka or Axon (actor + event sourcing). For reactive
-> streaming: Reactor Flux with bounded elastic scheduler. I never
-> add lock-based complexity when an architectural pattern eliminates
-> the need.
+*Push deeper:* What changes in your concurrency architecture when you
+introduce virtual threads? What problems do virtual threads NOT solve?
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "Actor model eliminates concurrency bugs" | Actors eliminate race conditions on state; deadlock is still possible (actors waiting for each other's response) | False confidence in actor systems |
-| "Event loop is always faster than thread pool" | Event loop excels at IO-bound; for CPU-bound, thread pool is equivalent or better | Using event loop for CPU tasks; blocks the loop |
-| "Pipeline pattern requires Disruptor" | BlockingQueue-based pipeline works well for moderate throughput; Disruptor adds complexity for > 10M msg/sec only | Over-engineering simple pipelines |
+**Misconception 1: "Virtual threads eliminate the need for all concurrency
+design."**
+Virtual threads solve the "blocking I/O wastes a platform thread" problem.
+They do NOT solve: CPU-bound workloads (still need platform thread pools),
+lock contention (synchronization on virtual threads still blocks the
+carrier), pinning (synchronized blocks prevent unmounting - must use
+ReentrantLock for virtual-thread-friendly code), and memory coordination
+(shared state still needs concurrent data structures).
+
+**Misconception 2: "Reactive programming is always better than blocking."**
+Reactive (Project Reactor, RxJava) maximizes CPU utilization for I/O-
+bound work but at the cost of: complex error handling, difficult debugging
+(no meaningful stack traces), incompatibility with blocking APIs, and
+steep learning curve. For most services, virtual threads (Java 21) achieve
+similar throughput with synchronous code.
+
+**Misconception 3: "One big thread pool is simpler and works fine."**
+A single shared pool causes noisy-neighbor problems: slow operations
+(DB timeouts, external HTTP calls) fill the pool and starve fast
+operations. Pool segregation (CPU pool, I/O pool, background pool) is
+not premature optimization - it is a fundamental resilience pattern.
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Actor mailbox overflow | OOM or task rejection | Actor cannot process messages faster than arrival rate | Monitor mailbox sizes; alert on queue > threshold | Add backpressure; scale actors; bound mailbox with drop/buffer strategy |
-| Pipeline stage imbalance | Queue between stages always full or always empty | Stage throughput mismatch | Monitor queue depth per stage | Scale slow stage (more threads); tune batch size |
+**Failure 1: Thread pool starvation due to mixed workloads**
+Symptom: service becomes unresponsive; fast endpoints affected by slow
+endpoints; thread dump shows all pool threads stuck in slow operations.
+Cause: single shared pool with mixed fast/slow tasks.
+```
+Thread pool: 20 threads
+Fast tasks: 1ms (checkout page)
+Slow tasks: 30s (large report generation)
+When 20 report generation tasks submit: pool exhausted
+All checkout requests queue, timeout, cascade to upstream failures
+```
+Fix: dedicated pools by operation type and SLA class.
+
+**Failure 2: Virtual thread pinning**
+Symptom: Java 21 virtual threads, high I/O concurrency, but throughput
+plateaus at carrier pool size (default = CPU count).
+Cause: virtual thread executes `synchronized` block while waiting on
+I/O. The virtual thread is PINNED to its carrier (cannot unmount).
+```bash
+# Detect pinning with JFR:
+-Djdk.tracePinnedThreads=full  # prints stack trace when pinning occurs
+# Or JFR event: jdk.VirtualThreadPinned
+```
+Fix: replace synchronized blocks with ReentrantLock inside virtual-
+thread code. Synchronized on the virtual thread body (not critical
+section) cannot be worked around.
+
+**Failure 3: Back-pressure missing - OutOfMemoryError under load**
+Symptom: service works fine at normal load; under spike, memory exhausts.
+Cause: unbounded task queue; incoming requests faster than processing.
+```
+Unbounded queue: LinkedBlockingQueue() // no capacity limit!
+10K requests arrive in 10 seconds
+10K tasks queued, each holding request data
+Request objects: 1KB each = 10MB (fine)
+10K virtual thread stacks: 2KB each = 20MB (fine)
+BUT: each task fetches a 1MB response = 10GB pending results = OOM
+```
+Fix: bounded queues with explicit rejection handling. Circuit breaker
+to shed load before OOM.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 3 min | Name and describe each pattern; basic use cases |
-| Mid | 5 min | Trade-offs; when to choose each; Java implementations |
-| Senior | 8 min | Disruptor mechanics; actor deadlock; event loop + thread pool combo |
-| Staff | 12 min | Design a system using one of these patterns end-to-end |
+| Question Category | Time to Answer |
+|---|---|
+| Thread model decision | 3-4 minutes |
+| Pool sizing | 3-4 minutes |
+| Virtual threads vs reactive | 4-5 minutes |
+| Workload isolation | 3-4 minutes |
+| Back-pressure design | 3-4 minutes |
+| State sharing model | 3-4 minutes |
+| Failure isolation | 3-4 minutes |
+| Structured concurrency | 3-4 minutes |
+| Microservices concurrency | 3-4 minutes |
+| Migration strategy | 4-5 minutes |
+| Production patterns | 3-4 minutes |
+| Review a design | 4-5 minutes |
 
 ---
 
-**Q1** [ARCHITECTURE] [STAFF]
+**Q1 (Thread model decision): How do you decide between platform threads,
+virtual threads, and reactive for a new service?**
 
-"Design a high-throughput order processing system (1M orders/sec)
-using a concurrency architecture pattern."
+A: Decision framework based on workload type:
 
-**Answer:**
+**Step 1: Classify the work.**
+- CPU-bound (encryption, compression, computation): platform threads.
+  Rule: N threads = CPU cores + 1. More threads than cores = context
+  switch overhead, not more throughput.
+- I/O-bound (HTTP calls, DB queries, file I/O): threads block most of
+  the time. Platform threads waste OS resources while blocking.
+- Mixed: split into separate pools (see Q4).
 
-Pattern choice: Pipeline with lock-free Disruptor ring buffer.
+**Step 2: Check Java version.**
+Java 21+: virtual threads are available and GA.
+Pre-Java 21: only platform threads or reactive.
 
-Requirements analysis:
-- 1M orders/sec = 1000 ns per order budget
-- Orders must be processed in sequence (matching engine rule)
-- Multiple stages: receive, validate, match, persist, notify
-- Low latency: P99 < 1ms
-
-Architecture:
+**Step 3: Apply the Java 21 decision tree:**
 ```
-[Network] -> [Receive] -> [Validate] -> [Match] -> [Persist] -> [Notify]
-               Thread 1     Threads 2-3   Thread 4   Thread 5    Thread 6
+I/O-bound work?
+  YES -> Virtual threads (Executors.newVirtualThreadPerTaskExecutor())
+  NO (CPU-bound) -> Fixed platform thread pool (N = cores)
 
-Ring Buffer between each stage (Disruptor):
-  - Lock-free slot claim (CAS)
-  - Cache-line padded: no false sharing between slots
-  - Consumer polls (spin-wait): microsecond latency
-  - 64K slots: 64K * 64 bytes = 4MB (fits in L3 cache)
-```
+Synchronous code with synchronized blocks?
+  Virtual thread + synchronized -> risk of pinning -> use ReentrantLock
+  Platform thread -> synchronized is fine
 
-Design decisions:
-1. Single sequence in Match stage: orders matched in arrival order.
-   Only one match thread avoids locking the order book.
-2. Persist stage: async write to DB; ring buffer absorbs bursts
-3. BatchSize for Persist: group 500 orders per DB write (500x
-   throughput improvement vs one DB call per order)
-4. Notify stage: publish to Kafka; async, no latency impact
-
-Scalability: at 1M/sec, each stage has 1000ns budget.
-Disruptor ring buffer: ~5ns per slot claim. Match stage: ~200ns.
-Persist (batched): 500 orders in one 2ms DB write = 4ns/order.
-Total: within budget.
-
-Fault tolerance: Disruptor has no persistence; wrap with
-event sourcing: write each order to the ring buffer AND to a
-durable log (Kafka) before processing. On restart: replay from log.
-
-*What separates good from great:* Single-thread Match stage by
-design (no locking on the order book) and batching for Persist
-(the key to meeting the throughput target).
-
----
-
-### ⚖️ Comparison Table
-
-| Pattern | State Model | Throughput | Latency | Complexity | Best For |
-| --- | --- | --- | --- | --- | --- |
-| Actor | Private per actor | Medium-high | Medium | High | Distributed stateful |
-| Event Loop | Global (single thread) | High (IO) | Low | Medium | IO gateway |
-| Pipeline | Per-stage | Very high | Low | Medium | Ordered stream processing |
-| Thread-per-Request | Shared (synchronized) | Medium | Medium | Low | CRUD services |
-
----
-
-### 🏛️ System Design
-
-The concurrency architecture determines the entire system design:
-
-Actor: Use when components need location transparency (local or
-remote actor, same API). Event Sourcing + Actor = CQRS.
-
-Event Loop: Use for API gateways, proxy servers, WebSocket
-hubs. Combine with thread pool for CPU-heavy requests
-(Netty's EventLoop + workerPool design).
-
-Pipeline: Use when data has a natural flow (ETL, financial,
-media encoding). Disruptor for extreme throughput, BlockingQueue
-for moderate.
-
----
-
-### 📊 Diagram
-
-```
-PIPELINE vs ACTOR vs EVENT LOOP:
-
-Pipeline:
-  [Stage1: 1 thread] --queue--> [Stage2: 2 threads] --queue--> [Stage3]
-
-Actor:
-  [ActorA]--msg-->[ActorB]--msg-->[ActorC]
-  Each actor: private state, sequential mailbox
-
-Event Loop:
-  [EventLoop: 1 thread] --callbacks--> IO completion
-  [WorkerPool] <-- CPU tasks offloaded
+Need reactive back-pressure or event streaming?
+  Use Project Reactor (Spring WebFlux) or RxJava
+  (Reactive shines here even with virtual threads)
 ```
 
-```mermaid
-flowchart LR
-    subgraph Pipeline
-        P1[Stage 1] -->|queue| P2[Stage 2] -->|queue| P3[Stage 3]
-    end
-    subgraph Actor
-        A1((Actor A)) -->|message| A2((Actor B)) -->|message| A3((Actor C))
-    end
-    subgraph EventLoop
-        EL[Event Loop\n1 thread] -->|offload CPU| WP[Worker Pool]
-        IO[IO Events] -->|callback| EL
-    end
+**Virtual thread benefits:**
+- No pool sizing: create one per task (millions possible)
+- Blocking I/O auto-unmounts: carrier is freed for other virtual threads
+- Code remains synchronous (no callback pyramid)
+- Try-with-resources, debugging stack traces work normally
+
+**Remaining use cases for reactive:**
+- Streaming large datasets (back-pressure without loading all in memory)
+- Event-driven pipelines
+- Libraries that are already reactive (R2DBC, Spring WebFlux)
+
+*What separates good from great:* Virtual threads changed the default
+answer for I/O-bound services from "use reactive" to "use virtual
+threads with synchronous code". But reactive still wins for stream
+processing (large datasets, event pipelines) because its back-pressure
+model (Flux.onBackpressureDrop(), buffer()) is built for flow control
+in ways that virtual thread executors don't provide natively.
+
+---
+
+**Q2 (Pool sizing): How do you size a thread pool for different workload
+types?**
+
+A: Thread pool sizing formulas:
+
+**CPU-bound:**
+```
+Thread count = CPU cores + 1
+
+Rationale: N = cores means N threads can run simultaneously.
++1 handles the rare case where a thread is temporarily paused
+(OS preemption, minor GC). More than +1 = unnecessary context switches.
+
+Example: 8-core machine -> pool size = 9
+Code: Runtime.getRuntime().availableProcessors() + 1
 ```
 
-> **Diagram walkthrough:** Pipeline: data is a river flowing through
-> stages via queues; each stage owns a slice of time with the data.
-> Actor: data is a message in a mailbox; actors are isolated islands
-> communicating by post. Event Loop: one thread handles all IO events
-> via callbacks, offloading CPU work to a separate pool. Each model
-> eliminates shared mutable state differently: Pipeline by strict
-> handoff, Actor by mailbox isolation, Event Loop by single-threading
-> the dispatch.
-
----
-
----
-
-# Thread Safety Design Strategies
-
-**Interview Weight:** high (L5) - Tests ability to select the
-correct thread safety strategy for a given design scenario.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Five strategies for thread safety: (1) immutability - no mutation,
-> no races; (2) thread confinement - one thread owns the data;
-> (3) stateless - no fields, pure functions; (4) synchronization -
-> locks or CAS; (5) copy-on-write - reads share; writes copy.
-> Strategy 1-3 are zero-cost; prefer them before reaching for locks.
-
-**3 minutes (Senior):**
-
-> Thread confinement is the most underused: if data is only ever
-> touched by one thread, no synchronization is needed at all.
-> ThreadLocal implements per-thread confinement. Virtual thread
-> stacks are naturally confined. Event loop: all state confined to
-> the event loop thread.
->
-> Immutability: Java Record, @Value (Lombok), Collections.unmodifiableX,
-> final fields. Immutable objects are always safe to share - no
-> mutation = no data race. The cost: every "update" creates a new
-> object. For frequently modified state, this is inefficient.
->
-> Stateless: Spring @Service beans are designed stateless. All state
-> is in the arguments or in external storage (DB, cache). Stateless
-> services scale horizontally without synchronization.
->
-> Synchronization (last resort): when mutation is unavoidable and
-> cannot be confined, use the minimal synchronization necessary.
-> Prefer lock-free (CAS, AtomicXxx) over locks. Prefer read-write
-> locks (StampedLock) over exclusive locks for read-heavy workloads.
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "Thread safety strategies: immutability, confinement,
-stateless, CAS, locks. First three are free."
-
-**(2) First principles:** "Race conditions require: two threads +
-shared mutable state. Eliminate either sharing or mutation."
-
----
-
-### 📘 Concept Explanation
-
-**What it is:**
-
-A taxonomy of strategies for making code thread-safe, ordered from
-zero-cost (preferred) to highest-cost (last resort).
-
-**The problem it solves:**
-
-Developers default to locks for thread safety. Locks are the
-right tool in some cases but wrong in most. The strategy taxonomy
-helps select the correct approach at design time.
-
-**How it works:**
-
+**I/O-bound (platform threads):**
 ```
-STRATEGY 1: IMMUTABILITY (zero cost)
-  record Point(double x, double y) {}  // Java record: immutable
-  Point p = new Point(1.0, 2.0);
-  // Share freely: no lock needed, no synchronization
+Thread count = CPU cores × (1 + wait_time / compute_time)
 
-STRATEGY 2: THREAD CONFINEMENT (zero cost)
-  ThreadLocal<SimpleDateFormat> sdf =
-      ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd"));
-  // Each thread has its own SDF; no sharing; no synchronization
+Example: 8 cores, each task: 1ms compute, 9ms I/O wait
+Thread count = 8 × (1 + 9/1) = 80 threads
 
-STRATEGY 3: STATELESS (zero cost)
-  @Service
-  class OrderCalculator {  // no fields; all state in parameters
-      BigDecimal calculate(Order order, PriceList prices) {
-          return order.items().stream()
-              .map(item -> prices.get(item.sku()).multiply(item.qty()))
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-      }
-  }
-  // 1000 threads calling calculate() simultaneously: correct, no sync
-
-STRATEGY 4: CAS/LOCK-FREE (low cost)
-  AtomicLong counter = new AtomicLong(0);
-  counter.incrementAndGet(); // CAS: no lock, bounded retry
-
-STRATEGY 5: LOCKS (highest cost, last resort)
-  synchronized(this) { /* critical section */ }
-  // Or: ReentrantLock for try-lock, fair, condition variables
+This ensures all 8 CPU cores are always busy:
+80 threads, each 90% of time waiting = 8 threads always computing
 ```
 
-**The key insight:**
+**I/O-bound (Java 21 virtual threads):**
+```
+No sizing needed. Create one per task.
+JVM automatically manages carrier pool (default = ForkJoinPool.commonPool
+= CPU cores). When virtual thread blocks on I/O, it unmounts from carrier;
+another virtual thread mounts. Carrier pool stays fully utilized.
+```
 
-The question is not "should I add a lock?" but "can I eliminate
-shared mutable state entirely?" Most concurrency bugs in production
-are caused by mutable shared state that was never analyzed for
-thread safety. Defaulting to immutability at design time prevents
-entire classes of bugs.
+**Mixed workloads:**
+```
+Separate pools:
+- Pool A: CPU tasks (N = cores)
+- Pool B: I/O tasks (N = cores × 5, or virtual threads)
+- Pool C: Background/batch (N = 2, low priority)
 
-**When to use each:**
+Never mix CPU and I/O tasks in the same pool.
+```
 
-- Immutable: DTOs, value objects, configuration, results
-- Confinement: per-request state, parsers, formatters, caches
-- Stateless: service beans, utility classes, pure functions
-- CAS: counters, flags, single-field state
-- Locks: multi-field atomic updates, non-trivial invariants
+**Back-pressure (queue sizing):**
+```
+Queue capacity = acceptable_latency_ms × throughput_per_ms
 
-**When NOT to use it:**
+Example: 100ms max acceptable queue wait, 200 ops/sec
+Queue capacity = 100 × 0.2 = 20 tasks
 
-- Do not use locks for state that could be immutable: over-engineering
-- Do not use ThreadLocal for long-lived state: memory leak if not cleaned
-- Do not use stateless when natural state exists: forcing statelessness
-  into an algorithm that has inherent state is a code smell
+When queue > 20: reject (CallerRunsPolicy or AbortPolicy)
+```
 
-**Alternatives:**
-
-- Software Transactional Memory (Clojure STM): optimistic
-  multi-field atomic updates without locks
-- Actor model: confinement as an architectural pattern
-
-**First-principles derivation:**
-
-Data race condition: two threads access same memory, at least one
-writes, no HB ordering. Immutability: writes never happen. Confinement:
-only one thread can access (no second thread). Stateless: no
-shared memory. CAS/Locks: HB established by the atomic operation.
-All strategies address the formal data race definition.
+*What separates good from great:* The I/O thread count formula requires
+measuring actual wait time. Measure with JFR `jdk.ThreadPark` and
+`jdk.JavaMonitorWait` over a production window. The formula is a starting
+point; calibrate with load testing. Also: thread pool utilization
+should be 70-80% in steady state, not 90-100% (leaves headroom for
+traffic spikes).
 
 ---
 
-### 💻 Code Example
+**Q3 (Virtual threads vs reactive): Compare virtual threads and reactive
+programming for a high-concurrency service.**
 
-**Example 1: Bad (unnecessary lock) vs Good (immutability first)**
+A:
 
+**Virtual threads (Java 21):**
 ```java
-// BAD: synchronized for a value that never changes
-class Config {
-    private String apiUrl;
-    private int timeout;
-
-    synchronized String getApiUrl() { return apiUrl; }   // lock!
-    synchronized int getTimeout() { return timeout; }    // lock!
-    synchronized void init(String url, int t) {
-        apiUrl = url; timeout = t;
+// Thread-per-request with virtual threads
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    for (Request req : incoming) {
+        executor.submit(() -> {
+            User user = userService.find(req.userId);  // blocks -> unmounts
+            Order order = orderService.create(req);     // blocks -> unmounts
+            return notifyService.send(order);           // blocks -> unmounts
+        });
     }
 }
+// Code looks synchronous - easy to read, debug, and reason about
+// Each blocking call frees the carrier thread for another virtual thread
+```
 
-// GOOD: immutable config - zero locking overhead
-record Config(String apiUrl, int timeout) {}
-// Create once; share freely:
-Config config = new Config("https://api.example.com", 5000);
-// No synchronization needed: record fields are final
-// Reading from 100 threads: zero contention
+**Reactive (Project Reactor):**
+```java
+// Non-blocking pipeline
+Mono.fromCallable(() -> req.userId)
+    .flatMap(userId -> userService.findReactive(userId))  // non-blocking
+    .flatMap(user -> orderService.createReactive(req))    // non-blocking
+    .flatMap(order -> notifyService.sendReactive(order))  // non-blocking
+    .subscribe(
+        result -> log.info("Done: {}", result),
+        error -> log.error("Failed", error)
+    );
+// Non-blocking: no thread tied up
+// Code: callback/Mono chain - harder to read, debug
+```
 
-// GOOD: thread-local for per-request mutable state
-private static final ThreadLocal<RequestContext> CONTEXT =
-    ThreadLocal.withInitial(RequestContext::new);
+**Comparison:**
 
-public void handleRequest(HttpRequest req) {
-    CONTEXT.get().setUserId(req.header("X-User-Id"));
-    try {
-        processRequest(req);
-    } finally {
-        CONTEXT.remove(); // CRITICAL: prevent memory leak
-    }
+| Dimension | Virtual Threads | Reactive |
+|---|---|---|
+| Code style | Synchronous | Functional/callback |
+| Debugging | Normal stack traces | Operator fusion, hard stacks |
+| Exception handling | try/catch | onErrorResume, onErrorReturn |
+| Throughput (I/O-bound) | Similar | Similar |
+| Back-pressure | No native support | Built-in (Flux) |
+| Library ecosystem | Any blocking library | Must use reactive libraries |
+| Structured concurrency | StructuredTaskScope | reactor.util.context |
+| Learning curve | Low | High |
+
+**When reactive is still better:**
+1. Large stream processing: `Flux.fromIterable(1_000_000_records).map(transform)...`
+   with back-pressure prevents OOM.
+2. WebSocket / SSE: reactive streaming is natural.
+3. Existing reactive codebase (R2DBC, Spring WebFlux): stay reactive.
+
+**When virtual threads are better:**
+- New services that use JDBC (blocking), blocking HTTP clients
+- Teams without reactive experience
+- When debugging simplicity matters
+
+*What separates good from great:* The practical answer for most teams:
+adopt virtual threads for new I/O-bound services in Java 21. Reserve
+reactive for genuine streaming use cases. The common mistake: adopting
+reactive across the board for "performance", then spending months
+debugging `onErrorResume` chains and context propagation issues that
+would have been straightforward in synchronous code.
+
+---
+
+**Q4 (Workload isolation): Why and how do you isolate thread pools by
+workload type?**
+
+A: Workload isolation prevents noisy-neighbor interference: a slow
+workload (30-second report generation) filling the thread pool and
+blocking fast workloads (5ms API health check).
+
+**The problem without isolation:**
+```
+Single pool: 20 threads
+
+Normal traffic:
+  10 API requests (5ms each)  -> 10 threads
+  10 idle threads available
+
+Traffic spike with slow tasks:
+  10 API requests (5ms each)  -> 10 threads
+  10 report requests (30s each) -> 10 threads (ALL remaining used)
+  New API request arrives -> QUEUED! 30+ second wait
+
+Result: API latency goes from 5ms to 30s+
+        Health check fails
+        Circuit breaker opens
+        Cascading failure upstream
+```
+
+**Isolation architecture:**
+```java
+// Pool A: API requests (fast SLA, must be responsive)
+ThreadPoolExecutor apiPool = new ThreadPoolExecutor(
+    20, 20, 0, SECONDS,
+    new LinkedBlockingQueue<>(500),  // bounded
+    threadFactory("api-handler-%d"),
+    new AbortPolicy()); // reject immediately if full
+
+// Pool B: Report generation (slow, can queue)
+ThreadPoolExecutor reportPool = new ThreadPoolExecutor(
+    4, 8, 60, SECONDS,   // small: we limit parallelism
+    new LinkedBlockingQueue<>(100),
+    threadFactory("report-gen-%d"),
+    new CallerRunsPolicy()); // self-throttle if full
+
+// Pool C: Background (low priority, non-urgent)
+ExecutorService bgPool = Executors.newFixedThreadPool(2);
+
+// Route by operation type:
+apiPool.submit(() -> handleApiRequest(req));
+reportPool.submit(() -> generateReport(reportId));
+bgPool.submit(() -> sendWelcomeEmail(userId));
+```
+
+**Pool isolation benefits:**
+- API pool remains responsive even when report pool is saturated
+- Each pool can be sized for its specific workload characteristics
+- Metrics (queue depth, active count) are meaningful per workload
+- Failure modes are contained: report generation failure doesn't
+  affect API handling
+
+*What separates good from great:* Name your pools with SLA context
+(`api-handler`, `batch-processor`, `background-task`) and expose
+their metrics via Micrometer. Alert when pool queue depth > threshold
+(pre-exhaustion warning) or when active count > 90% of max (near-capacity
+warning). Pools that silently exhaust before alerting cause cascading
+failures.
+
+---
+
+**Q5 (Back-pressure design): Design the back-pressure strategy for
+a service that ingests 10K requests/second.**
+
+A: Back-pressure prevents a fast producer from overwhelming a slow
+consumer by signaling the producer to slow down or drop work.
+
+**Without back-pressure:**
+```
+Producer: 10K req/s
+Consumer: processes 8K req/s
+Difference: 2K req/s accumulates in queue
+After 60 seconds: 120K tasks queued
+Each task: 1KB in-memory = 120MB queue (JVM heap pressure)
+After 10 minutes: 1.2GB queue -> OOM -> crash
+```
+
+**Back-pressure strategies:**
+
+Strategy 1 - Bounded blocking queue:
+```java
+// Queue capacity = max work we can absorb before rejecting
+BlockingQueue<Request> queue = new LinkedBlockingQueue<>(1000);
+
+// Producer: blocks if queue full (CallerRunsPolicy)
+ThreadPoolExecutor pool = new ThreadPoolExecutor(
+    8, 8, 0, SECONDS, queue, factory,
+    new ThreadPoolExecutor.CallerRunsPolicy()); // caller thread blocks
+// When pool saturated: HTTP server thread blocks -> HTTP 503 naturally
+```
+
+Strategy 2 - Circuit breaker (Resilience4j):
+```java
+@CircuitBreaker(name="ingestion",
+    fallbackMethod="rejectRequest")
+Response handleRequest(Request req) {
+    return processQueue.submit(() -> process(req))
+        .get(100, MILLISECONDS); // timeout = reject if slow
+}
+
+Response rejectRequest(Request req, Throwable ex) {
+    return Response.status(503).entity("Service overloaded").build();
 }
 ```
 
-> **Code walkthrough:** The bad Config uses synchronized getters
-> for data that is initialized once and never changes - unnecessary
-> synchronization overhead on every read, from every thread, forever.
-> The Java record Config makes all fields final; the compiler enforces
-> immutability. Any thread can read config.apiUrl() with zero
-> synchronization. The ThreadLocal example shows confinement:
-> RequestContext is per-thread, created fresh per request, and
-> cleaned up in the finally block (CRITICAL - without remove(),
-> thread pool threads leak the context across requests).
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior / Mid (0-5 years):**
-
-> Five strategies: immutability (Java record, final fields), thread
-> confinement (ThreadLocal), stateless (no fields), CAS (AtomicLong),
-> locks (synchronized, ReentrantLock). Prefer immutability over
-> locks. Stateless Spring beans: zero synchronization needed.
-
----
-
-**Senior / Staff (5+ years):**
-
-> I design for thread safety from the start, not as an afterthought.
-> Default: immutable data (Java records for DTOs). Stateless services:
-> all mutable state in DB or external stores. Per-request state:
-> thread-local or method parameters. Only when mutation is unavoidable
-> do I reach for CAS, then locks as a last resort. Code review focus:
-> any mutable field in a @Service or @Component is a potential
-> concurrency bug unless explicitly synchronized.
-
----
-
-### ⚠️ Common Misconceptions
-
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "Spring beans are thread-safe by default" | Spring beans are singletons; shared instance fields are NOT thread-safe | Mutable fields in @Service cause race conditions |
-| "ThreadLocal prevents all memory leaks" | ThreadLocal values stay in thread pool threads between requests unless explicitly removed | Stale context; OOM in thread pools |
-| "Immutable means slow (always copies)" | Structural sharing (persistent data structures) enables efficient immutable updates; simple immutable objects have no overhead for reads | Premature optimization to mutable for "performance" |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Race condition in @Service | Intermittent wrong results or NPE | Mutable instance field in stateless service | FindBugs/SpotBugs: non-final field in singleton; jstack race under load | Remove instance field; use method parameter or ThreadLocal |
-| ThreadLocal memory leak | Memory grows over time in thread pool | ThreadLocal not removed in finally | Heap dump: large ThreadLocalMap in pool threads | Add try/finally with ThreadLocal.remove() |
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 3 min | Name five strategies; basic examples |
-| Mid | 5 min | Trade-offs; ThreadLocal lifecycle; Spring singleton issue |
-| Senior | 8 min | Design a cache with correct thread safety strategy selection |
-| Staff | 12 min | Thread safety as a system design first principle; eliminate vs manage shared state |
-
----
-
-**Q1** [ARCHITECTURE] [STAFF]
-
-"Given a Spring @Service that must cache frequently read,
-occasionally updated data, design a thread-safe caching strategy."
-
-**Answer:**
-
-Requirements: high read throughput, occasional write, correctness
-under concurrent reads/writes.
-
-Strategy analysis:
-- Not immutable: data changes
-- Not stateless: holding cache state
-- Need synchronization, but minimize cost for reads
-
-Option 1: ConcurrentHashMap (read-heavy, no invalidation)
+Strategy 3 - Reactive back-pressure (Project Reactor):
 ```java
-@Service
-class ProductService {
-    // ConcurrentHashMap: lock-free reads, fine-grained write locks
-    private final ConcurrentHashMap<String, Product> cache
-        = new ConcurrentHashMap<>();
-
-    public Product get(String id) {
-        return cache.computeIfAbsent(id, k -> loadFromDB(k));
-        // computeIfAbsent: atomic check-and-set; only loads once
-    }
-
-    public void invalidate(String id) {
-        cache.remove(id);
-    }
-}
-// Correct for: one-shot loading, TTL handled externally
+Flux.<Request>create(sink -> {
+    requestSource.setListener(sink::next);
+})
+.onBackpressureBuffer(1000, dropped -> metrics.increment("dropped"),
+    BufferOverflowStrategy.DROP_LATEST)
+.flatMap(req -> processAsync(req), 8) // max 8 in-flight
+.subscribe();
 ```
 
-Option 2: StampedLock (read-heavy with write)
+Strategy 4 - Rate limiting (token bucket):
 ```java
-@Service
-class ProductService {
-    private final StampedLock lock = new StampedLock();
-    private Map<String, Product> cache = new HashMap<>();
+RateLimiter limiter = RateLimiter.create(8000.0); // 8K permits/sec
+if (!limiter.tryAcquire(1, 10, MILLISECONDS)) {
+    return Response.status(429).entity("Rate limit exceeded").build();
+}
+return process(request);
+```
 
-    public Product get(String id) {
-        // Optimistic read: no lock if no concurrent write
-        long stamp = lock.tryOptimisticRead();
-        Product p = cache.get(id);
-        if (!lock.validate(stamp)) { // writer changed data
-            stamp = lock.readLock(); // fall back to read lock
-            try { p = cache.get(id); }
-            finally { lock.unlockRead(stamp); }
+*What separates good from great:* The right strategy depends on failure
+semantics. CallerRunsPolicy is good for internal back-pressure (slow
+down the caller). For external clients, return HTTP 429 (rate limit)
+or HTTP 503 (service unavailable) explicitly. Dropping tasks silently
+(DROP_LATEST without logging) is dangerous in financial services.
+Always: log dropped work, emit a metric, and alert when drop rate > 0.
+
+---
+
+**Q6 (State sharing model): When should you use shared state vs message
+passing?**
+
+A: The fundamental choice in concurrent architecture.
+
+**Shared state + locks:**
+```java
+// Shared state: all threads access the same objects
+class AccountService {
+    private final ConcurrentHashMap<String, Account> accounts;
+
+    void transfer(String from, String to, BigDecimal amount) {
+        Account a = accounts.get(from);
+        Account b = accounts.get(to);
+        // Lock ordering matters to prevent deadlock:
+        Object first = from.compareTo(to) < 0 ? a : b;
+        Object second = from.compareTo(to) < 0 ? b : a;
+        synchronized(first) {
+            synchronized(second) {
+                a.debit(amount);
+                b.credit(amount);
+            }
         }
-        return p;
-    }
-
-    public void refresh(Map<String, Product> newCache) {
-        long stamp = lock.writeLock();
-        try { cache = newCache; }
-        finally { lock.unlockWrite(stamp); }
     }
 }
-// Correct for: very frequent reads, rare full refreshes
-// Optimistic read: zero lock overhead when no writer active
+```
+Pros: low latency, no copying, simple for small state.
+Cons: lock ordering, deadlock risk, hard to scale across machines.
+
+**Message passing (queue-based):**
+```java
+// Each account owns its own processing queue
+class Account {
+    private final BlockingQueue<Transaction> txnQueue;
+    // Account thread reads from its own queue only:
+    void start() {
+        Thread.ofVirtual().start(() -> {
+            while (true) {
+                Transaction txn = txnQueue.take();
+                applyTransaction(txn); // single-threaded, no locks needed
+            }
+        });
+    }
+    void submit(Transaction txn) { txnQueue.put(txn); }
+}
+```
+Pros: no locks on account state, easy to scale (each account an actor).
+Cons: async (eventual consistency), harder to implement synchronous
+transfer (two-phase commit or saga pattern needed).
+
+**When to use shared state:**
+- Low-latency requirements (sub-millisecond)
+- Small, well-defined state
+- Contention is manageable (use concurrent data structures)
+- Simple CRUD without complex invariants
+
+**When to use message passing:**
+- Complex state machines per entity (Actor model)
+- High isolation required (failures don't propagate)
+- Scalability across machines (actors → distributed actors)
+- Workflows with multiple steps and compensating actions
+
+*What separates good from great:* The Actor model (Akka, or virtual
+threads as lightweight actors) is the natural fit for event-sourced
+domains where each entity has complex state and its own lifecycle.
+The shared state model is simpler for stateless services or services
+where state is primarily in the database (each request reads from DB,
+modifies in memory, writes back - limited shared mutable state in JVM).
+
+---
+
+**Q7 (Failure isolation): How do you design for concurrency failure
+isolation?**
+
+A: Failure isolation prevents a failing or slow component from affecting
+other components - the "bulkhead" pattern.
+
+**Thread pool bulkheads:**
+```java
+// Without bulkheads: database slowness -> all threads blocked -> service down
+// With bulkheads: database threads isolated -> API threads unaffected
+
+@Configuration
+class PoolConfig {
+    // Database operations: isolated pool
+    @Bean ExecutorService dbPool() {
+        return new ThreadPoolExecutor(
+            10, 20, 60, SECONDS,
+            new LinkedBlockingQueue<>(50),
+            factory("db-worker-%d"),
+            new AbortPolicy()); // RejectedExecutionException if full
+    }
+
+    // External HTTP calls: separate isolated pool
+    @Bean ExecutorService httpPool() {
+        return new ThreadPoolExecutor(
+            10, 50, 60, SECONDS,
+            new LinkedBlockingQueue<>(200),
+            factory("http-worker-%d"),
+            new AbortPolicy());
+    }
+}
 ```
 
-Option 3: Caffeine (production-grade cache)
+**Timeout every blocking operation:**
+```java
+CompletableFuture<User> userFuture =
+    CompletableFuture.supplyAsync(() -> userService.find(id), dbPool);
+
+// Never wait indefinitely:
+User user = userFuture
+    .orTimeout(500, TimeUnit.MILLISECONDS)     // timeout
+    .exceptionally(ex -> User.defaultUser())   // fallback
+    .get();
+```
+
+**Circuit breaker at the pool level:**
+```java
+@CircuitBreaker(name = "db-circuit",
+    fallbackMethod = "fallback")
+CompletableFuture<User> loadUser(String id) {
+    return CompletableFuture.supplyAsync(() -> db.find(id), dbPool);
+}
+// When db circuit opens: fallback immediately, don't fill pool queue
+```
+
+**StructuredTaskScope for failure propagation (Java 21):**
+```java
+// ShutdownOnFailure: if any subtask fails, cancel all remaining
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    var userFuture  = scope.fork(() -> userService.find(req.userId));
+    var orderFuture = scope.fork(() -> orderService.list(req.userId));
+    scope.join().throwIfFailed(); // throws if either failed
+    return combine(userFuture.get(), orderFuture.get());
+}
+// If userService throws -> orderService task automatically cancelled
+// Clean resource management via AutoCloseable
+```
+
+*What separates good from great:* StructuredTaskScope (Java 21) solves
+the "fire-and-forget gone wrong" problem. Without structured concurrency,
+if a parent task fails, subtasks continue running even if their results
+are no longer needed (wasting resources, possibly causing side effects).
+With `ShutdownOnFailure`, failure in one subtask immediately cancels
+the others - correct cancellation semantics by default.
+
+---
+
+**Q8 (Structured concurrency): Explain Structured Concurrency (Java 21)
+and when to use it.**
+
+A: Structured Concurrency (JEP 453, Java 21 preview, Java 23 second
+preview) is a framework that ensures subtask lifetimes are contained
+within the parent task's lifetime.
+
+**The problem without structured concurrency:**
+```java
+// BAD: fire-and-forget with futures
+Future<User> userFuture = pool.submit(() -> fetchUser(id));
+Future<Orders> orderFuture = pool.submit(() -> fetchOrders(id));
+
+// If fetchUser throws: userFuture fails
+// fetchOrders is STILL RUNNING - wasting resources
+// When we get the exception: orderFuture is orphaned
+
+User user = userFuture.get();    // throws
+Orders orders = orderFuture.get(); // never reached, orderFuture runs on
+```
+
+**With StructuredTaskScope:**
+```java
+// GOOD: structured concurrency
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    var userTask = scope.fork(() -> fetchUser(id));
+    var orderTask = scope.fork(() -> fetchOrders(id));
+
+    scope.join();          // wait for all tasks to complete
+    scope.throwIfFailed(); // throw if any task failed
+
+    return combine(userTask.get(), orderTask.get());
+}
+// If fetchUser throws:
+//   scope.join() sees the failure
+//   StructuredTaskScope cancels fetchOrders automatically
+//   try-with-resources: scope.close() ensures cleanup
+// ALL subtasks complete (or are cancelled) before parent returns
+```
+
+**Variants:**
+```java
+// ShutdownOnFailure: cancel all if any fails (fan-out calls)
+var scope = new StructuredTaskScope.ShutdownOnFailure();
+
+// ShutdownOnSuccess: cancel all when first succeeds (race two sources)
+var scope = new StructuredTaskScope.ShutdownOnSuccess<String>();
+scope.fork(() -> fetchFromPrimary(key));
+scope.fork(() -> fetchFromBackup(key));
+scope.join();
+String result = scope.result(); // whichever finished first
+```
+
+**When to use:**
+- Fan-out HTTP calls (call user service + order service, combine results)
+- Race two data sources (primary + backup)
+- Any parallel work where: lifetime must be bounded, parent must wait
+  for children, failure should cancel siblings
+
+*What separates good from great:* StructuredTaskScope enforces the tree
+structure of concurrent work - a subtask cannot outlive its parent.
+This prevents resource leaks, simplifies cancellation, and makes thread
+dump analysis straightforward (tree of scopes visible). Contrast with
+`CompletableFuture.allOf()`: results in orphaned futures on failure
+unless you manually cancel them (which most code doesn't).
+
+---
+
+**Q9 (Microservices concurrency): How do concurrency decisions change
+in a microservices architecture?**
+
+A: In microservices, concurrency decisions extend beyond JVM-level
+thread management to service-level coordination:
+
+**Per-service thread pools:**
+Each service call should have its own thread pool (bulkhead):
+```java
+// UserServiceClient, OrderServiceClient, InventoryServiceClient:
+// Each has its own pool with its own timeout and circuit breaker
+@FeignClient(configuration = UserFeignConfig.class)
+interface UserServiceClient { ... }
+
+class UserFeignConfig {
+    @Bean
+    Retryer retryer() { return new Retryer.Default(100, 1000, 3); }
+    // Resilience4j circuit breaker + bulkhead:
+    @Bean
+    public UserFeignClient client() {
+        return CircuitBreaker.decorateSupplier(
+            "user-service-cb",
+            () -> new UserFeignClientImpl(userPool));
+    }
+}
+```
+
+**Cross-service consistency:**
+- Synchronous calls: service-to-service RPC. Fast, but cascading failure
+  risk. Use timeouts + circuit breakers.
+- Asynchronous events: Kafka. Higher latency, but decoupled failure modes.
+  Choose based on consistency requirements.
+
+**Distributed back-pressure:**
+At a single-JVM level, bounded queues prevent OOM. In microservices:
+- HTTP: return 503/429 to upstream (upstream's circuit breaker opens)
+- Kafka: consumer lag is the queue; back-pressure = slow consumption
+- Reactive HTTP: Spring WebFlux with back-pressure from reactor
+
+**Context propagation across threads:**
+```java
+// MDC (Mapped Diagnostic Context) must be propagated to worker threads:
+String traceId = MDC.get("traceId");
+executor.submit(() -> {
+    MDC.put("traceId", traceId);  // restore in worker thread
+    try { doWork(); }
+    finally { MDC.clear(); }     // clean up
+});
+// Or use Micrometer's ObservationRegistry for automatic context propagation
+```
+
+*What separates good from great:* The "bulkhead" pattern at the
+microservice level: each downstream service gets its own thread pool
+AND circuit breaker. If the user-service latency spikes (50th-percentile
+goes from 10ms to 500ms), the user-service pool fills with waiting
+threads but other pools (order-service, inventory-service) are
+unaffected. Without pool isolation, one slow downstream service
+can fill the entire thread pool and take down the entire calling
+service.
+
+---
+
+**Q10 (Migration strategy): How do you migrate a Spring Boot service
+from a blocking thread-per-request model to virtual threads?**
+
+A: Migration from traditional blocking to virtual threads (Java 21):
+
+**Assessment first:**
+1. Check Java version (need 21+): `java -version`
+2. Find blocking code in hot paths (JDBC, RestTemplate, file I/O) -
+   these are the use cases that benefit most
+3. Find `synchronized` blocks that will cause pinning - must convert
+   to ReentrantLock
+
+**Migration steps:**
+
+Step 1: Update `application.properties`:
+```properties
+# Spring Boot 3.2+:
+spring.threads.virtual.enabled=true
+# Sets Tomcat/Jetty to use virtual threads automatically
+```
+
+Step 2: Update thread pools:
+```java
+// BEFORE: standard fixed thread pool
+@Bean
+ExecutorService taskExecutor() {
+    return Executors.newFixedThreadPool(100);
+}
+
+// AFTER: virtual thread executor
+@Bean
+ExecutorService taskExecutor() {
+    return Executors.newVirtualThreadPerTaskExecutor();
+}
+```
+
+Step 3: Replace synchronized with ReentrantLock in hot paths:
+```java
+// BEFORE (causes pinning when virtual thread blocks inside):
+synchronized void process() { ... }
+
+// AFTER (virtual-thread-friendly):
+private final ReentrantLock lock = new ReentrantLock();
+void process() {
+    lock.lock();
+    try { ... }
+    finally { lock.unlock(); }
+}
+```
+
+Step 4: Enable pinning detection:
+```
+-Djdk.tracePinnedThreads=full
+```
+Look for pinning events in logs during load test.
+
+Step 5: Load test and compare:
+- Throughput at target concurrency (10K concurrent requests)
+- Memory (virtual threads lower stack footprint)
+- CPU (should be similar or lower)
+
+**What NOT to migrate:**
+- CPU-bound task pools: virtual threads don't help, platform pools stay
+- Scheduled tasks with precise timing: `@Scheduled` fine as-is
+
+*What separates good from great:* The migration is mostly a configuration
+change for Spring Boot 3.2+ (`spring.threads.virtual.enabled=true`).
+The hard part is finding and fixing the pinning hot spots. Run with
+`-Djdk.tracePinnedThreads=full` under load test and fix every reported
+pinning incident before claiming the migration is complete. A single
+synchronized hot spot (e.g., inside JDBC driver) can pin all virtual
+threads and reduce throughput to carrier-pool size (8 threads on an
+8-core machine).
+
+---
+
+**Q11 (Production patterns): What are the essential production concurrency
+patterns you use in every service?**
+
+A: Essential production patterns:
+
+**1. Named thread pools with metrics:**
+```java
+ExecutorService pool = new ThreadPoolExecutor(10, 20, ..., queue, factory) {
+    { // expose to Micrometer:
+        Metrics.gauge("pool.size", this, ThreadPoolExecutor::getPoolSize);
+        Metrics.gauge("pool.active", this, ThreadPoolExecutor::getActiveCount);
+        Metrics.gauge("pool.queue", this, e -> e.getQueue().size());
+    }
+};
+```
+
+**2. Timeouts on every blocking call:**
+```java
+// Every external call has a timeout - no exceptions:
+future.orTimeout(500, MILLISECONDS)
+    .exceptionally(ex -> fallbackResponse());
+```
+
+**3. Deadlock detection in health check:**
+```java
+@Bean HealthIndicator deadlockDetector() {
+    ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+    return () -> bean.findDeadlockedThreads() == null ?
+        Health.up().build() :
+        Health.down().withDetail("deadlock", "detected").build();
+}
+```
+
+**4. Thread naming for observability:**
+Every thread pool has a descriptive name. Thread dump immediately
+shows which component is stuck.
+
+**5. Structured concurrency for fan-out:**
+For any "call N services, combine results" pattern: StructuredTaskScope
+(Java 21) or CompletableFuture.allOf() with explicit timeout.
+
+**6. Back-pressure with bounded queues:**
+No unbounded queues in production. Every queue has a capacity, rejection
+policy, and metric for current depth.
+
+*What separates good from great:* The combination of named pools +
+metrics + health check creates an observable concurrency layer. During
+incidents: metrics show WHICH pool is saturated, health check shows
+deadlocks, named threads in dumps show WHERE stuck. Without these,
+production incidents require 30-minute investigations. With these,
+diagnosis in under 5 minutes.
+
+---
+
+**Q12 (Review a design): Review this service's concurrency design and
+identify improvements.**
+
+A: Design under review:
 ```java
 @Service
-class ProductService {
-    private final LoadingCache<String, Product> cache =
-        Caffeine.newBuilder()
-            .maximumSize(10_000)
-            .expireAfterWrite(5, TimeUnit.MINUTES)
-            .refreshAfterWrite(1, TimeUnit.MINUTES)
-            .build(id -> loadFromDB(id));  // auto-load on miss
+class DataService {
+    // Single global pool:
+    ExecutorService pool = Executors.newFixedThreadPool(50);
 
-    public Product get(String id) {
-        return cache.get(id);  // thread-safe, auto-load, auto-expire
+    CompletableFuture<Result> process(Request req) {
+        return CompletableFuture.supplyAsync(() -> {
+            User user = httpClient.get("/users/" + req.userId); // blocking HTTP
+            List<Order> orders = db.query(/* long query */); // blocking DB
+            Report report = reportGen.generate(user, orders); // CPU intensive
+            emailService.send(user.email, report); // blocking SMTP
+            return new Result(report);
+        }, pool);
     }
 }
-// Correct for: production use; handles TTL, eviction, refresh
 ```
 
-Recommendation: Use Caffeine for production. Implement manually
-only when Caffeine is not available or constraints require it.
+Issues identified:
 
-*What separates good from great:* Knowing StampedLock optimistic
-read and recommending Caffeine for production caches.
+**Issue 1: Single pool for mixed workloads.**
+HTTP calls, DB queries, CPU work, and SMTP in the same pool. If DB
+is slow, all 50 threads block. HTTP, CPU, and SMTP all starve.
+
+**Issue 2: Pool size wrong for workload mix.**
+50 threads for 4 different blocking types. Each type needs its own
+sizing calculation.
+
+**Issue 3: No timeouts.**
+HTTP, DB, SMTP can all hang indefinitely. One stuck task holds a
+thread permanently.
+
+**Issue 4: No back-pressure.**
+`Executors.newFixedThreadPool` uses an UNBOUNDED queue by default.
+Under load: infinite queue growth, OOM.
+
+**Issue 5: No failure isolation.**
+If email service is down: all email tasks queue, fill pool, affect
+user fetch and order query.
+
+Improved design:
+```java
+@Service
+class DataService {
+    private final ExecutorService httpPool =   // I/O bound
+        newBoundedPool("http-worker", 20, 50, 200);
+    private final ExecutorService dbPool =     // I/O bound
+        newBoundedPool("db-worker", 10, 30, 100);
+    private final ExecutorService cpuPool =    // CPU bound
+        newBoundedPool("report-gen", cores, cores + 1, 50);
+    private final ExecutorService emailPool =  // I/O, low priority
+        newBoundedPool("email-sender", 2, 5, 20);
+
+    CompletableFuture<Result> process(Request req) {
+        return CompletableFuture
+            .supplyAsync(() -> httpClient.get("/users/" + req.userId),
+                httpPool)
+            .orTimeout(200, MILLISECONDS)
+            .thenCombineAsync(
+                CompletableFuture.supplyAsync(() -> db.query(...), dbPool)
+                    .orTimeout(1000, MILLISECONDS),
+                (user, orders) -> user, // combine
+                cpuPool)
+            .thenApplyAsync(
+                user -> reportGen.generate(user), cpuPool)
+            .thenApplyAsync(report -> {
+                emailPool.submit(() -> emailService.send(report)); // async
+                return new Result(report);
+            });
+    }
+}
+```
+
+*What separates good from great:* The email submission is fire-and-forget
+async (emailPool.submit) because the response should not wait for email
+delivery. If email fails, it should be retried via a message queue
+(Kafka, RabbitMQ) - not by re-running the entire request. Separating
+"core business logic" (HTTP + DB + report) from "side effects" (email)
+is the key architectural insight: core path gets high-priority pools
+with tight timeouts; side effects get low-priority pools with retry
+infrastructure.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Strategy | Read Cost | Write Cost | Concurrency Model | Use Case |
-| --- | --- | --- | --- | --- |
-| Immutability | Zero | New object | No sync needed | DTOs, config |
-| ThreadLocal | Zero (per thread) | Zero | No sync needed | Per-request state |
-| Stateless | Zero | Zero | No sync needed | Service logic |
-| CAS (AtomicXxx) | Low | Low-medium | Lock-free | Counters, flags |
-| synchronized | Medium | Medium | Exclusive lock | Multi-field invariants |
-| StampedLock | Near-zero (optimistic) | Medium | Optimistic + exclusive | Read-heavy cache |
+| Model | Throughput | Code Complexity | Debugging | Best For |
+|---|---|---|---|---|
+| Thread-per-request (blocking) | Medium | Low | Easy | Traditional apps, low concurrency |
+| Thread pools (segregated) | High | Medium | Medium | Standard production services |
+| Virtual threads (Java 21) | High (I/O) | Low | Easy | I/O-bound, Java 21+ |
+| Reactive (Project Reactor) | Very High (I/O) | High | Hard | Streaming, event-driven |
+| Actor model (Akka) | High | High | Medium | Complex state machines |
+| LMAX Disruptor | Very High (CPU) | Very High | Hard | Ultra-low latency |
+
+**The deciding factor:**
+Java 21+ with I/O-bound work: virtual threads.
+Java 17 or earlier with I/O-bound: reactive or large thread pools.
+CPU-bound: fixed platform thread pool at core count.
+Stream processing: reactive back-pressure model.
 
 ---
 
 ### 🏛️ System Design
 
-Thread safety strategy selection framework:
+**Design: Resilient high-concurrency API gateway (10K concurrent requests)**
 
-1. Can the data be immutable? Use immutability.
-2. Is the data per-thread? Use confinement.
-3. Is the logic stateless? Remove instance fields.
-4. Is only one field changing atomically? Use CAS.
-5. Multiple fields changing atomically? Use the smallest
-   possible synchronized block or StampedLock.
+```
+                    [Incoming HTTP - Tomcat Virtual Threads]
+                              |
+                    [Rate Limiter - Token Bucket]
+                    Max 8,000 req/s, reject with 429 above
+                              |
+                    [Dispatcher Thread]
+                    Routes by request type
+                   /          |          \
+          [Auth Pool]   [Cache Pool]   [Upstream Pool]
+          VT executor   VT executor    VT executor
+          (fast path)   (read-heavy)   (external calls)
+                   \          |          /
+                    [Response Assembler]
+                    StructuredTaskScope.ShutdownOnFailure
+                              |
+                    [Circuit Breaker - Resilience4j]
+                    Opens if error rate > 50% or latency > 500ms
+                              |
+                    [Metrics - Micrometer + Prometheus]
+                    per-pool: active, queue depth, P99 latency
 
-Apply in order: earlier strategies in the list are always better.
-Only proceed to the next strategy if the previous is not applicable.
+Failure modes handled:
+  - Upstream slow: circuit breaker opens, cached response returned
+  - Pool exhaustion: bounded queue + CallerRunsPolicy (self-throttle)
+  - Deadlock: health check detects, alert within 30 seconds
+  - High load: rate limiter returns 429 before queue fills
+```
+
+This design provides: horizontal isolation (each pool fails independently),
+back-pressure (bounded queues, rate limiter), observability (per-pool
+metrics), and safe failure propagation (StructuredTaskScope).
 
 ---
 
 ### 📊 Diagram
 
 ```
-STRATEGY SELECTION TREE:
+Concurrency Architecture Decision Tree:
 
-Can data be immutable? --YES--> record / final / Collections.unmodifiableX
-         |
-        NO
-         |
-One thread only? --------YES--> ThreadLocal / confined object
-         |
-        NO
-         |
-No shared state? --------YES--> Stateless service / pure function
-         |
-        NO
-         |
-Single field atomic? ----YES--> AtomicXxx / CAS
-         |
-        NO
-         |
-Use smallest lock scope: synchronized / ReentrantLock / StampedLock
+Workload type?
+  CPU-bound: FixedThreadPool(cores)
+  I/O-bound:
+    Java 21+? -> VirtualThreadPerTaskExecutor
+    Java 17:  -> Large pool (cores * wait/compute ratio)
+              or Reactive (Project Reactor/WebFlux)
+  Mixed: Segregate into separate pools
+
+Fan-out pattern?
+  Java 21: StructuredTaskScope.ShutdownOnFailure
+  Java 17: CompletableFuture.allOf() + orTimeout
+
+Back-pressure?
+  Bounded queue + explicit rejection policy
+  Rate limiter before the pool
+
+Failure isolation?
+  One pool per downstream service/resource
+  Circuit breaker on each pool
+  Timeout on every blocking call
 ```
 
 ```mermaid
 flowchart TD
-    A{Can data be immutable?} -->|Yes| B[record / final fields\nzero cost]
-    A -->|No| C{One thread owns it?}
-    C -->|Yes| D[ThreadLocal / confined\nzero cost]
-    C -->|No| E{Is it stateless?}
-    E -->|Yes| F[Stateless service\nzero cost]
-    E -->|No| G{Single field atomic?}
-    G -->|Yes| H[AtomicXxx / LongAdder\nlow cost]
-    G -->|No| I[StampedLock / synchronized\nhighest cost - minimize scope]
+    A[New Java Service] --> B{Workload type?}
+    B -->|CPU-bound| C[FixedThreadPool<br/>N = cores + 1]
+    B -->|I/O-bound| D{Java version?}
+    D -->|Java 21+| E[VirtualThreadPerTaskExecutor<br/>one per task, no sizing]
+    D -->|Java 17-20| F{Concurrency level?}
+    F -->|< 1K concurrent| G[Large platform thread pool<br/>N = cores * 1 + W/S]
+    F -->|> 1K concurrent| H[Reactive<br/>Project Reactor / WebFlux]
+    B -->|Mixed| I[Segregate pools<br/>CPU pool + IO pool + BG pool]
+    C --> J[Add bounded queue + metrics]
+    E --> J
+    G --> J
+    H --> J
+    I --> J
+    J --> K[Circuit breaker per downstream]
+    K --> L[Timeouts on all blocking calls]
+    L --> M[Health check deadlock detection]
 ```
 
-> **Diagram walkthrough:** The decision tree encodes the strategy
-> selection framework. Each node eliminates a strategy and moves to
-> the next. The goal: reach the topmost applicable node. Most domain
-> objects can be made immutable (DTOs, events, results). Per-request
-> state fits confinement. Service logic fits stateless. Only complex
-> mutable aggregates need locks. Following the tree prevents the
-> common mistake of jumping directly to "add a lock" for everything.
-
----
-
----
-
-# Distributed Locking Strategies
-
-**Interview Weight:** critical (L5) - Tests ability to reason
-about distributed consensus and the trade-offs of distributed
-locking. Frequently asked at senior/staff level.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Distributed locking ensures mutual exclusion across JVM processes
-> or machines. Options: Redis SETNX with TTL (simple, not
-> fully safe), Redlock (multi-node Redis, safer), ZooKeeper
-> ephemeral nodes (strong consistency), database row locks (simple
-> with RDBMS). Key challenge: what happens when the lock holder
-> crashes? TTL + fencing tokens prevent stale lock holders from
-> corrupting state.
-
-**3 minutes (Senior):**
-
-> Redis SETNX (SET if Not eXists): atomically sets a key with an
-> expiry. Acquire: SET lock:key $clientId NX PX 30000 (30s TTL).
-> Release: check clientId (Lua script: get key, compare, del if match
-> - atomic). Problem: single Redis node - if it fails during lock
-> hold, the lock is lost or stuck. Failover takes time; new leader
-> may not have the lock state.
->
-> Redlock: acquire the lock on majority (>N/2) of N independent
-> Redis nodes. Lock is valid only if majority acquisition time < TTL.
-> Martin Kleppmann (2016) argued Redlock is unsafe under clock skew
-> and GC pauses (lock may expire while holder is paused, another
-> client acquires, then paused client resumes unaware). Safety
-> requires fencing tokens.
->
-> Fencing token: monotonically increasing sequence number attached
-> to the lock. Storage backend (DB, file system) rejects writes
-> from stale tokens. Ensures correctness even if the lock holder
-> is paused after lock expiry.
->
-> ZooKeeper (Curator): uses ephemeral sequential nodes. The node
-> with the lowest sequence number holds the lock. ZK watches notify
-> the next node when the current holder releases. ZK uses ZAB
-> (atomic broadcast) for linearizable writes: correct under network
-> partitions. More complex but proven correct.
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "Distributed lock: mutual exclusion across JVMs.
-Options: Redis, Redlock, ZooKeeper. Key problem: what if holder crashes."
-
-**(2) First principles:** "A lock is a promise: one holder at a time.
-In distributed systems, promise can be broken by crash, network,
-GC pause. TTL + fencing tokens are the safeguards."
-
----
-
-### 📘 Concept Explanation
-
-**What it is:**
-
-Distributed locking: a mutual exclusion mechanism across multiple
-processes or machines. Prevents two nodes from concurrently
-modifying the same resource (e.g., cron job running twice,
-inventory going negative).
-
-**The problem it solves:**
-
-In-JVM locks (synchronized, ReentrantLock) have no effect across
-multiple JVM instances. Distributed systems need cross-node mutual
-exclusion for: job scheduling (exactly-once execution), inventory
-deduction (exactly-one write), distributed caches (single writer).
-
-**How it works:**
-
-```
-REDIS SETNX PATTERN:
-  // Acquire (Java with Lettuce/Jedis):
-  String clientId = UUID.randomUUID().toString();
-  String lock = "lock:inventory:" + productId;
-  boolean acquired = redis.set(lock, clientId,
-      SetArgs.Builder.nx().px(30_000)); // NX=only if absent, PX=TTL ms
-
-  // Release (atomic Lua script: check owner then delete):
-  String releaseScript = """
-      if redis.call('get', KEYS[1]) == ARGV[1] then
-          return redis.call('del', KEYS[1])
-      else return 0 end
-  """;
-  redis.eval(releaseScript, 1, lock, clientId);
-  // CRITICAL: only release YOUR lock (compare clientId first)
-
-FENCING TOKEN:
-  // Lock server returns a monotonically increasing token on each acquire
-  Lock lock = lockServer.acquire("inventory");
-  long token = lock.getToken();  // e.g., 42
-
-  // Write to storage with token:
-  db.update("inventory", amount, token);
-  // Storage checks: is token > last_seen_token?
-  // If yes: apply write. If no (stale token): reject.
-  // Guarantees: stale client (resumed after GC pause) is rejected
-
-REDLOCK ALGORITHM:
-  // Acquire on N=5 Redis nodes (majority = 3):
-  long start = currentTime();
-  int acquired = 0;
-  for (Redis node : redisNodes) {
-      if (node.set(lock, clientId, NX, PX, ttl)) acquired++;
-  }
-  long elapsed = currentTime() - start;
-  if (acquired >= 3 && elapsed < ttl) {
-      // Lock acquired; validity = ttl - elapsed
-  } else {
-      // Failed; release all acquired nodes
-  }
-```
-
-**The key insight:**
-
-TTL prevents permanent lock: if the holder crashes, the lock
-expires. But TTL + GC pause = dangerous: holder is paused for
-longer than TTL. Lock expires. Another client acquires. Original
-client resumes unaware. Fencing tokens are the only way to detect
-this race: storage rejects writes from tokens smaller than the
-current fence.
-
-**When to use it:**
-
-- Cron job exactly-once execution across cluster nodes
-- Inventory deduction preventing double-spend
-- Leader election for singleton services
-- Cache warming: only one node computes and caches
-
-**When NOT to use it:**
-
-- Do not use distributed locks for high-frequency operations:
-  lock acquisition is ~1ms (network RTT); unsuitable for sub-ms paths
-- Do not use single-node Redis for critical data: node failure
-  loses the lock state temporarily
-- Do not assume Redlock is safe under all conditions: use ZooKeeper
-  or etcd for stronger guarantees
-
-**Alternatives:**
-
-- etcd (Raft-based): linearizable; used by Kubernetes for its
-  distributed locks
-- PostgreSQL advisory locks: pg_try_advisory_lock (integer-based,
-  cheap, session or transaction scoped)
-- ShedLock (Spring): @SchedulerLock annotation + backed by Redis,
-  JDBC, or Mongo; designed for scheduled tasks
-
-**First-principles derivation:**
-
-Distributed mutual exclusion is impossible to achieve perfectly in
-an asynchronous network (FLP impossibility - with crash failures,
-no deterministic consensus protocol terminates). Practical distributed
-locks accept bounded safety violations (TTL) and use fencing tokens
-to detect and reject stale operations. ZooKeeper achieves
-linearizability via ZAB consensus (majority required for each write).
-
----
-
-### 💻 Code Example
-
-**Example 1: BAD (no owner check) vs GOOD (atomic Lua release)**
-
-```java
-// BAD: race condition on lock release
-String lock = "lock:job:1";
-try {
-    redis.setex(lock, 30, clientId); // acquire
-    doWork();
-} finally {
-    redis.del(lock);  // BAD: may delete ANOTHER client's lock!
-    // If TTL expired during doWork(), another client acquired the lock.
-    // del() deletes the new client's lock -> two concurrent holders!
-}
-
-// GOOD: atomic compare-and-delete via Lua script
-String releaseScript = """
-    if redis.call('get', KEYS[1]) == ARGV[1] then
-        return redis.call('del', KEYS[1])
-    else
-        return 0
-    end
-""";
-try {
-    String clientId = UUID.randomUUID().toString();
-    boolean acquired = "OK".equals(
-        redis.set(lock, clientId, SetArgs.Builder.nx().px(30_000)));
-    if (!acquired) throw new LockAcquisitionException(lock);
-    doWork();
-} finally {
-    // Atomic: check clientId AND delete in one Redis command
-    redis.eval(releaseScript, ScriptOutputType.INTEGER,
-        new String[]{lock}, clientId);
-}
-```
-
-> **Code walkthrough:** The bad version uses redis.del() in the
-> finally block. If TTL expired during doWork() (GC pause, slow
-> operation), another process already acquired the lock. Deleting
-> the key removes the new holder's lock, creating two concurrent
-> lock holders - the exact problem we're trying to prevent. The good
-> version uses a Lua script that atomically reads the key (checking
-> ownership) and deletes only if this client owns it. Redis executes
-> Lua scripts atomically: no other command can interleave between
-> the GET and DEL. The clientId (UUID) uniquely identifies this
-> specific lock acquisition attempt.
-
-**Example 2: ShedLock for Spring scheduled tasks**
-
-```java
-// GOOD: ShedLock prevents duplicate job execution across cluster
-@Configuration
-class ShedLockConfig {
-    @Bean
-    public LockProvider lockProvider(DataSource dataSource) {
-        return new JdbcTemplateLockProvider(dataSource,
-            JdbcTemplateLockProvider.Configuration.builder()
-                .withTableName("shedlock")
-                .usingDbTime()  // use DB clock for consistency
-                .build());
-    }
-}
-
-@Component
-class InventoryRefreshJob {
-    @Scheduled(cron = "0 0 * * * *")  // every hour
-    @SchedulerLock(
-        name = "inventoryRefresh",
-        lockAtLeastFor = "PT10M",   // hold lock min 10 min
-        lockAtMostFor = "PT55M")    // auto-release after 55 min
-    public void refreshInventory() {
-        // Only ONE node in the cluster runs this method per hour
-        inventoryService.refresh();
-    }
-}
-// DB-backed: survives Redis failure; uses DB transaction for safety
-```
-
-> **Code walkthrough:** ShedLock uses a database row as the lock.
-> On job start: attempts to INSERT or UPDATE a row in the shedlock
-> table with lockAtMostFor expiry. If the insert/update fails (another
-> node holds the lock): the job is skipped. lockAtLeastFor prevents
-> releasing too early (protects against clock drift between nodes).
-> lockAtMostFor is the safety TTL: if the node crashes, the lock
-> expires after 55 minutes. This is simpler and more reliable than
-> manual Redis SETNX for scheduled tasks.
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior / Mid (0-5 years):**
-
-> Distributed lock: prevents two nodes from doing the same work.
-> Redis SETNX with TTL is the common approach. TTL: auto-expire if
-> holder crashes. Always release with a Lua script that checks
-> ownership first. ShedLock for Spring scheduled jobs.
-
----
-
-**Senior / Staff (5+ years):**
-
-> I design distributed locking with fail-safety first: what happens
-> if the holder crashes after acquiring? TTL handles lock expiry.
-> Fencing tokens handle the "resumed stale holder" problem. I use
-> ShedLock for job scheduling (simpler, DB-backed). For
-> high-availability applications, I use Redis Redlock with fencing
-> tokens for correctness guarantees. For critical locking (financial
-> transactions): ZooKeeper (Curator) or etcd (linearizable). I never
-> assume a distributed lock is perfectly safe without fencing.
-
----
-
-### ⚠️ Common Misconceptions
-
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "Redis SETNX is safe" | Single-node Redis: failover loses lock state; clock skew invalidates TTL calculations | Lock loss during Redis failover; two concurrent holders |
-| "Redlock solves all Redis lock problems" | Redlock is disputed for safety under clock skew + GC pause (Kleppmann 2016); needs fencing tokens | False confidence in Redlock safety |
-| "Distributed lock is easy" | Distributed consensus is fundamentally hard (FLP impossibility); practical locks have bounded safety violations | Under-engineering; production incidents |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Duplicate job execution | Two nodes run the same cron job simultaneously | No distributed lock; or lock expired due to long GC pause | Check job logs across nodes: same job ID executed twice | ShedLock with lockAtLeastFor; fencing tokens in storage |
-| Lock never released | Lock TTL too long; stuck job; other nodes starved | Node crashed before release; TTL too large | Redis: TTL remaining on lock key; check if holder process is still alive | Set TTL <= expected max job duration; implement lock health check |
-| Stale lock holder | Data corruption: two writers to same resource | GC pause longer than TTL; original holder resumed | Fencing token rejections in storage logs | Implement fencing tokens; reject writes with stale tokens |
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 3 min | Redis SETNX concept; TTL purpose; ShedLock |
-| Mid | 5 min | Lua release script; Redlock overview; ZooKeeper vs Redis trade-off |
-| Senior | 8 min | Fencing tokens; Redlock safety debate; etcd/ZooKeeper internals |
-| Staff | 12 min | Design a distributed locking system for a financial application |
-
----
-
-**Q1** [ARCHITECTURE] [STAFF]
-
-"Design a distributed locking system for an inventory deduction service
-that processes 50K/sec transactions."
-
-**Answer:**
-
-Requirements:
-- 50K/sec inventory deductions
-- No double-spend: exactly one deduction per transaction
-- Lock granularity: per product (not global)
-- Acceptable latency: +5ms for lock overhead
-
-Analysis:
-50K/sec with per-product locks = distributed lock must support
-50K lock acquisitions/sec. Redis handles 100K-1M ops/sec.
-Network RTT for Redis in same datacenter: ~0.5ms.
-Lock acquisition: one SET NX = one Redis call = 0.5ms.
-
-Architecture: Redis-based per-product distributed lock:
-
-```
-Transaction arrives -> Acquire lock for product-id
-  -> SET lock:inv:{product-id} {txnId} NX PX 2000 (2s TTL)
-  -> If acquired:
-     - Check inventory (DB read)
-     - Deduct (DB write with fencing token)
-     - Publish event (Kafka)
-     - Release lock (Lua: check txnId + DEL)
-  -> If not acquired: retry with 50ms backoff, max 3 retries
-```
-
-Fencing token: use the Kafka partition offset as the fencing token.
-Storage rejects writes from lower offsets. Even if a transaction's
-lock expires and a new one starts, the offset monotonically increases.
-Stale transactions have lower offsets and are rejected.
-
-Scale: 50K/sec = 50K Redis SETNX calls/sec. One Redis node: max
-~100K ops/sec. Shard lock keys by product category: 5 Redis nodes,
-each handling ~10K/sec. Per-node headroom at 50%.
-
-Failure handling:
-- Redis node failure: lock key lost. Two transactions may proceed.
-  Fencing token prevents double-deduction at DB level.
-- Transaction crash during hold: TTL=2s. Next retry after 2s.
-  Set TTL = max transaction duration + 100ms buffer.
-
-*What separates good from great:* Using Kafka offset as fencing
-token (already available in the system; no extra infrastructure)
-and sharding lock keys across multiple Redis nodes for horizontal
-scalability.
-
----
-
-### ⚖️ Comparison Table
-
-| Strategy | Consistency | Throughput | Complexity | Best For |
-| --- | --- | --- | --- | --- |
-| Redis SETNX | Best-effort (single node) | Very high (~100K ops/s) | Low | Scheduled jobs, low-risk locks |
-| Redlock | Better (majority) | High | Medium | Multi-node Redis environments |
-| ZooKeeper (Curator) | Strong (linearizable) | Medium (~10K ops/s) | High | Leader election, critical resources |
-| etcd | Strong (Raft) | Medium | Medium | Kubernetes-style coordination |
-| DB advisory lock | Strong (ACID) | Medium | Low | Already-RDBMS systems |
-
----
-
-### 🏛️ System Design
-
-Distributed locking in a microservices inventory system:
-
-Tier 1 (high throughput, lower consistency): Redis SETNX with
-fencing tokens for product-level locks. Handles the 50K/sec
-deduction path.
-
-Tier 2 (leader election, low frequency): ZooKeeper ephemeral
-nodes for singleton service election (one inventory refresh
-process, one report generator). Happens ~10x/day, not on the
-hot path.
-
-Tier 3 (scheduled jobs): ShedLock with DB backing for nightly
-batch jobs. Simple, auditable, uses existing RDBMS.
-
-Never mix tiers: use the simplest tool appropriate for each
-use case.
-
----
-
-### 📊 Diagram
-
-```
-REDIS DISTRIBUTED LOCK LIFECYCLE:
-
-Node A:  [SET NX OK] --hold-- [Lua DEL]
-Node B:  [SET NX FAIL] --wait-- [retry after TTL] [SET NX OK]
-                         ^
-                   TTL expires (crash protection)
-
-FENCING TOKEN:
-  Lock acquired: token=42
-  Write to DB: UPDATE inventory WHERE token > 41 -> OK (42 > 41)
-  Lock expires; client pauses; token=43 issued to Node B
-  Original client resumes: UPDATE ... WHERE token > 43 -> REJECTED (42 < 43)
-```
-
-```mermaid
-sequenceDiagram
-    participant A as Node A
-    participant R as Redis
-    participant B as Node B
-    participant DB as Database
-
-    A->>R: SET lock:inv:42 clientA NX PX 2000
-    R->>A: OK (acquired, token=7)
-    B->>R: SET lock:inv:42 clientB NX PX 2000
-    R->>B: nil (rejected)
-    A->>DB: UPDATE inv WHERE token > 6 (token=7)
-    DB->>A: OK
-    A->>R: Lua DEL if clientA (release)
-    R->>A: 1 (released)
-    B->>R: SET lock:inv:42 clientB NX PX 2000
-    R->>B: OK (acquired, token=8)
-```
-
-> **Diagram walkthrough:** Node A acquires the lock (SET NX OK)
-> and receives fencing token 7. Node B's concurrent attempt is
-> rejected (nil). Node A writes to DB with token 7; DB accepts
-> (7 > 6, the previous token). Node A releases with the Lua script
-> (safe: only deletes if clientA owns the key). Node B then acquires
-> with token 8. If Node A somehow retried after Node B acquired,
-> its DB write would carry token 7, which the DB would reject
-> (7 < 8). Fencing tokens make the storage layer the final
-> arbiter of correctness, not the lock system.
-
----
-
----
+> **Diagram walkthrough:** The decision tree maps workload type and
+> Java version to the right concurrency model. CPU-bound work always
+> uses a fixed platform thread pool sized to core count - this prevents
+> context switch overhead. I/O-bound work branches on Java version:
+> virtual threads in Java 21+ deliver the same throughput as reactive
+> with synchronous code simplicity. Java 17 I/O-bound services at high
+> concurrency require reactive to avoid too many blocked platform threads.
+> All paths converge on the same production requirements: bounded queues,
+> circuit breakers, timeouts, and health checks - these are non-negotiable
+> regardless of the concurrency model chosen.

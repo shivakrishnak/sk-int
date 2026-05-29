@@ -1,1513 +1,1930 @@
 ---
 layout: default
 title: "Docker - L0 Orientation"
-parent: "Docker and Containers"
+parent: "Docker"
+grand_parent: "SK Interview"
 nav_order: 1
 permalink: /docker/l0-orientation/
 ---
 
-## Keywords in This File
-{: .no_toc }
+# What Is Docker and Why It Exists
 
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Containerization Overview](#containerization-overview) | high |
-| 2 | [Docker Ecosystem and Architecture](#docker-ecosystem-and-architecture) | high |
-| 3 | [Containers vs Virtual Machines](#containers-vs-virtual-machines) | critical |
-| 4 | [Container Use Cases for Java Backend](#container-use-cases-for-java-backend) | high |
-
----
-
-# Containerization Overview
-
-**Interview Weight:** high - The foundational vocabulary question.
-Interviewers ask this to gauge mental model depth. A weak answer
-recites a definition; a strong answer explains WHY it was invented
-and what trade-off it makes.
+🎯 Interview Weight: foundational orientation question. Every
+Docker interview starts here. Expected from all levels.
 
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Containerization packages an application with its complete runtime
-> environment - code, JDK, libraries, and config - into a portable
-> unit. This solves the "works on my machine" problem by making the
-> environment part of the deliverable. Containers share the host OS
-> kernel, so they start in milliseconds and use far less memory than
-> virtual machines while still providing process-level isolation.
+> Docker is a platform for building, shipping, and running software
+> in containers. A container packages an application with all its
+> dependencies (libraries, configuration, runtime) into a single
+> portable unit. The problem Docker solves: "it works on my machine"
+> - Docker eliminates environment differences between development,
+> testing, and production.
 
 **3 minutes (Senior):**
-
-> Before containers, deploying Java applications meant configuring
-> the right JDK version, system libraries, and environment variables
-> on every server. Things broke when ops patched a library your app
-> depended on. The root cause was that the environment was separate
-> from the application - you deployed code but not the environment
-> that code was tested against.
+> Before Docker, deploying software meant managing environment
+> differences manually: different OS versions, different library
+> versions, different configuration between dev and prod. These
+> differences caused the "dependency hell" problem - an application
+> tested in one environment broke in another.
 >
-> Containerization makes the environment part of the artifact. The
-> container image is what you test in CI, and that identical image
-> goes through staging and production. Under the hood, three Linux
-> kernel primitives enable this: namespaces give each container an
-> isolated view of processes, filesystem, and network; cgroups limit
-> how much CPU and memory each container can consume; and a union
-> filesystem like OverlayFS stores images as stacked read-only layers
-> with a thin writable layer added when the container runs.
+> Docker solves this with OS-level virtualization. A Docker container
+> packages the application and its entire runtime environment into
+> an image. The image runs identically on any host with Docker
+> installed, regardless of the host OS.
 >
-> The key insight for interviews: containers share the host kernel.
-> They are NOT virtual machines. A Spring Boot app that takes minutes
-> to provision on a VM takes seconds in a container. The trade-off
-> is isolation - a kernel exploit escapes all containers on that host,
-> which is why regulated environments often run containers inside VMs.
+> The key innovation: Docker made Linux containers accessible.
+> Linux containers (LXC/cgroups/namespaces) existed before Docker.
+> Docker added a developer-friendly CLI, a layered image format,
+> and Docker Hub (a registry for sharing images). These three
+> additions turned a complex systems technology into a developer tool.
 
-**Framework:** WHAT -> WHY -> HOW -> TRADE-OFF -> EXAMPLE
+**Framework:** PROBLEM → SOLUTION → KEY MECHANISM → ECOSYSTEM
 
-*Adapting up:* Senior adds the isolation trade-off and when to layer
-containers inside VMs for compliance requirements.
+*Adapting up:* "At scale, Docker is the standardization layer for
+software distribution. The container image is the deployment unit.
+CI pipelines build images; orchestrators (Kubernetes) run them.
+The entire cloud-native ecosystem is built on the container image
+as the immutable artifact."
 
-*Adapting down:* Junior: "Containers package the app and its
-environment together so it runs the same everywhere."
+*Adapting down:* "Docker is like a shipping container for software.
+A physical shipping container holds any cargo and works on any
+ship, truck, or crane. A Docker container holds any software and
+runs on any machine with Docker installed."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "So you are asking about containerization - let me
-think through what problem that solves."
+**(1) Restate:** "Docker - packages software + its dependencies into
+a portable container that runs identically anywhere."
 
-**(2) First principles:** "From first principles, deploying software
-requires matching the app to its runtime environment. The only ways
-to do this are: configure every server identically, ship a full VM,
-or package the environment with the app..."
+**(2) First principles:** "Software depends on its environment
+(OS, libraries, config). Packaging the environment with the software
+eliminates environment dependency. This is the container model."
 
-**(3) Bridge:** "This reminds me of JAR files - you package the
-Java code with its dependencies. Containerization extends that idea
-to the entire OS user-space."
+**(3) Bridge:** "Like a self-contained apartment vs. a hotel room.
+Hotel (bare metal): shared infrastructure, your stuff might not
+fit. Apartment (container): bring your own stuff, self-contained,
+portable."
 
 ---
 
 ### 📘 Concept Explanation
 
 **What it is:**
-Containerization is a method of packaging an application and its
-dependencies into a self-contained unit (container) that runs
-consistently on any host with a compatible container runtime.
+Docker is an open platform for developing, shipping, and running
+applications in isolated environments called containers. Docker
+packages an application and all its dependencies into a standardized
+unit (a container image) that can be distributed and run consistently
+across any environment.
 
 **The problem it solves:**
-Environment drift caused deployment failures. The same application
-behaved differently across developer machines, CI servers, staging,
-and production because each had slightly different library versions,
-JDK builds, and OS configuration. Every deployment carried hidden
-risk from invisible environment differences.
+Pre-Docker software deployment faced three recurring problems:
+
+Problem 1 - Environment drift: an application tested on Ubuntu
+18.04 with Python 3.7 and library X v2.1 would fail in production
+running Ubuntu 20.04 with Python 3.9 and library X v2.3. Every
+environment difference was a potential failure point.
+
+Problem 2 - Dependency conflicts: server A runs both app-1
+(requires Python 2.7) and app-2 (requires Python 3.8). These
+requirements conflict. Virtual machines solved this by giving
+each app its own OS instance, but at significant resource cost.
+
+Problem 3 - Slow environment setup: a new developer joining a
+team spent days configuring their local environment to match
+production. Mismatches between local and production caused
+"works on my machine" bugs.
 
 **How it works:**
-Three Linux kernel features combine to create containers:
 
-```
-+-- Linux Kernel Features -------+
-|  Namespaces: per-container     |
-|    PID, network, mount, UTS   |
-|  Cgroups: resource limits      |
-|    CPU, memory, disk I/O      |
-|  Union FS: layered images      |
-|    Layer 1: base OS           |
-|    Layer 2: JDK               |
-|    Layer 3: app               |
-|    Writable: container data   |
-+--------------------------------+
-```
+Docker uses three Linux kernel features:
 
-```mermaid
-flowchart TD
-    K[Linux Kernel] --> NS[Namespaces\nPID / Net / Mount / UTS]
-    K --> CG[Cgroups\nCPU / Memory / IO limits]
-    K --> UFS[Union Filesystem\nOverlayFS layers]
-    NS --> C1[Container 1\nisolated view]
-    CG --> C1
-    UFS --> C1
-    NS --> C2[Container 2\nisolated view]
-    CG --> C2
-    UFS --> C2
-```
+Namespaces: isolate the container's view of the system. Each
+container has its own process tree, network interface, filesystem
+mount points, and user IDs. Processes inside the container cannot
+see processes outside it.
 
-> **Diagram walkthrough:** The Linux kernel provides three independent
-> primitives. Namespaces give each container its own process tree,
-> network stack, and filesystem view - the container cannot see other
-> containers' processes. Cgroups enforce resource limits so one
-> container cannot starve another of CPU or memory. The union
-> filesystem stores images as read-only layers that are shared across
-> containers, with only a thin writable layer per container instance.
+Control groups (cgroups): limit the container's resource usage.
+Set maximum CPU (0.5 cores), memory (512 MB), and I/O bandwidth.
+Prevents one container from consuming all host resources.
 
-**The key insight:**
-Containers share the host OS kernel. They are NOT virtual machines.
-This is why they are lightweight and fast - but also why their
-isolation boundary is the kernel, not hardware.
+Union filesystem (overlay2): Docker images are built in layers.
+Each Dockerfile instruction creates a new layer. Layers are read-
+only and shared between containers that use the same base image.
+The container adds a writable layer on top (copy-on-write).
 
-**When to use it:**
-- Reproducible builds across dev/CI/staging/prod environments
-- Microservice deployment with independent versioning
-- CI pipelines where build isolation prevents test pollution
-- Horizontal scaling where identical copies of a service run in parallel
+The image format: a Docker image is a series of read-only layers
+(a filesystem snapshot) plus metadata (entry point, exposed ports,
+environment variables). Images are distributed via registries
+(Docker Hub, Amazon ECR, Google Artifact Registry).
 
-**When NOT to use it:**
-- Applications requiring Windows-specific APIs on a Linux host
-- Workloads needing true kernel-level isolation (use VMs instead)
-- Simple scripts that run once with no dependency concerns
+**The Docker daemon and client:**
+Docker uses a client-server architecture. The Docker daemon
+(dockerd) runs as a background service, manages containers and
+images. The Docker CLI (docker) sends commands to the daemon via
+a REST API. This design allows remote Docker management: point
+your local Docker CLI at a remote Docker daemon.
+
+**Key insight:**
+Docker made containers mainstream not by inventing container
+technology (Linux containers existed since 2008) but by providing
+three things the technology lacked: a developer-friendly workflow,
+a portable image format, and a public registry for sharing images.
+
+**When to use Docker:**
+- Standardizing development environments across a team
+- Packaging applications for consistent deployment
+- Isolating application dependencies
+- Building microservices (each service in its own container)
+- CI/CD pipelines (build and test in standardized containers)
+
+**When NOT to use Docker:**
+- Latency-sensitive applications requiring kernel bypass networking
+- Applications requiring full hardware access (GPU pass-through
+  is possible but complex)
+- Very simple single-process utilities on a dedicated machine
+  (overhead is not justified)
+- Windows-native applications (Linux containers on Windows requires
+  a Linux VM underneath)
 
 **Alternatives:**
-- Virtual Machines - full OS isolation, heavier, slower startup
-- OS packages + config management - reproducible but not portable
-- Fat JARs - packages Java dependencies, not the whole runtime
+- Podman: daemonless container runtime compatible with Docker CLI.
+  No root daemon required.
+- Buildah: container image building tool, daemonless.
+- containerd: the container runtime that Docker itself uses internally.
+- LXC/LXD: Linux containers at system container level (more like
+  lightweight VMs).
 
 **First-principles derivation:**
-Given that software depends on specific runtime versions and OS
-libraries, the only options are: (A) standardize all servers by
-policy - fails at scale, (B) ship the entire OS as a VM - too heavy,
-(C) virtualize only the user-space and share the kernel - this is
-containers. Option C hits the right trade-off between isolation
-and overhead for most workloads.
+Software = code + dependencies + configuration + runtime environment.
+Traditional deployment moves only the code and tries to configure
+the environment separately. Container deployment moves all four
+together. This eliminates the configuration surface by eliminating
+the assumption of a pre-configured environment.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Running your first container**
+**BAD: Traditional deployment (environment-dependent)**
 
 ```bash
-# Pull and run an image from Docker Hub
-docker run hello-world
+# BAD: Application setup depends on pre-configured environment
+# deploy.sh - runs on the production server
+# Problem: assumes Python 3.9, pip, and specific system libraries
+# are already installed in the right versions
 
-# Run an interactive Ubuntu shell
-docker run -it ubuntu:22.04 bash
+pip install flask==2.1.0 requests==2.28.0
+python app.py
 
-# Run in detached mode (background)
-docker run -d --name myapp -p 8080:8080 \
-    openjdk:21-slim java -jar app.jar
+# Works on developer laptop: Python 3.9.1
+# Fails on production: Python 3.8.2 (incompatible)
+# Works after production Python upgrade
+# Fails again when new developer has Python 3.11
+# 3 hours debugging "it works on my machine"
 ```
 
-> **Code walkthrough:** `docker run` is the fundamental operation -
-> pull image if missing, create a container, start it. The `-p 8080:8080`
-> flag maps host port to container port. `-d` runs detached so the
-> container keeps running after the command returns. This illustrates
-> that running a container is as fast as starting a process.
+> **Code walkthrough:** The traditional deployment script fails
+> because it relies on the host environment matching the expected
+> configuration. The `pip install` command installs the right
+> packages but cannot control whether Python 3.8 or 3.9 is installed.
+> Flask 2.1.0 requires Python >= 3.6, but the exact behavior may
+> differ between minor Python versions. Every host becomes a snowflake.
 
-**Example 2: Inspecting running containers**
+**GOOD: Docker containerized deployment**
+
+```dockerfile
+# GOOD: Environment is defined and portable
+# Dockerfile - part of the source code repository
+
+FROM python:3.9-slim-bullseye
+
+# Set working directory
+WORKDIR /app
+
+# Copy only requirements first (enables layer caching)
+COPY requirements.txt .
+
+# Install dependencies in a separate layer
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code last (changes most frequently)
+COPY . .
+
+# Document the port the application listens on
+EXPOSE 8080
+
+# Run as non-root user (security best practice)
+RUN useradd --uid 1001 appuser
+USER appuser
+
+CMD ["python", "app.py"]
+```
 
 ```bash
-# List running containers
-docker ps
+# Build: create an image from the Dockerfile
+docker build -t myapp:v1.0.0 .
 
-# List all containers (including stopped)
-docker ps -a
+# Run: start a container from the image
+# --publish: map host port 8080 to container port 8080
+# --name: give the container a human-readable name
+docker run --publish 8080:8080 --name myapp myapp:v1.0.0
 
-# Show resource usage (CPU, memory, net I/O)
-docker stats myapp
-
-# See container logs
-docker logs -f myapp
-
-# Execute a command inside a running container
-docker exec -it myapp /bin/sh
+# The image built on a developer's Mac runs identically
+# on Ubuntu Linux in production
 ```
 
-> **Code walkthrough:** These commands reveal the container's lifecycle
-> and runtime state. `docker stats` shows cgroup-enforced resource
-> usage in real time. `docker exec` is essential for debugging -
-> it opens a shell inside the isolated namespace of the running
-> container so you see exactly what the app sees.
+> **Code walkthrough:** The Dockerfile specifies exactly which Python
+> version (3.9-slim-bullseye) to use - not "whatever Python is installed"
+> but a pinned, reproducible base image. The two-step COPY pattern
+> (requirements.txt first, then application code) enables Docker's
+> layer cache: if only the application code changes (the common case),
+> the pip install layer is reused from cache, making builds significantly
+> faster. The explicit `USER appuser` ensures the application runs
+> without root privileges, following the principle of least privilege.
+> Any machine with Docker installed runs this image identically.
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-
-> Containerization is packaging an application with its runtime -
-> the JDK, libraries, and config - so it runs the same everywhere.
-> Docker is the main tool. You write a Dockerfile that describes
-> what goes in the image, build it, and run it anywhere.
-
-*Push deeper:* Add: "The key benefit is that the image I test in CI
-is the exact same image that runs in production - no environment drift."
+> "Docker packages an application with all its dependencies so it
+> runs the same everywhere. The Dockerfile defines the environment.
+> Docker builds the image from it. You run the image as a container.
+> The image works on my laptop, on the CI server, and in production
+> because the environment is in the image, not assumed from the host."
 
 ---
 
-**Senior / Staff (5+ years):**
+### ⚠️ Common Misconceptions
 
-> Containerization solves environment consistency by packaging the
-> app and its runtime as an immutable artifact. The three Linux
-> primitives behind it are namespaces for isolation, cgroups for
-> resource limits, and a union filesystem for layered images.
+**Misconception 1: "Docker containers are lightweight virtual machines."**
+Containers are not VMs. A VM emulates hardware and runs a full OS.
+A container shares the host OS kernel and runs as an isolated process.
+Docker containers start in milliseconds (process start). VMs start
+in 30-60 seconds (OS boot). Containers have near-zero overhead for
+CPU and memory compared to VMs. The isolation is weaker: a kernel
+vulnerability affects all containers on the host; a hypervisor
+vulnerability in a Type 2 VM does not expose other VMs.
 
-The senior answer adds trade-off awareness: containers share the
-kernel, so they trade some isolation for speed. For compliance
-requirements or multi-tenant hostile workloads, you layer containers
-inside VMs to get both. At the staff level, you frame containerization
-as the foundation for a deployment platform - the image becomes the
-deployment unit across all environments, enabling blue-green and
-canary releases trivially.
+**Misconception 2: "Docker is the only container runtime."**
+Docker is the most popular but not the only container runtime.
+containerd, CRI-O, and Podman are widely used alternatives. Kubernetes
+does not require Docker; it uses the Container Runtime Interface
+(CRI) which any compliant runtime implements. Docker contributes
+to containerd (the core runtime) as an upstream project.
 
-*Push deeper:* "The image digest is the immutable identity of a
-deployment. If you record the digest in your deploy pipeline, you
-can always reproduce exactly what ran in production - even years later."
-
----
-
-### ❓ Questions You Will Be Asked
-
-#### Definition
-- "What is containerization and why does it exist?"
-- "How would you explain containers to a developer who has never
-  used them?"
-
-🗣️ "Containerization is packaging an application with its entire
-runtime environment - the JDK, OS libraries, and configuration -
-so that environment drift cannot cause deployment failures. Before
-containers, the same code would behave differently on different
-machines because each machine had slightly different libraries.
-With containers, the image is the artifact you test and ship,
-so what runs in production is identical to what passed CI."
-
-#### Mechanism
-- "How do containers achieve isolation without a hypervisor?"
-- "What Linux kernel features enable containerization?"
-
-🗣️ "Containers use three Linux kernel features. Namespaces give each
-container its own isolated view of processes, network, and filesystem
-- the container cannot see other containers' processes. Cgroups
-enforce resource limits so one container cannot take all the CPU
-or memory. And a union filesystem stores images as stacked read-only
-layers with a thin writable layer per container. The result is
-strong isolation with near-zero overhead because there is no
-hypervisor - the host kernel manages it all directly."
-
-#### Comparison
-- "When would you use containers instead of running the app directly
-  on the server?"
-- "What does containerization give you that a JAR file does not?"
-
-🗣️ "A JAR packages Java dependencies but still depends on the JDK
-version and OS libraries on the host. A container packages the JDK
-itself and all OS-level dependencies. Running directly on a server
-means one misconfigured library version breaks all apps on that
-server. Containers give environment isolation, reproducibility,
-and the ability to scale by simply starting more identical copies."
-
-#### Scenario
-- "Your team deploys to three environments but keeps seeing
-  'it works in dev but fails in prod' failures. How would you fix this?"
-- "You need to run two services on the same host that require
-  different JDK versions. How do you solve this?"
-
-🗣️ "For the environment consistency problem, I would containerize
-both the app and its test suite so CI runs inside the same image
-that deploys to production. The key is building once and promoting
-the same image through environments - never rebuilding for staging
-or prod. For different JDK versions on the same host, containers
-solve this cleanly: each container has its own JDK layer, completely
-isolated from other containers on the same host."
-
-#### Debugging
-- "A container crashes immediately after starting - how do you
-  investigate?"
-- "Your containerized app runs fine locally but fails on the CI
-  server. Walk me through your diagnosis."
-
-🗣️ "For an immediately crashing container, I start with docker logs
-to get the application output and stderr. If there is no output,
-I check the container exit code with docker inspect - a code of 137
-means OOMKilled, 1 is usually an application error. I then run
-docker run -it with the same image but override the entrypoint to
-bash so I can inspect the filesystem and manually run the start
-command. For a CI vs local discrepancy, I compare the image digests
-and environment variables - usually it is an env var that exists
-locally but not in CI, or a volume mount that hides a missing file."
-
-#### Deep Dive
-- "What are the security implications of containers sharing the
-  host kernel?"
-- "Explain the container image layer model. How does it affect
-  build speed and image size?"
-
-🗣️ "The shared kernel boundary means that a kernel exploit -
-a privilege escalation vulnerability - can potentially escape a
-container and gain host root access. This is a real risk and why
-you should run containers as non-root users, use read-only
-filesystems, and apply seccomp profiles. For multi-tenant hostile
-workloads - like running customer-uploaded code - you need
-microVMs like Firecracker or gVisor which provide a stronger
-isolation boundary. For the layer model: each Dockerfile instruction
-creates a new layer. Layers are cached by the daemon, so if only
-your app JAR changes, Docker reuses the JDK layer from cache and
-only uploads the changed layer to the registry. This makes builds
-fast and registry storage efficient. The implication for Dockerfile
-design is that you put rarely-changing layers at the top."
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with the three Linux primitives. |
-| Hiring Manager | Lead with the "identical image from CI to prod" story. |
-| Bar Raiser | Lead with the kernel-sharing trade-off and when VMs still win. |
-| Peer Engineer | "The thing I always come back to is building the image once..." |
-
----
----
-
-# Docker Ecosystem and Architecture
-
-**Interview Weight:** high - Asked to verify whether you understand
-Docker as a platform (daemon + CLI + runtime + registry) or just
-as a "docker run" command. Interviewers use this to distinguish
-operators from practitioners.
+**Misconception 3: "Containers are inherently secure."**
+Containers provide isolation but not security guarantees by default.
+A container running as root with no capability restrictions and
+host namespace access is effectively root on the host. Security
+requires explicit configuration: non-root user, dropped capabilities,
+read-only filesystem, no privileged mode, AppArmor/seccomp profiles.
 
 ---
 
-### 🎯 Model Answer
+### 🚨 Failure Modes and Diagnosis
 
-**30 seconds:**
+**Failure Mode 1: Container runs differently on different machines**
+Symptom: application works on developer's machine but fails in CI
+or production.
+Cause: usually a volume mount (developer has local code mounted
+into container, CI uses built image), or architecture mismatch
+(developer on Apple Silicon builds ARM64 image, production is AMD64).
+Diagnosis: `docker inspect mycontainer` - check Mounts and Architecture.
+`docker run --platform linux/amd64` forces AMD64 even on ARM hosts.
+Fix: always test with the production image (not local volume mounts)
+before considering "it works in dev." Use multi-platform builds
+(`docker buildx build --platform linux/amd64,linux/arm64`).
 
-> Docker is a client-server platform. The Docker CLI is a thin
-> client that sends commands to the Docker daemon over a REST API.
-> The daemon manages images, containers, networks, and volumes
-> using containerd as its container runtime. Images are stored in
-> registries - Docker Hub is the default, but any OCI-compliant
-> registry works. You write Dockerfiles to define images, build
-> them, push them to a registry, and pull and run them anywhere.
+**Failure Mode 2: Container starts but application is unreachable**
+Symptom: `docker run` succeeds, but `curl localhost:8080` returns
+connection refused.
+Cause: either (a) application is listening on localhost/127.0.0.1
+inside the container (not 0.0.0.0), or (b) port is not published
+in the run command.
+Diagnosis: `docker ps` - check the PORTS column.
+`docker logs mycontainer` - see if the app logged its bind address.
+Fix: ensure application binds to `0.0.0.0:8080` (all interfaces),
+and add `-p 8080:8080` to the docker run command.
 
-**3 minutes (Senior):**
-
-> The Docker architecture separates concerns across four layers.
-> The CLI (docker) is a thin REST client - it converts your commands
-> into API calls to the daemon socket. The daemon (dockerd) is the
-> server that handles orchestration: it resolves image names, pulls
-> layers from the registry, manages container lifecycle, and sets up
-> networking and volumes. The daemon delegates actual container
-> execution to containerd, which uses runc (the OCI reference
-> runtime) to set up namespaces and cgroups and launch the process.
->
-> This layering matters in practice. Because the CLI talks to the
-> daemon via a socket, you can point your CLI at a remote daemon -
-> which is how build farms and remote development environments work.
-> The daemon caches image layers locally, so pulling an image the
-> second time is instant for layers already present.
->
-> Registries are content-addressed: every image version has a SHA256
-> digest. Pulling by tag is convenient but mutable - the same tag
-> can point to a different image after a push. Pinning by digest
-> (image@sha256:abc123) guarantees reproducibility, which matters
-> for production pipelines.
-
-**Framework:** WHAT -> WHY -> HOW -> TRADE-OFF -> EXAMPLE
-
-*Adapting up:* Staff adds governance angle - why your pipeline
-should pin by digest, not tag, for production promotions.
-
-*Adapting down:* Junior: "Docker has a daemon that does the work
-and a CLI you use to talk to it. Images live in a registry."
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about how Docker is built
-internally - let me think through the components."
-
-**(2) First principles:** "Any client-server tool needs a server
-to do the work, a client to send commands, and storage for
-artifacts. Docker follows that pattern exactly..."
-
-**(3) Bridge:** "This is similar to how git works - git CLI talks
-to a local repository, which can push to a remote origin. Docker
-CLI talks to a local daemon, which can push to a remote registry."
+**Failure Mode 3: Container exits immediately after start**
+Symptom: `docker run` starts a container that exits with code 1
+or code 2 within seconds.
+Diagnosis: `docker logs mycontainer` (even after exit, logs persist
+until container is removed). Exit code 1 = application error.
+Exit code 127 = command not found (CMD points to a non-existent executable).
+Fix: verify the CMD or ENTRYPOINT in the Dockerfile points to the
+correct executable. Run `docker run --entrypoint /bin/sh myimage`
+to get a shell inside the image and investigate manually.
 
 ---
 
-### 📘 Concept Explanation
+### 🎯 Interview Deep-Dive
 
-**What it is:**
-Docker is a platform for building, shipping, and running containers.
-It consists of the Docker CLI, the Docker daemon (dockerd), the
-containerd runtime, and a registry for storing images.
+| Format | Time | Focus |
+|--------|------|-------|
+| Screener | 2 min | Definition + problem it solves |
+| Panel | 5 min | How containers work (namespaces/cgroups) |
+| Senior | 7 min | Container vs VM + when to use each |
 
-**The problem it solves:**
-Before Docker standardized the workflow, building and running
-containers required deep kernel knowledge. Docker wrapped Linux
-namespaces and cgroups in a developer-friendly API and a standard
-image format (now OCI), making containers accessible to every
-developer without requiring systems programming expertise.
+---
 
-**How it works:**
+**Q1 (Definition): What problem does Docker solve?**
 
+Docker solves the environment portability problem in software
+delivery. Before Docker, an application deployed to a new environment
+frequently failed because of environment differences: wrong OS version,
+missing libraries, conflicting Python/Java/Node versions, different
+configuration file paths.
+
+Docker solves this by packaging the application with its entire
+runtime environment into an image. The image runs identically on
+any system with Docker installed, regardless of the host OS
+configuration.
+
+The three components of Docker's solution:
+1. Images: portable, self-contained filesystem snapshots with
+   metadata.
+2. Containers: running instances of images, isolated at the process
+   level.
+3. Registry: distribution system for sharing images.
+
+The practical impact: a junior developer can `docker pull` the
+production image and run it locally, knowing they are testing
+against the exact same software stack as production.
+
+*What separates good from great:* Connecting Docker to the delivery
+pipeline. Docker did not just fix developer environments - it created
+a new deployment artifact (the image) that became the atomic unit
+of deployment for the cloud-native ecosystem. Every Kubernetes Pod
+runs a container. Every CI pipeline builds an image. The container
+image is the universal deployment currency.
+
+---
+
+**Q2 (Mechanism): How do Linux namespaces and cgroups enable
+container isolation?**
+
+Linux containers are implemented using two kernel features working
+together.
+
+Namespaces provide isolation by creating separate views of the
+system for each container:
+- PID namespace: process 1 inside the container is not process 1
+  on the host. The container has its own process tree. Container
+  processes cannot see or signal host processes.
+- Network namespace: the container has its own network interfaces,
+  routing table, and IP address. Container port 8080 is separate
+  from host port 8080.
+- Mount namespace: the container has its own filesystem mount table.
+  Host filesystems are not visible inside the container (unless
+  explicitly mounted as a volume).
+- UTS namespace: the container has its own hostname.
+- User namespace: container's root user (UID 0) maps to a non-root
+  UID on the host (if user namespace remapping is configured).
+
+Control groups (cgroups) provide resource limiting and accounting:
+- CPU: limit container to 0.5 CPU cores. The container cannot
+  consume more than 50% of one CPU.
+- Memory: limit container to 512MB. If the container exceeds this,
+  the kernel OOM-killer kills a process in the container.
+- I/O: limit read/write throughput for block devices.
+- Network: (via tc netem) limit bandwidth.
+
+The combination: namespaces make the container appear isolated
+from the host. Cgroups prevent the container from consuming all
+host resources. Together, they create the illusion of a separate
+system while running as processes on the host kernel.
+
+*What separates good from great:* Understanding that namespaces
+and cgroups are not security mechanisms by default - they are isolation
+mechanisms. A container process that escapes its namespace (via a
+kernel exploit) gains access to the host. Defense-in-depth requires
+additional security layers: seccomp (system call filtering), AppArmor/SELinux
+(MAC policies), and dropping Linux capabilities.
+
+---
+
+**Q3 (Deep Dive): Explain the difference between a Docker image
+and a Docker container.**
+
+A Docker image is a static, read-only template: a layered filesystem
+(overlay2) with metadata (environment variables, exposed ports,
+entry point command). An image is the blueprint.
+
+A Docker container is a running instance of an image: it adds a
+writable layer on top of the read-only image layers (copy-on-write)
+and a runtime state (running/stopped, process list, network
+connections, file changes).
+
+The analogy: image = class definition. Container = object instance.
+Multiple containers can run from the same image simultaneously.
+
+The overlay filesystem:
 ```
-+-- Docker Architecture --------+
-|  CLI (docker)                  |
-|    | REST API                 |
-|  Daemon (dockerd)              |
-|    | gRPC                     |
-|  containerd                    |
-|    | OCI spec                 |
-|  runc (process launcher)       |
-|                                |
-|  Registry (Hub/ECR/GCR)        |
-|    images (layer blobs)        |
-+--------------------------------+
+Container writable layer  ← all writes go here (copy-on-write)
+Image layer 3 (read-only) ← COPY . . (application code)
+Image layer 2 (read-only) ← RUN pip install requirements
+Image layer 1 (read-only) ← FROM python:3.9-slim
 ```
+When a container reads a file, it first checks its writable layer.
+If not found, it reads from the image layers. When a container
+writes to a file from an image layer, the file is first copied to
+the writable layer (copy-on-write), then written. The original
+image layer remains unchanged.
 
-```mermaid
-sequenceDiagram
-    participant CLI as docker CLI
-    participant D as dockerd daemon
-    participant CT as containerd
-    participant R as Registry
-    CLI->>D: docker pull nginx:latest
-    D->>R: fetch manifest + layer blobs
-    R-->>D: image layers (SHA256)
-    D->>D: store layers in local cache
-    CLI->>D: docker run nginx:latest
-    D->>CT: create container
-    CT->>CT: setup namespaces + cgroups
-    CT-->>D: container started
-    D-->>CLI: container ID
-```
+Implications:
+- Multiple containers share image layers (saving disk space)
+- Container writable layer is lost when the container is removed
+  (use volumes for persistent data)
+- Large writes (many file modifications) have performance overhead
+  from copy-on-write
 
-> **Diagram walkthrough:** The CLI sends a pull request to the daemon,
-> which fetches the manifest (metadata describing layers) and the
-> layer blobs from the registry. Layers are cached locally by digest.
-> On `docker run`, the daemon tells containerd to create the container,
-> which sets up namespaces and cgroups and starts the process. The
-> daemon returns the container ID to the CLI. Every step is decoupled,
-> allowing the daemon to be remote and the runtime to be swappable.
-
-**The key insight:**
-The docker CLI is stateless - it is just a REST client. All state
-lives in the daemon. This architecture enables remote Docker
-contexts (develop against a cloud daemon) and CI scenarios where
-multiple CLI invocations share a daemon cache.
-
-**When to use it:**
-Docker is the standard tool for local container development, CI
-image building, and single-host container deployments. Use
-Docker Compose for multi-container development environments.
-
-**When NOT to use it:**
-Docker daemon runs as root by default, which is a security concern
-in multi-tenant environments. For rootless containers, use Podman.
-For large-scale production orchestration, the runtime is Kubernetes
-(which uses containerd directly, not dockerd).
-
-**Alternatives:**
-- Podman - daemon-less, rootless, drop-in Docker CLI replacement
-- nerdctl + containerd - direct containerd client with Docker UX
-- Buildah - dedicated image builder without a runtime daemon
-
-**First-principles derivation:**
-Container operations (build, run, push, pull) involve state management
-(image layers, container metadata, network config). Putting all state
-in a daemon ensures consistency - two CLI calls see the same state.
-The client-server split also enables the daemon to run as root (for
-kernel operations) while the CLI runs as a regular user.
+*What separates good from great:* Understanding the performance
+implication of the writable layer. Databases, log-heavy applications,
+and anything that writes large amounts of data should use Docker
+volumes (not the container's writable layer) for writes. The writable
+layer uses overlay2 (or other union filesystem), which has overhead
+for write-heavy workloads. Volumes bypass the union filesystem and
+write directly to the host filesystem.
 
 ---
 
-### 💻 Code Example
+**Q4 (Trade-off): When would you choose Docker over running
+software directly on the host?**
 
-**Example 1: Docker client-server interaction**
+Docker overhead is justified when the portability and isolation
+benefits outweigh the complexity cost.
 
+Use Docker when:
+- Environment consistency is critical (multiple developers, multiple
+  environments, CI/CD). The image eliminates "works on my machine."
+- Application has complex dependencies (specific Python version,
+  compiled libraries, system packages). The Dockerfile documents
+  and pins all dependencies.
+- Running multiple applications with conflicting dependencies on
+  the same host. Namespaces prevent conflicts.
+- You need rapid, clean environment setup (new developer, CI runner
+  provisioning).
+- Building microservices: each service runs in its own container
+  with its own dependencies.
+
+Run directly on host when:
+- Maximum performance is required. Docker's overlay filesystem
+  and network bridging add latency (typically < 5% CPU, but network
+  can be 10-15% for bridge mode vs. host mode).
+- Application requires direct hardware access (specific GPU, FPGA,
+  USB device).
+- Very simple utility on a dedicated single-purpose server.
+- Debugging complex kernel interactions where container isolation
+  obscures the problem.
+
+*What separates good from great:* The network performance nuance.
+Docker bridge networking adds NAT overhead. For high-throughput
+services, use `--network=host` to bypass Docker networking entirely.
+For Kubernetes, the CNI plugin directly provides the network namespace
+to the pod. The performance overhead concern is most relevant for
+extremely high-throughput data plane applications; for typical
+web services, Docker overhead is negligible.
+
+---
+
+**Q5 (Debugging): A Docker container works on your machine but
+fails in production. How do you debug it?**
+
+This is the classic "works on my machine" failure that Docker is
+supposed to prevent. When it occurs, the container environment
+differs between machines.
+
+Step 1: Establish environment equivalence.
+Are you actually running the same image? Check:
 ```bash
-# Show daemon info (confirms daemon is running)
-docker info
-
-# See daemon version and API version
-docker version
-
-# Point CLI at a remote daemon (remote context)
-docker context create remote \
-    --docker "host=ssh://user@remote-host"
-docker context use remote
-docker ps  # now runs against remote host
+docker inspect mycontainer --format '{{.Image}}'
+# production: sha256:abc123...
+# developer: sha256:abc123...  # must match
 ```
 
-> **Code walkthrough:** `docker info` confirms the daemon is
-> responding and shows its configuration. `docker version` shows
-> both the CLI version and the daemon's API version - these can
-> differ, and a version mismatch causes API errors. The context
-> commands show the client-server split: you can point the same
-> CLI at different daemons without changing any commands.
+If digests differ, the images are different (a `latest` tag or
+rebuild produced a different image).
 
-**Example 2: Image registry lifecycle**
-
+Step 2: Check environment variables.
 ```bash
-# Pull by tag (mutable - tag can be overwritten)
-docker pull nginx:latest
+docker inspect mycontainer --format '{{.Config.Env}}'
+```
+Production may have different env vars than local. A missing
+database URL, a different API key, a different MODE=production
+can cause different behavior.
 
-# Pull by digest (immutable - guaranteed reproducibility)
-docker pull nginx@sha256:abc123def456...
-
-# Tag and push to your registry
-docker tag myapp:latest registry.example.com/myapp:1.0.0
-
-docker push registry.example.com/myapp:1.0.0
-
-# List local image cache
-docker images
-docker image ls --format "{{.Repository}}:{{.Tag}}"
+Step 3: Check volume mounts.
+A developer running with `--volume $(pwd):/app` (local code mounted)
+is not testing the built image. Production runs the code in the
+image. Verify:
+```bash
+docker inspect mycontainer --format '{{.Mounts}}'
+# Should be empty or only data volumes (no source code mounts)
 ```
 
-> **Code walkthrough:** Pulling by tag is convenient but not
-> reproducible - `nginx:latest` today might be a different image
-> tomorrow. Pulling by digest guarantees you get the exact image
-> you tested. In production pipelines, the build step should record
-> the digest of the built image, and the deploy step should pull
-> by that digest, not by tag. The `docker tag` command does not
-> copy the image - it creates a new name pointing to the same layers.
+Step 4: Check resource limits.
+Production may have memory limits set. The container OOMs but
+the developer's machine has unlimited memory.
+```bash
+docker stats mycontainer
+# Watch for MEM USAGE approaching MEM LIMIT
+```
+
+Step 5: Check architecture.
+Developer on Apple Silicon (ARM64) builds an ARM64 image. Production
+is AMD64. The image runs correctly but with Rosetta emulation
+locally and natively in production (or refuses to run entirely).
+```bash
+docker inspect mycontainer --format '{{.Architecture}}'
+```
+
+*What separates good from great:* The correct first question:
+"Is this the same image digest?" Not "is this the same tag?" Tags
+are mutable. `latest` is rebuilt and the digest changes. If the
+image digest matches between environments, the problem is in the
+environment (env vars, volume mounts, resource limits, network).
+If the digest differs, build the exact same image first.
 
 ---
 
-### 🎓 Answers by Seniority
+**Q6 (Architecture): How does Docker fit into a modern CI/CD pipeline?**
 
-**Junior / Mid (0-5 years):**
+Docker provides three integration points in a CI/CD pipeline.
 
-> Docker has a CLI that you type commands into and a daemon that
-> runs in the background and does the actual work. The daemon manages
-> images and containers. Images are stored in registries like Docker
-> Hub. You write a Dockerfile, build an image, and run containers
-> from it.
+Build stage - standardized build environment:
+```yaml
+# GitHub Actions: build in a Docker container
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and test
+        run: |
+          # Run tests inside the application's container image
+          docker build --target test -t myapp:test .
+          docker run myapp:test mvn test
+```
+The build environment is the Dockerfile itself - reproducible
+and version-controlled.
 
-*Push deeper:* Add: "The CLI is just a REST client to the daemon.
-That is why you can have the daemon on a remote server and still
-use your local docker CLI to control it."
+Package stage - create the deployment artifact:
+```yaml
+      - name: Build production image
+        run: |
+          docker build \
+            --build-arg VERSION=${{ github.sha }} \
+            --tag ghcr.io/myorg/myapp:${{ github.sha }} \
+            --tag ghcr.io/myorg/myapp:latest \
+            .
+          docker push ghcr.io/myorg/myapp:${{ github.sha }}
+```
+The image tag includes the Git SHA - the image is the deployable
+artifact, immutable and content-addressable.
+
+Deploy stage - run the artifact:
+```yaml
+      - name: Deploy to production
+        run: |
+          # Kubernetes: update the deployment to use the new image
+          kubectl set image deployment/myapp \
+            myapp=ghcr.io/myorg/myapp:${{ github.sha }}
+```
+
+The three-stage flow: build → package → deploy. Docker makes each
+stage reproducible: the same Dockerfile always produces the same
+build environment, the same image tag refers to the same bytes,
+the same image runs identically in staging and production.
+
+*What separates good from great:* Using the Git SHA as the image
+tag (not `latest`). The `latest` tag is mutable - it can be
+overwritten by a subsequent build. Using the commit SHA creates
+an immutable mapping between "code version" and "image." Combined
+with image signing (cosign), you can prove that the image running
+in production was built from a specific commit by a specific CI
+pipeline.
+
+---
+
+**Q7 (Trade-off): Docker daemon vs daemonless containers
+(Podman) - what are the trade-offs?**
+
+Docker uses a daemon architecture: the dockerd process runs as
+root and manages all containers. The Docker CLI sends commands
+to dockerd via a Unix socket.
+
+Trade-offs of Docker daemon architecture:
+- Advantages: mature ecosystem, Docker Hub integration, Docker
+  Compose, Swarm. The daemon provides socket-based access for
+  management tools.
+- Disadvantages: root daemon is a security concern (a daemon
+  vulnerability affects the entire host). Docker socket binding
+  in CI containers (`-v /var/run/docker.sock:/var/run/docker.sock`)
+  is effectively root access to the host.
+
+Podman's daemonless architecture:
+- Each container runs as a child process of the user running
+  the Podman command. No central daemon.
+- Rootless containers: containers run as the invoking user, not root.
+  A compromised container process has the user's permissions, not root.
+- Drop-in Docker CLI replacement: `alias docker=podman` works for
+  most use cases.
+- Disadvantages: some features (Docker socket compatibility, Swarm)
+  are absent or require workarounds.
+
+When to prefer Podman:
+- Security-sensitive environments where rootless containers are required
+- CI/CD environments where mounting the Docker socket is forbidden
+- Environments where root daemon is not permitted
+
+When to stay with Docker:
+- Docker Compose heavy workflows (Podman Compose is available but
+  less mature)
+- Docker Swarm deployments (Podman has no Swarm equivalent)
+- Existing ecosystem deeply invested in Docker tooling
+
+*What separates good from great:* The security implication of the
+Docker socket. Mounting the Docker socket into a CI container
+(`-v /var/run/docker.sock:/var/run/docker.sock`) gives that container
+root access to the host. This is a critical security concern in
+multi-tenant CI environments. Alternatives: Kaniko (builds inside
+the container without Docker daemon), Buildkit, or Podman with
+rootless mode. Understanding this attack surface separates security-
+aware engineers from those who follow tutorials without questioning
+their implications.
 
 ---
 
-**Senior / Staff (5+ years):**
-
-> Docker is a client-server platform with four layers: the CLI as
-> a REST client, the daemon for orchestration, containerd as the
-> OCI runtime, and a registry for image storage. The daemon handles
-> caching, networking, and volume management.
-
-The senior adds production concerns: in Kubernetes environments,
-Docker daemon is not used - Kubernetes talks to containerd directly.
-Knowing this prevents the common confusion when Docker commands do
-not work inside Kubernetes nodes. At the staff level, you discuss
-registry governance - pinning by digest vs tag, image scanning in
-the registry, and promotion pipelines that verify the digest at
-each environment boundary.
-
-*Push deeper:* "In a secure supply chain, every image promotion
-should verify the SHA256 digest matches what was built and tested.
-Tags are just aliases and can be moved. Digests are immutable."
-
----
-
-### ❓ Questions You Will Be Asked
-
-#### Definition
-- "What is the Docker daemon and why does it exist?"
-- "What components make up the Docker platform?"
-
-🗣️ "The Docker daemon is the server-side component that does all
-the actual work - pulling images, managing containers, setting up
-networks and volumes. The CLI is just a thin REST client. The
-reason for this split is that container operations require root
-privileges to manipulate kernel namespaces, so the daemon runs
-as root while users interact with it through the CLI. The platform
-also includes a registry for storing and distributing images and
-containerd as the actual container runtime under the daemon."
-
-#### Mechanism
-- "Walk me through what happens when I run docker pull nginx:latest."
-- "How does the image layer cache work in Docker?"
-
-🗣️ "When you run docker pull, the CLI sends a request to the daemon.
-The daemon fetches the image manifest from the registry - this is
-a JSON document that lists the layers. For each layer, the daemon
-checks the local cache by digest. Layers already in cache are
-skipped. Missing layers are downloaded in parallel as compressed
-tarballs, extracted, and stored in the local layer store. The
-layer cache is keyed by SHA256 digest, so two images sharing a
-common base layer (like the same JDK layer) share that storage.
-This is how a 500 MB JDK layer is downloaded once and reused
-across all your Java images."
-
-#### Comparison
-- "When would you choose Podman over Docker?"
-- "What is the difference between Docker and Kubernetes?"
-
-🗣️ "Podman is the right choice when you need rootless containers -
-no daemon running as root - which is required in some corporate
-environments and CI systems. Podman is command-compatible with
-Docker, so switching is usually just an alias. For Docker vs
-Kubernetes: Docker is a single-host tool - it runs containers on
-one machine. Kubernetes is an orchestration platform that manages
-containers across a cluster of machines, handles scheduling,
-self-healing, scaling, and service discovery. In production,
-Kubernetes uses containerd directly - no Docker daemon needed."
-
-#### Scenario
-- "Your CI pipeline is slow because it pulls the base JDK image
-  every build. How do you fix it?"
-- "You need to ensure every service deployment uses the exact same
-  image that was tested. How do you implement this?"
-
-🗣️ "For the slow CI pull, the fix is to mount the Docker layer
-cache between CI runs - most CI platforms have a cache step for
-the Docker daemon directory. Alternatively, push the base image
-to a registry in the same region as your CI runner so pulls are
-fast. For the exact-image guarantee, the build step should output
-the image digest (docker inspect --format '{{.Id}}' myimage)
-and store it as a build artifact. The deploy step uses that digest
-to pull the exact image - not a tag - which prevents a race
-condition where a new push to the same tag between build and
-deploy changes what gets deployed."
-
-#### Debugging
-- "The Docker daemon is not responding to CLI commands. How do
-  you diagnose it?"
-- "Images on your CI server keep running out of disk space. How
-  do you manage this?"
-
-🗣️ "For an unresponsive daemon, I check the daemon process with
-systemctl status docker, then look at daemon logs with
-journalctl -u docker. Common causes are an OOM event killing
-the daemon, a full disk (daemon fails to write layer blobs),
-or a lock file left from a crashed daemon. For disk space, the
-issue is layer accumulation from pulled and built images. The
-fix is docker system prune --volumes to remove unused images,
-containers, networks, and volumes. In CI, I add this as a post-
-build step, or set up a cron job to prune images older than
-7 days: docker image prune -a --filter until=168h."
-
-#### Deep Dive
-- "Why does Docker use a layered filesystem for images?"
-- "What replaced Docker in Kubernetes and why?"
-
-🗣️ "The layered filesystem exists for two reasons: deduplication
-and incremental builds. When two images share a common base layer
-- same Ubuntu and JDK - that layer is stored once and shared.
-When you rebuild your app image, only the layer containing your
-application changes - the JDK and OS layers are reused from cache.
-This makes builds fast (seconds for a code change vs minutes for
-a full rebuild) and registries efficient (you only push changed
-layers). For Kubernetes: Docker was removed as the default runtime
-in Kubernetes 1.20. The reason was the double-layering - Kubernetes
-talked to the Docker daemon, which talked to containerd. Removing
-Docker and talking to containerd directly simplified the stack,
-reduced memory usage, and removed a potential failure point. The
-OCI image format Docker introduced is still the standard - images
-built with Docker run fine on Kubernetes."
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with daemon/CLI/registry components and gRPC chain. |
-| Hiring Manager | Lead with how the registry enables "build once, deploy many." |
-| Bar Raiser | Lead with digest vs tag reproducibility guarantee. |
-| Peer Engineer | "The thing that bit us was tag mutability in production..." |
-
----
 ---
 
 # Containers vs Virtual Machines
 
-**Interview Weight:** critical - The most frequently asked
-container fundamentals question. Asked at every level. A weak
-answer says "containers are lighter." A strong answer explains
-WHY at the architecture level and states the isolation trade-off.
+🎯 Interview Weight: core conceptual question, asked in nearly
+every Docker interview. Expected from all levels.
 
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Virtual machines virtualize hardware - each VM runs a full OS
-> on a hypervisor. Containers virtualize the OS - they share the
-> host kernel but have isolated processes, filesystem, and network.
-> VMs offer stronger isolation (separate kernel per VM) but are
-> heavy (gigabytes, seconds to boot). Containers are lightweight
-> (megabytes, milliseconds to start) but share the kernel, so a
-> kernel vulnerability affects all containers on that host.
+> Containers share the host OS kernel; VMs run a full OS each.
+> Containers start in milliseconds and use megabytes of memory. VMs
+> boot in 30-60 seconds and use gigabytes. Containers offer process-
+> level isolation (weaker security boundary). VMs offer hardware-
+> level isolation (stronger security boundary). Use containers for
+> application workloads; use VMs when you need full OS isolation or
+> a different kernel.
 
 **3 minutes (Senior):**
-
-> The architectural difference is at the virtualization boundary.
-> A VM contains a hypervisor, a guest OS kernel, and the application.
-> The hypervisor (VMware, KVM, Hyper-V) intercepts every privileged
-> instruction to provide hardware-level isolation. This is strong
-> but expensive - each VM needs its own OS, taking gigabytes of
-> memory just for the operating system.
+> The fundamental difference is the isolation boundary. A VM uses
+> a hypervisor to emulate hardware, allowing a guest OS to run
+> unmodified on top. The hypervisor is the security boundary: the
+> guest OS is completely unaware of the host. Full OS isolation.
 >
-> A container shares the host kernel. The kernel's namespace feature
-> gives each container an isolated view of processes and filesystem.
-> The kernel's cgroup feature limits each container's resource usage.
-> There is no hypervisor, no guest OS, no instruction translation.
-> A Java process in a container is just a Java process on the host,
-> restricted by cgroup limits and seeing a namespaced filesystem.
+> A container uses Linux namespaces and cgroups to create an isolated
+> process environment on the host kernel. The container shares the
+> host kernel. This makes containers lightweight (no OS overhead)
+> but weaker in isolation: a kernel vulnerability affects all containers.
 >
-> The practical difference for Java teams: a VM image for a Spring
-> Boot service is 10 GB (OS + JDK + app). A container image is
-> 250 MB (JDK layer + app layer). You can run 50 Spring Boot
-> containers on a host where you could fit 5 VMs. The trade-off is
-> isolation. A kernel exploit - a privilege escalation vulnerability
-> - escapes a container and gains host root. For untrusted code or
-> PCI/HIPAA requirements, you nest containers inside VMs to get
-> both operational speed and the hard isolation boundary.
+> The practical tradeoff: containers are 100x faster to start, use
+> 10-20x less memory, and pack 10-20x denser on the same hardware.
+> VMs provide stronger security isolation and can run different
+> operating systems.
 
-**Framework:** WHAT -> WHY -> HOW -> TRADE-OFF -> EXAMPLE
+**Framework:** ISOLATION LEVEL → PERFORMANCE → SECURITY → USE CASES
 
-*Adapting up:* Staff adds the hybrid model (containers in VMs),
-microVMs (Firecracker), and when each is appropriate by workload.
+*Adapting up:* "In Kubernetes, Pods are containers. Fargate provides
+Pod-level isolation by running each Pod in its own microVM (using
+Firecracker). This gives you container density with VM-level security
+isolation. The two models are converging."
 
-*Adapting down:* Junior: "VMs have their own OS. Containers share
-the host OS kernel. Containers are faster and smaller."
+*Adapting down:* "VMs are separate houses. Containers are apartments
+in the same building. Houses are completely isolated (different
+plumbing, different walls). Apartments share some infrastructure
+(the building's electrical system = the kernel) but are otherwise
+isolated."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about containers vs VMs - let
-me work through the virtualization boundary for each."
+**(1) Restate:** "Containers share the host kernel, VMs run a full OS.
+Containers are faster/lighter; VMs are more isolated."
 
-**(2) First principles:** "Virtualization exists to isolate
-workloads. You can isolate at the hardware level (VMs) or at
-the OS level (containers)..."
+**(2) First principles:** "Isolation requires a boundary. VM boundary =
+hypervisor (hardware virtualization). Container boundary = kernel
+namespaces (software virtualization). Stronger boundary = higher
+cost."
 
-**(3) Bridge:** "Think of a server as a building. VMs are
-apartments (each has its own plumbing and electricity). Containers
-are offices in an open floor plan (shared infrastructure, but
-separate locked spaces)."
+**(3) Bridge:** "OS is like an apartment building. VM = separate building.
+Container = apartment in the same building."
 
 ---
 
 ### 📘 Concept Explanation
 
 **What it is:**
-Virtual machines and containers are both isolation technologies
-for running multiple workloads on one physical host. They differ
-in WHERE the isolation boundary sits.
+Virtual machines and containers are both technology for running
+isolated workloads, but they operate at different levels of the
+software stack. Understanding this difference is fundamental to
+selecting the right isolation mechanism.
 
-**The problem it solves:**
-Running multiple applications on one host without them interfering
-with each other - through dependency conflicts, resource contention,
-or security breaches.
+**Architecture comparison:**
 
-**How it works:**
-
+Virtual Machine stack:
 ```
-VM Architecture:
-+- Physical Host ----------+
-| +- Hypervisor ----------+|
-| | +- VM 1 ------+       ||
-| | | Guest OS    |       ||
-| | | JDK         | VM 2  ||
-| | | App JAR     | ...   ||
-| | +-------------+       ||
-| +------------------------|
-+--------------------------+
-
-Container Architecture:
-+- Physical Host ----------+
-| Host Linux Kernel        |
-| +-Cont 1-+ +-Cont 2-+   |
-| | JDK    | | JDK    |   |
-| | App    | | App    |   |
-| +--------+ +--------+   |
-+--------------------------+
+Application Code
+Libraries / Runtime
+Guest OS (kernel + userspace)
+Hypervisor (hardware emulation)
+Host OS
+Physical Hardware
 ```
 
-```mermaid
-block-beta
-  columns 3
-  block:VM["VM Stack"]:1
-    columns 1
-    A1["App + JDK"]
-    A2["Guest OS Kernel"]
-    A3["Hypervisor"]
-    A4["Physical Hardware"]
-  end
-  space
-  block:CT["Container Stack"]:1
-    columns 1
-    B1["App + JDK"]
-    B2["Namespaces + Cgroups"]
-    B3["Host OS Kernel (shared)"]
-    B4["Physical Hardware"]
-  end
+Container stack:
+```
+Application Code
+Libraries / Runtime
+Container Runtime (namespace/cgroup management)
+Host OS Kernel (shared)
+Physical Hardware
 ```
 
-> **Diagram walkthrough:** The VM stack has a hypervisor above the
-> hardware, then a full guest OS kernel per VM, then the application.
-> Every VM is isolated at the kernel level - if one VM's kernel
-> crashes, others are unaffected. The container stack shows the host
-> kernel shared by all containers, with namespaces and cgroups
-> providing logical isolation within that shared kernel. The
-> application layers are similar in both - the fundamental difference
-> is whether the kernel is shared.
+The key difference: the guest OS layer. VMs have it; containers
+do not. The container's process talks directly to the host kernel,
+isolated by namespaces and cgroups.
 
-**The key insight:**
-Container isolation is enforced by the same kernel the containers
-share. A container escape attack targets the kernel. VM isolation
-is enforced by the hypervisor, which runs below the guest kernel.
-This is why VMs have a larger trusted computing base - and why
-containers in VMs (the hybrid model) appear in regulated industries.
+**Performance comparison:**
 
-**When to use VMs:**
-- Workloads requiring hard isolation (customer-uploaded code,
-  PCI-DSS environments, multi-tenant cloud functions)
-- Windows workloads on a Linux host
-- Bare-metal applications with specific hardware requirements
+Startup time:
+- Container: milliseconds (process fork, namespace setup)
+- VM: 30-90 seconds (BIOS POST, OS boot, service initialization)
 
-**When to use Containers:**
-- Microservices and backend APIs
-- CI/CD pipelines requiring fast, reproducible builds
-- Dev environments where startup time matters
-- Horizontal scaling scenarios
+Memory overhead:
+- Container: application memory only (no OS overhead)
+- VM: application memory + guest OS (minimum 256MB, typically 1-4GB)
 
-**Alternatives:**
-- Firecracker microVMs - VM isolation at near-container speed
-  (AWS Lambda uses this)
-- gVisor - user-space kernel that intercepts container syscalls,
-  providing extra isolation without full VMs
-- Kata Containers - lightweight VMs with OCI container interface
+CPU overhead:
+- Container: near-zero (no hardware emulation)
+- VM: 2-10% for hypervisor overhead (hardware-assisted virtualization,
+  VMX/SVM, reduces this significantly)
 
-**First-principles derivation:**
-The trade-off is isolation strength vs overhead. True hardware
-isolation (hypervisor) prevents any kernel-level escape but
-requires duplicating the OS per workload. Shared-kernel isolation
-(containers) eliminates OS overhead but moves the isolation
-boundary up to the kernel. The right choice depends on whether
-you trust the workload code - internal services can use containers,
-external/untrusted code needs VMs.
+Density (on a 64GB server):
+- Containers: hundreds to thousands of small containers
+- VMs: 10-50 VMs (limited by OS memory overhead)
+
+**Security comparison:**
+
+Container isolation weaknesses:
+- Shared kernel: a kernel exploit can affect all containers on the host
+- Container escapes: privileged containers, mounted Docker socket,
+  certain capabilities can break isolation
+- Shared kernel modules: loaded kernel modules are visible to all containers
+
+VM isolation strengths:
+- Hypervisor boundary: the guest OS is unaware of the host
+- VM escape is more difficult (requires hypervisor vulnerability,
+  not just container runtime vulnerability)
+- Can run different OSes (Windows VM on Linux host)
+- Stronger for multi-tenant environments (cloud providers use VMs
+  to isolate customer workloads)
+
+**When containers are appropriate:**
+- Deploying multiple instances of the same application (web servers,
+  microservices)
+- Rapid scaling (containers start faster, enabling faster autoscaling)
+- Development environments (consistent, lightweight)
+- Kubernetes workloads
+
+**When VMs are appropriate:**
+- Multi-tenant workloads where customers should not share a kernel
+  (cloud infrastructure, PCI-compliant workloads)
+- Running different operating systems (Windows workloads on a Linux host)
+- Workloads requiring kernel-level customization
+- Legacy applications that cannot be containerized
+
+**The convergence: microVMs:**
+AWS Firecracker and gVisor (Google) provide microVM-level isolation
+with near-container performance. Firecracker boots a minimal Linux
+kernel in 125ms with ~5MB memory overhead. AWS Lambda and Fargate
+use Firecracker to give each customer workload its own kernel, combining
+container density with VM security. This is the direction for
+security-sensitive container workloads.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Measuring the startup difference**
+**Comparing startup time and density**
 
 ```bash
-# Time a container startup (milliseconds)
-time docker run --rm alpine echo "hello"
+# BAD: Using a full VM for a simple web service
+# VM overhead for a web application:
+# - 4GB RAM for the VM OS + runtime
+# - 45 seconds to start
+# - One VM = one service = massive over-provisioning
 
-# Contrast: a VM boot takes 15-60 seconds
-# (not runnable as a quick command)
-
-# Container memory footprint
-docker run -d --memory=128m --name test alpine sleep 1h
-docker stats test --no-stream
-# CONTAINER  MEM USAGE / LIMIT  MEM %
-# test       1.2MiB / 128MiB    0.94%
+vagrant up myapp-vm  # 45-90 seconds boot time
+# VM uses 4GB RAM to run a 100MB web application
 ```
 
-> **Code walkthrough:** The alpine container starts in under a second
-> because there is no OS boot sequence - the kernel is already running.
-> The memory stats show the container uses minimal memory overhead,
-> unlike a VM which would use hundreds of MB just for the guest OS.
-> The `--memory=128m` flag demonstrates cgroup memory enforcement.
-
-**Example 2: Demonstrating namespace isolation**
+> **Code walkthrough:** The VM approach allocates a full OS (4GB)
+> for a web application that uses 100MB. The 40:1 overhead ratio
+> is the density problem. At 100 services, VMs require 400GB of RAM
+> for OS overhead alone.
 
 ```bash
-# Container sees its own process namespace
-docker run --rm alpine ps aux
-# Shows only the processes inside the container
+# GOOD: Container approach
+# Container overhead for the same web application:
+# - 100MB RAM (application only, no OS overhead)
+# - Milliseconds to start
+# - One host can run 100+ containers
 
-# Host sees the container process
-ps aux | grep sleep
+# Start 10 containers simultaneously
+for i in {1..10}; do
+  docker run -d \
+    --memory=128m \
+    --cpus=0.25 \
+    --name webserver-$i \
+    nginx:alpine &
+done
+wait
 
-# Container has its own hostname
-docker run --rm alpine hostname
-# Shows container ID, not host hostname
+# All 10 containers started in < 1 second total
+docker ps | grep webserver | wc -l  # 10
+docker stats --no-stream | grep webserver
+# Each container: ~5MB memory (nginx:alpine is tiny)
+# vs. 4GB per VM
 
-# But shares the host kernel version
-docker run --rm alpine uname -r
-# Shows HOST kernel version - not a guest OS
+# Container vs VM density on a 32GB server:
+# VMs: 32GB / 4GB per VM = 8 VMs
+# Containers: 32GB / 128MB per container = 250 containers
 ```
 
-> **Code walkthrough:** The `ps aux` inside the container shows only
-> the container's own processes - namespace isolation working. But
-> `uname -r` shows the host kernel version, proving that containers
-> share the kernel. This is the clearest demonstration of WHERE
-> the isolation boundary sits: above the kernel, not below it.
+> **Code walkthrough:** The container density advantage is dramatic
+> in practice. Ten containers start in under one second because each
+> container is just a process fork with namespace setup - no OS boot.
+> The 128MB memory limit per container allocates the application's
+> actual memory need, not OS overhead. The same 32GB server runs
+> 250 containers vs. 8 VMs. This density advantage is why Kubernetes
+> can run hundreds of pods on a few nodes: each pod is a container
+> (or a few containers), not a VM.
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-
-> VMs have their own OS so they are heavier but more isolated.
-> Containers share the host OS kernel so they start in milliseconds
-> and use much less memory. For most backend services, containers
-> are the right choice. VMs are needed when you need full isolation
-> or are running a different OS than the host.
-
-*Push deeper:* Add: "The practical difference for Java is image
-size - a containerized Spring Boot app is maybe 300 MB, a VM image
-is 10 GB. That matters a lot for scaling speed."
+> "Containers share the host OS kernel, so they start fast and use
+> less memory. VMs run their own OS, so they start slowly but are
+> more isolated. For web applications and microservices, containers
+> are better because of the density and speed. For multi-tenant
+> cloud infrastructure, VMs are required because customers should
+> not share a kernel."
 
 ---
 
-**Senior / Staff (5+ years):**
+### ⚠️ Common Misconceptions
 
-> The isolation boundary is the key difference. VMs isolate at the
-> hypervisor level - each VM has its own kernel. Containers isolate
-> at the OS level - they share the kernel and use namespaces and
-> cgroups for logical separation.
+**Misconception 1: "Containers are not secure enough for production."**
+Containers are production-grade for most workloads. AWS ECS, Google
+Cloud Run, and Kubernetes run container workloads at massive scale
+securely. The security requirements depend on the threat model.
+Single-tenant containers on isolated infrastructure (your cluster,
+your nodes) have adequate security. Multi-tenant containers sharing
+kernel on the same node with untrusted third parties require
+additional hardening (user namespace, Kata Containers, Firecracker).
 
-The senior adds the security implication: kernel CVEs affect all
-containers on a host simultaneously, while a VM kernel CVE only
-affects that VM. For security-sensitive workloads in my teams, we
-nested containers inside VMs - getting Kubernetes operational speed
-with the VM isolation boundary. At the staff level, you discuss
-microVMs (Firecracker, which AWS Lambda uses) as the engineering
-solution to getting VM-level isolation at near-container startup
-speed (125ms cold start vs 50ms for containers, vs 15+ seconds
-for traditional VMs).
+**Misconception 2: "VMs and containers are mutually exclusive."**
+Production infrastructure typically uses both: VMs (EC2 instances,
+GCE VMs) as the host layer, containers running inside the VMs.
+Kubernetes typically runs on VMs, not bare metal. The combination
+provides VM-level isolation at the infrastructure layer and container-
+level density at the application layer.
 
-*Push deeper:* "The hybrid model - containers inside VMs - is
-not a compromise. It gives you immutable infrastructure with strong
-isolation. The only cost is the VM image layer in your toolchain."
+**Misconception 3: "Containers always perform better than VMs."**
+Containers have lower overhead for CPU and memory. But network
+I/O through Docker bridge networking (NAT) can be slower than
+VM network performance. Disk I/O through the overlay filesystem
+can be slower than direct disk access. For I/O-intensive workloads,
+the performance comparison is not straightforward.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Container memory usage exceeds limits**
+Symptom: containers are repeatedly OOM-killed. `docker ps` shows
+containers with status "Exited (137)". Exit code 137 = OOM kill.
+Diagnosis: `docker stats` shows memory usage approaching the limit.
+`dmesg | grep oom-kill` on the host confirms the kernel killed the process.
+Fix: either increase the container memory limit (if application
+genuinely needs more memory) or diagnose the memory leak in the
+application. The container did not cause the OOM - it enforced
+the limit that revealed the underlying problem.
+
+**Failure Mode 2: Too many containers overwhelm the host**
+Symptom: host responds slowly, containers experience high latency.
+`top` on the host shows 95%+ CPU or memory pressure.
+Cause: container count exceeded host capacity. Containers share
+the host kernel and compete for host resources.
+Diagnosis: `docker stats --no-stream` shows per-container resource usage.
+Sum CPU and memory across all containers to see total consumption.
+Fix: reduce the number of containers on the host, or add resource
+limits to each container to prevent resource starvation.
+
+**Failure Mode 3: VM-level security required but using containers**
+Symptom: compliance audit finds that PCI-scoped workloads are
+sharing kernel with non-PCI workloads. Auditor requires stronger
+isolation.
+Cause: container isolation (namespaces) does not satisfy the compliance
+requirement for kernel-level isolation.
+Fix: move PCI-scoped workloads to dedicated nodes (no shared kernel
+with non-PCI workloads) OR use Kata Containers/Firecracker for
+microVM isolation per workload.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is the difference between a container and a virtual machine?"
-- "Why are containers considered lightweight compared to VMs?"
-
-🗣️ "VMs virtualize hardware - each VM runs a complete OS including
-its own kernel on a hypervisor. Containers virtualize the OS -
-they share the host kernel but have isolated process and filesystem
-namespaces. Containers are lightweight because there is no guest
-OS to boot or maintain. A container starts in milliseconds because
-the kernel is already running - it just creates new namespaces.
-A VM takes 30-60 seconds because it boots an OS. In memory, a VM
-needs hundreds of MB for its OS. A container needs only what
-the application itself requires."
-
-#### Mechanism
-- "How does a hypervisor provide isolation between VMs?"
-- "If containers share the kernel, how are they isolated from
-  each other?"
-
-🗣️ "A hypervisor intercepts privileged CPU instructions from each
-VM and emulates them - each VM thinks it owns the hardware but is
-actually talking to the hypervisor. This provides strong isolation
-because VMs have separate kernels. For containers, isolation comes
-from the Linux kernel's namespace feature. Each container gets its
-own PID namespace (it only sees its own processes), network
-namespace (its own network stack and IP), mount namespace (its
-own filesystem view), and UTS namespace (its own hostname).
-Cgroups limit how much CPU and memory each container can use.
-This is the kernel enforcing isolation within itself."
-
-#### Comparison
-- "When should you run containers inside VMs instead of
-  directly on bare metal?"
-- "What is a microVM and when would you use one over containers?"
-
-🗣️ "Containers inside VMs - the cloud model used by AWS, GCP, and
-Azure - makes sense when you need both operational agility and
-hard isolation. The VM provides the kernel boundary that protects
-the hypervisor host. The containers inside provide fast deployment
-cycles and dense packing. You pay the VM overhead (usually 1-5%)
-once per VM and get container speed for everything inside it.
-MicroVMs like Firecracker or Kata Containers solve the specific
-problem of running untrusted code. They boot a minimal VM in
-125ms - fast enough for serverless functions - while providing
-true VM isolation. AWS Lambda uses Firecracker because customer
-code is genuinely untrusted and container isolation is not
-sufficient for that threat model."
-
-#### Scenario
-- "Your company needs to run Java microservices and also execute
-  customer-uploaded code. How do you design the isolation strategy?"
-- "You need to migrate 50 legacy applications from VMs to
-  containers. What risks do you assess first?"
-
-🗣️ "For mixed workloads - internal services and customer code -
-I would use containers for the internal services and microVMs or
-containers inside dedicated VMs for customer code. The isolation
-boundary must match the trust boundary. For the VM migration, the
-main risks I assess first are: application assumptions about
-the filesystem that break in a container (writing to /var, assuming
-a specific /tmp path), JVM memory configuration (the JVM reads
-host memory by default and will allocate too much heap inside a
-container), privileged operations that need root but should not
-run as root in containers, and any app that uses raw sockets or
-specific network config that needs extra kernel capabilities."
-
-#### Debugging
-- "A container needs a capability that is blocked by default -
-  how do you identify and resolve this?"
-- "Your containerized app behaves differently than in a VM.
-  What are the most common causes?"
-
-🗣️ "For a missing capability, I start by running the app with
---privileged to confirm that is the issue, then use strace or
-docker events to identify the specific syscall that is failing.
-Once I know the capability (like NET_ADMIN for raw socket access),
-I add only that capability with --cap-add rather than running
-privileged. For behavioral differences between container and VM,
-the most common causes in Java applications are: memory - the JVM
-sees host memory in a container without container awareness flags
-and over-allocates heap; CPU - Java's Runtime.availableProcessors()
-returns host CPU count, not the container's CPU limit, affecting
-thread pool sizing; and time zone or locale settings that were
-present on the VM but are missing in the minimal container image."
-
-#### Deep Dive
-- "Explain the security threat model for containers - what can
-  a compromised container do?"
-- "What is the kernel attack surface for a containerized
-  workload?"
-
-🗣️ "A compromised container can attempt several classes of attack.
-First, privilege escalation within the container: if running as
-root inside the container, an attacker can mount the host filesystem
-via /proc, access host network, or exploit a kernel vulnerability.
-Second, resource exhaustion: without cgroup limits, a container
-can fork-bomb or allocate all host memory. Third, kernel exploits:
-container isolation is enforced in kernel code, so an unpatched
-kernel CVE can lead to a container escape. The defense layers are:
-run containers as non-root users, use read-only root filesystems,
-apply seccomp profiles (Docker has a default one that blocks 40+
-dangerous syscalls), set CPU and memory cgroup limits, and keep
-the kernel patched. For the highest-risk workloads, the defense
-is microVMs, which reduce the shared kernel surface to a tiny
-subset of syscalls via a paravirtual interface."
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with hypervisor vs kernel-level isolation boundary. |
-| Hiring Manager | Lead with density, speed, and image size differences. |
-| Bar Raiser | Lead with the kernel security trade-off and hybrid model. |
-| Peer Engineer | "The subtle issue is what happens with kernel CVEs..." |
+| Format | Time | Focus |
+|--------|------|-------|
+| Screener | 2 min | Container vs VM core difference |
+| Panel | 5 min | When to use each + security trade-offs |
+| Senior | 7 min | MicroVM convergence + Kubernetes node architecture |
 
 ---
+
+**Q1 (Definition): What is the fundamental technical difference
+between a VM and a container?**
+
+The fundamental difference is the isolation boundary.
+
+A virtual machine uses a hypervisor to create a hardware abstraction
+layer. The guest OS (and its kernel) runs on top of emulated hardware.
+The guest OS is completely isolated from the host OS - it has its
+own kernel, its own memory space, its own device drivers.
+
+A container uses Linux kernel primitives (namespaces, cgroups) to
+create an isolated execution environment for a process. The container
+shares the host OS kernel. There is no emulated hardware; the
+process runs directly on the host hardware, with isolation enforced
+by the kernel.
+
+The practical implication:
+- VM: full OS boot required (30-90 seconds), full OS memory overhead
+  (1-4GB), strong isolation (hypervisor boundary)
+- Container: process startup (milliseconds), no OS overhead, weak
+  isolation (namespace boundary)
+
+*What separates good from great:* Understanding that "sharing the
+kernel" is a specific technical statement. The container process's
+system calls go directly to the host kernel. The kernel enforces
+the namespace isolation. If the kernel has a vulnerability that
+allows namespace escape, all containers on the host are exposed.
+This is why AWS does not run customer containers on shared kernels -
+they use Firecracker microVMs (one kernel per Lambda function).
+
 ---
 
-# Container Use Cases for Java Backend
+**Q2 (Mechanism): How does a hypervisor work and why is it
+necessary for VM security?**
 
-**Interview Weight:** high - Connects containerization to Java-
-specific concerns. Interviewers ask this to check whether you
-know the JVM-in-container gotchas (memory, CPU, signals) that
-trip up teams making the move from VMs.
+A hypervisor is software that creates and manages VMs by intercepting
+hardware access from guest OSes.
+
+Type 1 hypervisor (bare-metal): runs directly on hardware. VMware
+ESXi, Xen, KVM. The hypervisor owns the hardware; VMs are scheduled
+on the hypervisor.
+
+Type 2 hypervisor (hosted): runs on top of a host OS. VMware
+Workstation, VirtualBox. The host OS owns the hardware; the
+hypervisor runs as an application.
+
+Hardware-assisted virtualization (Intel VT-x, AMD-V): modern CPUs
+include hardware support for virtualization. The CPU has two modes:
+root mode (hypervisor) and non-root mode (guest OS). Guest OS
+instructions run directly on hardware (nearly native performance)
+unless they require hypervisor intervention (privileged instructions).
+This reduces the performance overhead from 10-20% (software
+emulation) to 2-5%.
+
+Why the hypervisor provides stronger isolation: a VM escape requires
+finding a hypervisor vulnerability (a process in the VM escaping
+from non-root to root mode). Hypervisors are small, well-audited
+codebases (the "trusted computing base" is minimal). Container
+runtime vulnerabilities (Runc CVEs, kernel CVEs) are more common.
+
+*What separates good from great:* The KVM/QEMU architecture that
+most cloud providers use. KVM is a kernel module that makes the
+Linux kernel a Type 1 hypervisor. QEMU is the user-space component
+that emulates hardware. An EC2 instance runs on KVM (AWS used Xen
+historically, migrated to KVM with the Nitro system). Knowing that
+cloud VMs are KVM/Xen instances running on physical servers - and
+that your container might be inside a VM - is the full picture.
+
+---
+
+**Q3 (Trade-off): When would you run containers inside VMs,
+and is this redundant?**
+
+Running containers inside VMs is the standard architecture for
+production Kubernetes deployments, not redundant overhead.
+
+The architecture: physical server → VM (EC2 instance, GCE node) →
+Kubernetes node → Docker/containerd → container (pod).
+
+Why containers inside VMs:
+- VM layer provides infrastructure isolation: each customer in a
+  cloud environment has their own VMs. The VM boundary prevents
+  kernel-level cross-customer access.
+- Container layer provides application isolation and density: within
+  a VM, multiple application containers pack efficiently.
+- Operational flexibility: VMs can be added/removed for scaling.
+  Containers within VMs deploy rapidly without VM boot time.
+
+The combination is not redundant because each layer solves a different
+problem:
+- VM: isolates infrastructure tenants (different teams, different
+  compliance scopes)
+- Container: isolates applications within a tenant's infrastructure
+
+Performance overhead: a VM introduces 2-5% CPU overhead
+(hardware-assisted virtualization). A container inside a VM adds
+< 1% additional overhead. Total: 3-6%. Acceptable for most workloads.
+
+*What separates good from great:* The multi-tenant cloud context.
+AWS does not give you bare metal by default - you get VMs. Kubernetes
+runs on VMs. Your containers run inside VMs. Understanding this
+three-tier architecture is essential for diagnosing performance
+issues (is the overhead from VM hypervisor, container runtime, or
+application?) and for security analysis (what are the security
+boundaries between your workloads and other customers?).
+
+---
+
+**Q4 (Architecture): What are microVMs and why are they becoming
+important?**
+
+A microVM is a lightweight virtual machine that provides kernel-level
+isolation with near-container performance. It is the convergence
+of VM security with container efficiency.
+
+The motivation: containers share the host kernel (security gap).
+VMs provide kernel isolation but with 1-4GB overhead and 30-second
+startup (too heavy for FaaS/serverless).
+
+MicroVM implementations:
+
+Firecracker (AWS): built for AWS Lambda and Fargate. A KVM-based
+hypervisor with a minimal device model. Boots a Linux kernel in
+125ms. Memory overhead: ~5MB per microVM (vs. 1-4GB for a full VM).
+Security: each Lambda invocation runs in its own Firecracker microVM.
+Customer code cannot escape to another customer's kernel.
+
+gVisor (Google): user-space kernel that interposes between container
+processes and the host kernel. Container system calls are handled
+by gVisor's kernel (written in Go), which then makes a limited set
+of system calls to the host kernel. Reduces the attack surface:
+the container cannot directly call all host kernel system calls.
+
+Kata Containers: runs each container in a lightweight VM using
+QEMU or Firecracker as the hypervisor. Compatible with Kubernetes
+(uses the CRI). Combines container image format with VM isolation.
+
+Use cases:
+- Multi-tenant serverless (Lambda, Cloud Run): each invocation
+  in its own microVM
+- Security-sensitive containers (PCI, healthcare): hardware-enforced
+  isolation per container
+- Kubernetes with mixed trust levels: Kata Containers for untrusted
+  workloads, standard containers for trusted workloads
+
+*What separates good from great:* The Firecracker design philosophy.
+AWS built Firecracker with a 100% device model that is intentionally
+minimal: virtio-net, virtio-blk, serial, one-button power off,
+and no more. A smaller device model means a smaller attack surface.
+The 125ms boot time is achieved by pre-running the kernel setup
+to a snapshot state and restoring from the snapshot for each
+invocation (similar to process forking from a copy-on-write snapshot).
+
+---
+
+**Q5 (Debugging): How do you diagnose whether a performance issue
+is from the container or VM layer?**
+
+Performance issues in containerized environments have multiple
+potential sources. Isolating the layer requires systematic measurement.
+
+Step 1: Establish a baseline.
+Run the application natively on the host (no container, no VM).
+Measure throughput, latency, CPU, memory. This is the theoretical
+maximum performance.
+
+Step 2: Test container overhead alone.
+Run the application in a container on bare metal (no VM). If
+container overhead is measurable, it appears here. Compare to
+the bare metal baseline. Container overhead for CPU is typically
+< 1%. Overlay filesystem overhead for disk I/O can be 10-20%
+for write-heavy workloads.
+
+Step 3: Test VM overhead alone.
+Run the application natively inside a VM. Compare to bare metal.
+Hardware-assisted virtualization overhead is 2-5% for CPU-bound
+workloads. Network overhead depends on the VM network driver
+(virtio-net: 5-10%, SR-IOV: near-native).
+
+Step 4: Test container inside VM.
+This is production. If the overhead is additive (VM + container),
+you are seeing both layers. If the overhead is primarily one layer,
+investigate that layer.
+
+Tools:
+```bash
+# CPU performance profiling
+perf stat -p $(docker inspect --format '{{.State.Pid}}' mycontainer)
+
+# Network performance (compare container vs host network)
+docker run --network host iperf3 -c remote-host
+docker run --network bridge iperf3 -c remote-host
+# Bridge: 10Gbps typical. Host: near-physical-limit.
+
+# Disk I/O: overlay2 vs volume
+docker run -v /tmp/test:/data myapp  # Host filesystem
+docker run myapp  # Overlay2 filesystem
+fio --name=test --filename=/data/test --size=1G --rw=write
+```
+
+*What separates good from great:* The overlay2 disk I/O overhead
+for write-heavy workloads. The overlay2 copy-on-write mechanism
+for writes has significant overhead for sequential write workloads:
+each new write to a file from an image layer copies the file to
+the writable layer first. A database or log-heavy application
+using the container's writable layer instead of a volume can
+experience 2-5x write performance degradation. The diagnostic:
+`iostat` showing high await time for writes correlating with
+container write activity.
+
+---
+
+**Q6 (Architecture): What is SR-IOV and when would you use it
+for containers?**
+
+SR-IOV (Single Root I/O Virtualization) is a hardware technology
+that allows a single physical network card (PF - Physical Function)
+to present itself as multiple virtual network cards (VF - Virtual
+Functions). Each VF can be assigned directly to a VM or container,
+bypassing the hypervisor/kernel for network I/O.
+
+The problem it solves: standard VM/container networking uses software
+emulation (virtio) or kernel bridging that adds latency and reduces
+throughput. For network-intensive workloads (high-frequency trading,
+real-time video processing, database replication), this overhead
+is unacceptable.
+
+SR-IOV path: application → VF driver → RDMA directly to NIC → network.
+No hypervisor intervention, no kernel bridge. Near-physical performance.
+
+For Docker containers: the SR-IOV CNI plugin (for Kubernetes) or
+the `--device` flag (for Docker) assigns a VF directly to the
+container. The container has direct hardware access to a virtual
+NIC.
+
+Trade-offs:
+- Performance: 10-40% latency reduction for network-intensive apps
+- Flexibility loss: the VF is dedicated to the container. You cannot
+  move it via live migration. Container density is limited by the
+  number of VFs (a physical NIC typically has 8-64 VFs).
+- Complexity: requires SR-IOV capable hardware, kernel drivers,
+  and specialized CNI configuration.
+
+Use cases: financial services (HFT), real-time media processing,
+5G network functions. Not appropriate for standard web services
+where the software networking overhead is negligible.
+
+*What separates good from great:* Understanding when SR-IOV is
+overkill. For a web application handling 10,000 req/s, the network
+overhead from Docker bridge networking adds < 0.1ms of latency -
+imperceptible. SR-IOV is justified when the application processes
+millions of packets per second and every microsecond of network
+latency matters. The decision requires a network performance
+benchmark (iperf3, netperf) to quantify the actual overhead before
+investing in SR-IOV complexity.
+
+---
+
+**Q7 (Trade-off): How does container vs VM choice affect
+compliance and security audit outcomes?**
+
+Compliance frameworks (SOC 2, PCI-DSS, HIPAA) do not mandate VM
+isolation. They require adequate security controls appropriate to
+the risk level. The choice of isolation mechanism must be justified
+by the organization's risk assessment.
+
+PCI-DSS (payment card data):
+- Requires isolation of cardholder data environment (CDE) from
+  non-CDE systems.
+- Container isolation is accepted if: containers running CDE workloads
+  are on dedicated nodes (no shared kernel with non-CDE workloads),
+  kernel is hardened (CIS benchmark), and container runtime is
+  patched and monitored.
+- VM isolation per CDE workload provides stronger compliance posture
+  and is more commonly chosen.
+- Kata Containers provides VM isolation per container, accepted
+  as equivalent to VM isolation.
+
+HIPAA (health data):
+- Requires appropriate safeguards for ePHI. The specific mechanism
+  (containers vs. VMs) is not mandated.
+- The risk analysis determines the required isolation level. If
+  the risk analysis identifies kernel-sharing as a risk, mitigations
+  must be applied (dedicated nodes, hardened kernel, microVMs).
+
+Practical compliance posture:
+- Standard containers on hardened dedicated nodes: acceptable for
+  most compliance frameworks.
+- Containers sharing nodes with untrusted workloads: requires
+  additional controls or stronger isolation.
+- Kata Containers / Firecracker: provides the strongest compliance
+  posture for container workloads.
+
+*What separates good from great:* The key phrase in compliance:
+"adequate controls appropriate to risk." Containers with proper
+hardening (non-root, read-only filesystem, dropped capabilities,
+seccomp, AppArmor, dedicated nodes for sensitive workloads) satisfy
+PCI-DSS for most organizations. The compliance conversation is about
+documenting the controls and demonstrating their effectiveness,
+not about mandating a specific technology.
+
+---
+
+---
+
+# The OCI Standard and Container Runtime Ecosystem
+
+🎯 Interview Weight: intermediate orientation - distinguishes engineers
+who understand the container ecosystem from those who only know Docker.
 
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Containers give Java backend teams consistent environments across
-> dev, staging, and prod; clean isolation for running multiple JDK
-> versions on one host; and the foundation for Kubernetes-based
-> auto-scaling. The main Java-specific concern is JVM configuration:
-> the JVM sees host memory by default and will over-allocate heap
-> unless you set container awareness flags or explicit heap limits.
+> OCI (Open Container Initiative) is the industry standard for
+> container image format and runtime interface. It means any OCI-
+> compliant image runs on any OCI-compliant runtime (Docker, Podman,
+> containerd, CRI-O). The OCI standard prevents vendor lock-in:
+> you can build an image with Docker and run it with Podman or on
+> Kubernetes via containerd.
 
 **3 minutes (Senior):**
-
-> The biggest operational win for Java teams from containers is
-> eliminating JDK version chaos. Before containers, all services
-> on a host shared one JDK installation. With containers, your
-> legacy JDK 8 service and your new JDK 21 service run side by side,
-> each with their own JDK layer, completely isolated. This removes
-> a major constraint on upgrading services independently.
+> The OCI was founded in 2015 when Docker donated the container
+> image format and runtime specifications to a neutral foundation
+> (CNCF-affiliated, Linux Foundation). The goal was to prevent
+> fragmentation - without a standard, different container platforms
+> would build incompatible images.
 >
-> For microservices, containers provide the natural deployment unit.
-> Each service has its own image, versioned independently, scaled
-> independently. You can update one service without redeploying
-> others. The container image becomes the immutable artifact that
-> travels through CI, staging, and production unchanged.
+> OCI defines two specifications: the Image Spec (how images are
+> structured and distributed) and the Runtime Spec (how containers
+> are created and managed from images).
 >
-> The Java-specific pitfall is JVM memory in containers. Before
-> JDK 10 (backported to JDK 8u191), the JVM read host memory to
-> calculate the default heap size. A container with 512m limit on
-> a 32 GB host would calculate a 8 GB default heap, immediately
-> exceed the cgroup memory limit, and get OOMKilled. From JDK 10+,
-> the JVM is container-aware by default: it reads cgroup limits
-> and sizes the heap proportionally. Best practice is still to set
-> -XX:MaxRAMPercentage=75.0 explicitly - 75% of the container limit
-> leaves headroom for the JVM's native memory and metaspace.
+> The practical result: when you build a Docker image, it is an
+> OCI image. When Kubernetes pulls and runs that image, it uses
+> containerd (the OCI runtime that Docker itself uses internally).
+> Docker's frontend (CLI, build, compose) sits on top of the same
+> OCI standards that every other container tool uses.
 
-**Framework:** WHAT -> WHY -> HOW -> TRADE-OFF -> EXAMPLE
+**Framework:** PROBLEM (fragmentation) → OCI SPECS → ECOSYSTEM TOOLS
 
-*Adapting up:* Staff discusses the image build strategy (multi-stage
-builds, distroless base images) and how it affects supply chain
-security and startup time in Kubernetes.
+*Adapting up:* "The CRI (Container Runtime Interface) is Kubernetes'
+extension of OCI. The CRI defines how Kubernetes talks to any
+container runtime. containerd and CRI-O implement CRI. Docker used
+to (via dockershim, removed in Kubernetes 1.24). The OCI/CRI
+combination is the standardization layer that enables the entire
+cloud-native ecosystem."
 
-*Adapting down:* Junior: "Containers mean the same JDK version
-in dev and prod, and you set -Xmx to control heap size."
+*Adapting down:* "OCI is like USB standards. Before USB, every
+device needed its own cable. OCI standardized container images so
+any container tool can use any container image."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about where containers help
-specifically with Java backend services - let me think through
-the pain points they solve."
+**(1) Restate:** "OCI - the standard for container images and runtimes.
+Enables portability across tools."
 
-**(2) First principles:** "Java backend services have four
-environment concerns: JDK version, library dependencies, OS
-configuration, and runtime flags. Containers address the first
-three directly..."
+**(2) First principles:** "Standardization prevents fragmentation.
+OCI defines the interface so builders and runners of containers
+are interchangeable."
 
-**(3) Bridge:** "This is similar to the problem virtual
-environments solve for Python. Containers solve the same problem
-for the JVM - but also for the OS layer below it."
+**(3) Bridge:** "Like POSIX for Unix systems. Multiple implementations
+(Linux, macOS, AIX) but they all follow the same interface standard."
 
 ---
 
 ### 📘 Concept Explanation
 
 **What it is:**
-Containers for Java backends mean packaging the JDK, application
-JAR, and runtime configuration into a container image. The same
-image runs in CI, staging, and production, eliminating environment
-drift.
+The Open Container Initiative (OCI) is an open governance structure
+(Linux Foundation) that maintains specifications for container
+images and runtimes. The OCI ensures that containers built by one
+tool can be run by any compliant tool, preventing vendor lock-in
+and ecosystem fragmentation.
 
-**The problem it solves:**
-Java backend deployments historically suffered from JDK version
-drift, shared library conflicts when multiple services run on the
-same host, and inconsistency between dev environments and servers.
-Containers isolate each service into its own environment.
+**The two OCI specifications:**
 
-**How it works:**
+OCI Image Spec (OCI-IS):
+Defines the container image format: a manifest (list of layers
+and configuration), a set of filesystem layers (tar archives),
+and an image configuration (entry point, environment variables,
+ports). The Image Spec is what makes a Docker image runnable by
+containerd, Podman, or any other OCI-compliant runtime.
 
+OCI Runtime Spec (OCI-RS):
+Defines the interface for creating and managing containers from
+OCI images. Specifies the runtime bundle (a directory containing
+the root filesystem and a config.json), the lifecycle operations
+(create, start, kill, delete), and the state model. The canonical
+implementation is runc (a reference implementation by Docker/OCI).
+
+**The container runtime ecosystem:**
+
+Low-level runtimes (OCI runtime spec):
+- runc: the reference implementation. Written by Docker, donated
+  to OCI. Used by Docker, containerd, and Podman as the underlying
+  container creator.
+- crun: a C implementation of the OCI runtime spec. Faster startup
+  than runc, used by Podman by default.
+- Kata Containers Runtime: implements OCI runtime spec but creates
+  a lightweight VM instead of a container namespace. Transparent
+  substitution of strong isolation.
+- gVisor (runsc): implements OCI runtime spec using a user-space
+  kernel. Intercepts container system calls for security.
+
+High-level runtimes (manage images, networks, storage):
+- containerd: the core container runtime. Manages image pull, storage,
+  and networking. Calls runc to create the actual container. Used
+  by Docker Engine and Kubernetes.
+- Docker Engine: containerd + Docker CLI + Docker Compose + build tools.
+  The developer-facing layer.
+- CRI-O: a lightweight containerd alternative purpose-built for
+  Kubernetes. Implements the CRI (Container Runtime Interface).
+  No Docker CLI, no compose - just Kubernetes runtime.
+- Podman: Docker-compatible CLI without a daemon. Uses runc/crun
+  as the low-level runtime.
+
+**The Kubernetes Container Runtime Interface (CRI):**
+Kubernetes does not talk to Docker or containerd directly. It uses
+the CRI, a gRPC interface that any compliant container runtime can
+implement. containerd (via containerd's CRI plugin) and CRI-O both
+implement the CRI. Docker's shim (dockershim) was removed in
+Kubernetes 1.24 - Docker is no longer directly supported.
+
+The chain for Kubernetes:
 ```
-Java Container Image Layers:
-+----------------------------------+
-| Layer 4: app.jar (changes often) |
-+----------------------------------+
-| Layer 3: config + entrypoint     |
-+----------------------------------+
-| Layer 2: JDK 21                  |
-+----------------------------------+
-| Layer 1: base OS (Ubuntu/alpine) |
-+----------------------------------+
+kubelet (Kubernetes) → CRI → containerd → runc → container
+kubelet (Kubernetes) → CRI → CRI-O → runc → container
 ```
-
-```mermaid
-flowchart LR
-    subgraph Build["Multi-Stage Build"]
-        M["Maven Build Stage\nJDK 21 + Maven"] --> J["Compiled app.jar"]
-    end
-    subgraph Image["Runtime Image"]
-        J --> I["JRE 21 base\n+ app.jar\n+ entrypoint.sh"]
-    end
-    subgraph Run["Container Runtime"]
-        I --> C["Running JVM\n-XX:MaxRAMPercentage=75\n-XX:+UseZGC"]
-    end
-```
-
-> **Diagram walkthrough:** Multi-stage builds separate the build
-> environment (Maven + full JDK) from the runtime image (JRE only).
-> The final image contains only the JRE and the compiled JAR, not
-> the Maven build tool or the JDK compiler. This reduces the attack
-> surface and image size. The container runtime starts the JVM with
-> container-aware flags for heap sizing.
 
 **The key insight:**
-The JVM has a complex relationship with Linux cgroups. Container
-awareness flags are not optional in production - without them,
-the JVM miscalculates heap size and thread pool defaults, causing
-OOMKills and thread pool undersizing.
+Docker is a developer tool layer above the OCI standards. The image
+you build with `docker build` is an OCI image. The container
+created with `docker run` uses runc via containerd. Docker's value
+is the developer experience (CLI, Compose, Hub integration). The
+underlying technology is standardized OCI that any tool implements.
 
-**When to use it:**
-- All new Java microservices should be containerized from day one
-- Legacy monoliths benefit from containerization when deploying
-  to environments that use container orchestration (Kubernetes)
-- CI pipelines for reproducible builds
-
-**When NOT to use it:**
-- Java applications using native OS features that require specific
-  kernel modules not available in the container
-- Java applications that need direct hardware access (GPU, FPGA)
-
-**Alternatives:**
-- GraalVM native image - compile to native binary, no JVM overhead
-- JVM on VMs with Ansible/Terraform provisioning - more overhead
-  but simpler if the team is not familiar with containers
-
-**First-principles derivation:**
-Java's "write once, run anywhere" promise was about the bytecode,
-not the environment. The JDK version, GC algorithm, memory limits,
-and OS libraries still differ between environments. Containerizing
-the JDK and OS layer extends "write once, run anywhere" to the
-complete runtime environment, not just the bytecode.
+**When to use each runtime:**
+- Docker: developer environments, local development, Docker Compose
+- containerd: production Kubernetes nodes (the standard choice)
+- CRI-O: Kubernetes nodes where a minimal runtime is preferred
+- Podman: CI/CD environments, rootless container requirements
+- Kata: security-sensitive workloads requiring VM isolation
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: Basic Java Dockerfile (BAD pattern)**
-
-```dockerfile
-# BAD: Single stage, includes build tools in
-# the runtime image, runs as root
-FROM maven:3.9-eclipse-temurin-21
-
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn package -DskipTests
-
-EXPOSE 8080
-CMD ["java", "-jar", "target/app.jar"]
-```
-
-> **Code walkthrough:** This pattern bundles Maven and the full JDK
-> compiler into the runtime image. The resulting image is 1.5 GB
-> instead of 250 MB. It also runs as root, violating the least-
-> privilege principle. Maven caches are not preserved between builds.
-> This is the first draft every developer writes before learning
-> multi-stage builds.
-
-**Example 2: Multi-stage Java Dockerfile (GOOD pattern)**
-
-```dockerfile
-# GOOD: Multi-stage build - builder vs runtime
-# Stage 1: build
-FROM maven:3.9-eclipse-temurin-21 AS builder
-WORKDIR /build
-# Copy pom first for layer caching (dependencies
-# rarely change, code changes often)
-COPY pom.xml .
-RUN mvn dependency:go-offline -q
-COPY src ./src
-RUN mvn package -DskipTests -q
-
-# Stage 2: runtime (JRE only, not full JDK)
-FROM eclipse-temurin:21-jre-alpine
-RUN addgroup -S appgroup \
-    && adduser -S appuser -G appgroup
-WORKDIR /app
-COPY --from=builder /build/target/app.jar app.jar
-RUN chown appuser:appgroup app.jar
-USER appuser
-
-# Container-aware JVM flags
-ENV JAVA_OPTS="\
-  -XX:MaxRAMPercentage=75.0 \
-  -XX:+UseZGC \
-  -XX:+ExitOnOutOfMemoryError"
-
-EXPOSE 8080
-ENTRYPOINT ["sh", "-c", \
-  "exec java $JAVA_OPTS -jar app.jar"]
-```
-
-> **Code walkthrough:** The multi-stage build keeps Maven out of
-> the runtime image, reducing size by 80%. Copying `pom.xml` before
-> `src/` exploits Docker layer caching - dependency downloads are
-> cached as long as pom.xml does not change. A non-root user is
-> created for least-privilege execution. `MaxRAMPercentage=75.0`
-> makes the JVM container-aware. `ExitOnOutOfMemoryError` ensures
-> the container exits (and Kubernetes restarts it) instead of
-> hanging in a degraded OOM state.
-
-**Example 3: JVM container awareness verification**
+**OCI compatibility in practice**
 
 ```bash
-# Without container awareness (old JDK or disabled)
-# JVM reads host memory (32 GB host -> 8 GB default heap)
-docker run --rm --memory=512m eclipse-temurin:8 \
-    java -XX:+PrintFlagsFinal -version 2>&1 \
-    | grep MaxHeapSize
-# MaxHeapSize = 8589934592 (8 GB!) -- WRONG
+# BAD: Assuming Docker-specific behavior
+# Problem: uses Docker-specific features not in OCI spec
 
-# With container awareness (JDK 10+ default)
-docker run --rm --memory=512m eclipse-temurin:21 \
-    java -XX:+PrintFlagsFinal -version 2>&1 \
-    | grep MaxHeapSize
-# MaxHeapSize = 130023424 (~124 MB, 25% of 512m) -- OK
+# Docker-specific builder (BuildKit features not in OCI spec)
+docker build --secret id=mysecret,src=./secret.txt .
+# Secret mounting is BuildKit-specific, not OCI standard
+# Buildah, Podman, or Kaniko may not support this syntax
 
-# Explicitly control with MaxRAMPercentage
-docker run --rm --memory=512m eclipse-temurin:21 \
-    java -XX:MaxRAMPercentage=75.0 \
-    -XX:+PrintFlagsFinal -version 2>&1 \
-    | grep MaxHeapSize
-# MaxHeapSize = 402653184 (~384 MB, 75% of 512m) -- BEST
+# Using --network=none which is Docker flag, not OCI
+docker run --network=none myapp
+# This works in Docker but syntax may differ in Podman/containerd
 ```
 
-> **Code walkthrough:** This demonstrates the exact JVM behavior
-> that causes OOMKills in containerized Java. Without container
-> awareness, the JVM allocates 8 GB heap inside a 512m container
-> and is killed immediately by the OOM killer. With JDK 21 container
-> awareness (on by default), the heap is sized to 25% of the limit.
-> Setting MaxRAMPercentage=75 uses 384m for heap, leaving 128m
-> for metaspace, native memory (JIT compiled code, thread stacks),
-> and the JVM itself. The `exec` in the entrypoint is critical -
-> it makes the JVM PID 1 so it receives SIGTERM directly for
-> graceful shutdown.
+> **Code walkthrough:** Docker build flags that use BuildKit-specific
+> features (like `--secret`) are not part of the OCI Image Spec. They
+> work in Docker but may not work in Buildah, Kaniko, or other OCI-
+> compliant build tools. Writing portable Dockerfiles means using
+> OCI-standard features when interoperability with other runtimes
+> is required.
+
+```bash
+# GOOD: OCI-portable image build and multi-runtime usage
+
+# 1. Build with Docker: produces OCI-compliant image
+docker build -t myapp:v1.0.0 .
+# Produces an OCI image in the local Docker image store
+
+# 2. Export as OCI image archive (portable format)
+docker save myapp:v1.0.0 | gzip > myapp-v1.0.0.tar.gz
+
+# 3. Import and run with Podman (no Docker installed)
+podman load < myapp-v1.0.0.tar.gz
+podman run myapp:v1.0.0  # Works: same OCI image format
+
+# 4. Push to registry (OCI registry protocol)
+docker push ghcr.io/myorg/myapp:v1.0.0
+# This image is now runnable by:
+# - Docker: docker run ghcr.io/myorg/myapp:v1.0.0
+# - Podman: podman run ghcr.io/myorg/myapp:v1.0.0
+# - Kubernetes: containerd pulls and runs it via CRI
+
+# 5. Inspect OCI image manifest (the standard format)
+docker manifest inspect ghcr.io/myorg/myapp:v1.0.0
+# Output: OCI image manifest with layers (media type: application/vnd.oci.*)
+# Not Docker-specific - any OCI-aware tool can read this
+
+# 6. Running the same image with containerd directly
+ctr images pull ghcr.io/myorg/myapp:v1.0.0
+ctr run ghcr.io/myorg/myapp:v1.0.0 myapp-instance
+# containerd's CLI (ctr) runs the same OCI image as Docker
+```
+
+> **Code walkthrough:** The OCI compatibility chain is demonstrated
+> across three different runtimes (Docker, Podman, containerd's ctr).
+> All three pull and run the same image from the same registry because
+> they all implement the OCI Image Spec and OCI Distribution Spec.
+> The image manifest (visible via `docker manifest inspect`) uses
+> OCI media types, not Docker-specific types. This is the portability
+> that OCI standardization provides: build once (with any compliant
+> builder), run anywhere (on any compliant runtime).
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-
-> Containers give you the same JDK version in dev and prod, so
-> there is no "it worked on my machine" problem. You write a
-> Dockerfile, build it, and the same image runs everywhere. The
-> main thing to know for Java is setting -Xmx or
-> -XX:MaxRAMPercentage so the JVM does not try to use more memory
-> than the container allows.
-
-*Push deeper:* Add: "Multi-stage Dockerfiles are the right pattern -
-you build with Maven in one stage and copy just the JAR into a
-smaller runtime image, so your production image is 200 MB not 1.5 GB."
+> "OCI is the standard that makes container images portable. A Docker
+> image is actually an OCI image, so it works with Podman, containerd,
+> and Kubernetes. I learned this when Kubernetes 1.24 removed Docker
+> support - our images kept working because they were OCI images all
+> along, and the cluster just switched from Docker to containerd
+> underneath."
 
 ---
 
-**Senior / Staff (5+ years):**
+### ⚠️ Common Misconceptions
 
-> Containers are the natural deployment unit for Java microservices.
-> Each service owns its JDK version and dependencies, images are
-> immutable artifacts promoted through environments unchanged, and
-> Kubernetes can scale them horizontally in seconds.
+**Misconception 1: "Docker images only work with Docker."**
+Docker images are OCI-compliant images. They work with any OCI-
+compliant runtime: Podman, containerd, CRI-O, Buildah. The Kubernetes
+migration away from dockershim demonstrated this: all existing
+Docker images continued working unchanged on containerd.
 
-The senior covers the JVM-specific pitfalls: container awareness
-(MaxRAMPercentage), graceful shutdown (PID 1 and SIGTERM handling),
-CPU quota awareness (Runtime.availableProcessors() returns host
-CPU count without explicit CPU limits, causing thread pool over-
-provisioning), and startup probe vs readiness probe alignment with
-the JVM warm-up time. At the staff level, you discuss the image
-build supply chain: using distroless or hardened base images,
-scanning images for CVEs in the CI pipeline, and how native image
-compilation (GraalVM) changes the container model by eliminating
-the JVM entirely.
+**Misconception 2: "Kubernetes uses Docker to run containers."**
+Since Kubernetes 1.24, Docker is not supported as a container runtime.
+Kubernetes uses the CRI (Container Runtime Interface) to communicate
+with container runtimes. containerd and CRI-O are the standard
+runtimes. The images built with Docker still work because they
+are OCI images, not because Kubernetes uses Docker.
 
-*Push deeper:* "The subtlest JVM-in-container issue is JIT warm-up.
-Kubernetes may terminate a container before the JVM reaches peak
-throughput. Techniques like CDS (class data sharing) and AOT
-compilation reduce warm-up time. With GraalVM native image,
-it disappears entirely."
+**Misconception 3: "runc is the only runtime option."**
+runc is the reference implementation and default, but it is not the
+only option. Kata Containers (runc → VM), gVisor (runc → user-space
+kernel), and crun (faster C implementation) are production alternatives.
+The OCI Runtime Spec makes this substitutable: the high-level runtime
+(containerd) can be configured to use any OCI-compliant low-level runtime.
 
 ---
 
-### ❓ Questions You Will Be Asked
+### 🚨 Failure Modes and Diagnosis
 
-#### Definition
-- "Why should Java backend services be containerized?"
-- "What Java-specific issues arise when running the JVM
-  in a container?"
+**Failure Mode 1: Image fails to run after Kubernetes removes dockershim**
+Symptom: after upgrading Kubernetes 1.23 → 1.24 (or similar),
+pods fail to start with `runtime unavailable` errors.
+Cause: the Kubernetes node was configured to use Docker (dockershim)
+as the container runtime. Kubernetes 1.24 removed dockershim.
+Diagnosis: check the node's kubelet configuration for the container
+runtime endpoint: `--container-runtime-endpoint=unix:///var/run/dockershim.sock`.
+This socket no longer exists post-1.24.
+Fix: migrate the node's container runtime to containerd or CRI-O.
+The images do not need to change (OCI compatibility). Only the kubelet
+configuration changes.
 
-🗣️ "Java backend services benefit from containers for three
-reasons. First, environment consistency - the same JDK version
-and OS libraries in dev, CI, staging, and production eliminates
-environment-specific bugs. Second, isolation - multiple services
-with different JDK versions can share a host. Third, immutable
-deployments - the container image is the artifact, not a JAR file
-that gets deployed to a separately-configured server. The main
-Java-specific issues are JVM memory configuration - the JVM reads
-host memory by default and over-allocates heap if you do not set
-container awareness flags - and CPU awareness for thread pool sizing."
+**Failure Mode 2: OCI image built for wrong architecture fails to start**
+Symptom: `docker run ghcr.io/myorg/myapp:latest` succeeds on the
+developer's machine but fails on the production server with `exec
+format error`.
+Cause: the image was built for AMD64 (linux/amd64) but the production
+server is ARM64 (linux/arm64), or vice versa.
+Diagnosis: `docker inspect ghcr.io/myorg/myapp:latest | grep Architecture`
+- shows the architecture the image was built for.
+Fix: multi-platform build: `docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/myorg/myapp:latest .`
+This creates an OCI image index (manifest list) with images for
+both architectures. The runtime selects the correct variant.
 
-#### Mechanism
-- "How does the JVM determine its default heap size inside
-  a container?"
-- "What happens when a container with a 512m memory limit runs
-  a JVM configured to use 8 GB of heap?"
+**Failure Mode 3: runc version mismatch causes container creation failure**
+Symptom: `docker run` fails with cryptic error about OCI spec version
+mismatch.
+Cause: the containerd version and runc version on the host are
+incompatible. Package updates may upgrade one without the other.
+Diagnosis: `runc --version` and `containerd --version`. Check
+the containerd-runc compatibility matrix.
+Fix: ensure containerd and runc are from the same release family.
+Typically fixed by installing containerd from the vendor's repository
+(which pulls the correct runc version as a dependency) rather than
+mixing OS package manager and manual installation.
 
-🗣️ "The JVM calculates the default heap size as a fraction of
-available memory. Before JDK 10, it read host memory - so inside
-a 512m container on a 32 GB host, it would try to allocate an 8 GB
-heap. The container's cgroup memory limit would be exceeded almost
-immediately, and the OOM killer would send SIGKILL to the JVM
-process, which Docker reports as exit code 137. From JDK 10, the
-JVM is container-aware: it reads the cgroup memory limit rather
-than host memory. The default heap is 25% of the container limit,
-which is conservative. Best practice is to set MaxRAMPercentage=75
-to use 75% of the limit for heap, leaving the remaining 25% for
-metaspace, JIT code cache, and native thread stacks."
+---
 
-#### Comparison
-- "When would you use GraalVM native image over a traditional
-  JVM container?"
-- "Compare running a Spring Boot app in a JVM container vs
-  a native image container."
+### 🎯 Interview Deep-Dive
 
-🗣️ "GraalVM native image compiles the Spring Boot application
-to a native binary - no JVM at runtime. The native image starts
-in under 100ms versus 5-15 seconds for a JVM container, and uses
-a fraction of the memory. This is compelling for functions and
-serverless workloads where cold start time is critical. The trade-
-offs: native image compilation takes 3-10 minutes (versus 30s for
-a JAR build), JIT profiling optimizations are not available so
-peak throughput is lower than a warmed-up JVM, and some reflection-
-heavy frameworks (though Spring has strong native support now)
-require AOT hints. For a high-throughput microservice that runs
-24/7, the warmed-up JVM will outperform native image. For a
-serverless function or batch job, native image wins."
+| Format | Time | Focus |
+|--------|------|-------|
+| Screener | 2 min | What OCI is + why it matters |
+| Panel | 5 min | Runtime ecosystem + Kubernetes CRI |
+| Senior | 7 min | OCI Image spec + runtime substitution |
 
-#### Scenario
-- "A containerized Spring Boot service is getting OOMKilled
-  in production. How do you diagnose and fix it?"
-- "You are migrating 10 Java microservices to containers for
-  the first time. What do you address first?"
+---
 
-🗣️ "For an OOMKilled service, the first diagnostic is the exit
-code - 137 confirms it was a SIGKILL from the OOM killer. I check
-the container's memory usage over time with docker stats or
-Kubernetes metrics. Common causes are: no MaxRAMPercentage set
-(JVM grabbed too much heap), a memory leak in the application
-(heap grows until it hits the container limit), or direct memory
-allocation (NIO, Netty, or off-heap caches) exceeding the limit
-because we only sized for heap. The fix depends on cause: add
-MaxRAMPercentage=75, profile the heap for leaks with async-profiler,
-or set -XX:MaxDirectMemorySize for direct buffer pools. For a
-first-time migration, I address three things first: set MaxRAMPercentage
-in the Dockerfile so JVM heap is correctly sized, ensure the app
-handles SIGTERM gracefully for Kubernetes rolling deploys, and use
-multi-stage builds to keep image sizes under 500 MB."
+**Q1 (Definition): What is the OCI and what two specifications
+does it define?**
 
-#### Debugging
-- "Your Java container starts but the application is slow
-  at first and fast later. What is the cause?"
-- "A container works fine on your laptop but is OOMKilled on
-  the CI server. Same image, same JVM flags. What do you check?"
+The Open Container Initiative (OCI) is a Linux Foundation project
+that maintains open standards for container formats and runtimes.
+It was founded in 2015 when Docker and CoreOS agreed to standardize
+rather than fragment the container ecosystem.
 
-🗣️ "Slow-then-fast is classic JVM JIT warm-up. The JVM starts
-interpreting bytecode, then the JIT compiler profiles hot methods
-and compiles them to native code. This takes 30-120 seconds for
-a Spring Boot app under load. Kubernetes readiness probes should
-not pass until the app has processed some requests, because if
-traffic hits the service before JIT warm-up, the first users see
-high latency. The fix is to align the readiness probe timeout with
-actual warm-up time, or use JVM startup options like AppCDS to
-pre-share class data. For the CI OOMKill: even though the image
-and flags are the same, the CI server likely has different memory
-limits. The JVM reads the cgroup limit at startup - if CI has a
-tighter memory limit than your laptop Docker resource settings,
-the JVM gets less heap. Run docker inspect on both environments
-to compare the memory limits."
+The two OCI specifications:
 
-#### Deep Dive
-- "Explain why exec form vs shell form in the Dockerfile
-  ENTRYPOINT matters for Java signal handling."
-- "How does CPU quota awareness affect Java thread pool sizing
-  in containers?"
+OCI Image Specification: defines how container images are structured
+and distributed. An OCI image consists of a manifest (JSON document
+listing the image layers and configuration), a set of content-
+addressable layer archives (tar files compressed with gzip or zstd),
+and an image configuration (entry point, environment variables,
+architecture, OS). Any OCI-compliant builder produces images in
+this format. Any OCI-compliant registry distributes them. Any
+OCI-compliant runtime can execute them.
 
-🗣️ "The exec form ENTRYPOINT like CMD java -jar runs the JVM as
-PID 1 directly. The shell form CMD sh -c java -jar runs a shell
-as PID 1, which starts the JVM as a child process. Kubernetes
-sends SIGTERM to PID 1 for graceful shutdown. If the JVM is a
-child of the shell, the shell may not forward SIGTERM, causing
-the container to be forcibly killed after the grace period. Using
-exec in shell form - exec java -jar - replaces the shell process
-with the JVM, making the JVM PID 1. This is a subtle but critical
-production issue. For CPU awareness: Runtime.availableProcessors()
-returns the host CPU count by default, even if the container has
-a CPU limit of 0.5 cores. Java's ForkJoinPool (used by parallel
-streams and CompletableFuture) sizes itself using availableProcessors.
-A service with 0.5 CPU that creates a thread pool sized for 32
-cores will thrash the scheduler. From JDK 10, the JVM reads the
-CPU quota from cgroups, so availableProcessors returns a value
-based on the CPU limit. Still, always verify this is working
-with your specific JDK version and runtime."
+OCI Runtime Specification: defines how a container runtime creates
+and manages containers from OCI images. Specifies the runtime bundle
+format (a directory with the root filesystem and a config.json),
+the lifecycle operations (create, start, kill, delete, state), and
+the state model. runc is the reference implementation. Alternative
+implementations (crun, Kata, gVisor) implement the same spec.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with JVM memory/CPU awareness mechanics. |
-| Hiring Manager | Lead with environment consistency and deploy speed. |
-| Bar Raiser | Lead with the JVM heap sizing failure mode and OOMKill. |
-| Peer Engineer | "The thing that gets everyone is MaxRAMPercentage..." |
+*What separates good from great:* The OCI Distribution Spec
+(a third spec added later): defines the HTTP API for pushing and
+pulling images from container registries. This is what makes Docker
+Hub, Amazon ECR, Google Artifact Registry, and GitHub Container
+Registry all compatible with any OCI-compliant tool. The Distribution
+Spec is why `podman pull ghcr.io/myorg/myapp:v1.0.0` works even
+though GitHub Container Registry was originally designed for Docker.
+
+---
+
+**Q2 (Architecture): What is the Kubernetes Container Runtime
+Interface (CRI) and how does it relate to OCI?**
+
+The Container Runtime Interface (CRI) is a gRPC API that Kubernetes
+defines for communicating with container runtimes. It is Kubernetes'
+extension of OCI for the orchestrator context.
+
+The relationship: OCI defines how to create individual containers
+from images. CRI defines how an orchestrator (kubelet) communicates
+with a container runtime to manage pods, images, and containers
+at cluster scale.
+
+CRI operations (higher level than OCI):
+- Image management: PullImage, RemoveImage, ImageStatus
+- Sandbox management: RunPodSandbox, StopPodSandbox (pod network
+  setup, the pause container)
+- Container management: CreateContainer, StartContainer, ExecSync
+
+Why CRI exists separately from OCI: OCI is about individual
+container lifecycle (runc creates a container and exits). CRI is
+about cluster-level management (kubelet needs to list running
+containers, check their status, exec into them, manage pod-level
+networking). These are different concerns.
+
+The chain:
+```
+kubelet
+  → CRI gRPC call (e.g., CreateContainer)
+  → containerd CRI plugin
+  → containerd core (image, snapshot management)
+  → runc (OCI runtime) creates the actual container
+  → Linux kernel (namespaces, cgroups)
+```
+
+Why dockershim was removed: Docker Engine does not implement CRI
+natively. Kubernetes maintained a shim (dockershim) that translated
+CRI calls to Docker API calls. Docker internally used containerd
+anyway. Removing dockershim removed the translation layer - kubelet
+now talks directly to containerd (which implements CRI natively).
+
+*What separates good from great:* The pause container (infra container).
+A Kubernetes Pod is not just a set of containers - it also has an
+infrastructure container (pause) that holds the pod's network
+namespace. The actual application containers share the pause container's
+network namespace (they all have the same IP). This is why containers
+in a Pod can communicate via localhost. The CRI manages the pause
+container; the OCI runtime creates both the pause and application
+containers.
+
+---
+
+**Q3 (Deep Dive): Explain content-addressable storage and why
+it is central to OCI image design.**
+
+Content-addressable storage is a system where the address (identifier)
+of a piece of data is derived from its content (typically a
+cryptographic hash). OCI images use content-addressable storage
+for layers and manifests.
+
+In the OCI Image Spec: every image layer is identified by its
+SHA256 hash (the digest). The manifest references layers by digest:
+```json
+{
+  "schemaVersion": 2,
+  "mediaType": "application/vnd.oci.image.manifest.v1+json",
+  "layers": [
+    {
+      "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+      "digest": "sha256:abc123...",
+      "size": 45678
+    }
+  ]
+}
+```
+
+The digest IS the address. When pulling an image, the client
+downloads the manifest (identified by tag), then downloads each
+layer by its digest. The client verifies: SHA256(downloaded bytes)
+== digest in the manifest. If they match, the data is authentic
+and unmodified.
+
+Why content-addressable storage is important:
+
+Deduplication: if two images share a layer (same base image, same
+pip install layer), the registry stores only one copy. The manifest
+of each image references the same digest. Two images may each list
+50 layers, but if 45 layers are shared, only 5 unique layers are
+stored on disk.
+
+Immutability: a layer's content cannot be changed without changing
+its digest, which changes the manifest. Content-addressable storage
+makes images immutable: once a layer is pushed with a given digest,
+that digest always refers to exactly those bytes.
+
+Security: image signing tools (cosign, Notary v2) sign the image
+manifest digest. A signed digest proves that the exact bytes were
+produced by a trusted entity. Any modification to any layer changes
+the digest, invalidating the signature.
+
+*What separates good from great:* The distinction between tags and
+digests. An image tag (`myapp:v1.0.0`) is a mutable pointer to
+a manifest digest. The same tag can be pushed multiple times with
+different content, changing the underlying digest. A digest reference
+(`myapp@sha256:abc123...`) is immutable: it always refers to the
+same bytes. In production security-sensitive deployments, use digest
+references (not tags) to ensure you run the exact image that was
+tested and signed.
+
+---
+
+**Q4 (Trade-off): containerd vs CRI-O vs Docker: which Kubernetes
+runtime should you choose?**
+
+All three (containerd, CRI-O, Docker with dockershim) implement
+OCI. Docker is no longer a valid choice (dockershim removed in
+1.24). The real choice is containerd vs CRI-O.
+
+containerd:
+- Mature, battle-tested (powers Docker Engine internally)
+- Rich feature set: snapshotter plugins, OCI and Docker image support,
+  encryption, content store
+- Actively maintained by Docker/CNCF with large community
+- Default in EKS, GKE, many managed Kubernetes offerings
+- Plugin architecture (containerd-shim) enables Kata, gVisor
+  as drop-in low-level runtimes
+
+CRI-O:
+- Designed specifically for Kubernetes, minimal feature set
+- Implements only what Kubernetes needs (no Docker CLI, no compose,
+  no containerd plugins)
+- Red Hat's choice: default runtime in OpenShift
+- Slightly smaller footprint, simpler configuration
+- Less ecosystem tooling (no ctr, no nerdctl)
+
+When to choose containerd: most cases. Larger ecosystem, better
+tooling (nerdctl for debugging, containerd shims for Kata/gVisor),
+supported by most managed Kubernetes services.
+
+When to choose CRI-O: OpenShift deployments (it is the default
+and best-supported), environments where minimal footprint and
+Kubernetes-exclusive design philosophy are valued.
+
+*What separates good from great:* The nerdctl advantage. nerdctl
+is a Docker-compatible CLI for containerd. Debugging a Kubernetes
+node requires directly inspecting containers on the node. With
+containerd, you can use `nerdctl ps`, `nerdctl exec`, and `nerdctl
+logs` with familiar Docker semantics. With CRI-O, you use `crictl`
+(a lower-level CRI CLI). For operators who are Docker-familiar,
+nerdctl significantly reduces the cognitive load of node-level
+debugging.
+
+---
+
+**Q5 (Mechanism): What is a container runtime shim and why is
+it needed?**
+
+A container runtime shim is a small process that acts as an
+intermediary between the high-level runtime (containerd) and the
+low-level runtime (runc). The shim runs for the lifetime of the
+container, even after runc exits.
+
+Why a shim is needed:
+runc creates the container and then exits - it is a short-lived
+process. Once runc exits, the container's init process is running,
+but nothing is managing the container's stdio, exit status, or
+lifecycle signals.
+
+The shim solves this:
+1. containerd calls runc to create the container
+2. runc creates the container and hands the container's stdio to the shim
+3. runc exits (it has finished its work)
+4. The shim continues running, holding the container's stdio open,
+   monitoring the container process, and reporting exit status
+   to containerd when the container exits
+
+The shim architecture:
+```
+containerd
+  → spawns containerd-shim-runc-v2 (one per container)
+  → containerd-shim-runc-v2 calls runc
+  → runc creates container and exits
+  → containerd-shim-runc-v2 monitors the container process
+  → container process exits
+  → shim reports exit status to containerd via shim API
+  → shim exits
+```
+
+Why this matters for debugging: `ps aux | grep shim` shows one
+shim process per running container on the host. If a container
+is stuck, the shim process is still running. The shim process
+ID corresponds to the container; kill the shim process (SIGKILL)
+as a last resort to force-stop a container.
+
+*What separates good from great:* The "OOMKilled" diagnosis path.
+When a container is OOM-killed, the kernel kills the container
+process. The shim detects the container exit and reports the
+exit code (137 = SIGKILL) to containerd. containerd reports it
+to the CRI (Kubernetes). The Kubernetes Event shows the container
+"OOMKilled." This chain - kernel OOM killer → shim exit detection
+→ CRI status update → Kubernetes Event - is how OOM kill makes
+it to `kubectl describe pod`.
+
+---
+
+**Q6 (Architecture): How does multi-platform image support work
+in OCI?**
+
+Multi-platform images are OCI image indexes: a manifest that lists
+platform-specific manifests. A single image reference (e.g.,
+`nginx:latest`) works on AMD64, ARM64, ARMv7, and s390x because
+the registry returns the correct platform's manifest.
+
+The OCI Image Index (formerly Docker Manifest List):
+```json
+{
+  "schemaVersion": 2,
+  "mediaType": "application/vnd.oci.image.index.v1+json",
+  "manifests": [
+    {
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "digest": "sha256:amd64-manifest-digest...",
+      "platform": { "os": "linux", "architecture": "amd64" }
+    },
+    {
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "digest": "sha256:arm64-manifest-digest...",
+      "platform": { "os": "linux", "architecture": "arm64" }
+    }
+  ]
+}
+```
+
+When the client (Docker, containerd) pulls `nginx:latest`, it
+resolves the tag to the image index. The client then selects the
+manifest for its platform and downloads the platform-appropriate
+layers.
+
+Building multi-platform images with Docker Buildx:
+```bash
+docker buildx create --use --name mybuilder
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --tag ghcr.io/myorg/myapp:v1.0.0 \
+  --push \
+  .
+# Builds on both platforms (or emulates with QEMU)
+# Creates an OCI image index with both manifests
+# Pushes to the registry as a multi-platform image
+```
+
+The QEMU emulation: when building for a non-native platform (AMD64
+building ARM64), Docker uses QEMU user-mode emulation. This is
+slower (5-10x) but enables single-machine multi-platform builds.
+For production CI, use native ARM64 runners for ARM64 builds.
+
+*What separates good from great:* The `--platform linux/amd64,linux/arm64`
+best practice for all public images. With the proliferation of
+ARM64 (AWS Graviton, Apple Silicon, Raspberry Pi), images that
+only support AMD64 fail on these platforms with confusing errors.
+Multi-platform support is now a standard expectation for public
+images. For internal images, provide both platforms if your
+infrastructure includes ARM64 nodes (common in EKS/GKE where
+Graviton instances are cost-effective).
+
+---
+
+**Q7 (Debugging): Your CI pipeline builds Docker images but
+Kubernetes can't pull them. How do you diagnose the OCI registry
+issue?**
+
+Container image pull failures in Kubernetes are a common class of
+problem with several distinct root causes.
+
+Step 1: Read the Pod event.
+```bash
+kubectl describe pod mypod -n mynamespace
+# Look for Events section, specifically:
+# Failed to pull image "ghcr.io/myorg/myapp:v1.0.0":
+#   ... (error message tells you why)
+```
+
+Common error messages and their causes:
+- `401 Unauthorized` → missing or invalid registry credentials
+- `403 Forbidden` → credentials exist but don't have pull access
+- `404 Not Found` → wrong image name or tag doesn't exist
+- `no such host` → DNS resolution failure for the registry hostname
+- `x509: certificate signed by unknown authority` → registry uses
+  self-signed certificate not trusted by the node
+- `toomanyrequests` → Docker Hub rate limit exceeded
+
+Step 2: Verify the image exists.
+```bash
+docker manifest inspect ghcr.io/myorg/myapp:v1.0.0
+# If this fails locally, the image doesn't exist or tag is wrong
+# If it succeeds locally but fails in Kubernetes:
+#   → credentials or network issue on the Kubernetes node
+```
+
+Step 3: Check image pull secrets.
+```bash
+kubectl get secret myapp-registry-secret -o yaml
+# Verify .dockerconfigjson contains the correct registry credentials
+
+kubectl get pod mypod -o yaml | grep imagePullSecrets
+# Verify the pod references the correct secret
+```
+
+Step 4: Test from the Kubernetes node directly.
+```bash
+# SSH to the node, try pulling the image with the node's credentials
+ssh node-ip
+crictl pull ghcr.io/myorg/myapp:v1.0.0
+# If this fails, the node itself can't reach the registry
+# Check: firewall rules, NAT, proxy configuration
+```
+
+Step 5: Architecture mismatch.
+```bash
+kubectl get nodes -o wide | grep ARCH
+# If nodes are arm64 but image is amd64 only:
+docker manifest inspect ghcr.io/myorg/myapp:v1.0.0 | grep architecture
+# Use multi-platform build if architecture mismatch
+```
+
+*What separates good from great:* The Docker Hub rate limit issue
+in CI. Docker Hub anonymous pull limit: 100 pulls per 6 hours per
+IP. In CI environments with many runners on the same IP (or behind
+NAT), the rate limit is hit quickly. Symptoms: `toomanyrequests`
+errors, intermittent image pull failures. Solutions: authenticate
+to Docker Hub (authenticated pulls: 200/6h for free, 5,000/day
+for paid), use a pull-through cache registry (Nexus, Harbor),
+or mirror common base images to your private registry.

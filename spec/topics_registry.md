@@ -22,30 +22,9 @@ This file is the **single source of truth** for the keyword generation rubric an
 
 | Topic        | Folder              | Status                                       | Description      |
 |--------------|---------------------|----------------------------------------------|------------------|
-| [Topic Name] | docs/[folder-name]/ | planned / scaffolded / generating / complete | One-line summary |
+| [Topic Name] | docs/[folder-name]/ | planned / generating / complete | One-line summary |
 
 ## Active Topics
-
-| Java Language | docs/java-language/ | generating | Core language: type system, OOP, generics, lambdas, modern features |
-| Java Core | docs/java-core/ | generating | Standard library: Collections, I/O, Date/Time, exceptions, utilities |
-| Java Concurrency | docs/java-concurrency/ | generating | Threads, locks, concurrent collections, executors, CompletableFuture |
-| Java JVM | docs/java-jvm/ | generating | JVM internals: GC algorithms, class loading, JIT, profiling, tuning |
-| Java Performance | docs/java-performance/ | generating | Benchmarking, profiling tools, memory/CPU optimization, production tuning |
-| Spring | docs/spring/ | scaffolded | Spring Framework and Boot: IoC, DI, AOP, MVC, WebFlux, transactions, security |
-| Hibernate | docs/hibernate/ | scaffolded | Hibernate ORM: SessionFactory, mapping, caching, fetching, locking, diagnostics |
-| JPA | docs/jpa/ | scaffolded | Java Persistence API: EntityManager, JPQL, Criteria API, Spring Data JPA |
-| Micronaut | docs/micronaut/ | scaffolded | Micronaut Framework: compile-time DI, HTTP, Micronaut Data, cloud-native, GraalVM native |
-| Quarkus | docs/quarkus/ | complete | Quarkus: build-time augmentation, ArC CDI, Panache ORM, native image, MicroProfile |
-| GraalVM | docs/graalvm/ | complete | GraalVM: Graal JIT, native-image AOT, SubstrateVM, polyglot engine, Truffle |
-| Design Patterns and SOLID | docs/design-patterns/ | planned | SOLID principles, GoF patterns (creational/structural/behavioral), enterprise patterns, anti-patterns, refactoring |
-| REST API Design and HTTP | docs/rest-api/ | planned | REST architectural style, HTTP protocol, API versioning, pagination, OpenAPI, GraphQL vs REST, API gateway |
-| Database and SQL | docs/database-sql/ | planned | SQL mastery, indexing (B-tree, composite), query plans, transactions, MVCC, connection pooling, schema design |
-| Messaging and Event-Driven | docs/messaging/ | planned | Kafka, RabbitMQ, event sourcing, CQRS, Saga, outbox pattern, schema evolution, exactly-once semantics |
-| DevOps and CI/CD | docs/devops-cicd/ | planned | CI/CD pipelines, GitHub Actions, Jenkins, deployment strategies, GitOps, IaC, platform engineering |
-| Docker and Containers | docs/docker/ | planned | Docker, containerization, multi-stage builds, JVM in containers, image optimization, security, OCI standards |
-| Kubernetes | docs/kubernetes/ | planned | K8s orchestration, pods, deployments, services, HPA, operators, Java on Kubernetes, multi-cluster |
-| Microservices | docs/microservices/ | planned | Microservices architecture, service decomposition, circuit breaker, saga, DDD, distributed tracing, contract testing |
-| System Design | docs/system-design/ | planned | System design interviews, scalability, load balancing, caching, sharding, capacity estimation, trade-offs |
 
 
 ---
@@ -74,11 +53,12 @@ Every interview topic MUST cover ALL knowledge levels. A topic missing L0/L1 (fo
 > the count - a deep language may need 40+ L3 keywords; a micro-topic
 > may need only 3. Generate as many as the topic genuinely requires.
 >
-> **Keywords per file** are hard-capped at 5 (non-negotiable). Files
-> larger than 5 keywords degrade content quality and risk timeout.
-> L0/L1 entries are short (~1,500-2,500 words each); L4/L5 entries
-> are long (~7,000-9,000 words each). Split any level with more than
-> 5 keywords across multiple files by subtopic (e.g.,
+> **Keywords per file** are difficulty-capped (non-negotiable):
+> ★★★ (hard) = 1 per file, ★★☆ (medium) = 2 per file, ★☆☆ (easy) = 3 per file.
+> This cap equals the generation batch size, so every file completes
+> in a single call. L0/L1/META entries are ★☆☆; L2/L3/L6 are ★★☆;
+> L4/L5 entries are ★★★. Split any level that exceeds its cap across
+> multiple files named by descriptive subtopic (e.g.,
 > `Java - L2 Collections.md`, `Java - L2 Streams.md`). Never split
 > by sequence number ("Part 1", "Part 2").
 
@@ -91,11 +71,11 @@ column above are 5. **One level per file - never mix levels.**
 | File pattern                   | Level | Purpose                                             |
 |--------------------------------|-------|-----------------------------------------------------|
 | `{Topic} - Prerequisites.md`   | PRE   | Dependency map - optional, complex topics only      |
-| `{Topic} - L0 Orientation.md`  | L0    | Why it exists, ecosystem, what came before          |
-| `{Topic} - L1 Foundations.md`  | L1    | Core vocabulary, building blocks, setup             |
-| `{Topic} - L2 {Subtopic}.md`   | L2    | Working patterns - split by subtopic if >5 keywords |
-| `{Topic} - L3 {Subtopic}.md`   | L3    | Design decisions - split by subtopic if >5 keywords |
-| `{Topic} - L4 {Subtopic}.md`   | L4    | Production depth - split by subtopic if >5 keywords |
+| `{Topic} - L0 {Subtopic}.md`  | L0    | Why it exists, ecosystem, what came before          |
+| `{Topic} - L1 {Subtopic}.md`  | L1    | Core vocabulary, building blocks, setup             |
+| `{Topic} - L2 {Subtopic}.md`   | L2    | Working patterns - split when >2 keywords    |
+| `{Topic} - L3 {Subtopic}.md`   | L3    | Design decisions - split when >2 keywords    |
+| `{Topic} - L4 {Subtopic}.md`   | L4    | Production depth - 1 per file (★★★)          |
 | `{Topic} - L5 Architecture.md` | L5    | Strategy, migration, at-scale governance            |
 | `{Topic} - L6 Theory.md`       | L6    | Theory, specification, research - optional          |
 | `{Topic} - META Patterns.md`   | META  | Transferable cross-domain thinking                  |
@@ -163,7 +143,5 @@ Reference splits for common topics. Use as a starting point - adapt per topic.
    META.
 3. Plan files: one file per level. Use the [level-per-file pattern](#file-organization-by-level). Respect
    content-capacity limits. Split by subtopic when a level exceeds capacity.
-4. Run the scaffold generator (optional): `pwsh -File scripts/generate_topics.ps1 -Topic "MyTopic"`.
-5. Update status to `scaffolded`, then `generating`, then `complete`.
-6. Add the topic row to `docs/index.md`.
-7. Add the topic row to `docs/index.md` with link and keyword count.
+4. Update status to `generating`, then `complete`.
+5. Add the topic row to `docs/index.md`.

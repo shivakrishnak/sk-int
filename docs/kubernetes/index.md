@@ -1,31 +1,45 @@
 ---
+layout: default
 title: "Kubernetes"
-nav_order: 18
+parent: "SK Interview"
+nav_order: 13
 has_children: true
+permalink: /kubernetes/
 ---
 
 # Kubernetes
 
-Kubernetes orchestration: pods, deployments, services, ConfigMaps, secrets,
-health probes, HPA, ingress, persistent volumes, operators, CRDs, network
-policies, Java on Kubernetes best practices, and multi-cluster strategies.
+Container orchestration with Kubernetes: from orientation to architect level.
+Covers pods, deployments, services, networking, storage, scheduling, security,
+autoscaling, control plane internals, and production operations strategy.
+
+## Keywords in This File
+
+{: .no_toc }
+
+This is the topic index. See individual files for keyword navigation tables.
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Kubernetes - L0 Orientation](Kubernetes%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Kubernetes - L1 Foundations](Kubernetes%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Kubernetes - L2 Workloads](Kubernetes%20-%20L2%20Workloads.md) | L2 | 5 | complete |
-| [Kubernetes - L2 Networking and Storage](Kubernetes%20-%20L2%20Networking%20and%20Storage.md) | L2 | 5 | complete |
-| [Kubernetes - L3 Advanced Operations](Kubernetes%20-%20L3%20Advanced%20Operations.md) | L3 | 5 | complete |
-| [Kubernetes - L3 Java on Kubernetes](Kubernetes%20-%20L3%20Java%20on%20Kubernetes.md) | L3 | 5 | complete |
-| [Kubernetes - L4 Production Depth](Kubernetes%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Kubernetes - L5 Architecture](Kubernetes%20-%20L5%20Architecture.md) | L5 | 4 | complete |
-| [Kubernetes - L6 Theory](Kubernetes%20-%20L6%20Theory.md) | L6 | 3 | complete |
-| [Kubernetes - META Patterns](Kubernetes%20-%20META%20Patterns.md) | META | 3 | complete |
-
-**Keywords:** 44 | **Files:** 10 | **Status:** complete
+| nav_order | File | Level | Difficulty | Keywords | Status |
+|-----------|------|-------|------------|----------|--------|
+| 1 | Kubernetes - L0 Orientation.md | L0 | ★☆☆ | 3 | complete |
+| 2 | Kubernetes - L1 Core Objects.md | L1 | ★☆☆ | 3 | complete |
+| 3 | Kubernetes - L1 Configuration.md | L1 | ★☆☆ | 3 | complete |
+| 4 | Kubernetes - L2 Workloads.md | L2 | ★★☆ | 2 | complete |
+| 5 | Kubernetes - L2 Networking.md | L2 | ★★☆ | 2 | complete |
+| 6 | Kubernetes - L2 Storage.md | L2 | ★★☆ | 2 | complete |
+| 7 | Kubernetes - L3 Scheduling.md | L3 | ★★☆ | 2 | complete |
+| 8 | Kubernetes - L3 Observability.md | L3 | ★★☆ | 2 | complete |
+| 9 | Kubernetes - L3 Security.md | L3 | ★★☆ | 2 | complete |
+| 10 | Kubernetes - L4 etcd.md | L4 | ★★★ | 1 | complete |
+| 11 | Kubernetes - L4 Control Plane.md | L4 | ★★★ | 1 | complete |
+| 12 | Kubernetes - L4 HPA and Autoscaling.md | L4 | ★★★ | 1 | complete |
+| 13 | Kubernetes - L4 Service Mesh.md | L4 | ★★★ | 1 | complete |
+| 14 | Kubernetes - L5 Multi-Cluster Architecture.md | L5 | ★★★ | 1 | complete |
+| 15 | Kubernetes - L5 Production Operations.md | L5 | ★★★ | 1 | complete |
+| 16 | Kubernetes - L6 Theory.md | L6 | ★★☆ | 2 | complete |
+| 17 | Kubernetes - META Patterns.md | META | ★☆☆ | 3 | complete |
 
 ---
 
@@ -33,94 +47,117 @@ policies, Java on Kubernetes best practices, and multi-cluster strategies.
 
 ### Kubernetes - L0 Orientation
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kubernetes Overview and Architecture        | ★☆☆        | draft   |
-| 2   | Kubernetes Control Plane Components         | ★☆☆        | draft   |
-| 3   | Why Kubernetes for Java Backend             | ★☆☆        | draft   |
-| 4   | Kubernetes Ecosystem and Distributions      | ★☆☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 1 | What Kubernetes Is and Why It Exists | ★☆☆ | complete |
+| 2 | Kubernetes vs Docker vs Docker Compose | ★☆☆ | complete |
+| 3 | Kubernetes Ecosystem Map | ★☆☆ | complete |
 
-### Kubernetes - L1 Foundations
+### Kubernetes - L1 Core Objects
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Pods and Container Lifecycle                | ★☆☆        | draft   |
-| 2   | Deployments and ReplicaSets                 | ★☆☆        | draft   |
-| 3   | Services and Networking Fundamentals        | ★★☆        | draft   |
-| 4   | ConfigMaps and Secrets                      | ★★☆        | draft   |
-| 5   | Namespaces and RBAC Basics                  | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 4 | Pod | ★☆☆ | complete |
+| 5 | Deployment and ReplicaSet | ★☆☆ | complete |
+| 6 | Service and Networking Basics | ★☆☆ | complete |
+
+### Kubernetes - L1 Configuration
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 7 | ConfigMap and Secret | ★☆☆ | complete |
+| 8 | Namespace and Resource Quotas | ★☆☆ | complete |
+| 9 | kubectl CLI Basics | ★☆☆ | complete |
 
 ### Kubernetes - L2 Workloads
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Health Probes Liveness Readiness Startup    | ★★☆        | draft   |
-| 2   | Resource Requests and Limits                | ★★☆        | draft   |
-| 3   | Horizontal Pod Autoscaler                   | ★★☆        | draft   |
-| 4   | Rolling Updates and Rollback Strategies     | ★★☆        | draft   |
-| 5   | Jobs CronJobs and Batch Processing          | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 10 | StatefulSet vs Deployment | ★★☆ | complete |
+| 11 | DaemonSet and Job | ★★☆ | complete |
 
-### Kubernetes - L2 Networking and Storage
+### Kubernetes - L2 Networking
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Ingress Controllers and Load Balancing      | ★★☆        | draft   |
-| 2   | Persistent Volumes and Storage Classes      | ★★☆        | draft   |
-| 3   | StatefulSets and DaemonSets                 | ★★☆        | draft   |
-| 4   | Service Mesh Basics (Istio)                 | ★★☆        | draft   |
-| 5   | Helm Charts and Package Management          | ★★☆        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 12 | Ingress and Load Balancing | ★★☆ | complete |
+| 13 | NetworkPolicy and Service Types | ★★☆ | complete |
 
-### Kubernetes - L3 Advanced Operations
+### Kubernetes - L2 Storage
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kubernetes Operators and CRDs               | ★★★        | draft   |
-| 2   | Network Policies and Security               | ★★★        | draft   |
-| 3   | Pod Security Standards                      | ★★★        | draft   |
-| 4   | Resource Quota and Limit Ranges             | ★★★        | draft   |
-| 5   | Custom Scheduling and Affinity Rules        | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 14 | PersistentVolume and PVC | ★★☆ | complete |
+| 15 | StorageClass and Dynamic Provisioning | ★★☆ | complete |
 
-### Kubernetes - L3 Java on Kubernetes
+### Kubernetes - L3 Scheduling
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | JVM Memory Configuration in Kubernetes      | ★★★        | draft   |
-| 2   | Graceful Shutdown for Java Services         | ★★★        | draft   |
-| 3   | Init Containers and Sidecar Pattern         | ★★★        | draft   |
-| 4   | Spring Boot on Kubernetes Best Practices    | ★★★        | draft   |
-| 5   | Native Image in Kubernetes Deployments      | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 16 | Pod Scheduling: Affinity Taints and Tolerations | ★★☆ | complete |
+| 17 | Resource Requests and Limits | ★★☆ | complete |
 
-### Kubernetes - L4 Production Depth
+### Kubernetes - L3 Observability
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kubernetes Debugging and Troubleshooting    | ★★★        | draft   |
-| 2   | OOMKilled and Resource Problems             | ★★★        | draft   |
-| 3   | Pod Scheduling and Eviction Issues          | ★★★        | draft   |
-| 4   | Kubernetes Networking Diagnosis             | ★★★        | draft   |
-| 5   | Kubernetes Security Hardening               | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 18 | Health Checks: Liveness Readiness and Startup Probes | ★★☆ | complete |
+| 19 | Kubernetes Logging and Monitoring Strategy | ★★☆ | complete |
 
-### Kubernetes - L5 Architecture
+### Kubernetes - L3 Security
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Multi-Cluster and Multi-Region Strategy     | ★★★        | draft   |
-| 2   | GitOps with Kubernetes                      | ★★★        | draft   |
-| 3   | Platform Engineering on Kubernetes          | ★★★        | draft   |
-| 4   | Kubernetes Cost Optimization                | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 20 | RBAC: Role-Based Access Control | ★★☆ | complete |
+| 21 | Pod Security: SecurityContext and Pod Security Admission | ★★☆ | complete |
 
-### Kubernetes - META Patterns
+### Kubernetes - L4 etcd
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kubernetes Resource Sizing Framework        | ★★★        | draft   |
-| 2   | Kubernetes Troubleshooting Mental Model     | ★★★        | draft   |
-| 3   | Container Orchestration Decision Model      | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 22 | etcd Architecture and Consistency | ★★★ | complete |
+
+### Kubernetes - L4 Control Plane
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 23 | API Server Scheduler and Controller Manager Internals | ★★★ | complete |
+
+### Kubernetes - L4 HPA and Autoscaling
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 24 | HPA VPA and Cluster Autoscaler | ★★★ | complete |
+
+### Kubernetes - L4 Service Mesh
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 25 | Service Mesh: Istio and Envoy Sidecar Pattern | ★★★ | complete |
+
+### Kubernetes - L5 Multi-Cluster Architecture
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 26 | Multi-Cluster and Federation Strategy | ★★★ | complete |
+
+### Kubernetes - L5 Production Operations
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 27 | Kubernetes Production Operations and Upgrade Strategy | ★★★ | complete |
 
 ### Kubernetes - L6 Theory
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Kubernetes Control Theory and Reconciliation | ★★★        | draft   |
-| 2   | Distributed Scheduling Theory               | ★★★        | draft   |
-| 3   | Declarative Infrastructure Formal Models    | ★★★        | draft   |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 28 | Desired State and Reconciliation Loops Theory | ★★☆ | complete |
+| 29 | Kubernetes API Machinery and Operator Pattern | ★★☆ | complete |
+
+### Kubernetes - META Patterns
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 30 | Kubernetes Decision Framework: When K8s Is Overkill | ★☆☆ | complete |
+| 31 | Kubernetes Debugging Mental Model | ★☆☆ | complete |
+| 32 | Kubernetes Security Hardening Checklist | ★☆☆ | complete |

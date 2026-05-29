@@ -1,32 +1,44 @@
 ---
-title: "Database and SQL"
-nav_order: 14
+layout: default
+title: "Database SQL"
+parent: "SK Interview"
+nav_order: 1
 has_children: true
+permalink: /database-sql/
 ---
 
-# Database and SQL
+# Database SQL
 
-Relational database mastery: SQL (joins, CTEs, window functions),
-indexing (B-tree, composite, covering), query plans, transaction
-isolation, MVCC, connection pooling (HikariCP), schema design,
-normalization, and polyglot persistence decisions.
+Interview-focused notes and concise study material for Database SQL.
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Database SQL - L0 Orientation](Database%20SQL%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Database SQL - L1 Foundations](Database%20SQL%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Database SQL - L2 Queries](Database%20SQL%20-%20L2%20Queries.md) | L2 | 5 | complete |
-| [Database SQL - L2 Indexing](Database%20SQL%20-%20L2%20Indexing.md) | L2 | 5 | complete |
-| [Database SQL - L3 Transactions and Concurrency](Database%20SQL%20-%20L3%20Transactions%20and%20Concurrency.md) | L3 | 5 | complete |
-| [Database SQL - L3 Internals](Database%20SQL%20-%20L3%20Internals.md) | L3 | 5 | complete |
-| [Database SQL - L4 Production Depth](Database%20SQL%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Database SQL - L5 Architecture](Database%20SQL%20-%20L5%20Architecture.md) | L5 | 4 | complete |
-| [Database SQL - L6 Theory](Database%20SQL%20-%20L6%20Theory.md) | L6 | 3 | complete |
-| [Database SQL - META Patterns](Database%20SQL%20-%20META%20Patterns.md) | META | 3 | complete |
-
-**Keywords:** 44 | **Files:** 10 | **Status:** complete
+| nav_order | File | Level | Difficulty | Keywords | Status |
+|-----------|------|-------|------------|----------|--------|
+| 1 | Database SQL - L0 Orientation.md | L0 | ★☆☆ | 3 | complete |
+| 2 | Database SQL - L0 Ecosystem.md | L0 | ★☆☆ | 3 | complete |
+| 3 | Database SQL - L1 Core Queries.md | L1 | ★☆☆ | 3 | complete |
+| 4 | Database SQL - L1 Data Modification.md | L1 | ★☆☆ | 3 | complete |
+| 5 | Database SQL - L1 Joins and Aggregates.md | L1 | ★☆☆ | 3 | complete |
+| 6 | Database SQL - L2 Advanced Queries.md | L2 | ★★☆ | 2 | complete |
+| 7 | Database SQL - L2 Indexing Basics.md | L2 | ★★☆ | 2 | complete |
+| 8 | Database SQL - L2 Transactions Basics.md | L2 | ★★☆ | 2 | complete |
+| 9 | Database SQL - L2 Performance Basics.md | L2 | ★★☆ | 2 | complete |
+| 10 | Database SQL - L3 Advanced SQL.md | L3 | ★★☆ | 2 | complete |
+| 11 | Database SQL - L3 Indexing Strategy.md | L3 | ★★☆ | 2 | complete |
+| 12 | Database SQL - L3 Concurrency Control.md | L3 | ★★☆ | 2 | complete |
+| 13 | Database SQL - L3 Schema Design.md | L3 | ★★☆ | 2 | complete |
+| 14 | Database SQL - L3 Query Optimization.md | L3 | ★★☆ | 2 | complete |
+| 15 | Database SQL - L4 MVCC Internals.md | L4 | ★★★ | 1 | complete |
+| 16 | Database SQL - L4 WAL and Durability.md | L4 | ★★★ | 1 | complete |
+| 17 | Database SQL - L4 Index Internals.md | L4 | ★★★ | 1 | complete |
+| 18 | Database SQL - L4 Production Diagnostics.md | L4 | ★★★ | 1 | complete |
+| 19 | Database SQL - L4 SQL Injection.md | L4 | ★★★ | 1 | complete |
+| 20 | Database SQL - L5 Scalability.md | L5 | ★★★ | 1 | complete |
+| 21 | Database SQL - L5 Migration Strategy.md | L5 | ★★★ | 1 | complete |
+| 22 | Database SQL - L5 Architecture Decisions.md | L5 | ★★★ | 1 | complete |
+| 23 | Database SQL - L6 Theory.md | L6 | ★★☆ | 2 | complete |
+| 24 | Database SQL - META Patterns.md | META | ★☆☆ | 3 | complete |
 
 ---
 
@@ -34,94 +46,166 @@ normalization, and polyglot persistence decisions.
 
 ### Database SQL - L0 Orientation
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Relational Database Fundamentals            | ★☆☆        | draft |
-| 2   | SQL Language Overview                       | ★☆☆        | draft |
-| 3   | ACID Properties Overview                    | ★☆☆        | draft |
-| 4   | Database Ecosystem and Types                | ★☆☆        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 1 | Why Databases Exist | ★☆☆ | draft |
+| 2 | The Relational Model - Tables, Keys, and Relationships | ★☆☆ | draft |
+| 3 | SQL Overview - The Declarative Query Language | ★☆☆ | draft |
 
-### Database SQL - L1 Foundations
+### Database SQL - L0 Ecosystem
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | SELECT Queries and JOIN Types               | ★☆☆        | draft |
-| 2   | INSERT UPDATE DELETE and MERGE              | ★☆☆        | draft |
-| 3   | Data Types and Constraints                  | ★☆☆        | draft |
-| 4   | Index Fundamentals                          | ★★☆        | draft |
-| 5   | Transaction Basics and Savepoints           | ★★☆        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 4 | RDBMS Landscape - PostgreSQL, MySQL, Oracle, SQL Server | ★☆☆ | draft |
+| 5 | SQL vs NoSQL - When to Choose Each | ★☆☆ | draft |
+| 6 | The Structured Data Problem - Before Databases | ★☆☆ | draft |
 
-### Database SQL - L2 Queries
+### Database SQL - L1 Core Queries
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Window Functions                            | ★★☆        | draft |
-| 2   | Common Table Expressions and Recursive CTEs | ★★☆        | draft |
-| 3   | Subqueries and Correlated Queries           | ★★☆        | draft |
-| 4   | Aggregations and GROUP BY Advanced          | ★★☆        | draft |
-| 5   | Views and Materialized Views                | ★★☆        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 7 | SELECT Statement - Reading Rows from Tables | ★☆☆ | draft |
+| 8 | WHERE Clause - Filtering Rows with Conditions | ★☆☆ | draft |
+| 9 | ORDER BY and LIMIT - Sorting and Pagination | ★☆☆ | draft |
 
-### Database SQL - L2 Indexing
+### Database SQL - L1 Data Modification
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | B-Tree Index Structure                      | ★★☆        | draft |
-| 2   | Composite and Covering Indexes              | ★★☆        | draft |
-| 3   | Query Execution Plans and EXPLAIN           | ★★☆        | draft |
-| 4   | Index Design Strategy                       | ★★☆        | draft |
-| 5   | Index Anti-Patterns                         | ★★☆        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 10 | INSERT, UPDATE, DELETE - Modifying Table Data | ★☆☆ | draft |
+| 11 | Tables and Schemas - Organizing Data Structures | ★☆☆ | draft |
+| 12 | Data Types - Choosing Correct Column Types | ★☆☆ | draft |
 
-### Database SQL - L3 Transactions and Concurrency
+### Database SQL - L1 Joins and Aggregates
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Transaction Isolation Levels                | ★★★        | draft |
-| 2   | MVCC and Row Versioning                     | ★★★        | draft |
-| 3   | Database Locking Strategies                 | ★★★        | draft |
-| 4   | Connection Pooling and HikariCP             | ★★★        | draft |
-| 5   | Deadlock Detection and Prevention           | ★★★        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 13 | INNER JOIN - Combining Tables on Matching Rows | ★☆☆ | draft |
+| 14 | LEFT JOIN and RIGHT JOIN - Including Unmatched Rows | ★☆☆ | draft |
+| 15 | Aggregate Functions - COUNT, SUM, AVG, GROUP BY, HAVING | ★☆☆ | draft |
 
-### Database SQL - L3 Internals
+### Database SQL - L2 Advanced Queries
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | PostgreSQL Query Optimizer                  | ★★★        | draft |
-| 2   | Database Storage Engine Internals           | ★★★        | draft |
-| 3   | Schema Migration Strategies                 | ★★★        | draft |
-| 4   | Partitioning and Sharding                   | ★★★        | draft |
-| 5   | Full-Text Search and JSON Queries           | ★★★        | draft |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 16 | Subqueries and Correlated Subqueries | ★★☆ | draft |
+| 17 | CTEs (Common Table Expressions) | ★★☆ | draft |
 
-### Database SQL - L4 Production Depth
+### Database SQL - L2 Indexing Basics
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Query Performance Diagnosis                 | ★★★        | draft |
-| 2   | Connection Pool Tuning and Diagnosis        | ★★★        | draft |
-| 3   | Schema Design Anti-Patterns                 | ★★★        | pending |
-| 4   | Database Security and Injection Prevention  | ★★★        | pending |
-| 5   | Database Monitoring and Alerting            | ★★★        | pending |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 18 | Database Indexes - How They Speed Up Queries | ★★☆ | draft |
+| 19 | Index Types - B-Tree, Hash, and Composite Indexes | ★★☆ | draft |
 
-### Database SQL - L5 Architecture
+### Database SQL - L2 Transactions Basics
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Polyglot Persistence Strategy               | ★★★        | pending |
-| 2   | Database Scaling Patterns                   | ★★★        | pending |
-| 3   | Database Replication and High Availability  | ★★★        | pending |
-| 4   | NoSQL Decision Framework                    | ★★★        | pending |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 20 | Transactions and ACID Properties | ★★☆ | draft |
+| 21 | Commit and Rollback - Transaction Lifecycle | ★★☆ | draft |
+
+### Database SQL - L2 Performance Basics
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 22 | EXPLAIN and Query Execution Plans | ★★☆ | draft |
+| 23 | N+1 Query Anti-Pattern | ★★☆ | draft |
+
+### Database SQL - L3 Advanced SQL
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 24 | Window Functions - ROW_NUMBER, RANK, LAG, LEAD | ★★☆ | draft |
+| 25 | Recursive CTEs - Hierarchical Data Queries | ★★☆ | draft |
+
+### Database SQL - L3 Indexing Strategy
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 26 | Index Selection Strategy - Composite Index Column Order | ★★☆ | draft |
+| 27 | Covering Indexes and Index-Only Scans | ★★☆ | draft |
+
+### Database SQL - L3 Concurrency Control
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 28 | Transaction Isolation Levels - Read Phenomena and Trade-offs | ★★☆ | draft |
+| 29 | Optimistic vs Pessimistic Locking | ★★☆ | draft |
+
+### Database SQL - L3 Schema Design
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 30 | Database Normalization - 1NF through BCNF | ★★☆ | draft |
+| 31 | Denormalization - When and Why to Break Normal Forms | ★★☆ | draft |
+
+### Database SQL - L3 Query Optimization
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 32 | Query Optimizer - Statistics, Cardinality, and Plan Selection | ★★☆ | draft |
+| 33 | Partitioning Strategies - Range, List, and Hash Partitioning | ★★☆ | draft |
+
+### Database SQL - L4 MVCC Internals
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 34 | MVCC (Multi-Version Concurrency Control) Internals | ★★★ | draft |
+
+### Database SQL - L4 WAL and Durability
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 35 | Write-Ahead Log (WAL) - Crash Recovery Internals | ★★★ | draft |
+
+### Database SQL - L4 Index Internals
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 36 | B-Tree Index Internals - Page Splits, Fill Factor, Bloat | ★★★ | draft |
+
+### Database SQL - L4 Production Diagnostics
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 37 | Database Production Diagnostics - Locks, Deadlocks, Slow Queries | ★★★ | draft |
+
+### Database SQL - L4 SQL Injection
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 38 | SQL Injection - Attack Vectors, Detection, and Prevention | ★★★ | draft |
+
+### Database SQL - L5 Scalability
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 39 | Database Scalability - Read Replicas, Sharding, and Partitioning | ★★★ | draft |
+
+### Database SQL - L5 Migration Strategy
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 40 | Schema Migration Strategy at Scale - Zero-Downtime Deployments | ★★★ | draft |
+
+### Database SQL - L5 Architecture Decisions
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 41 | Database Architecture Decisions - SQL, NewSQL, and Polyglot Persistence | ★★★ | draft |
 
 ### Database SQL - L6 Theory
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Relational Algebra and Set Theory           | ★★★        | pending |
-| 2   | Transaction Serializability Theory          | ★★★        | pending |
-| 3   | CAP Theorem and Consistency Models          | ★★★        | pending |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 42 | Relational Algebra and Codd's 12 Rules | ★★☆ | draft |
+| 43 | ACID Formalization - Gray and Lamport Transaction Theory | ★★☆ | draft |
 
 ### Database SQL - META Patterns
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Database Selection Decision Framework       | ★★★        | pending |
-| 2   | Query Optimization Mental Model             | ★★★        | pending |
-| 3   | Data Modeling Decision Patterns             | ★★★        | pending |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 44 | ACID Reasoning as Universal Correctness Framework | ★☆☆ | draft |
+| 45 | Index Design as Cache Prefetching - The Storage Hierarchy Pattern | ★☆☆ | draft |
+| 46 | SQL Query as Set Theory - The Mathematical Foundation Transfer | ★☆☆ | draft |

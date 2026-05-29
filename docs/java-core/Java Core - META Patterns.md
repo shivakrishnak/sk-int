@@ -1,1688 +1,1703 @@
 ---
 layout: default
 title: "Java Core - META Patterns"
-parent: "Java Core APIs"
-nav_order: 7
+parent: "Java Core"
+grand_parent: "SK Interview"
+nav_order: 17
 permalink: /java-core/meta-patterns/
 ---
 
-## Keywords in This File
-{: .no_toc }
+# Java Core - META Patterns
 
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Fail-Fast vs Fail-Safe: Iterator Design and ConcurrentModificationException](#fail-fast-vs-fail-safe-iterator-design-and-concurrentmodificationexception) | high |
-| 2 | [Choosing the Right Collection: A Decision Framework](#choosing-the-right-collection-a-decision-framework) | high |
-| 3 | [Abstraction Leakage: When Java Abstractions Expose Internals](#abstraction-leakage-when-java-abstractions-expose-internals) | medium-high |
-
----
-
-# Fail-Fast vs Fail-Safe: Iterator Design and ConcurrentModificationException
-
-**Interview Weight:** high - Directly tests iterator design knowledge;
-appears in senior interviews as a behavioral + design question.
-
----
+## Java Code Review Mental Model
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Fail-fast iterators (most `java.util` collections) detect structural
-> modifications during iteration by checking `modCount`. If modified,
-> they throw `ConcurrentModificationException` immediately - "fail fast"
-> rather than silently producing wrong results. Fail-safe iterators
-> (`java.util.concurrent` collections) operate on a snapshot or use
-> weakly consistent traversal - they never throw CME but may not reflect
-> the latest state. The trade-off: fail-fast = accurate data, fragile
-> iteration; fail-safe = tolerant of modification, possibly stale data.
+> Code review in Java means checking five dimensions: correctness (does it
+> do what it should?), safety (null, concurrency, resource leaks, exceptions),
+> design (coupling, naming, abstractions), performance (allocations, O(n) patterns),
+> and maintainability (readability, testability). The highest-value checks:
+> null handling, resource closing (try-with-resources), thread safety, and
+> equals/hashCode consistency.
 
 **3 minutes (Senior):**
-
-> **Fail-fast mechanism**: `ArrayList`, `HashMap`, `HashSet` and others
-> maintain a `modCount` field incremented on every structural modification
-> (add, remove, clear - NOT set). The iterator captures `expectedModCount`
-> at creation. Each `next()` call checks: `if (modCount != expectedModCount)
-throw new ConcurrentModificationException()`. This is best-effort only -
-> the spec says CME is NOT guaranteed when multiple threads modify without
-> synchronization (data race). It's a diagnostic aid, not a guarantee.
+> Java code review has a checklist, but the mental model matters more.
+> Ask: "What breaks if I pass null, a negative number, an empty list, or
+> a list of 10 million elements?" - this is boundary testing in your head.
+> Correctness issues: wrong algorithm, off-by-one errors, incorrect condition
+> logic, missing edge cases. Safety issues: NullPointerException, unclosed
+> resources, race conditions, integer overflow, ClassCastException.
+> Design issues: Law of Demeter violations, feature envy, exposed internals,
+> inappropriate exception types, missing abstractions. Performance: O(n^2)
+> in a loop, unnecessary object creation in hot paths, missing indexes (if
+> reviewing data access code).
 >
-> **Fail-safe patterns**: (1) Snapshot iterator: `CopyOnWriteArrayList`
-> copies the backing array at iterator creation time. Iteration is on the
-> snapshot - modifications to the original list are invisible. Never throws CME.
-> Stale: items added after iterator creation are not visible. (2) Weakly
-> consistent: `ConcurrentHashMap`, `ConcurrentLinkedQueue` use weakly
-> consistent iterators. They reflect the state at some point during the
-> traversal - may show inserts made after iteration started, or may not.
-> Never throws CME, never uses a full copy. (3) Iterator.remove(): the
-> only safe way to remove an element from a fail-fast collection during
-> iteration - uses `expectedModCount` syncing internally.
->
-> **Transfer principle**: fail-fast is the "loudly fail on unexpected
-> input" philosophy applied to iteration. In API design, it generalizes
-> to: prefer immediate, loud failures that reveal bugs early over silent
-> wrong answers.
+> The Pareto principle applies: 80% of bugs come from 20% of patterns. Learn
+> to spot the high-frequency bug families first: null, resources, concurrency.
 
-**Framework:** FAIL-FAST (modCount, CME, immediate failure) +
-FAIL-SAFE (snapshot, weakly-consistent) + TRANSFER (design principle)
-
-_Adapting up:_ Discuss the `modCount` implementation in `AbstractList`,
-the weakly-consistent semantics in `ConcurrentHashMap.entrySet().iterator()`,
-and the "fail loudly" design principle in resilient systems (circuit breakers
-vs silent degradation).
-
-_Adapting down:_ Fail-fast: throws immediately when modified during iteration.
-Fail-safe: never throws, may see stale data. Use `iterator.remove()` to
-safely remove during iteration.
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "Fail-fast: CME immediately if collection modified during
-iteration (modCount check). Fail-safe: snapshot or weakly consistent, never
-throws. Fail-fast = catch bugs fast; fail-safe = tolerate concurrent changes."
+**(1) Restate:** "Java code review - five dimensions: correctness, safety,
+design, performance, maintainability. I'll walk through each with examples."
 
-**(2) First principles:** "If you modify a collection while iterating, the
-iterator's position is undefined. Two design choices: blow up immediately
-(fail-fast) so the programmer knows, or continue on a stable view (fail-safe)."
+**(2) First principles:** "A code review is a second pair of eyes looking for
+what the author assumed was true but isn't. Focus on what the code assumes and
+verify those assumptions."
 
-**(3) Bridge:** "Fail-fast iterator is like a bank teller who refuses to
-continue if the register total changes mid-count ('wait, someone added money -
-let me start over'). Fail-safe iterator is like a CCTV recording: works
-from a saved snapshot regardless of what happens in real time."
+**(3) Bridge:** "Code review is like proofreading a legal contract. You don't
+just check grammar (style) - you look for ambiguous clauses (design), missing
+conditions (logic), and unenforceable promises (incorrect assumptions)."
 
 ---
 
 ### 📘 Concept Explanation
 
-**`modCount` mechanism:**
+**Five-dimension code review checklist:**
+
+```
+1. CORRECTNESS
+   - Does the algorithm implement the specification?
+   - Off-by-one: < vs <=, 0-based vs 1-based indexing
+   - Missing edge cases: empty collections, null input, zero/negative
+   - Integer overflow: int arithmetic on large numbers (use long)
+   - Floating-point equality: == instead of Math.abs(a-b) < epsilon
+
+2. SAFETY
+   - NullPointerException: unguarded dereference of nullable values
+   - Resource leaks: streams, connections not in try-with-resources
+   - Thread safety: shared mutable state without synchronization
+   - Exception handling: swallowed exceptions, wrong exception type
+   - Security: SQL injection, deserialization of untrusted data
+
+3. DESIGN
+   - Single responsibility: class does too much
+   - Information hiding: returning mutable internal collections
+   - Naming: unclear names, abbreviations, misleading names
+   - Abstraction: implementation details leaking into public API
+   - Coupling: direct reference to concrete class instead of interface
+
+4. PERFORMANCE
+   - String concatenation in loop (use StringBuilder)
+   - Unnecessary object creation (new String(bytes) -> new String(bytes, charset))
+   - Inefficient data structure (LinkedList where ArrayList fits, HashMap without capacity)
+   - N+1 query: loading entities in a loop (use JOIN FETCH)
+   - Missing cache: repeated expensive computation
+
+5. MAINTAINABILITY
+   - Long methods (> 30 lines usually needs splitting)
+   - Magic numbers without named constants
+   - Untestable code (private static methods, static singletons, System.currentTimeMillis)
+   - Missing tests for edge cases
+   - Duplication: same logic in two places
+```
+
+---
+
+### 💻 Code Example
+
+> **Code walkthrough:** The review of `getUserData` shows the most common
+> Java safety issues in a realistic method: null dereference, unclosed resources,
+> exception swallowing, and type-unsafe access. The fixed version addresses
+> each with the standard Java idiom.
 
 ```java
-// Simplified AbstractList implementation to show modCount:
-class AbstractList<E> {
-    protected transient int modCount = 0; // structural modification count
-
-    public boolean add(E e) {
-        // ... add element ...
-        modCount++; // structural modification!
-        return true;
+// BAD: multiple code review findings in one method
+String getUserData(Long userId) {
+    try {
+        Connection conn = dataSource.getConnection(); // FINDING 1: not closed
+        ResultSet rs = conn.createStatement()
+            .executeQuery("SELECT * FROM users WHERE id=" + userId); // FINDING 2: SQL injection
+        if (rs.next()) {
+            String data = rs.getString("data");
+            return data.toUpperCase(); // FINDING 3: data could be null
+        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // FINDING 4: exception swallowed, no rethrow
     }
+    return null; // FINDING 5: caller needs null check, no Optional
+}
 
-    public E remove(int index) {
-        // ... remove element ...
-        modCount++; // structural modification!
-        return removed;
-    }
+// GOOD: all findings addressed
+Optional<String> getUserData(Long userId) {
+    Objects.requireNonNull(userId, "userId required"); // FINDING 5: explicit null input
 
-    // set() does NOT increment modCount:
-    public E set(int index, E element) {
-        // replaces without structural change - no modCount++
-        return old;
-    }
-
-    // Iterator captures modCount at creation:
-    class Itr implements Iterator<E> {
-        int expectedModCount = modCount; // snapshot at creation
-
-        public E next() {
-            // Check before each element:
-            if (modCount != expectedModCount) {
-                throw new ConcurrentModificationException();
+    String sql = "SELECT data FROM users WHERE id = ?"; // FINDING 2: parameterized
+    try (Connection conn = dataSource.getConnection(); // FINDING 1: auto-closed
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setLong(1, userId);
+        try (ResultSet rs = ps.executeQuery()) { // FINDING 1: ResultSet also closed
+            if (rs.next()) {
+                String data = rs.getString("data");
+                return Optional.ofNullable(data) // FINDING 3: null-safe
+                    .map(String::toUpperCase);
             }
-            // ... return next element ...
+            return Optional.empty();
         }
-
-        // Iterator.remove(): SAFE removal during iteration
-        public void remove() {
-            // ... remove current element ...
-            modCount++;
-            expectedModCount = modCount; // sync: my modification is expected
-        }
-    }
-}
-```
-
-**Fail-safe patterns comparison:**
-
-```
-Fail-Fast (java.util.*):
-  ArrayList.iterator()          ConcurrentModificationException
-  HashMap.entrySet().iterator() ConcurrentModificationException
-  HashSet.iterator()            ConcurrentModificationException
-
-Fail-Safe - Snapshot:
-  CopyOnWriteArrayList.iterator()    Never throws CME; iterates SNAPSHOT
-  Collections.unmodifiableList()     Never modifiable, never throws
-
-Fail-Safe - Weakly Consistent:
-  ConcurrentHashMap.entrySet().iterator()  Reflects SOME state during traversal
-  ConcurrentLinkedQueue.iterator()         May see elements added after start
-  ConcurrentSkipListMap.iterator()         Weakly consistent
-
-"Safe" removal approaches:
-  iterator.remove()         O(1), updates expectedModCount - safe
-  list.removeIf(predicate)  Structural modification done internally - safe
-  list.subList().clear()    Removes range - internal, safe
-```
-
-**Design implications:**
-
-```java
-// Pattern 1: Safe removal via iterator.remove()
-Iterator<String> it = list.iterator();
-while (it.hasNext()) {
-    if (shouldRemove(it.next())) {
-        it.remove(); // safe: syncs expectedModCount
+    } catch (SQLException e) {
+        throw new DataAccessException("Failed to fetch user " + userId, e); // FINDING 4: rethrow
     }
 }
 
-// Pattern 2: removeIf (Java 8+, cleaner)
-list.removeIf(item -> shouldRemove(item));
-
-// Pattern 3: collect-then-remove (simple but 2-pass)
-List<String> toRemove = new ArrayList<>();
-for (String item : list) {
-    if (shouldRemove(item)) toRemove.add(item);
-}
-list.removeAll(toRemove);
-
-// Pattern 4: CopyOnWriteArrayList for concurrent iteration
-List<Listener> listeners = new CopyOnWriteArrayList<>();
-// Thread A: adds/removes listeners during iteration
-listeners.add(newListener);
-// Thread B: iterates snapshot - no CME, no locking needed
-for (Listener l : listeners) { l.onEvent(event); }
+// Code review red flags checklist:
+// - "catch (Exception e) { e.printStackTrace(); }" -> always a FAIL
+// - "return null" from methods returning collections -> return empty instead
+// - ".equals()" on possibly-null value -> NPE waiting to happen
+// - "new ArrayList(list)" inside a loop -> O(n^2) copy
+// - synchronized method with long I/O -> lock held too long
+// - "static mutable field" -> global state / threading issues
 ```
 
----
-
-### 💻 Code Example
-
-#### Event dispatcher - fail-fast trap and fail-safe solution
-
-```java
-import java.util.*;
-import java.util.concurrent.*;
-
-// Demonstration of fail-fast vs fail-safe in event dispatch
-public class EventDispatcher {
-
-    // BAD: fail-fast list - ConcurrentModificationException
-    //      when listener removes itself during dispatch
-    private final List<EventListener> badListeners =
-        new ArrayList<>();
-
-    public void dispatchBad(Event event) {
-        for (EventListener l : badListeners) {
-            l.onEvent(event, this);
-            // If onEvent() calls unregisterListener(l):
-            // -> badListeners.remove(l)
-            // -> modCount++
-            // -> next iteration: ConcurrentModificationException!
-        }
-    }
-
-    // GOOD: CopyOnWriteArrayList - fail-safe snapshot
-    private final List<EventListener> listeners =
-        new CopyOnWriteArrayList<>();
-
-    public void dispatch(Event event) {
-        // Iterator operates on a snapshot of the list at this point
-        // Listeners can safely call unregister() during dispatch
-        for (EventListener l : listeners) {
-            l.onEvent(event, this); // may call unregisterListener()
-        }
-        // No CME, no concurrent modification issue
-    }
-
-    public void registerListener(EventListener l) {
-        listeners.add(l); // creates new array copy - thread-safe
-    }
-
-    public void unregisterListener(EventListener l) {
-        listeners.remove(l); // creates new array copy - thread-safe
-    }
-
-    interface EventListener {
-        void onEvent(Event e, EventDispatcher d);
-    }
-    record Event(String type, Object data) {}
-}
-```
-
-> **Code walkthrough:** The BAD version uses `ArrayList` - when
-> `onEvent()` calls `unregisterListener()` which calls `badListeners.remove()`,
-> the `modCount` increments. The for-each loop's iterator detects the
-> change on the next `next()` call and throws `ConcurrentModificationException`.
-> The GOOD version uses `CopyOnWriteArrayList` - the iterator captures
-> a reference to the backing array at dispatch time. Any `add()`/`remove()`
-> creates a NEW backing array. The iteration continues on the original
-> snapshot, never sees any modification, never throws CME.
+> **Code walkthrough:** The fixed version uses try-with-resources for all
+> resources (Connection, PreparedStatement, ResultSet - each is `AutoCloseable`).
+> PreparedStatement prevents SQL injection (parameterized query). `Optional<String>`
+> makes the absent case explicit in the type system. The `DataAccessException`
+> wraps the technical exception with context (which userId) and propagates
+> to the caller. This pattern covers 90% of common Java data access review
+> findings in one example.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Junior:** Fail-fast iterators throw `ConcurrentModificationException` if
-the collection is modified during iteration. Use `iterator.remove()` or
-`removeIf()` instead of direct `remove()` in loops.
+**Junior / Mid (0-5 years):**
+> Check for: nulls (use Objects.requireNonNull for parameters), try-with-resources
+> for any AutoCloseable, equals/hashCode together, proper exception handling
+> (no swallowing). Use static analysis tools: SpotBugs, Checkstyle, SonarQube
+> to catch common patterns automatically before human review.
 
-**Mid-level:** `modCount` tracks structural modifications. The iterator
-captures `expectedModCount` at creation. `next()` throws CME if counts
-differ. Fail-safe iterators: `CopyOnWriteArrayList` (snapshot) and
-`ConcurrentHashMap` (weakly consistent) never throw CME.
+---
 
-**Senior:** The CME guarantee is weak: spec says CME should be thrown
-on best-effort basis for single-threaded violations. Under multi-threading
-without synchronization, corrupted data (not CME) may result. CME is a
-diagnostic tool, not a safety guarantee.
-`CopyOnWriteArrayList.iterator()` is safe for concurrent modification but
-stale - any modifications after iterator creation are invisible.
-
-**Staff:** The fail-fast design is an instance of the "fail loudly" principle:
-surface bugs immediately where they occur rather than silently propagating
-wrong state. This generalizes to: validation at API boundaries, assertions
-in critical paths, and circuit breakers that fail fast rather than silently
-degrading. The weakly-consistent iterator in `ConcurrentHashMap` is the
-distributed-safe design: in a concurrent environment, "perfectly consistent"
-iteration requires a snapshot (expensive) or a lock (bottleneck). Weakly
-consistent allows progress with bounded staleness.
+**Senior / Staff (5+ years):**
+> Go beyond syntax: review for thread safety (any shared mutable state? any
+> race condition if this runs concurrently?), backward compatibility (is this
+> a library method? are callers depending on this signature?), failure modes
+> (what happens if the database is down? if the network is slow? if the input
+> is 10 million items?). The highest-value reviews challenge assumptions:
+> "you assume this list is always small - is that guaranteed?" A 30-line method
+> that's clear but has a hidden race condition is worse than a 100-line method
+> that's verbose but correct. Correctness > conciseness.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                                                          | Reality                                                                                                                                                                                                            | Danger                                                                                                                   |
-| --- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| 1   | `ConcurrentModificationException` is only thrown in multithreaded code | CME also occurs single-threaded when the collection is structurally modified while iterating via a method call within the loop body                                                                                | Unexpected CME in production single-threaded code that tests fine because test loops don't trigger the modification path |
-| 2   | `CopyOnWriteArrayList` is always safe for concurrent access            | COW is safe for iteration and modification. But reading the same item twice may see different values (read-then-decide is not atomic). Also: writes are O(n) - VERY expensive for large lists with frequent writes | Performance disaster using COW for large lists with frequent writes (each write copies the entire backing array)         |
-| 3   | Fail-fast guarantees that all concurrent modifications are detected    | The spec explicitly says: CME cannot be relied upon for correctness in concurrent programs. Under race conditions, the `modCount` check may itself be non-atomic, and corruption may occur without CME             | Treating CME absence as proof that a HashMap is not being concurrently modified                                          |
+**Misconception 1: "Style issues are the most important in a code review."**
+Style is the lowest-value review category. Automated tools (Checkstyle,
+SpotBugs, Google Java Format) should handle style before human review.
+Human reviewers should focus on: correctness, safety, and design issues
+that tools cannot detect. A code review that spends 80% of comments on
+variable naming and spacing and misses a race condition has failed.
+
+**Misconception 2: "More code comments = better code."**
+Comments that explain WHAT the code does are noise (the code shows what it
+does). Comments that explain WHY are valuable (business rule, non-obvious
+constraint). Best documentation: clear naming and small methods that are
+self-evident. Aim for code that doesn't need comments; write comments only
+for non-obvious trade-offs, workarounds, or domain knowledge.
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure 1 - CME from listener self-unregistering during dispatch**
-
-Symptom: `ConcurrentModificationException` in event dispatch code.
-The stack trace points to `AbstractList$Itr.checkForComodification()`.
-
-Root cause: An event listener calls `removeListener(this)` inside
-`onEvent()`, which calls `ArrayList.remove()`, incrementing `modCount`.
-The for-each iterator detects this on the next call to `next()`.
-
-Fix: Replace `ArrayList<Listener>` with `CopyOnWriteArrayList<Listener>`.
-
----
-
-**Failure 2 - Stale iteration in CopyOnWriteArrayList**
-
-Symptom: A listener that was unregistered continues to receive events
-for the current dispatch cycle.
-
-Root cause: `CopyOnWriteArrayList` iterator works on a snapshot from
-before the `remove()` call. The removed listener is still in the
-snapshot.
-
-This is expected behavior and usually acceptable. If strict
-"stop-at-unregister" is needed: use a volatile `boolean active`
-flag per listener checked at the start of `onEvent()`.
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Preparation time | Recommended approach                                                             |
-| ---------------- | -------------------------------------------------------------------------------- |
-| 25 min           | modCount mechanism; CME; iterator.remove()                                       |
-| 50 min           | Add fail-safe patterns (COAL, CHM weakly consistent); removeIf                   |
-| 1.5 hours        | Add listener dispatch pattern; design principle transfer; CME in concurrent code |
-
----
-
-**[SENIOR] Q1: What is `modCount` and how does it implement fail-fast
-iteration?** [CONCEPTUAL]
-
-_Why they ask:_ Tests deep knowledge of collection internals.
-
-_Likely follow-up:_ "Why is CME not guaranteed to be thrown?"
-
-`modCount` (modification count) is a `protected transient int` field
-in `AbstractList` and most `java.util` collections. It is incremented
-by every "structural modification" - operations that change the size
-(add, remove, clear) or otherwise modify the internal structure.
-Non-structural operations like `set()` do not increment `modCount`.
-
-When an `Iterator` is created: `expectedModCount = modCount`.
-On each `next()` call: `if (modCount != expectedModCount) throw new CME()`.
-On `iterator.remove()`: the iterator performs the removal and then
-sets `expectedModCount = modCount` to re-synchronize.
-
-Why CME is not guaranteed:
-
-1. Single-threaded: `modCount` check happens in `next()` - guaranteed
-   for every structural modification
-2. Multi-threaded without synchronization: `modCount` reads are not
-   synchronized. Two threads can race such that the check passes even
-   though modification occurred. The Java Memory Model does not guarantee
-   visibility of writes without happens-before relationship.
-
-Implication: in concurrent code, CME is a best-effort diagnostic. Rely
-on `ConcurrentHashMap` and `CopyOnWriteArrayList` for actual thread safety.
-
-_What separates good from great:_ Distinguishing single-threaded (CME
-guaranteed) vs multi-threaded (CME not guaranteed - JMM reasoning).
-
----
-
-**[STAFF] Q2: ARCHITECTURE: How does the fail-fast/fail-safe design
-choice generalize to system design?** [ARCHITECTURE]
-
-_Why they ask:_ Tests ability to transfer a pattern to system-level thinking.
-
-_Likely follow-up:_ "What are the downsides of fail-fast at the system level?"
-
-**Fail-fast in iterators = detect and surface problems immediately.**
-This principle generalizes to system design:
-
-**Fail-fast at API boundaries**: validate inputs at service entry points
-and reject invalid requests immediately (400 Bad Request) rather than
-propagating invalid state deep into the system and failing with a
-confusing error later.
-
-**Fail-fast in distributed systems (Circuit Breaker)**:
-A circuit breaker pattern detects repeated downstream failures and
-opens the circuit (fails fast) rather than continuing to send requests
-that will timeout. This protects the caller from cascading failure.
-`Hystrix`, `Resilience4j`, Spring Cloud Circuit Breaker implement this.
-
-**Fail-safe in distributed systems (Bulkhead)**:
-Isolate failures - a failing subsystem doesn't take down the whole
-system. Like fail-safe iteration continues on a snapshot, a bulkhead
-allows the rest of the system to continue despite partial failure.
-
-**Fail-fast with observability**:
-
-```
-Fail-fast: Circuit breaker opens -> logs and alerts fire immediately
-Fail-safe: Timeout after 30 seconds -> hard to detect quietly failing services
-```
-
-Trade-offs:
-
-- Fail-fast: easier to debug (fail at the source), but interrupts
-  partial functionality. May be too disruptive for degradable services.
-- Fail-safe: tolerates partial failures, but bugs surface late.
-  Silent wrong answers are dangerous in financial systems.
-
-Rule of thumb: fail-fast at trust boundaries, fail-safe within a service
-for non-critical paths.
-
-_What separates good from great:_ Naming `Resilience4j` Circuit Breaker
-as the system-level fail-fast pattern and connecting the iterator
-`modCount` check to the circuit breaker "trip threshold."
-
----
-
-**[SENIOR] Q3: DEBUGGING: How do you diagnose and fix a
-`ConcurrentModificationException` in production?** [DEBUGGING]
-
-_Why they ask:_ Tests systematic debugging methodology.
-
-_Likely follow-up:_ "How do you prevent it from happening again?"
-
-**Step 1: Analyze the stack trace**
-
-The CME stack trace includes the iteration location AND typically
-the class name (`AbstractList$Itr` = ArrayList, `HashMap$HashIterator` = HashMap).
-The stack trace does NOT show where the modification happened.
-
-**Step 2: Find the modification**
-
-Search for all `add()`, `remove()`, `clear()` calls on the same
-collection visible in the callstack:
-
-- Method called from within the loop body
-- Callback/listener that modifies the collection
-- Another thread (if the code is not single-threaded)
-
-**Step 3: Fix**
-
-Identify the relationship between iteration and modification:
-
+**Failure: equals() without hashCode() - breaks HashMap, HashSet behavior.**
 ```java
-// Case 1: Same thread, remove condition inside loop
-// Fix: removeIf
-list.removeIf(item -> shouldRemove(item));
+// BAD: equals() without hashCode()
+class User {
+    String email;
 
-// Case 2: Same thread, complex logic requires modification
-// Fix: collect + apply after loop
-Set<K> toRemove = new HashSet<>();
-for (Map.Entry<K,V> entry : map.entrySet()) {
-    if (shouldRemove(entry)) toRemove.add(entry.getKey());
-}
-toRemove.forEach(map::remove);
-
-// Case 3: Callback/listener modifies during dispatch
-// Fix: CopyOnWriteArrayList for listener list
-
-// Case 4: Multi-threaded modification
-// Fix: ConcurrentHashMap, or external synchronization
-```
-
-**Step 4: Prevention**
-
-Add mutation tests: for any collection that is iterated in production
-code, add a test that: (a) sets up the iteration; (b) triggers a
-modification within the loop; (c) verifies the correct removal/update
-occurred without exception.
-
-_What separates good from great:_ Knowing that the CME stack trace
-shows iteration location but NOT modification location, so finding
-the modification requires code analysis.
-
----
-
-**[SENIOR] Q4: TRADE-OFF: When is `CopyOnWriteArrayList` the wrong choice
-despite being thread-safe?** [TRADE-OFF]
-
-_Why they ask:_ Tests ability to reason about COW performance trade-offs.
-
-_Likely follow-up:_ "What would you use instead for a write-heavy list?"
-
-`CopyOnWriteArrayList.add()` and `remove()` create a NEW copy of the
-entire backing array. For a list with N elements, each write is O(N)
-time and O(N) memory.
-
-Wrong use cases:
-
-1. **Frequently-updated list**: a list of active connections where
-   connections are added and removed frequently. With 10,000 connections,
-   each add/remove copies 10,000 references. Under high connection
-   churn, this creates GC pressure and O(N) write cost.
-
-2. **Large list**: a 1M-element cache list. Each write copies 1M
-   references = 8MB on a 64-bit JVM per write. Under any write load,
-   this is prohibitively expensive.
-
-3. **Write-heavy, read-light**: COW is optimized for "many readers,
-   few writers." If writes are as frequent as reads, COW provides no
-   benefit and significant overhead.
-
-Better alternatives when writes are frequent:
-
-- `Collections.synchronizedList(new ArrayList<>())`: single lock,
-  O(1) add/remove, but reads also lock
-- `ConcurrentLinkedDeque`: lock-free MPMC queue, O(1) add/remove,
-  but not a random-access list
-- Manual `ReadWriteLock` around an `ArrayList`: read lock is shared
-  (multiple readers), write lock is exclusive
-
-_What separates good from great:_ Quantifying "COW write is O(N) copy"
-not just "expensive" - and suggesting `ReadWriteLock + ArrayList` as
-the right abstraction for write-tolerant read-heavy access.
-
----
-
-**[STAFF] Q5: BEHAVIORAL: Describe a system design scenario where
-choosing fail-safe over fail-fast (or vice versa) had significant impact.**
-[BEHAVIORAL - STAR]
-
-_Why they ask:_ Tests ability to reason about design choices and their consequences.
-
-_Likely follow-up:_ "Would you make the same choice again?"
-
-**Situation:** A notification service dispatched events to registered
-listeners (webhooks for external partners). The listener list was backed
-by an `ArrayList`. During a peak event storm (3x normal rate), the service
-started throwing `ConcurrentModificationException` in the dispatch loop.
-An ops team member had added a self-managing listener that removed itself
-from the list after processing certain event types.
-
-**Task:** Remediate the CME issue while preserving the business requirement
-that listeners can self-unregister.
-
-**Action (fail-safe approach):**
-
-1. Replaced `ArrayList` with `CopyOnWriteArrayList`
-2. Removed all manual `synchronizedList` wrappers (COW is inherently
-   thread-safe)
-3. Result: no more CME; self-unregistration worked (listener removed
-   in next dispatch cycle)
-
-**Long-term consequence of fail-safe choice:**
-The stale snapshot behavior created a subtle issue: a deregistered
-listener continued to receive the current batch of events. For most
-listeners this was harmless (idempotent). For one rate-limited partner
-webhook, the "extra event" (from the stale snapshot) caused a 429
-rate-limit response and extra retry logic to be triggered.
-
-**What I would change**: For listeners that require strict "stop now"
-behavior: add a `boolean active` volatile flag checked at the start of
-`onEvent()`. This gives fail-safe iteration stability with opt-in
-"cancel immediately" semantics:
-
-```java
-public void onEvent(Event e, EventDispatcher d) {
-    if (!active.get()) return; // skip if deregistered
-    // ... process event ...
-    if (shouldDeregister(e)) {
-        active.set(false);
-        d.unregisterListener(this);
-    }
-}
-```
-
-**Result:** The COW approach worked and was the right trade-off for
-the majority of cases. The `active` flag pattern was added for
-rate-sensitive listeners.
-
-_What separates good from great:_ Discovering and solving the secondary
-consequence (stale snapshot event delivered to deregistered listener)
-rather than just fixing the CME.
-
----
-
-**[SENIOR] Q6: What are the memory implications of `CopyOnWriteArrayList`
-writes?** [SCALE]
-
-_Why they ask:_ Tests understanding of COW memory behavior at scale.
-
-_Likely follow-up:_ "How does the GC handle the old array copies?"
-
-Each `add()` or `remove()` on `CopyOnWriteArrayList`:
-
-1. Acquires an intrinsic lock (`synchronized`)
-2. Creates a new array of length `old.length + 1` (for add) or `old.length - 1` (for remove)
-3. Copies all references from the old array to the new array
-4. Replaces the backing array reference with the new array
-5. The old array becomes unreachable (if no iterator is using it) -> GC eligible
-
-Memory cost per write: one new array of size N references = N _ 8 bytes
-(on 64-bit JVM with compressed oops: 4 bytes per reference, so N _ 4 bytes).
-
-Scale example: a 10,000-element list with 100 writes/second:
-
-- Each write: allocates 10,000 \* 4 = 40KB
-- 100 writes/second = 4MB/second allocation rate from COW writes alone
-- The old arrays are eligible for GC but create sustained pressure
-
-GC impact: the old arrays are short-lived (from one write to the next
-write or to end-of-GC-cycle). They are allocated in the young generation
-and should be collected in minor GC. But under high write load, they
-may survive to old generation (promotion), causing GC pressure.
-
-Monitoring: enable GC logging (`-Xlog:gc*`). If GC shows high allocation
-rate and frequent young-gen collections, COW write overhead may be
-contributing.
-
-_What separates good from great:_ The GC generation promotion risk under
-high write load - old arrays may not be collected before next minor GC,
-causing premature promotion to old gen.
-
----
-
----
-
-# Choosing the Right Collection: A Decision Framework
-
-**Interview Weight:** high - The practical synthesis of all collection
-knowledge; tests judgment, not just recall.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Collection choice starts with the access pattern: ordered-by-insertion,
-> sorted, unique, or map. Then: thread safety requirement and access
-> pattern (mostly read, balanced, mostly write). Then: iteration frequency.
-> The common traps: `LinkedList` (poor cache locality - almost always
-> `ArrayDeque`), `Vector` and `Hashtable` (legacy - use `CopyOnWriteArrayList`
-> or `ConcurrentHashMap`). `ArrayList` is the right `List` default; `HashMap`
-> is the right `Map` default for single-threaded.
-
-**3 minutes (Senior):**
-
-> Decision axes:
->
-> **1. Collection type (interface)**:
->
-> - Need fast contains/distinct? -> `Set` (HashSet: O(1), TreeSet: O(log n) + sorted)
-> - Need FIFO/LIFO? -> `Queue`/`Deque` (ArrayDeque: general, PriorityQueue: min-heap)
-> - Need key-value lookup? -> `Map` (HashMap: O(1), TreeMap: O(log n) + sorted)
-> - Need ordered list? -> `List` (ArrayList: default, LinkedList: almost never)
->
-> **2. Ordering requirement**:
->
-> - Insertion order matters? -> `LinkedHashSet` / `LinkedHashMap`
-> - Natural/comparator order? -> `TreeSet` / `TreeMap`
-> - No ordering needed? -> `HashSet` / `HashMap`
->
-> **3. Concurrency requirement**:
->
-> - No concurrency? -> `java.util.*` (ArrayList, HashMap)
-> - Concurrent reads, occasional writes? -> `CopyOnWriteArrayList` (List),
->   `ConcurrentHashMap` (Map)
-> - Balanced concurrent access? -> `ConcurrentHashMap`
-> - FIFO multi-producer/consumer? -> `ArrayBlockingQueue`, `LinkedBlockingQueue`
->
-> **4. Memory / performance**:
->
-> - Small map with enum keys? -> `EnumMap` (array-backed, faster than HashMap)
-> - Need identity comparison (not equals)? -> `IdentityHashMap`
-> - Need weak-reference keys (cache)? -> `WeakHashMap`
-> - Large collections with binary data? -> consider off-heap structures
-
-**Framework:** TYPE (interface choice) + ORDER + CONCURRENCY + PERFORMANCE
-
-_Adapting up:_ Discuss `EnumMap`, `WeakHashMap`, `IdentityHashMap`
-as specialized optimizations; and the n-tier decision tree for large-scale
-concurrent data structures (Concurrent Skip List, Caffeine cache).
-
-_Adapting down:_ ArrayList, HashMap for single-threaded. ConcurrentHashMap
-for concurrent. ArrayDeque for queue/stack. HashSet for uniqueness.
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "Decision tree: What is my key operation? (lookup ->
-Map/Set; ordered traversal -> Tree*; insertion/removal at ends ->
-ArrayDeque). Is it concurrent? (yes -> Concurrent*). Any ordering needed?
-(insertion -> Linked*; sort -> Tree*)."
-
-**(2) First principles:** "Every collection choice trades: memory overhead,
-access time complexity, ordering guarantee, thread safety. Match the
-collection's guarantee to your requirement."
-
-**(3) Bridge:** "Choosing a collection is like choosing a filing system.
-Unsorted box (HashMap): fast put/get by label, no order. Sorted binder
-(TreeMap): alphabetical, slower. Ticket queue (ArrayDeque): FIFO.
-Client list with visit order (LinkedHashMap): insertion-ordered access."
-
----
-
-### 📘 Concept Explanation
-
-**Decision tree:**
-
-```
-Start
-  |
-  +-- Need UNIQUE elements (set semantics)?
-  |     |
-  |     +-- Need sorted order?       TreeSet   O(log n)
-  |     +-- Need insertion order?    LinkedHashSet O(1) amortized
-  |     +-- No order needed?         HashSet   O(1) amortized
-  |
-  +-- Need KEY -> VALUE mapping?
-  |     |
-  |     +-- Need sorted order?       TreeMap   O(log n)
-  |     +-- Need insertion order?    LinkedHashMap O(1) amortized
-  |     +-- No order needed?         HashMap   O(1) amortized
-  |     +-- Keys are enums?          EnumMap   O(1), fastest
-  |     +-- Need concurrent access?  ConcurrentHashMap
-  |     +-- Keys by identity (==)?   IdentityHashMap
-  |     +-- Cache (key auto-removed)?WeakHashMap
-  |
-  +-- Need FIFO / LIFO / Priority?
-        |
-        +-- FIFO (queue)?            ArrayDeque or LinkedBlockingQueue
-        +-- LIFO (stack)?            ArrayDeque (use push/pop)
-        +-- Priority queue?          PriorityQueue (min-heap)
-        +-- Concurrent producer-consumer?  BlockingQueue implementations:
-               Bounded buffer?        ArrayBlockingQueue
-               Unbounded?             LinkedBlockingQueue
-               Work stealing?         LinkedTransferQueue
-        +-- Delayed/scheduled?       DelayQueue
-```
-
-**Complexity reference:**
-
-| Collection        | get/contains | add            | remove           | Notes                        |
-| ----------------- | ------------ | -------------- | ---------------- | ---------------------------- |
-| ArrayList         | O(1)         | O(1) amortized | O(n) shift       | best List default            |
-| LinkedList        | O(n)         | O(1) at ends   | O(1) if iterator | rarely better than ArrayList |
-| ArrayDeque        | O(1)         | O(1) amortized | O(1) at ends     | best Queue/Stack             |
-| HashMap           | O(1) avg     | O(1) avg       | O(1) avg         | best Map default             |
-| TreeMap           | O(log n)     | O(log n)       | O(log n)         | sorted, NavigableMap         |
-| HashSet           | O(1) avg     | O(1) avg       | O(1) avg         | best Set default             |
-| TreeSet           | O(log n)     | O(log n)       | O(log n)         | sorted                       |
-| PriorityQueue     | O(1) peek    | O(log n)       | O(log n)         | min at head                  |
-| ConcurrentHashMap | O(1)         | O(1)           | O(1)             | concurrent, no null          |
-
-**When to deviate from the defaults:**
-
-```java
-// DEFAULT: HashMap
-Map<String, User> users = new HashMap<>();
-
-// Use LinkedHashMap when: order of iteration matches insertion order
-Map<String, Config> orderedConfig = new LinkedHashMap<>();
-// Predictable serialization order for configs
-
-// Use TreeMap when: need floor()/ceiling()/range queries
-NavigableMap<Long, Event> timeline = new TreeMap<>();
-Event before = timeline.floorEntry(timestamp).getValue();
-
-// Use EnumMap when: keys are an enum type
-// ~30% faster than HashMap for enum key access
-Map<DayOfWeek, List<Appointment>> schedule = new EnumMap<>(DayOfWeek.class);
-
-// Use WeakHashMap for in-memory caches:
-// Entry is removed when key has no other strong references
-Map<Object, Metadata> metaCache = new WeakHashMap<>();
-// WARNING: unpredictable eviction - prefer Guava/Caffeine for caching
-
-// Use ArrayDeque (not Stack, not LinkedList) for stack/queue:
-Deque<State> history = new ArrayDeque<>();
-history.push(state);  // stack: LIFO
-history.pop();
-```
-
----
-
-### 💻 Code Example
-
-#### Decision framework applied to real scenarios
-
-```java
-// Scenario 1: Track unique HTTP session IDs seen in last 1 hour
-// Requirement: unique, no ordering needed, fast contains()
-// Choice: HashSet
-Set<String> activeSessions = new HashSet<>();
-activeSessions.add(sessionId);
-boolean isValid = activeSessions.contains(sessionId); // O(1)
-
-// Scenario 2: LRU Cache with ordered eviction
-// Requirement: insertion/access order, bounded size, O(1) get/put
-// Choice: LinkedHashMap with access-order + removeEldestEntry
-int capacity = 1000;
-Map<String, Value> lruCache = new LinkedHashMap<>(
-    capacity, 0.75f, true // true = access-order (not insertion-order)
-) {
     @Override
-    protected boolean removeEldestEntry(Map.Entry<String,Value> e) {
-        return size() > capacity; // evict oldest-accessed when full
+    public boolean equals(Object o) {
+        if (!(o instanceof User u)) return false;
+        return email.equals(u.email); // logical equality by email
     }
-};
+    // hashCode() NOT overridden -> uses Object.hashCode() (identity-based)
+}
 
-// Scenario 3: Event timeline - find all events in a time range
-// Requirement: sorted by timestamp, range query
-// Choice: TreeMap (NavigableMap)
-NavigableMap<Long, Event> timeline = new TreeMap<>();
-timeline.put(event.timestamp(), event);
-// Find events in last 5 minutes:
-long now = System.currentTimeMillis();
-SortedMap<Long, Event> recent =
-    timeline.subMap(now - 300_000L, true, now, true);
+// Symptom:
+Set<User> users = new HashSet<>();
+users.add(new User("alice@example.com"));
+users.contains(new User("alice@example.com")); // FALSE! Different hash codes!
+// HashSet checks hashCode first -> different hash -> different bucket -> not found!
 
-// Scenario 4: Multi-threaded request counter per endpoint
-// Requirement: concurrent reads and writes, atomic increment
-// Choice: ConcurrentHashMap + merge
-ConcurrentHashMap<String, Long> requestCounts =
-    new ConcurrentHashMap<>();
-requestCounts.merge(endpoint, 1L, Long::sum);  // atomic
+// Fix:
+@Override
+public int hashCode() {
+    return Objects.hash(email); // must use same fields as equals
+}
+// Rule: if a.equals(b), then a.hashCode() == b.hashCode() (REQUIRED by contract)
 
-// Scenario 5: Priority task queue (most urgent first)
-// Requirement: dequeue highest-priority item
-// Choice: PriorityQueue
-PriorityQueue<Task> taskQueue = new PriorityQueue<>(
-    Comparator.comparingInt(Task::priority).reversed()
-);
-taskQueue.offer(task);
-Task next = taskQueue.poll(); // O(log n), highest priority first
+// Diagnostic: add to code review checklist:
+// "Whenever equals() is overridden, hashCode() must also be overridden."
+// IDE will warn: "equals() but not hashCode()" via IntelliJ inspection
 ```
-
-> **Code walkthrough:** Each scenario maps a business requirement to a
-> concrete collection choice. The LRU cache using `LinkedHashMap` with
-> `access-order=true` and `removeEldestEntry()` is a complete,
-> production-ready cache in ~10 lines. `TreeMap.subMap()` enables
-> O(log n + k) range queries (k = results) - far more efficient than
-> filtering an `ArrayList`. The `ConcurrentHashMap.merge()` atomic
-> increment is the idiom that replaces thread-unsafe counter maps.
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior:** `ArrayList` for list, `HashMap` for map, `HashSet` for unique,
-`ArrayDeque` for queue/stack. Never `Vector` or `Hashtable`.
-
-**Mid-level:** Sort or range queries? `TreeMap`/`TreeSet`. Insertion order?
-`Linked*`. Concurrency? `Concurrent*`. Priority? `PriorityQueue`. Enum keys?
-`EnumMap`. LRU cache? `LinkedHashMap` with access-order.
-
-**Senior:** Quantify the choice with complexity. `LinkedList` is almost
-never correct - `ArrayDeque` is O(1) at both ends and has better cache
-locality. `WeakHashMap` is not a real cache (unpredictable eviction). For
-caches use Caffeine (or Guava) - proper eviction policies. `ConcurrentHashMap`
-has approximate `size()` - use `mappingCount()` for large maps.
-
-**Staff:** Collection choice at scale: memory pressure from large HashMaps
-(Java HashMap has ~48 bytes overhead per entry). For large collections
-of primitives, consider Eclipse Collections or HPPC (High Performance Primitive Collections)
-which avoid autoboxing overhead. Off-heap collections (Chronicle Map) for
-datasets larger than Java heap.
-
----
-
-### ⚠️ Common Misconceptions
-
-| #   | Misconception                                                              | Reality                                                                                                                                                                                                                    | Danger                                                                              |
-| --- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1   | `LinkedList` is faster for queue operations than `ArrayList`               | `ArrayDeque` is consistently faster than `LinkedList` for queue (FIFO) and stack (LIFO) operations, with better cache locality. `LinkedList` should rarely be used                                                         | Performance regression from using LinkedList as a queue                             |
-| 2   | `WeakHashMap` is a good choice for an in-memory cache                      | `WeakHashMap` evicts entries when the key has no other strong references. If caller holds a reference to the key, entries are never evicted. Eviction is non-deterministic (depends on GC). Not suitable for bounded cache | Memory leak if keys are held elsewhere; or unexpected eviction if keys are not held |
-| 3   | `TreeMap` and `HashMap` have the same interface so they're interchangeable | `HashMap` does not guarantee iteration order. Code that accidentally relies on HashMap iteration order (which is deterministic for the same JVM run) will break when switching between JVM versions or adding elements     | Non-deterministic ordering bugs that only manifest in production or after upgrade   |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure 1 - O(n^2) from wrong collection choice**
-
-Symptom: Feature works correctly in dev (small data) but is extremely
-slow in production (large data set).
-
-Root cause: Using `List.contains()` in a loop (O(n) per call -> O(n^2)
-total), or `LinkedList.get(index)` (O(n) per call) in random access.
-
-Diagnostic: Profile with JFR or async-profiler. Hot path in
-`AbstractSequentialList.get()` or `AbstractCollection.contains()` = wrong collection type.
-
-Fix: Replace `List` used for `contains()` with `Set`. Replace `LinkedList`
-used for `get(index)` with `ArrayList`.
-
----
-
-**Failure 2 - HashMap corruption in multithreaded code**
-
-Symptom: `get()` returns null for keys that were just put. `size()` returns
-impossible values. Thread stuck in infinite loop inside `HashMap.get()` (Java 7).
-
-Root cause: Concurrent modification of `HashMap` without synchronization.
-
-Fix: Replace with `ConcurrentHashMap`. Add a code-level test: `Thread.holdsLock(map)`
-check in critical sections, or static analysis (FindBugs `IS_FIELD_NOT_GUARDED`).
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach                                      |
-| ---------------- | --------------------------------------------------------- |
-| 30 min           | ArrayList vs LinkedList; HashMap vs TreeMap; Concurrent\* |
-| 1 hour           | Add LRU with LinkedHashMap; PriorityQueue; EnumMap        |
-| 1.5 hours        | Add WeakHashMap nuances; off-heap; Eclipse Collections    |
+| Question Category | Time to Answer |
+|---|---|
+| Top 5 Java code review issues | 2 minutes |
+| null handling strategies | 2 minutes |
+| Resource leak detection | 2 minutes |
+| Thread safety review | 2-3 minutes |
+| equals/hashCode contract | 2 minutes |
+| Exception handling patterns | 2 minutes |
+| Design smell detection | 2 minutes |
 
 ---
 
-**[MID] Q1: Why is `ArrayDeque` preferred over `LinkedList` for
-queue and stack operations?** [TRADE-OFF]
+**Q1 (Top 5 issues): What are the top 5 Java code review findings?**
 
-_Why they ask:_ A classic Java collection knowledge question.
+A:
+1. **NullPointerException risk:** dereferencing a value that could be null
+   without checking. Fix: `Objects.requireNonNull` for required parameters,
+   `Optional<T>` for optional returns
+2. **Unclosed resources:** connections, streams, files not in try-with-resources
+   Fix: `try (var conn = ...; var stmt = ...) { }`
+3. **Exception swallowing:** `catch (Exception e) { e.printStackTrace(); }` - error lost
+   Fix: rethrow as domain exception with context
+4. **Shared mutable state without synchronization:** concurrent access without
+   `synchronized`, `volatile`, or concurrent collection
+5. **equals/hashCode inconsistency:** `equals()` overridden but `hashCode()` not,
+   breaking all hash-based collections
 
-_Likely follow-up:_ "What does `LinkedList` do that `ArrayDeque` can't?"
-
-`ArrayDeque` uses a circular resizable array; `LinkedList` uses a doubly
-linked list of nodes.
-
-**Cache locality**: `ArrayDeque` elements are contiguous in memory.
-CPU cache lines hold multiple elements. Iterating or polling from
-`ArrayDeque` hits the cache on most accesses. `LinkedList` nodes are
-heap objects scattered across memory. Every `next` pointer dereference
-is a potential cache miss (pointer chasing). At large sizes on modern
-hardware, `LinkedList.poll()` can be 3-5x slower than `ArrayDeque.poll()`.
-
-**Memory overhead**: each `LinkedList` node = 24 bytes (object header +
-`item` + `next` + `prev` = 4 fields). For 1M elements: 24MB of overhead
-just for node objects. `ArrayDeque` stores references directly in the
-array: 1M elements \* 4 bytes = 4MB.
-
-**Operations**: both are O(1) for `addFirst`, `addLast`, `pollFirst`,
-`pollLast`. `ArrayDeque` is O(n) for `contains()` - same as `LinkedList`.
-
-**What `LinkedList` can do that `ArrayDeque` cannot**:
-`ListIterator.add()` and `ListIterator.remove()` at arbitrary positions
-during iteration in O(1) (assuming you already have the iterator
-positioned). `ArrayDeque` does not implement `List` and has no arbitrary
-position insertion. For this use case, `LinkedList` remains valid.
-
-_What separates good from great:_ The cache locality explanation
-quantified - "pointer chasing = cache miss" - not just "array is faster."
+*What separates good from great:* These five patterns account for the majority
+of Java bugs in production. Static analysis tools (SpotBugs for null/resource,
+Checkstyle for style, PMD for complexity, SonarQube combines all) automate
+detection. The remaining high-value manual check: logic errors and race conditions
+that require understanding the application context.
 
 ---
 
-**[SENIOR] Q2: When would you use `TreeMap` over `HashMap`?**
-[TRADE-OFF]
+**Q2 (Thread safety review): How do you review code for thread safety?**
 
-_Why they ask:_ Tests knowledge of when O(log n) is better than O(1).
-
-_Likely follow-up:_ "What are the extra APIs that TreeMap provides?"
-
-`HashMap` provides O(1) average get/put. `TreeMap` provides O(log n) get/put
-but also `NavigableMap` operations: `firstKey()`, `lastKey()`, `floorKey()`,
-`ceilingKey()`, `subMap(from, to)`, `headMap(to)`, `tailMap(from)`.
-
-Use `TreeMap` when:
-
-1. **Range queries**: "find all events between time T1 and T2"
-   -> `timeline.subMap(T1, T2)` - O(log n + k) vs O(n) scan of HashMap
-2. **Sorted iteration**: keys always iterated in sorted order. `HashMap`
-   iteration order is undefined.
-3. **Nearest-neighbor queries**: "find the largest key <= X"
-   -> `tree.floorKey(X)` - O(log n)
-4. **Pagination**: "fetch keys from position N to M" (with `tailMap`)
-
-Don't use `TreeMap` when:
-
-- Only random access by exact key needed (`HashMap` is faster)
-- Key type doesn't implement `Comparable` and no Comparator provided
-  (required for `TreeMap`)
-
-Example: a rate limiter that tracks requests per minute window. The
-"window" key is a timestamp truncated to the minute. Cleaning up old
-windows: `rateLimits.headMap(now - 5_minutes).clear()` is O(log n + k)
-with `TreeMap`. With `HashMap`, you'd need to iterate all entries: O(n).
-
-_What separates good from great:_ Quantifying range query improvement
-(O(log n + k) vs O(n)) with a concrete use case (sliding window cleanup).
-
----
-
-**[SENIOR] Q3: DEBUGGING: A service's memory usage keeps growing even
-though you're using `WeakHashMap` for caching. Why?** [DEBUGGING]
-
-_Why they ask:_ Tests understanding of WeakHashMap's specific semantics.
-
-_Likely follow-up:_ "What would you use instead?"
-
-`WeakHashMap` retains entries only as long as the KEY has at least one
-strong reference elsewhere. When the key object has no strong references,
-the GC can collect it, and the entry is removed from the map.
-
-Memory growing despite `WeakHashMap` means: the keys have strong references
-elsewhere and are NEVER collected.
-
-Common causes:
-
-1. **String literal keys**: `String` literals are interned in the JVM's
-   constant pool - a strong reference forever. `WeakHashMap` with `String`
-   literal keys NEVER evicts entries.
-
-2. **Keys held in collections**: the WeakHashMap key is also stored in
-   another `List` or `Set`. As long as that list holds the reference, the
-   WeakHashMap entry persists.
-
-3. **Keys held by long-lived objects**: an object field or static variable
-   holds the key.
-
-Diagnosis: heap dump + analyze `WeakHashMap$Entry` objects. For each entry,
-use "find shortest path to GC root" - this shows what is keeping the key
-alive.
-
-Fix: Use a proper cache library (`Caffeine`, Guava `CacheBuilder`) with
-explicit size-based or time-based eviction. These evict deterministically
-regardless of GC behavior.
-
-_What separates good from great:_ The `String` literal key trap - a very
-common `WeakHashMap` misuse - and the "find shortest path to GC root" heap
-dump diagnostic technique.
-
----
-
-**[STAFF] Q4: ARCHITECTURE: How do you choose between a Java collection
-and a database or cache for storing application state?** [ARCHITECTURE]
-
-_Why they ask:_ Tests ability to reason beyond in-JVM data structures.
-
-_Likely follow-up:_ "What is the scalability inflection point?"
-
-**In-JVM collection** (HashMap, ConcurrentHashMap):
-
-- Latency: nanoseconds to microseconds
-- Visibility: current JVM only
-- Durability: none (lost on restart)
-- Size limit: Java heap (typically 2-32GB)
-- Best for: request-scoped state, hot path caches, in-flight aggregations
-
-**External cache** (Redis, Memcached):
-
-- Latency: sub-millisecond (same data center)
-- Visibility: all service instances
-- Durability: Redis with AOF persistence
-- Size limit: RAM on cache nodes (terabytes)
-- Best for: session state, shared counters, cross-service caches, pub/sub
-
-**Database** (PostgreSQL, DynamoDB):
-
-- Latency: milliseconds
-- Visibility: all services, all time
-- Durability: full ACID (or eventual with DynamoDB)
-- Size limit: effectively unlimited
-- Best for: business-critical state, audit trail, complex queries
-
-Decision framework:
-
-```
-Question 1: Does the state survive a JVM restart?
-  No -> in-JVM collection
-  Yes -> external (cache or DB)
-
-Question 2: Does multiple service instances need to see it?
-  No -> in-JVM
-  Yes -> external
-
-Question 3: Is query complexity needed (range, join, aggregation)?
-  Yes -> database
-  No -> cache if latency matters, DB if durability matters
-
-Question 4: What is the read:write ratio?
-  Read-heavy (cache-aside pattern):
-    cache layer (Redis) in front of DB
-  Write-heavy:
-    DB directly (avoid cache write-invalidation complexity)
-```
-
-_What separates good from great:_ The read:write ratio question and the
-"cache-aside vs write-through" decision point, not just "use cache for
-speed."
-
----
-
-**[SENIOR] Q5: How does `EnumMap` work and when is it worth using?**
-[CONCEPTUAL]
-
-_Why they ask:_ Tests knowledge of specialized collection optimization.
-
-_Likely follow-up:_ "What is the performance difference vs HashMap?"
-
-`EnumMap<K extends Enum<K>, V>` stores values in an array indexed by
-the enum ordinal (`enum.ordinal()`). The array index IS the key.
-
-Implementation:
-
+A:
 ```java
-// Conceptual EnumMap internals:
-class EnumMap<K extends Enum<K>, V> {
-    private final Class<K> keyType;
-    private Object[] vals; // sized to number of enum constants
+// RED FLAGS in code review:
+// 1. Non-final mutable static field
+static Map<String, User> cache = new HashMap<>(); // NOT thread-safe!
+// Fix: ConcurrentHashMap, or lock-protected access, or immutable + reference swap
 
-    public V get(K key) {
-        return (V) vals[key.ordinal()]; // direct array access: O(1)
-    }
-    public V put(K key, V value) {
-        Object old = vals[key.ordinal()];
-        vals[key.ordinal()] = value;
-        return (V) old;
-    }
-    // Iteration: walk the array in ordinal order
+// 2. Compound check-then-act without atomicity
+if (!cache.containsKey(key)) {  // check
+    cache.put(key, load(key));  // act
+    // Another thread may add key between check and act -> lost update!
 }
+// Fix: ConcurrentHashMap.computeIfAbsent(key, k -> load(k))
+
+// 3. Iterator over shared collection
+for (User u : sharedList) { ... } // ConcurrentModificationException!
+// Fix: CopyOnWriteArrayList, synchronized block, or stream on snapshot
+
+// 4. Reading a long or double without volatile/synchronized
+long counter; // non-atomic on 32-bit JVM (two 32-bit writes)
+// Fix: AtomicLong, or volatile (for visibility without atomicity)
+
+// 5. Double-checked locking without volatile
+static MyClass instance; // NOT volatile: broken DCL
+if (instance == null) {
+    synchronized (MyClass.class) {
+        if (instance == null) instance = new MyClass(); // may publish partially constructed!
+    }
+}
+// Fix: volatile instance, or class holder idiom, or enum singleton
 ```
 
-Benefits vs `HashMap<DayOfWeek, ...>`:
+*What separates good from great:* Thread safety bugs are notoriously hard
+to reproduce (intermittent, timing-dependent). The review strategy: look for
+SHARED + MUTABLE state. Single-threaded code is safe by definition. Immutable
+shared state is safe by definition. The only risky combination: shared +
+mutable + no synchronization. When reviewing: ask "can two threads access
+this field simultaneously?" If yes: is it properly protected?
 
-- No hash computation needed (ordinal = index)
-- No collision handling (array access is direct)
-- No boxing for enum keys
-- Iteration is always in enum declaration order
-- Memory: one array vs hash buckets with linked chains
-- Performance: ~2x faster for get/put than HashMap in microbenchmarks
+---
 
-Use cases:
+**Q3 (Resource leaks): How do you identify and fix resource leaks?**
 
-- Day-of-week schedules: `EnumMap<DayOfWeek, List<Appointment>>`
-- HTTP status code handlers: `EnumMap<HttpStatus, Handler>`
-- State machine transitions: `EnumMap<State, List<Transition>>`
-- Feature flags by tier: `EnumMap<Tier, Set<Feature>>`
+A:
+```java
+// All java.io.Closeable and java.lang.AutoCloseable should be in try-with-resources
 
-Worth using whenever: keys are a known enum type AND the map is in a
-hot path (high call rate). The performance gain is modest in most
-applications but adds up in high-frequency code.
+// Connection: expensive, limited pool (will exhaust!)
+Connection conn = dataSource.getConnection();
+// ... if exception thrown above, conn never closed!
 
-_What separates good from great:_ Knowing the implementation (ordinal
-as array index, no hashing) rather than just "it's faster with enums."
+// Stream: file descriptor leak (OS limit ~65536 open files per process)
+InputStream in = Files.newInputStream(path);
+// ... if exception, file descriptor leaked!
+
+// Correct pattern (try-with-resources handles close + exception):
+try (Connection conn = dataSource.getConnection();
+     InputStream in = Files.newInputStream(path)) {
+    // use resources
+} // auto-closed in reverse order, even on exception
+
+// Java 9: effectively final variable in try-with-resources
+InputStream in = getInputStream();
+try (in) { // reuse existing variable (Java 9+)
+    // use in
+}
+
+// Static analysis: SpotBugs rule OBL_UNSATISFIED_OBLIGATION
+// Finds: Closeable created but not closed on all exit paths
+// Run: spotbugs -textui -high myapp.jar
+
+// Less obvious leak: thread pools, scheduled executors
+ExecutorService exec = Executors.newFixedThreadPool(4);
+// ... if exception: executor threads run forever! JVM never exits
+// Fix: exec.shutdown() in finally or use try-with-resources (ExecutorService
+// is Closeable in Java 19+ via AutoCloseable)
+```
+
+*What separates good from great:* Connection pool exhaustion is the most
+common resource leak symptom in production. The log shows: "Timeout waiting
+for connection from pool" - application hangs, not crashes. The root cause:
+a code path that throws an exception before the connection is closed, returning
+it to the pool. With 10 threads each leaking one connection: pool of 10 = fully
+exhausted after 10 requests. Diagnosis: `connection.pool.size` metric drops
+steadily (or JMX pool stats). Fix: always try-with-resources, or at minimum
+`finally { conn.close(); }`.
+
+---
+
+**Q4 (Design smells): What design smells do you look for in Java review?**
+
+A:
+```java
+// 1. Law of Demeter violation (call chain)
+order.getCustomer().getAddress().getCity(); // "train wreck"
+// Fix: order.getShippingCity() or order.getCustomer().shippingCity()
+// Reason: change to Customer.getAddress() breaks all callers of the chain
+
+// 2. Feature Envy: method uses another object's data more than its own
+class OrderValidator {
+    boolean isValid(Order order) {
+        // Uses all Customer fields, none of Order fields:
+        return order.getCustomer().getAge() >= 18
+            && order.getCustomer().getCountry().equals("US")
+            && !order.getCustomer().isBlacklisted();
+        // This logic BELONGS in Customer
+    }
+}
+// Fix: move to Customer.isEligibleToOrder()
+
+// 3. Returning mutable internal state
+class Registry {
+    private final Map<String, User> users = new HashMap<>();
+    public Map<String, User> getUsers() { return users; } // BAD: caller can mutate!
+    // Fix: return Collections.unmodifiableMap(users) or Map.copyOf(users)
+}
+
+// 4. Boolean parameter (splits two behaviors into one method)
+void processOrder(Order order, boolean urgent);
+// What does true mean? urgent? expedited? priority? rush?
+// Fix: two methods (processOrder, processUrgentOrder)
+// or: processOrder(Order, OrderPriority priority) with enum
+
+// 5. Overly broad exception catch:
+catch (Exception e) { // catches NPE, OutOfMemoryError, etc.
+    log.warn("Something failed", e); // hides bugs silently
+}
+// Fix: catch specific exceptions; let unexpected exceptions propagate
+```
+
+*What separates good from great:* Design smell detection requires context.
+Not every long method or large class is a problem: a 100-line method in a
+utility class with clear local variables may be more readable than 5 extracted
+single-line methods with opaque names. Code review is not about mechanically
+applying rules but asking: "Is this code as clear and correct as it can be
+given the constraints?" The best reviewers ask questions: "Why did you choose
+this approach? Did you consider X?" rather than mandating changes.
+
+---
+
+**Q5 (Security review): What security issues do you look for in Java review?**
+
+A:
+```java
+// SQL Injection: always parameterized queries
+String sql = "SELECT * FROM users WHERE email = '" + email + "'";
+// email = "' OR '1'='1" -> returns all users!
+// Fix: PreparedStatement with ? placeholder
+
+// Path traversal: user input used in file paths
+File f = new File("/data/uploads/" + filename);
+// filename = "../../../etc/passwd" -> directory traversal!
+// Fix:
+Path safe = Path.of("/data/uploads").resolve(filename).normalize();
+if (!safe.startsWith("/data/uploads"))
+    throw new SecurityException("Path traversal attempt: " + filename);
+
+// Deserialization: never deserialize untrusted data
+ObjectInputStream ois = new ObjectInputStream(untrustedStream);
+Object obj = ois.readObject(); // code execution gadget chains!
+// Fix: use ObjectInputFilter, or avoid Java serialization for untrusted input
+
+// Logging sensitive data:
+log.info("User logged in: email={}, password={}", email, password); // BAD!
+// Fix: never log passwords, tokens, PII
+log.info("User logged in: email={}", email); // OK
+
+// Random number generation for security:
+Random r = new Random(); // NOT cryptographically secure
+r.nextInt(100); // predictable with known seed
+// Fix: SecureRandom for tokens, passwords, nonces:
+SecureRandom sr = new SecureRandom();
+byte[] token = new byte[32];
+sr.nextBytes(token); // cryptographically random
+String tokenHex = HexFormat.of().formatHex(token); // 64-char hex token
+```
+
+*What separates good from great:* Security review is the highest-risk review
+dimension. A single SQL injection can exfiltrate the entire database. A single
+path traversal can read server credentials. The OWASP Top 10 is the checklist:
+injection, broken authentication, XSS, insecure deserialization, security
+misconfiguration. In Java: SQL injection is #1 (PreparedStatement always),
+insecure deserialization is #2 (avoid Java serialization for external input),
+path traversal is #3 (normalize + prefix check). Automated tools: OWASP
+Dependency-Check (vulnerable dependencies), SonarQube security rules,
+Semgrep rules for Java security patterns.
+
+---
+
+**Q6 (Exception review): What exception handling patterns are correct?**
+
+A:
+```java
+// ANTI-PATTERN 1: swallow exceptions
+try { doWork(); }
+catch (Exception e) { } // silent failure - hides bugs, debugging nightmare
+
+// ANTI-PATTERN 2: log and rethrow (double-logging)
+catch (Exception e) {
+    log.error("Error", e);
+    throw e; // logs here AND in the caller: duplicate stack trace in logs
+}
+// Fix: log OR throw, not both (unless at the top-level boundary handler)
+
+// ANTI-PATTERN 3: wrap and lose context
+catch (SQLException e) {
+    throw new RuntimeException("Database error"); // lost: which SQL, which params
+}
+// Fix: include context:
+throw new DataAccessException("Failed to fetch user " + userId, e);
+
+// CORRECT: wrap with context, don't re-log
+catch (IOException e) {
+    throw new ServiceException("Failed to read config from " + path, e);
+}
+// One place logs at the boundary (REST controller, message consumer, etc.)
+
+// CORRECT: handling specific recoverable cases
+try {
+    return cache.get(key);
+} catch (CacheException e) {
+    log.warn("Cache miss for {}: {}", key, e.getMessage());
+    return loadFromDatabase(key); // specific recovery action
+}
+
+// CORRECT: finally for cleanup (when not using try-with-resources)
+try { doWork(); }
+finally { cleanup(); } // always runs: normal AND exception paths
+```
+
+*What separates good from great:* Exception handling strategy should be
+defined at the architecture level, not method by method. The "log at the
+boundary" pattern: lower-level methods throw checked or unchecked exceptions
+with context. The top-level handler (Spring's `@ExceptionHandler`,
+Kafka consumer error handler, main method) logs the full stack trace once
+and returns an appropriate error response. This produces one log entry per
+error (not duplicate stack traces from log-and-rethrow). The MDC (Mapped
+Diagnostic Context) in log4j/logback adds correlation IDs: every log line
+for a request includes `requestId=abc123`, making distributed tracing easier.
+
+---
+
+**Q7 (Immutability review): How do you review for mutability issues?**
+
+A:
+```java
+// REVIEW: is this object safely shared?
+
+// FAIL: mutable class fields exposed
+class Config {
+    public List<String> allowedHosts; // mutable, public!
+    // Any caller can: config.allowedHosts.add("evil.com")
+}
+
+// FAIL: returning mutable copy reference
+class SecurityConfig {
+    private List<String> allowedHosts = new ArrayList<>();
+    public List<String> getAllowedHosts() {
+        return allowedHosts; // caller can mutate!
+    }
+}
+
+// PASS: defensive copy on return
+public List<String> getAllowedHosts() {
+    return List.copyOf(allowedHosts); // unmodifiable snapshot
+}
+
+// PASS: immutable from construction
+class SecurityConfig {
+    private final List<String> allowedHosts;
+    SecurityConfig(List<String> hosts) {
+        this.allowedHosts = List.copyOf(hosts); // copy + immutable
+    }
+    public List<String> getAllowedHosts() {
+        return allowedHosts; // already immutable, safe to return directly
+    }
+}
+
+// REVIEW checklist for mutability:
+// - final on all fields? (can't reassign, but doesn't prevent mutation of objects)
+// - mutable fields (List, Map, Date, byte[]) -> defensive copy on input and output?
+// - Is this class used as a HashMap key? -> must be immutable (hashCode must be stable)
+// - Is this class used across threads? -> must be thread-safe (immutable or synchronized)
+```
+
+*What separates good from great:* Immutability review is about anticipating
+where sharing goes wrong. A `List<String>` field that's never shared across
+threads and is always replaced wholesale (not mutated) is fine as mutable.
+A `List<String>` field that's accessed concurrently or returned to callers
+who might modify it needs to be immutable. The review question: "Who holds a
+reference to this, and could any of them modify it?" If the answer is
+"multiple callers in different threads," the class must be immutable or
+properly synchronized.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ level - comparison table not required)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ level - system design not required)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: code review mental model is conceptual, not visual)*
 
 ---
 
 ---
 
-# Abstraction Leakage: When Java Abstractions Expose Internals
-
-**Interview Weight:** medium-high - A META-level concept; tests design
-wisdom beyond API knowledge.
-
----
+## Java Version Upgrade Decision Framework
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Abstraction leakage occurs when an abstraction's implementation details
-> bleed through its interface - callers must know about internals to use
-> it correctly. In Java: returning mutable internal collections, checked
-> exceptions from implementation details, `Thread.sleep()`-based polling
-> APIs, and performance characteristics that contradict the abstraction
-> (like `LinkedList.get(i)` being O(n) despite implementing `List` which
-> implies O(1) random access). These leaks create invisible coupling and
-> brittle callers.
+> Java version upgrades follow a decision framework: first, LTS versions only
+> (8, 11, 17, 21) for production - never non-LTS for long-running apps.
+> Second, assess compatibility: does everything compile? (source compatibility),
+> do existing .class files run? (binary compatibility), does behavior change?
+> (semantic compatibility). Third: test with migration tools (`--release` flag,
+> jdeps, jlink). Fourth: incremental adoption (compile with Java 17, run on
+> Java 11, add Java 17 features gradually). LTS support: 8 (extended), 11
+> (extended), 17 (until 2029), 21 (until 2031).
 
 **3 minutes (Senior):**
+> The version upgrade decision has two axes: WHEN (LTS timing) and HOW MUCH
+> (how many Java features to adopt). LTS cadence: every 2 years since Java 17
+> (17, 21, 25). Companies typically stay on LTS N-1 until N has 6+ months of
+> proven stability and their ecosystem (frameworks, libraries, tools) is
+> compatible.
+>
+> Java 11 to 17 changes: modules (JEP 261), removed APIs (Nashorn, CORBA,
+> sun.misc.BASE64Encoder), new features (records, sealed classes, text blocks,
+> pattern matching instanceof, switch expressions). Java 17 to 21: virtual
+> threads (JEP 444), sequenced collections, record patterns, switch pattern
+> matching GA.
+>
+> Migration blockers: reflection into JDK internals (modules block this),
+> removed APIs (replaced in later versions or via third-party), bytecode
+> instrumentation agents (need updating for new bytecode instructions),
+> GraalVM native (closed-world constraint requires explicit config).
 
-> **The concept (Joel Spolsky's law):** "All non-trivial abstractions,
-> to some degree, are leaky." The key word is "to some degree" - the
-> question is how much and whether the leakage is accounted for.
->
-> **Java collection leakage examples:**
-> (1) `List.get(int)` contract: the `List` interface implies O(1) random
-> access. `LinkedList.get(i)` is O(n). Callers using a `List` reference
-> with a `LinkedList` implementation experience unexpected O(n^2) in loops.
-> The interface abstraction leaks the performance contract.
->
-> (2) `HashMap.get()` contract: appears O(1). Actually O(n) in the
-> worst case (all keys hash to same bucket). Callers relying on O(1)
-> for security purposes can be DoS'd by crafting keys with identical hashes.
->
-> (3) Mutable collection return: a method returns `List<User>` from
-> a repository. Caller calls `list.add(user)` - which mutates the
-> repository's internal collection (if it returned `this.users`).
-> The method's abstraction leaked the mutable backing store.
->
-> (4) `Date`/`Calendar` mutability: `Date.getTime()` returns a `Date`
-> object that the caller can modify (setter calls). Callers can corrupt
-> the original object's state. The immutability contract was not
-> enforced.
->
-> **Transfer principle:** Design APIs to prevent callers from accidentally
-> depending on implementation details. Return interfaces (not implementations),
-> unmodifiable/immutable wrappers, and document performance contracts
-> explicitly.
-
-**Framework:** DEFINITION (Spolsky's Law) + COLLECTION-LEAKS (List.get,
-HashMap worst case, mutable return) + IMMUTABILITY-LEAK + PREVENTION
-
-_Adapting up:_ Discuss the `hyrum.io/law` corollary (with enough users,
-every observable behavior becomes a dependency), and how API versioning
-is constrained by leaked abstractions that callers depend on.
-
-_Adapting down:_ Abstraction leakage = callers can see or depend on
-implementation details. Fix: return interfaces, not implementations;
-return immutable/unmodifiable views.
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "Abstraction leakage: implementation details visible to
-callers. Java examples: LinkedList.get(i) is O(n) via List; returning
-mutable internal collection; checked exceptions from implementation.
-Prevention: return interfaces, return defensive copies."
+**(1) Restate:** "Java version upgrade - LTS-only strategy, compatibility
+assessment, migration tools (jdeps, jlink, --release flag), common blockers
+(modules, removed APIs), and incremental adoption approach."
 
-**(2) First principles:** "An abstraction promises to hide implementation.
-Leakage = the implementation imposes requirements on callers that the
-abstraction contract does not mention."
+**(2) First principles:** "A version upgrade is a controlled risk: new features
+vs compatibility cost. The framework: enumerate compatibility breaks, test
+them, fix them, adopt new features gradually."
 
-**(3) Bridge:** "Abstraction leakage is like a restaurant that calls
-itself fast food but whose service time depends on how full the kitchen
-is. The 'fast food' abstraction leaks the kitchen's implementation detail.
-Customers who order based on the menu (contract) are surprised by
-implementation-dependent performance."
+**(3) Bridge:** "Upgrading Java is like upgrading a building's electrical
+system while tenants are inside. Plan during business hours (test in CI),
+phase the upgrade (dev -> staging -> production), know what breaks (old
+outlets = removed APIs), and have rollback (old JDK available)."
 
 ---
 
 ### 📘 Concept Explanation
 
-**Taxonomy of Java abstraction leaks:**
-
+**LTS Release Timeline:**
 ```
-Type 1: PERFORMANCE LEAK
-  Interface implies one complexity; implementation delivers another
+Java 8  (2014) - Extended support 2030 (Oracle) / 2026 (community)
+Java 11 (2018) - Extended support 2026 (Oracle) / 2024 (community)
+Java 17 (2021) - Extended support 2029 (Oracle) / 2027 (community)
+Java 21 (2023) - Extended support 2031 (Oracle) / 2029 (community)
+Java 25 (2025) - Next LTS, GA September 2025
 
-  Example: List<T>.get(index)
-  Interface implies: O(1) random access (like arrays)
-  LinkedList.get(index): O(n) - traverses from head
+Non-LTS (skip for production):
+  Java 9, 10, 12, 13, 14, 15, 16, 18, 19, 20, 22, 23, 24
 
-  Why it matters: for (int i=0; i<list.size(); i++) { list.get(i); }
-    With ArrayList:   O(n)   - fast
-    With LinkedList:  O(n^2) - catastrophically slow
-
-Type 2: MUTABILITY LEAK
-  Abstraction returns or accepts a mutable reference to internals
-
-  Example: returning this.internalList from a getter
-  Caller can: internalList.clear(), .add(), .remove()
-  -> Corrupts internal state without calling any setter
-
-Type 3: EXCEPTION LEAK
-  Implementation-specific exceptions escape the abstraction boundary
-
-  Example: Repository.findUser() throws SQLException
-  The caller now knows the Repository is backed by SQL
-  -> Changing to MongoDB requires changing the exception type too
-  -> The caller is coupled to the SQL implementation
-
-Type 4: THREAD-SAFETY LEAK
-  Abstraction doesn't document thread-safety contract
-  Caller assumes safety; implementation is not safe
-
-  Example: SimpleDateFormat.parse() is not thread-safe
-  The DateFormat abstraction doesn't advertise this
-  -> Callers sharing a DateFormat instance get corruption
-
-Type 5: ORDER/BEHAVIOR LEAK
-  Implementation-specific behavior becomes a dependency
-
-  Example: HashMap.entrySet() happens to iterate in a consistent
-  order in one JVM version. Code is written that depends on this.
-  Next JVM version: order changes. Bug appears.
-```
-
-**Prevention patterns:**
-
-```java
-// LEAK: returns mutable internal collection
-public class UserCache {
-    private final Map<Long, User> cache = new HashMap<>();
-
-    // BAD: caller can modify cache directly
-    public Map<Long, User> getCache() { return cache; }
-
-    // GOOD: unmodifiable view (reflects changes but prevents writes)
-    public Map<Long, User> getCache() {
-        return Collections.unmodifiableMap(cache);
-    }
-
-    // BETTER: immutable copy (caller gets snapshot, no live view)
-    public Map<Long, User> getCacheSnapshot() {
-        return Map.copyOf(cache);
-    }
-
-    // BEST: don't expose the map; expose only what callers need
-    public Optional<User> findUser(Long id) {
-        return Optional.ofNullable(cache.get(id));
-    }
-}
-
-// LEAK: exception type reveals implementation
-// BAD:
-public interface UserRepository {
-    User findById(long id) throws SQLException; // leaks SQL impl!
-}
-// GOOD:
-public interface UserRepository {
-    User findById(long id) throws RepositoryException; // domain exception
-}
-class SqlUserRepository implements UserRepository {
-    public User findById(long id) throws RepositoryException {
-        try {
-            // ... SQL query ...
-        } catch (SQLException e) {
-            throw new RepositoryException("Find user failed", e);
-            // SQL exception wrapped: implementation detail hidden
-        }
-    }
-}
-```
-
-**The `Date`/`Calendar` mutability leak:**
-
-```java
-// Classic Java API abstraction leak:
-class Meeting {
-    private final Date scheduledTime;
-
-    public Meeting(Date time) {
-        // BAD: stores reference to mutable Date
-        this.scheduledTime = time;
-        // caller can: time.setTime(0); -> corrupts scheduledTime
-    }
-
-    public Date getScheduledTime() {
-        // BAD: returns mutable internal Date
-        return scheduledTime;
-        // caller can: meeting.getScheduledTime().setTime(0);
-    }
-}
-
-// GOOD: defensive copy on input and output
-class Meeting {
-    private final Date scheduledTime;
-
-    public Meeting(Date time) {
-        this.scheduledTime = new Date(time.getTime()); // defensive copy
-    }
-
-    public Date getScheduledTime() {
-        return new Date(scheduledTime.getTime()); // defensive copy
-    }
-}
-
-// BEST: use java.time (immutable by design, no leakage possible)
-class Meeting {
-    private final Instant scheduledTime; // immutable; no defensive copy needed
-
-    public Meeting(Instant time) {
-        this.scheduledTime = time; // safe: Instant is immutable
-    }
-
-    public Instant getScheduledTime() {
-        return scheduledTime; // safe to return directly
-    }
-}
+Decision:
+  -> Still on Java 8? Plan Java 21 direct (8 -> 21 skip 11, 17)
+     or 8 -> 17 -> 21 if step-by-step safer
+  -> On Java 11? Upgrade to 17 or 21 next LTS
+  -> On Java 17? Upgrade to 21
+  -> Always run on latest LTS with active support
 ```
 
 ---
 
 ### 💻 Code Example
 
-#### Iterator invalidation - performance and mutability leak
+> **Code walkthrough:** The migration toolchain uses `jdeps` (dependency
+> scanner) to find illegal internal API usage, the `--release` flag to enforce
+> source compatibility, and `jlink` to produce minimal runtime images. Running
+> `jdeps --jdk-internals` before upgrading catches the most common migration
+> blockers (sun.misc.* access, removed APIs).
 
 ```java
-import java.util.*;
+// STEP 1: Check for internal API usage before upgrading
+// $ jdeps --jdk-internals --multi-release 17 myapp.jar
+// Output:
+//   com.example.Foo -> sun.misc.BASE64Encoder (JDK internal API)
+//   com.example.Bar -> com.sun.xml.internal.ws.api.* (removed in Java 11)
+// Action: replace sun.misc.BASE64Encoder -> java.util.Base64 (Java 8+)
 
-public class LeakDemonstration {
+// STEP 2: Compile with target release flag
+// $ javac --release 11 --source 11 *.java  <- restricts to Java 11 API only
+// This catches accidental use of newer APIs that won't run on Java 11
 
-    // LEAKAGE 1: Performance leak
-    // List.get(i) implies O(1) by interface contract
-    // LinkedList.get(i) is O(n) - contract is misleading
-    public static long sumBad(List<Long> numbers) {
-        long sum = 0;
-        // BAD: works correctly, but O(n^2) with LinkedList!
-        for (int i = 0; i < numbers.size(); i++) {
-            sum += numbers.get(i); // O(n) if LinkedList
-        }
-        return sum; // correct but may be catastrophically slow
-    }
+// STEP 3: Run with illegal access warnings (Java 9-16)
+// $ java --illegal-access=warn -jar myapp.jar
+// Prints warnings for each reflective access to JDK internals
+// In Java 17: --illegal-access removed, access DENIED by default
+// -> All warnings from above must be fixed before Java 17
 
-    // GOOD: use iterator (O(1) per step regardless of List type)
-    public static long sumGood(List<Long> numbers) {
-        long sum = 0;
-        for (long n : numbers) { // uses iterator - O(1) per step
-            sum += n;
-        }
-        return sum; // correct AND O(n) for both ArrayList and LinkedList
-    }
+// STEP 4: Add module opens for frameworks that need reflection
+// Spring Boot with Java 17 needs:
+// --add-opens java.base/java.lang=ALL-UNNAMED  <- for reflection-heavy frameworks
+// --add-opens java.base/java.util=ALL-UNNAMED
+// Spring Boot 3.x adds these automatically in its Maven/Gradle plugin
 
-    // LEAKAGE 2: Mutable collection return
-    static class BadProductCatalog {
-        private final List<String> products = new ArrayList<>();
+// STEP 5: Adopt new features incrementally
+// Java 17 adoption:
+// BAD: all at once (high risk)
+// GOOD: Phase 1: just run on Java 17 (no code changes, just JVM upgrade)
+//       Phase 2: use records for new DTOs
+//       Phase 3: migrate existing value classes to records
+//       Phase 4: adopt sealed classes where appropriate
+//       Phase 5: use pattern matching instanceof
 
-        // BAD: returns internal mutable list
-        public List<String> getProducts() { return products; }
-        // Caller can: catalog.getProducts().clear(); -> empties catalog!
-    }
-
-    static class GoodProductCatalog {
-        private final List<String> products = new ArrayList<>();
-
-        // GOOD: return unmodifiable view
-        public List<String> getProducts() {
-            return Collections.unmodifiableList(products);
-            // Caller mutation throws UnsupportedOperationException
-        }
-
-        // BETTER: return only what callers need
-        public boolean hasProduct(String name) {
-            return products.contains(name);
-        }
-        public int productCount() {
-            return products.size();
-        }
-    }
+// Example: Java 14 instanceof pattern matching (adopted incrementally)
+// Before (Java 8-13):
+if (obj instanceof String) {
+    String s = (String) obj; // redundant cast after instanceof
+    process(s.toUpperCase());
 }
+// After (Java 14+, enabled by default Java 16+):
+if (obj instanceof String s) { // pattern matching: cast + bind in one
+    process(s.toUpperCase());
+}
+
+// Virtual threads (Java 21): drop-in for blocking I/O
+// BAD (before Java 21): blocking thread-per-request (1000 threads for 1000 concurrent)
+ExecutorService exec = Executors.newFixedThreadPool(200); // hard limit
+// GOOD (Java 21): virtual threads (millions of concurrent, tiny overhead)
+ExecutorService exec = Executors.newVirtualThreadPerTaskExecutor();
+// Same blocking code: database calls, HTTP calls still use blocking I/O
+// But now 1 physical thread can run thousands of virtual threads
 ```
 
-> **Code walkthrough:** `sumBad` leaks the performance contract: it
-> accepts `List<T>` (which implies O(1) random access by convention)
-> but calls `get(i)` in a loop - if the caller passes a `LinkedList`,
-> `get(i)` is O(n), making the loop O(n^2). `sumGood` uses the enhanced
-> for-each loop (iterator), which is O(1) per step for both `ArrayList`
-> and `LinkedList`. The mutable catalog leak: `getProducts()` returning
-> the internal list allows callers to violate the catalog's invariants
-> via the returned reference. The fix is `unmodifiableList()`, which
-> wraps the list and throws `UnsupportedOperationException` on mutation.
+> **Code walkthrough:** The `jdeps --jdk-internals` command is the most
+> important pre-upgrade step: it reveals direct dependencies on JDK internal
+> APIs that are blocked in Java 17+. The `--add-opens` flags are the migration
+> bridge: they re-enable reflective access for frameworks that haven't updated
+> yet, while you work on framework upgrades. Virtual threads in Java 21 are
+> the biggest performance upgrade: a blocking HTTP call that held a thread
+> for 200ms now holds a virtual thread (stackless, <1KB overhead) instead
+> of a platform thread (1MB stack, OS context switch). Application throughput
+> scales with the number of I/O-bound operations, not thread count.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Junior:** Return `Collections.unmodifiableList()` instead of the raw
-internal list. Use `java.time` (immutable) instead of `Date` (mutable).
-Avoid `LinkedList` when callers may access by index.
+**Junior / Mid (0-5 years):**
+> Use LTS versions only (17 or 21). Run `jdeps --jdk-internals` to find
+> migration blockers. Add `--add-opens` for framework compatibility. Adopt
+> new features (records, text blocks, pattern matching) incrementally, not
+> all at once. Verify with test suite at each step.
 
-**Mid-level:** Abstraction leakage: callers depend on implementation details
-that the abstraction contract does not promise. Four categories: performance,
-mutability, exception, thread-safety. Fix: return interfaces not implementations;
-return immutable views; wrap exceptions at service boundaries.
+---
 
-**Senior:** The performance leak of `LinkedList.get(i)` is the textbook
-example. The correct fix is not just to use `ArrayList` everywhere but to
-program to the iterator contract (for-each loop). `Hyrum's Law`: given
-enough users, all observable behaviors become dependencies - even iteration
-order, exact exception messages, or timing.
-
-**Staff:** In API design, leakage prevention is a first-class concern.
-Returning `List<T>` from an API promises iterator and index access but
-not O(1) index access. If O(1) random access is part of the contract,
-return `ArrayList<T>` or document the performance explicitly.
-`java.util.List` is leaky by design (it tries to be both array-list and
-linked-list with one interface). Java's `Deque` is better: it documents
-O(1) at-ends operations and no random access.
+**Senior / Staff (5+ years):**
+> Version upgrade decisions are ecosystem decisions, not just JVM decisions.
+> Verify: Spring Boot version (Spring Boot 3 requires Java 17+), Hibernate 6
+> (Java 11+), Kafka client (Java 11+), Jackson (Java 8+, fully Java 17),
+> and all third-party libraries via `mvn dependency:tree | jdeps` analysis.
+> The Java 17 migration is the most common current challenge: `--illegal-access`
+> removals affect many older libraries (PowerMock, older Mockito, some XML
+> libraries). Java 21 adds virtual threads - consider migrating blocking
+> thread-per-request to virtual thread executor (one line change with dramatic
+> throughput improvement for I/O-bound services).
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                                                  | Reality                                                                                                                                                                                                            | Danger                                                                                                 |
-| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| 1   | Returning an interface type (e.g., `List`) prevents leakage    | Returning `List` instead of `ArrayList` prevents type coupling but doesn't prevent mutability leakage (callers can still call `list.add()`) or performance leakage (`get(i)` complexity depends on implementation) | False confidence that "returning an interface" is sufficient to prevent leakage                        |
-| 2   | `Collections.unmodifiableList(list)` creates an immutable copy | `unmodifiableList` returns a VIEW - it reflects modifications to the underlying list. If the backing list is modified, the unmodifiable view reflects the change. For a true snapshot, use `List.copyOf(list)`     | Caller reads from the "unmodifiable" view and sees data that changed after they received the reference |
-| 3   | Defensive copies are always necessary for all methods          | Defensive copies are needed at trust boundaries and for mutable objects. For immutable types (String, Integer, Instant, records), defensive copies are unnecessary and wasteful                                    | Excessive defensive copies for immutable types waste memory and CPU                                    |
+**Misconception 1: "I can upgrade from Java 8 directly to Java 21 without issues."**
+Direct 8 -> 21 is POSSIBLE but requires careful testing. Known issues:
+(1) modules: `--add-opens` needed for reflection; (2) removed APIs (Nashorn
+JS engine removed in Java 15, CORBA removed in Java 11); (3) behavior changes
+in standard library (some hashCode and toString behaviors changed); (4) GC
+defaults changed (G1 is default since Java 9, was Parallel GC in Java 8).
+Use the `--release 8` flag to compile with Java 8 API constraints but run
+on Java 21 JVM - lowest friction first step.
+
+**Misconception 2: "Virtual threads (Java 21) speed up CPU-bound work."**
+Virtual threads are ONLY beneficial for BLOCKING I/O: waiting for database
+queries, HTTP calls, file I/O. For CPU-bound work (intensive calculations,
+image processing), virtual threads offer zero benefit - they still need a
+physical thread to execute. Increasing virtual thread count on CPU-bound work
+causes more context switching (same cores, more threads = more overhead).
+For CPU-bound: use `ForkJoinPool` or `parallelStream()` which is optimized
+for parallel CPU work.
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure 1 - O(n^2) from performance leak**
+**Failure: IllegalAccessError after Java 17 upgrade - modules block reflection.**
+```
+Symptom: java.lang.reflect.InaccessibleObjectException:
+  Unable to make field private final int java.lang.String.hash accessible
 
-Symptom: Code works in tests (small data), extremely slow in production.
-Profile shows hot path inside `AbstractSequentialList.get()`.
+Cause: Java 17 strong encapsulation:
+  - Reflective access to non-public JDK members DENIED by default
+  - Previously: just a warning (--illegal-access=warn)
+  - Java 17: illegal access = exception
 
-Root cause: A method accepting `List<T>` uses `list.get(i)` in a loop.
-A `LinkedList` was passed by the caller.
+Diagnosis:
+  1. Check stack trace: which field/class is being accessed?
+  2. Which library is doing it? (PowerMock, old Mockito, old serialization lib)
+  3. Check library version: was it updated for Java 17 compatibility?
 
-Fix: Replace index loop with iterator (for-each), or add a javadoc
-contract: `@param list Must be a RandomAccess list (e.g., ArrayList)`.
+Fix options (in order of preference):
+  1. Update the library to a Java 17-compatible version
+  2. Add --add-opens: JVM flag opens the specific package
+     --add-opens java.base/java.lang=ALL-UNNAMED
+     --add-opens java.base/java.util=ALL-UNNAMED
+  3. Replace the library with one that doesn't use reflection into JDK internals
 
----
-
-**Failure 2 - Caller corrupts internal state via returned collection**
-
-Symptom: Internal data structure is modified unexpectedly; invariants
-violated; `NullPointerException` from supposedly validated data.
-
-Root cause: A getter returns the raw internal collection; caller's code
-modifies it (possibly via a library call that mutates the list).
-
-Fix: Return `Collections.unmodifiableMap()` / `List.copyOf()` from getters.
-Add a test that verifies the returned collection throws on `add()`/`remove()`.
+Spring Boot 3 fix: move to Spring Boot 3.x (auto-handles --add-opens)
+Mockito fix: Mockito 5+ is Java 17 compatible (uses Byte Buddy, not reflection)
+PowerMock: ABANDONED, no Java 17 support -> migrate to Mockito 5 + @Spy
+```
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation time | Recommended approach                                               |
-| ---------------- | ------------------------------------------------------------------ |
-| 25 min           | Define leakage; LinkedList.get() O(n); mutable return              |
-| 50 min           | Add exception leak; Date mutability; Hyrum's Law                   |
-| 1.5 hours        | Add Spolsky's Law; API versioning constraint; Hyrum's Law examples |
+| Question Category | Time to Answer |
+|---|---|
+| LTS version strategy | 2 minutes |
+| Java 8 to 17 migration path | 2 minutes |
+| jdeps and migration tools | 2 minutes |
+| Module system impact | 2 minutes |
+| Virtual threads value | 2 minutes |
+| Records and sealed classes value | 2 minutes |
+| GC changes across versions | 90 seconds |
 
 ---
 
-**[MID] Q1: Give three examples of abstraction leakage in the Java
-standard library.** [CONCEPTUAL]
+**Q1 (LTS strategy): Which Java versions should production applications use?**
 
-_Why they ask:_ Tests depth of understanding of Java APIs, not just
-surface-level usage.
+A: Production: LTS versions only. Current LTS: 8, 11, 17, 21.
+New projects: Java 21 (longest supported, virtual threads, records, sealed classes GA).
+Migration projects: Java 17 (if 21 not yet validated in ecosystem) or directly 21.
+Security patches: always stay on latest patch version of your LTS (21.0.4, etc.).
+Non-LTS (9, 10, 12-16, 18-20, 22-24): only for experimentation or preview features.
+Support lifetime: Oracle LTS = 8 years from GA (17 until 2029, 21 until 2031).
 
-_Likely follow-up:_ "How were these fixed in later Java versions?"
-
-**Example 1: `LinkedList` implementing `List` (performance leak)**
-
-`List.get(index)` has no documented complexity. But `ArrayList.get(index)`
-is O(1) (array indexing) while `LinkedList.get(index)` is O(n) (traversal).
-Callers using a `List` reference and index loops experience O(n^2) with
-no obvious reason. Fixed by: always using iterator for `List` traversal;
-the `RandomAccess` marker interface was added to `ArrayList` as a hint
-(but it's still a hint, not enforced).
-
-**Example 2: `java.util.Date` mutability (mutability leak)**
-
-`Date` represents a point in time. `Date.getTime()` returned a `Date`
-object that could be mutated with `setTime()`. This allowed callers to
-modify "immutable" data they received. Fixed by: `java.time` (Java 8) -
-all `java.time` types are immutable by design.
-
-**Example 3: `SimpleDateFormat` thread safety (thread-safety leak)**
-
-`DateFormat.format()` appears to be a stateless operation (format a date,
-return a String). But `SimpleDateFormat` uses internal mutable state
-(calendar, field buffer). Calling it from multiple threads corrupts results.
-The interface provides no hint of this. Fixed by: `java.time.format.DateTimeFormatter`
-(Java 8) is explicitly documented as immutable and thread-safe.
-
-_What separates good from great:_ Naming `DateTimeFormatter` (Java 8+)
-as the fix for all three `Date`/`Calendar`/`SimpleDateFormat` leakage
-problems in one shot.
+*What separates good from great:* LTS choices also depend on vendor support.
+Oracle JDK LTS: commercial (fee-based for some use cases). OpenJDK: free, but
+community LTS varies. Alternative distributions: Adoptium (Eclipse Temurin),
+Amazon Corretto, Microsoft OpenJDK, Azul Zulu - all LTS binary-compatible,
+free for production. Most enterprises use Temurin or Corretto. Decision:
+choose a distribution with a clear LTS commitment matching your support window.
 
 ---
 
-**[STAFF] Q2: ARCHITECTURE: How do you design an API to minimize
-abstraction leakage?** [ARCHITECTURE]
+**Q2 (Java 21 features): What are the key features in Java 21 for production?**
 
-_Why they ask:_ Tests ability to reason about API design principles.
+A:
+1. **Virtual Threads (JEP 444):** Project Loom GA. Replaces thread pools for
+   I/O-bound services. Same blocking code, 1000x more concurrent I/O capacity.
+2. **Record Patterns (JEP 440):** Deconstruct records in pattern matching:
+   `if (obj instanceof Point(int x, int y)) { ... }`
+3. **Pattern Matching in switch (JEP 441):** Full switch expressions with
+   type patterns and guards: `switch(shape) { case Circle c when c.radius > 10 -> ...; }`
+4. **Sequenced Collections (JEP 431):** `SequencedCollection`, `SequencedMap` -
+   uniform API for first/last element across all ordered collections.
+5. **String Templates (Preview in 21, finalized in 23):** `STR."Hello \{name}"`
+6. **Unnamed Patterns (Preview in 21):** `case Point(int x, _) ->` (ignore y)
 
-_Likely follow-up:_ "How do you handle performance contracts?"
-
-Seven principles for leak-free API design:
-
-**1. Use the minimal interface type as the return type:**
-Return `Collection<T>`, not `ArrayList<T>`. Don't promise more than you need to.
-
-**2. Return immutable objects at trust boundaries:**
-Use `java.time`, records, `List.copyOf()`, `Map.copyOf()`. Make mutation
-structurally impossible.
-
-**3. Wrap exceptions at service boundaries:**
-Domain interfaces throw domain exceptions. Implementation-specific
-exceptions (SQL, IO) are caught and wrapped.
-
-**4. Document performance contracts explicitly:**
-`@implSpec: O(1) average` in Javadoc when performance is part of the
-contract. Callers should not have to read the implementation source to
-know the expected complexity.
-
-**5. Use value objects for domain values:**
-Java records are immutable, have correct equals/hashCode, and prevent
-the class of mutability leakage in `Date`/`Calendar`.
-
-**6. Restrict method visibility:**
-`package-private` and `private` for internal helpers. Only `public` what
-callers genuinely need. Each `public` method is a contract commitment.
-
-**7. Apply the Interface Segregation Principle:**
-Split large interfaces. A `ReadableRepository` and `WriteableRepository`
-separation prevents callers who only need reads from accidentally
-calling mutating methods.
-
-_What separates good from great:_ The explicit performance contract
-documentation point - most APIs don't document complexity, which means
-ALL performance characteristics leak (or are undefined).
+*What separates good from great:* Virtual threads + record patterns + switch
+expressions together change how you write Java. Before Java 21: complex
+visitor patterns for discriminated unions (manually simulated). After:
+sealed interfaces + records + pattern switch = algebraic data types with
+exhaustive handling - the same pattern as Kotlin sealed classes or Rust enums.
+The convergence: Java is gradually adopting functional programming idioms
+(immutable records, sealed types, pattern matching) while maintaining backward
+compatibility. This is the "Java maturity" phase: closing the gap with Kotlin
+without abandoning the 30 years of Java code.
 
 ---
 
-**[SENIOR] Q3: TRADE-OFF: When should you expose implementation details
-deliberately?** [TRADE-OFF]
+**Q3 (Migration risk): How do you assess and manage Java version upgrade risk?**
 
-_Why they ask:_ Tests nuanced thinking - when is leakage acceptable or
-even desirable?
+A:
+```
+Risk assessment framework:
 
-_Likely follow-up:_ "What is the difference between leakage and intentional exposure?"
+LOW RISK (usually safe):
+  - Application uses standard Java API (java.util, java.io, java.net)
+  - No reflection into JDK internals
+  - Dependencies are modern (updated in last 2 years)
+  - Good test coverage (>70%)
 
-Abstraction leakage is usually bad. But INTENTIONAL exposure of implementation
-details is sometimes necessary and correct:
+MEDIUM RISK (needs careful testing):
+  - Framework versions: Spring Boot 2 -> 3 (major), Hibernate 5 -> 6 (major)
+  - Some use of sun.misc.* or com.sun.* (jdeps will find these)
+  - Bytecode instrumentation agents (APM tools)
+  - Custom ClassLoaders
+  - Security manager usage (removed in Java 17)
 
-**Case 1: Performance-critical paths**
-When callers MUST know the implementation to use the API correctly,
-hiding it is misleading. If `RandomAccess` matters, accept `ArrayList<T>`,
-not `List<T>`. Be explicit: if the performance contract is part of the
-API, it belongs in the interface (or in `@implSpec` Javadoc).
+HIGH RISK (plan carefully):
+  - Large legacy codebase with no tests
+  - Dependency on removed APIs (CORBA, Nashorn, JAXB, JAX-WS)
+  - Heavy use of internal JDK APIs
+  - GraalVM native image (reflection config required)
+  - Custom JVM flags that changed semantics
 
-**Case 2: Database-specific features**
-A `UserRepository.findByAgeRange(int min, int max)` hides SQL. But a
-`UserRepository.findWithCustomQuery(Criteria c)` intentionally exposes
-that the backing store supports query composition. This is acceptable
-for a repository that will always be SQL-backed, in exchange for
-the productivity of rich query APIs.
+Migration steps:
+  1. jdeps --jdk-internals: find internal API usage
+  2. mvn dependency:tree | grep: find outdated deps
+  3. Compile with --release N: ensure source compatibility
+  4. Run tests on new JVM: discover runtime issues
+  5. Run with --add-opens: bridge period for frameworks
+  6. Update frameworks: Spring Boot 3, Hibernate 6, Mockito 5
+  7. Remove --add-opens: confirm everything works without bridge
+  8. Adopt new features incrementally
+```
 
-**Case 3: Escape hatches for power users**
-`Netty` provides `Channel.unsafe()` to access raw socket operations.
-The method name (`unsafe`) signals intentional exposure of internals
-with caller responsibility. This is a deliberate "escape hatch" pattern.
-
-**Case 4: Performance APIs**
-`ByteBuffer.order(ByteOrder.LITTLE_ENDIAN)` exposes the memory layout
-(big-endian vs little-endian). This is implementation detail but is
-necessary for interoperability with native data formats.
-
-**Rule**: expose implementation details intentionally, explicitly, and
-with appropriate naming (e.g., `unsafe()`, `getInternalState()` - names
-that signal "you're bypassing the abstraction"). Never let implementation
-details ACCIDENTALLY leak through a clean-looking API.
-
-_What separates good from great:_ The "escape hatch" pattern with `unsafe()`
-as the exemplar of intentional, named, documented exposure vs accidental
-leakage.
+*What separates good from great:* The most common Java 11 to 17 migration
+failure: PowerMock or old Mockito versions that use reflection into JDK
+internals for mocking. Java 17 blocks this with no workaround (no
+`--add-opens` for all cases). The fix: migrate from PowerMock to Mockito 5
+(Byte Buddy-based, Java 17 compatible). This is often a major test refactoring
+effort - sometimes weeks. Always audit the testing library stack first when
+planning a Java 17 upgrade.
 
 ---
 
-**[SENIOR] Q4: What is Hyrum's Law and how does it constrain API evolution?**
-[ARCHITECTURE]
+**Q4 (Virtual threads): When do virtual threads help and when don't they?**
 
-_Why they ask:_ Tests awareness of the observable behavior dependency problem.
+A:
+Virtual threads help when:
+- Blocking I/O (database, HTTP calls, file reads) is the bottleneck
+- High concurrent request count (thousands of simultaneous requests)
+- Migrating from thread-per-request model to scale without rewriting to async
 
-_Likely follow-up:_ "How does Google manage this for internal APIs?"
+Virtual threads do NOT help when:
+- CPU-bound: computation uses CPU fully (no blocking)
+- Already using reactive/async code (CompletableFuture, Project Reactor)
+- GPU or memory-bound workloads
 
-Hyrum's Law (Hyrum Wright, Google SWE): "With a sufficient number of users
-of an API, it does not matter what you promise in the contract: all
-observable behaviors of your system will be depended upon by somebody."
+```java
+// Drop-in migration for Tomcat-based Spring Boot:
+// application.properties:
+// spring.threads.virtual.enabled=true
+// -> All request threads become virtual threads
+// No code changes in controllers, services, repositories
 
-Examples in Java:
+// Manual executor:
+try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
+    List<Future<Result>> futures = new ArrayList<>();
+    for (String url : urls) {
+        futures.add(exec.submit(() -> fetch(url))); // each blocks a virtual thread
+    }
+    // Process results...
+} // exec.close() waits for all tasks
 
-- `HashMap.entrySet().iterator()` order: implementation-specific, not
-  promised. Java 8 changed it. Code that depended on the old order broke.
-- `String.hashCode()` implementation: not promised to be stable across
-  JVM versions. But code stored hash codes in databases (violating the
-  contract). JDK changes would break that code.
-- `Thread.sleep(n)` sleep duration: not exactly n milliseconds. Code
-  that assumed exact timing broke on faster CPUs.
+// Thread-local pitfall:
+// ThreadLocal values are per-virtual-thread (works correctly)
+// But ThreadLocal use discouraged in virtual threads at scale
+// (millions of virtual threads = millions of ThreadLocal entries)
+// Use ScopedValue (Java 21 preview, GA in 23) for structured value passing
+```
 
-Implication for API evolution:
+*What separates good from great:* Virtual threads don't eliminate the need
+to understand blocking. A virtual thread blocked on a `synchronized` block
+(as opposed to `Lock`) pins the carrier platform thread: the platform thread
+cannot be reused for other virtual threads. Java 21 issue: synchronized blocks
+in the JDK itself and many libraries (HashMap, ArrayList, I/O streams) can pin.
+JVM flag to detect pinning: `-Djdk.tracePinnedThreads=full`. Java 24 (JEP 491)
+fixes most of these: synchronized blocks no longer pin carrier threads.
+Immediate fix for Java 21: replace `synchronized` with `ReentrantLock` in
+hot paths.
 
-- Any observable behavior - including unintended behaviors - becomes a
-  de facto contract once users depend on it
-- Changing an "implementation detail" that users observe causes breakage
-- At scale (1000+ users), even clearly-wrong behaviors become dependencies
+---
 
-How to manage:
+**Q5 (Records adoption): When should you use records vs traditional classes?**
 
-1. Test for contract, not implementation: use `@Test` that verifies
-   documented behavior only, not implementation-specific behavior
-2. Deprecation with migration path: deprecate before removing
-3. Feature flags for behavioral changes: allow users to opt into the new behavior
-4. Semantic versioning: signal breaking changes in the version number
+A:
+Records are the right choice when:
+- The type is a pure data carrier (no complex logic)
+- All fields should be required (no optional fields)
+- Immutability is desired
+- equals/hashCode/toString by field identity is correct
 
-Google's approach (monorepo): all usages of an API are in the codebase.
-When changing an API, update all call sites. External APIs have stricter
-change processes because you can't update all callers.
+```java
+// GOOD: use record
+record UserDto(String name, String email, int age) {} // auto-equals, hashCode, toString
 
-_What separates good from great:_ The HashMap iteration order change
-as a concrete Java example where Hyrum's Law caused real breakage, and
-the monorepo "update all usages" as Google's solution.
+// BAD FIT for record:
+// 1. Needs inheritance (records are final)
+// 2. Has many optional fields (builder pattern better)
+// 3. Needs custom serialization (Hibernate @Entity, some JSON edge cases)
+// 4. Needs mutable state (records are immutable by default)
+
+// Records + compact constructor for validation:
+record Email(String value) {
+    Email {
+        Objects.requireNonNull(value, "email required");
+        if (!value.contains("@"))
+            throw new IllegalArgumentException("Invalid email: " + value);
+        value = value.strip().toLowerCase(Locale.ROOT);
+    }
+}
+
+// Records in switch pattern matching (Java 21):
+sealed interface Shape permits Circle, Rectangle {}
+record Circle(double radius) implements Shape {}
+record Rectangle(double width, double height) implements Shape {}
+
+double area(Shape shape) {
+    return switch (shape) {
+        case Circle(double r)           -> Math.PI * r * r;
+        case Rectangle(double w, double h) -> w * h;
+    };
+}
+```
+
+*What separates good from great:* Records replace 80% of Lombok's `@Data`
+use cases natively. The migration: `@Data class Foo { String a; int b; }` ->
+`record Foo(String a, int b) {}` is often one line shorter and doesn't need
+Lombok on the classpath. Caveats: Hibernate entities cannot be records (need
+no-arg constructor, mutable state for proxy generation). Jackson works with
+records in 2.12+. Spring's `@ConfigurationProperties` works with records in
+Spring Boot 2.6+. The main record limitation: no inheritance hierarchy (records
+are final). For "extend me" value types, abstract classes or sealed interfaces
+with records as leaves are the pattern.
+
+---
+
+**Q6 (Sequenced collections): What are sequenced collections?**
+
+A: Java 21 added `SequencedCollection`, `SequencedSet`, `SequencedMap` -
+interfaces that add first/last access to ordered collections.
+
+```java
+// Before Java 21: no uniform API for first/last element
+List<String> list = List.of("a", "b", "c");
+String first = list.get(0);                    // List: get(0)
+String last  = list.get(list.size() - 1);      // List: get(size-1)
+
+Deque<String> deque = new ArrayDeque<>();
+String dFirst = deque.peekFirst();             // Deque: peekFirst
+String dLast  = deque.peekLast();              // Deque: peekLast
+
+NavigableSet<String> nset = new TreeSet<>();
+String nFirst = nset.first();                  // NavigableSet: first()
+String nLast  = nset.last();                   // NavigableSet: last()
+
+// After Java 21: uniform API via SequencedCollection
+SequencedCollection<String> seq = List.of("a", "b", "c");
+String first = seq.getFirst();                 // uniform: getFirst()
+String last  = seq.getLast();                  // uniform: getLast()
+SequencedCollection<String> reversed = seq.reversed(); // uniform: reversed()
+seq.addFirst("z"); // add to front (for mutable collections)
+
+// All these implement SequencedCollection now:
+// List, Deque, LinkedHashSet, SortedSet (via NavigableSet)
+// LinkedHashMap, TreeMap implement SequencedMap
+```
+
+*What separates good from great:* Sequenced collections filled a long-standing
+gap. The `Iterable` interface has `iterator()` but no `first()` or `last()`.
+This caused every library and application to implement first/last access
+differently. Now: `SequencedCollection.getFirst()` is the standard. The most
+practical use: `LinkedHashMap.sequencedValues().getLast()` to get the most
+recently added entry - common in LRU cache implementations.
+
+---
+
+**Q7 (GC evolution): How have JVM garbage collectors evolved across versions?**
+
+A:
+```
+Java 8:  Default GC = Parallel GC (throughput-focused)
+         G1 GC available (--XX:+UseG1GC) but not default
+Java 9:  Default GC = G1 GC (balances throughput + latency)
+Java 11: ZGC available (ultra-low latency, experimental)
+         Shenandoah available (Red Hat contribution)
+Java 15: ZGC production-ready
+         Shenandoah production-ready
+Java 21: Generational ZGC (ZGC + generational = better default)
+         ZGC default in Java 21 (with generational enabled by default in future)
+
+GC Selection:
+  Parallel GC:     max throughput, highest pause times (batch processing)
+  G1 GC:           balanced default, <500ms pauses typical (web services)
+  ZGC:             sub-ms pauses, slightly lower throughput (latency-sensitive)
+  Shenandoah:      similar to ZGC, Red Hat maintained
+
+Migration note:
+  Java 8 -> 11: default GC changed to G1 (usually better, rarely worse)
+  Java 11 -> 17: GC defaults same, but GC improvements ongoing
+  Java 17 -> 21: consider ZGC if latency critical
+  Heap sizing:    same rules apply (-Xms, -Xmx) but G1 works better with larger heaps
+
+Diagnosing GC after upgrade:
+  -Xlog:gc*:file=gc.log:time,uptime (Java 9+)
+  (replaces -XX:+PrintGCDetails in Java 8)
+  jcmd <pid> GC.heap_info
+  JFR GC events
+```
+
+*What separates good from great:* The Java 8 to 11 GC default change
+(Parallel -> G1) is usually transparent but can cause latency changes in
+throughput-optimized applications. Parallel GC: designed for maximum
+throughput (few GC pauses but longer when they happen). G1: designed for
+predictable pause times (<200ms default target). For batch jobs: Parallel GC
+may be faster. For user-facing APIs: G1 is better. After upgrading, always
+profile GC with the new version: `jcmd <pid> GC.heap_info` and JFR GC
+events before declaring the upgrade successful.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ level - comparison table not required)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ level - system design not required)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: LTS timeline described adequately in text)*
+
+---
+
+---
+
+## Debugging Java APIs in Production
+
+### 🎯 Model Answer
+
+**30 seconds:**
+> Production Java debugging uses four main tools: `jstack` (thread dumps
+> for deadlocks/hangs), `jmap` (heap dumps for memory issues), `jcmd` (all
+> JVM diagnostics), and JFR (Java Flight Recorder, low-overhead continuous
+> profiling). For live issues: `jstack <pid>` or kill -3 for thread dump,
+> `jcmd <pid> VM.native_memory` for memory breakdown. Never attach a JDWP
+> debugger to production (halts all threads on breakpoint). Use remote logging
+> and metrics instead.
+
+**3 minutes (Senior):**
+> Production debugging is primarily OBSERVABILITY: metrics, logs, traces.
+> Debugging tools are for when observability data is insufficient. The
+> four-layer model: (1) metrics (Prometheus/Grafana: JVM heap, GC pauses,
+> thread count), (2) logs (structured JSON logs with trace IDs, level DEBUG
+> enabled only under load), (3) traces (OpenTelemetry spans across services),
+> (4) profiling (JFR continuous recording, Async Profiler flame graphs for
+> CPU-bound hotspots).
+>
+> For live issues: thread dump (`jstack`) is safe, returns in milliseconds.
+> Heap dump (`jmap -dump:format=b,file=heap.hprof <pid>`) pauses the JVM
+> for the dump duration - use `jcmd <pid> GC.heap_info` first for summary.
+> JFR is the safest continuous tool: <1% overhead, captures method sampling,
+> GC events, I/O, network, lock contention.
+
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "Production debugging - I'll cover the toolchain: jstack,
+jmap, jcmd, JFR, and the right diagnosis flow for each symptom: high CPU,
+memory leak, deadlock, high latency."
+
+**(2) First principles:** "Production debugging = narrow down the hypothesis.
+High CPU: profiler shows what code runs. High memory: heap dump shows what
+objects live. Deadlock: thread dump shows what each thread waits for. Narrow
+the search space systematically."
+
+**(3) Bridge:** "Production debugging is like medical diagnosis: you don't
+do every test upfront. Symptoms (CPU%, heap%, latency) guide the diagnostic
+tool choice (profiler, heap dump, thread dump). Run the cheapest test first."
+
+---
+
+### 📘 Concept Explanation
+
+**Symptom-to-tool mapping:**
+```
+High CPU:
+  1. jstack <pid> -> which threads are in RUNNABLE state?
+  2. top -H -p <pid> -> which native thread uses CPU?
+     (map to Java thread via "nid" in thread dump)
+  3. JFR method sampling OR async-profiler -> flamegraph of hot methods
+
+Memory increasing / OutOfMemoryError:
+  1. jcmd <pid> GC.heap_info -> current heap usage summary
+  2. jcmd <pid> VM.native_memory -> native memory breakdown (Java heap vs metaspace vs off-heap)
+  3. jmap -dump:format=b,file=heap.hprof <pid> -> full heap dump (pauses JVM!)
+  4. Eclipse MAT / IntelliJ heap analysis -> find retained sets, leak suspects
+
+Thread dump / Deadlock:
+  1. jstack <pid> OR kill -3 <pid> -> thread dump to stdout
+  2. Look for "Found one Java-level deadlock" in output
+  3. Or: look for threads in BLOCKED state waiting for same lock
+
+High latency / Slow requests:
+  1. JFR method profiling: find slow call trees
+  2. Async Profiler wall-clock mode: captures blocking time (I/O, lock wait)
+  3. Distributed traces (Jaeger, Zipkin): find slow downstream services
+```
+
+---
+
+### 💻 Code Example
+
+> **Code walkthrough:** The JFR diagnostic session covers the most common
+> production scenario: unexplained latency increase. Recording a 30-second
+> JFR snapshot while the symptom is active, then analyzing with JDK Mission
+> Control, reveals method hotspots, GC pressure, and lock contention in
+> one recording. The async-profiler flame graph is the most actionable output:
+> wide bars = time spent, click to drill down.
+
+```java
+// SCENARIO: CPU spike in production - diagnosis steps:
+
+// Step 1: Identify hot threads (without stopping the JVM)
+// jstack <pid> | grep -A 5 "RUNNABLE" | head -80
+// Output shows which Java methods are currently executing
+
+// Step 2: JFR recording (lowest overhead, best info)
+// $ jcmd <pid> JFR.start duration=30s settings=default filename=/tmp/app.jfr
+// $ jcmd <pid> JFR.check  <- verify recording is active
+// Wait 30 seconds, then:
+// $ jcmd <pid> JFR.dump filename=/tmp/app.jfr  <- if using continuous mode
+// Open in IntelliJ or JDK Mission Control
+
+// Step 3 (if JFR not enough): async-profiler (flame graph)
+// $ ./profiler.sh -d 30 -f /tmp/profile.html <pid>  <- 30s CPU profiling
+// Opens as interactive SVG flame graph in browser
+
+// Programmatic JFR (in-process recording for diagnostics endpoint):
+RecordingConfiguration config = new RecordingConfiguration();
+config.setName("production-debug");
+config.setDuration(Duration.ofSeconds(30));
+config.setDestination(Path.of("/tmp/app.jfr"));
+config.setToDisk(true);
+
+try (Recording recording = new Recording(config)) {
+    recording.start();
+    Thread.sleep(30_000);
+    // recording auto-stops and saves at end of try block
+}
+// Return path to JFR file via internal diagnostics API
+
+// SCENARIO: Memory leak diagnosis
+
+// Step 1: confirm leak (watch heap with JFR or GC logs)
+// -Xlog:gc*:file=/var/log/gc.log:time,uptime,level,tags (Java 11+)
+// Full GC triggered frequently? Heap grows after GC? = leak.
+
+// Step 2: light-weight object count (no pause)
+// $ jcmd <pid> GC.class_histogram | head -30
+// Shows: instances, bytes, class name for top 30 by instance count
+
+// Step 3: heap dump (pauses JVM during dump!)
+// $ jcmd <pid> GC.heap_dump /tmp/heap.hprof
+// Or: add -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/ to JVM startup
+// (auto-dumps on OOM before JVM exits - crucial for crash diagnosis)
+
+// Step 4: analyze with Eclipse MAT
+// Histogram: what objects exist?
+// Dominator tree: what keeps large object graphs alive?
+// "Leak suspects" report: often finds the root cause automatically
+
+// Common leak patterns:
+// - Cache without eviction (unbounded Map growing forever)
+// - EventListener not deregistered (holds reference to listener and its context)
+// - ThreadLocal not removed (thread pool reuse causes accumulation)
+// - Static Map used as cache (never GC'd, grows with every unique key)
+```
+
+> **Code walkthrough:** The `jcmd <pid> GC.class_histogram` is the most
+> production-safe first step for memory investigation: no JVM pause, output
+> in seconds. It answers "what types of objects dominate heap?" before
+> committing to a full heap dump (which pauses the JVM for seconds to minutes
+> depending on heap size). The `HeapDumpOnOutOfMemoryError` flag is mandatory
+> in production: without it, the OOM crash leaves no diagnosis artifact.
+> Always add `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/dumps/`
+> to production JVM startup flags.
+
+---
+
+### 🎓 Answers by Seniority
+
+**Junior / Mid (0-5 years):**
+> Use `jstack <pid>` for thread dumps (deadlocks, hangs). Use
+> `jcmd <pid> GC.class_histogram` for memory issues (no pause). Add
+> `-XX:+HeapDumpOnOutOfMemoryError` to every production JVM. Use JFR for
+> CPU profiling. Never use a JDWP debugger in production.
+
+---
+
+**Senior / Staff (5+ years):**
+> Production debugging is proactive, not reactive: set up JFR continuous
+> recording with a rolling buffer (1-2 minutes, low overhead) so that when
+> an incident happens you can dump the last 2 minutes and see what happened
+> just before. JVM startup: `-XX:StartFlightRecording=settings=default,disk=true,maxage=2m`.
+> Pair with structured logging (JSON, one-line per event, correlation ID on
+> every log entry). Observability = metrics + logs + traces + profiling.
+> When all four are in place: debugging is diagnosis, not guesswork.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: "Attaching a debugger to production is fine for short periods."**
+JDWP debugger in production halts ALL JVM threads on every breakpoint.
+A breakpoint that takes 1 second to inspect: all 200 concurrent users wait 1 second.
+This is a production incident caused by the debugging action itself.
+Alternatives: add temporary detailed logging (log the values you'd inspect
+in a debugger), use conditional log levels (change log level via JMX without restart),
+use JFR events (record events with field values, no pause), use bytecode instrumentation
+agents (Arthas, Btrace) that inject probe code without breakpoints.
+
+**Misconception 2: "OutOfMemoryError means you need more heap."**
+OOM can mean: (1) heap leak (more heap just delays the inevitable),
+(2) metaspace leak (too many dynamically generated classes - heap increase
+does nothing), (3) off-heap leak (DirectByteBuffer, Netty), (4) heap is
+genuinely too small (legitimate fix: increase). Diagnosis: check WHERE the
+OOM occurs: `java.lang.OutOfMemoryError: Java heap space` = heap, `java.lang.OutOfMemoryError: Metaspace` = class loading, `java.lang.OutOfMemoryError: Direct buffer memory` = native off-heap. Different diagnoses, different fixes.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure: Thread deadlock - application hangs, requests time out.**
+```
+Symptom: requests timeout, JVM is running (not crashed), CPU near 0%
+         Health checks pass but actual work is frozen
+
+Step 1: Take thread dump
+  $ jstack <pid>
+  OR: kill -3 <pid>  (prints to stdout)
+  OR: jcmd <pid> Thread.print
+
+Step 2: Look for deadlock section:
+  "Found one Java-level deadlock:"
+  "Thread-1: waiting to lock <0x00000006c22a2000> (class Foo)"
+  "Thread-2: waiting to lock <0x00000006c22b4100> (class Bar)"
+  Thread-1 holds Bar, waits for Foo
+  Thread-2 holds Foo, waits for Bar -> DEADLOCK
+
+Step 3: Identify lock order
+  Search for the lock addresses in the thread dump
+  Find where Thread-1 holds the lock Thread-2 is waiting for
+
+Step 4: Fix
+  Option A: establish global lock ordering (always lock A before B)
+  Option B: use tryLock with timeout (java.util.concurrent.Lock)
+    if (!lockA.tryLock(1, TimeUnit.SECONDS)) { /* retry or fail fast */ }
+  Option C: reduce locking scope (hold locks for shorter periods)
+  Option D: use optimistic concurrency (ConcurrentHashMap.compute)
+```
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Question Category | Time to Answer |
+|---|---|
+| Thread dump analysis | 2 minutes |
+| Heap dump workflow | 2 minutes |
+| JFR usage | 2 minutes |
+| OutOfMemoryError diagnosis | 2 minutes |
+| Deadlock detection | 2 minutes |
+| CPU spike diagnosis | 2 minutes |
+| Production observability setup | 2-3 minutes |
+
+---
+
+**Q1 (Thread dump): How do you take and analyze a Java thread dump?**
+
+A:
+```
+Methods to capture:
+  $ jstack <pid>                       <- attach and dump (safe, fast)
+  $ jcmd <pid> Thread.print            <- preferred, more info
+  $ kill -3 <pid>                      <- prints to JVM stdout (always works)
+  JFR Thread events                    <- continuous, lowest overhead
+  JMX: ThreadMXBean.dumpAllThreads()   <- programmatic
+
+Thread states (what they mean):
+  RUNNABLE:  executing Java code (or waiting for OS resources like I/O)
+  BLOCKED:   waiting to acquire a synchronized monitor
+  WAITING:   in Object.wait(), Thread.join(), LockSupport.park()
+  TIMED_WAITING: in sleep(), wait(timeout), park(timeout)
+
+Analysis:
+  1. DEADLOCK: "Found one Java-level deadlock" section
+  2. HOT THREADS: many threads in RUNNABLE in the same method = hotspot
+  3. STUCK: threads in WAITING/BLOCKED for extended period = lock/resource
+  4. POOL exhaustion: all ThreadPool threads BLOCKED waiting for I/O
+
+Thread naming: use meaningful names for debugging
+  Thread t = new Thread(work, "payment-processor-1"); // named!
+  ExecutorService exec = Executors.newFixedThreadPool(4, r -> {
+      Thread t = new Thread(r, "batch-worker-" + counter.incrementAndGet());
+      return t;
+  });
+  // Thread dump shows: "payment-processor-1" not "Thread-42"
+```
+
+*What separates good from great:* Thread naming is a production
+first-responder technique: when you get a thread dump with 200 threads,
+`Thread-42 BLOCKED at ...` tells you nothing. `payment-processor-1 BLOCKED
+waiting for database connection` tells you everything. Name threads at the
+executor level using a `ThreadFactory`. Spring Boot's task executor auto-names
+threads with the `AsyncExecutor` or bean name. The pattern: executor name +
+sequential number (`http-nio-8080-exec-1`, `kafka-consumer-0`).
+
+---
+
+**Q2 (Heap analysis): What tools do you use for Java heap analysis?**
+
+A:
+1. **`jcmd <pid> GC.class_histogram`:** no pause, shows top classes by
+   instance count and bytes. First stop for memory investigation.
+2. **`jcmd <pid> GC.heap_dump /tmp/dump.hprof`:** full heap dump, pauses
+   JVM during dump (seconds to minutes). Use only when histogram is insufficient.
+3. **Eclipse MAT (Memory Analyzer):** open-source, powerful. "Leak Suspects"
+   report, dominator tree, OQL (object query language). Best for deep analysis.
+4. **IntelliJ built-in heap viewer:** lighter, good for quick inspection
+5. **JFR `OldObjectSample` events:** identifies long-lived objects without
+   full heap dump (low overhead, continuous)
+
+```
+Heap dump analysis workflow (Eclipse MAT):
+  1. Open .hprof file
+  2. Run "Leak Suspects" report -> auto-detects common patterns
+  3. Check "Dominator Tree" -> which objects retain the most memory?
+  4. Check "Histogram" -> which classes have unexpected instance counts?
+  5. Path to GC root -> why is this object not garbage collected?
+
+Common findings:
+  - Unbounded cache: HashMap with millions of entries, no eviction
+  - Session leak: HTTP sessions not invalidated, holding large objects
+  - Thread-local leak: ThreadLocal<ByteBuffer> in thread pool, accumulates
+  - Classloader leak: webapp redeployment in app server, old ClassLoader retained
+```
+
+*What separates good from great:* The "path to GC roots" is the key operation
+in MAT. A leaked object is leaked because something is holding a reference to
+it. "Path to GC root" shows the chain: `StaticField -> HashMap -> ArrayList
+-> MyObject`. The chain reveals: there's a static `HashMap` (never GC'd)
+that references `ArrayList`s that reference your leaked objects. The fix:
+add eviction (Caffeine/Guava cache), or remove the static reference, or
+ensure the cache is cleared on application shutdown.
+
+---
+
+**Q3 (JFR profiling): How do you use JFR to diagnose production issues?**
+
+A:
+```bash
+# Method 1: One-shot recording
+jcmd <pid> JFR.start duration=60s settings=profile filename=/tmp/issue.jfr
+# Wait 60 seconds, then analyze /tmp/issue.jfr
+
+# Method 2: Continuous recording (always on, rolling buffer)
+# Add to JVM startup flags:
+-XX:StartFlightRecording=settings=default,disk=true,maxage=5m,dumponexit=true,\
+filename=/var/log/jfr/continuous.jfr
+
+# When incident occurs: dump the last 5 minutes
+jcmd <pid> JFR.dump filename=/tmp/incident.jfr maxage=5m
+
+# Method 3: Programmatic (diagnostic endpoint)
+# FlightRecorder.getFlightRecorder().takeSnapshot()
+# -> returns Recording with last N minutes of events
+```
+
+Key JFR event categories and what they reveal:
+```
+jdk.MethodSampling       -> hot methods (CPU profiling)
+jdk.GCHeapSummary        -> heap usage over time
+jdk.JavaMonitorWait      -> thread contention / lock wait
+jdk.SocketRead/Write     -> network I/O timing
+jdk.FileRead/Write       -> file I/O timing
+jdk.ObjectAllocationInNewTLAB -> allocation hotspots
+jdk.ThreadSleep          -> where threads are sleeping
+jdk.CPULoad              -> CPU usage over time
+```
+
+*What separates good from great:* The continuous JFR recording setup is the
+difference between "we have data" and "we have no idea what happened."
+When an OOM crash occurs at 3am, if you have `dumponexit=true` and a pre-OOM
+heap dump (`HeapDumpOnOutOfMemoryError`), you have everything needed for
+offline diagnosis. Without it: the JVM exits, state is gone, you're debugging
+a ghost. The 2-5 minute rolling buffer is the sweet spot: enough history to
+capture the lead-up to an incident, low enough overhead (<1%) for continuous
+production use.
+
+---
+
+**Q4 (Memory leak patterns): What are the most common Java memory leak patterns?**
+
+A:
+```java
+// PATTERN 1: Unbounded static cache
+class UserCache {
+    private static final Map<Long, User> CACHE = new HashMap<>(); // grows forever!
+
+    static User get(Long id) {
+        return CACHE.computeIfAbsent(id, UserRepository::findById);
+    }
+}
+// Fix: Caffeine with size or time-based eviction:
+static final Cache<Long, User> CACHE = Caffeine.newBuilder()
+    .maximumSize(10_000)
+    .expireAfterWrite(10, TimeUnit.MINUTES)
+    .build();
+
+// PATTERN 2: EventListener not removed
+class EventBus {
+    List<EventListener> listeners = new ArrayList<>();
+    void register(EventListener l) { listeners.add(l); }
+    // No deregister! Each registered object held forever
+}
+// Fix: WeakReference or explicit deregistration:
+void deregister(EventListener l) { listeners.remove(l); }
+// Or: WeakHashMap<EventListener, Void> listeners = new WeakHashMap<>();
+//     (auto-removed when listener has no other references)
+
+// PATTERN 3: ThreadLocal not removed in thread pool
+class RequestContext {
+    static ThreadLocal<User> CURRENT_USER = new ThreadLocal<>();
+}
+void handleRequest(User user) {
+    RequestContext.CURRENT_USER.set(user);
+    // ... handle request ...
+    // RequestContext.CURRENT_USER.remove(); // MISSING! Thread reused from pool
+    // Next request on same thread: CURRENT_USER still set to previous user!
+}
+// Fix: always call .remove() in finally:
+try {
+    RequestContext.CURRENT_USER.set(user);
+    handleRequest();
+} finally {
+    RequestContext.CURRENT_USER.remove(); // ALWAYS clean up
+}
+```
+
+*What separates good from great:* The ThreadLocal leak is the most insidious:
+it's not just a memory leak, it's a data leak between requests. User A's
+request context (authentication, tenant ID, permissions) remains on the thread
+and is picked up by user B's request if the thread is reused from the pool.
+This is a security vulnerability masquerading as a memory leak. Spring Security's
+`SecurityContextHolder` uses ThreadLocal and clears it via `SecurityContextPersistenceFilter`
+at the end of every request - this is the correct pattern.
+
+---
+
+**Q5 (High CPU): Step-by-step high CPU diagnosis in Java production.**
+
+A:
+```bash
+# Step 1: confirm Java process is the cause
+top                              # identify which PID uses CPU
+
+# Step 2: find which thread inside Java process
+top -H -p <java_pid>             # -H = show threads, not just process
+# Find the thread with high CPU; note the PID (native thread ID)
+
+# Step 3: convert native thread ID to hex (for thread dump correlation)
+printf '%x' <thread_pid>        # e.g., 12345 -> 0x3039
+
+# Step 4: get thread dump and find the thread
+jstack <java_pid> | grep "nid=0x3039" -A 20
+# Shows: which Java method the hot thread is executing
+
+# Common findings:
+# - JVM in GC: "GC Thread" in RUNNABLE = GC is CPU consumer
+#   -> Check heap: jcmd <pid> GC.heap_info
+#   -> If heap nearly full: OOM imminent, add heap or fix memory issue
+# - Application thread in tight loop: find the hot method
+#   -> JFR method sampling: which method appears most?
+# - JSON/XML parsing hotspot: deserializing massive payloads in tight loop
+#   -> Optimize: streaming parse, result caching, async deserialization
+# - Regex backtracking (ReDoS): catastrophic regex with adversarial input
+#   -> Use timeout: Pattern.CASE_INSENSITIVE + input length check
+```
+
+*What separates good from great:* The native thread ID to hex conversion
+is the key link between `top -H` (OS-level thread view) and `jstack` (JVM-level
+thread view). `top -H -p <pid>` shows TIDs in decimal; jstack shows thread IDs
+as hex in the `nid=0x...` field. Connecting these: `printf '%x' <tid>` converts
+to hex. Without this connection, you can see "some thread uses 99% CPU" but
+not WHICH Java code it's executing. With the nid link: you find the exact
+method in the exact thread within seconds.
+
+---
+
+**Q6 (GC diagnosis): How do you diagnose GC performance issues in production?**
+
+A:
+```bash
+# Enable GC logging (Java 11+):
+-Xlog:gc*:file=/var/log/jvm/gc.log:time,uptime,level,tags:filecount=10,filesize=20m
+
+# Key metrics to monitor:
+# - GC pause time: how long does each GC pause the application?
+#   Goal: P99 < 100ms for web services
+# - GC frequency: how often? (hourly = fine, every 30s = problem)
+# - After-GC heap: heap reclaimed? If heap after GC grows -> leak
+
+# JFR GC analysis:
+jcmd <pid> JFR.start duration=60s settings=default filename=/tmp/gc.jfr
+# Open in Mission Control: "GC" tab shows timeline of GC pauses
+
+# Common GC problems and fixes:
+# 1. Promotion failure: old generation fills before young gen GC cleans it
+#    Fix: increase old gen size (-Xmx), or reduce allocation rate
+# 2. Humongous allocation: objects > 50% region size (G1) -> direct to old gen
+#    Fix: reduce object size or increase G1 region size (-XX:G1HeapRegionSize)
+# 3. Metaspace OOM: too many classes loaded (class generation, reflection)
+#    Fix: -XX:MaxMetaspaceSize=512m, find what generates classes (bytecode gen?)
+# 4. GC overhead limit exceeded: >98% time in GC
+#    Fix: leak or insufficient heap; heap dump to find leak
+
+# Monitoring setup (Prometheus JVM micrometer):
+# jvm_gc_pause_seconds_max
+# jvm_memory_used_bytes{area="heap"}
+# jvm_gc_live_data_size_bytes (baseline heap after full GC)
+```
+
+*What separates good from great:* `jvm_gc_live_data_size_bytes` (or equivalent)
+is the most important long-term GC metric. This is the heap required for
+"live" data after a full GC - it should be stable over time. If it grows
+monotonically over hours/days: you have a memory leak. A common mistake:
+monitoring only `jvm_memory_used_bytes` which fluctuates with GC cycles.
+The "live data size" is the floor and reveals trends that usage metrics hide.
+Rule of thumb: set heap to 2-3x the live data size for adequate GC breathing room.
+
+---
+
+**Q7 (Arthas): How do you use Arthas for live production debugging?**
+
+A: Arthas is a JVM diagnostic tool from Alibaba - attaches to a running JVM
+and provides live introspection without code changes or restarts.
+
+```bash
+# Download and attach to running JVM:
+java -jar arthas-boot.jar <pid>
+
+# Key commands:
+
+# Watch method arguments and return values LIVE:
+watch com.example.OrderService createOrder "{params,returnObj}" -x 2
+# Output: every call to createOrder shows params and return value
+
+# Trace method call tree with timing:
+trace com.example.OrderService createOrder -n 5
+# Shows: createOrder -> validateOrder [5ms] -> saveOrder [50ms] -> sendEmail [200ms]
+# Immediately shows which sub-method is slow!
+
+# Decompile class at runtime (see what's actually loaded):
+jad com.example.OrderService
+# Shows: actual bytecode-decompiled Java
+# Reveals: is this the version you think it is?
+
+# Monitor method call count and avg time:
+monitor com.example.OrderService createOrder -c 5
+# Every 5 seconds: count, fail count, avg time, success rate
+
+# Redefine class at runtime (hot reload for debugging):
+# 1. Edit the class on your dev machine
+# 2. Compile: javac OrderService.java
+# 3. retransform /path/to/OrderService.class  (!)
+# Changes take effect immediately without restart
+
+# Stack trace who's calling a method:
+stack com.example.DatabasePool getConnection
+# Shows: full call stack for each getConnection call
+# Find: who is calling getConnection without closing it!
+```
+
+*What separates good from great:* Arthas `trace` is the production equivalent
+of a profiler for a specific code path: you get the call tree of ONE specific
+method with timing, live, in production, without any restart or code change.
+Traditional profilers sample all methods; `trace` focuses exactly on the
+method you're investigating. The Arthas `watch` command is the replacement
+for adding debug logging: instead of deploying a new version with `log.debug("param: " + param)`,
+you `watch` the method live and see the values immediately. This is only
+safe for diagnostic use: Arthas attaches via JVMTI and has measurable overhead
+on the traced methods; disable after diagnosis.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: ★☆☆ level - comparison table not required)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: ★☆☆ level - system design not required)*
+
+---
+
+### 📊 Diagram
+
+*(Omit: symptom-to-tool mapping described adequately in Concept Explanation)*

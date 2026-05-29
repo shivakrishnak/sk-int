@@ -1,955 +1,1020 @@
 ---
 layout: default
 title: "Design Patterns - L0 Orientation"
-parent: "Design Patterns and SOLID"
+parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 1
 permalink: /design-patterns/l0-orientation/
 ---
 
-## Keywords in This File
-{: .no_toc }
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Why Design Patterns Exist](#why-design-patterns-exist) | foundational |
-| 2 | [Gang of Four Pattern Catalog Overview](#gang-of-four-pattern-catalog-overview) | foundational |
-| 3 | [OOP Design Principles Landscape](#oop-design-principles-landscape) | foundational |
-| 4 | [Pattern Language and Pattern Thinking](#pattern-language-and-pattern-thinking) | foundational |
+# What Are Design Patterns
 
 ---
-
-# Why Design Patterns Exist
-
-**Interview Weight:** foundational - Asked at every level to
-gauge whether you think in terms of reusable solutions or
-reinvent from scratch each time.
-
+id: DP-001
+title: What Are Design Patterns
+category: Design Patterns
+difficulty: ★☆☆
+interview_weight: critical
+asked_at: All
+seniority: all
+tags: #design-patterns, #gof, #oop, #software-design
+status: draft
+version: 1
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Design patterns exist because software has recurring structural
-> problems that experienced engineers have already solved. A pattern
-> is a named, reusable solution to a common design problem in a
-> given context. They exist not as rules but as a shared vocabulary:
-> "use Strategy here" communicates more in three words than a
-> paragraph of description. Without patterns, every team reinvents
-> solutions, names them differently, and loses knowledge when
-> people leave.
+> Design patterns are reusable solutions to recurring software design
+> problems. They were popularized by the Gang of Four book (1994) which
+> catalogued 23 patterns into three categories: Creational (how to create
+> objects), Structural (how to compose objects), and Behavioral (how
+> objects communicate). They are not code to copy - they are blueprints
+> describing the structure of a solution.
 
 **3 minutes (Senior):**
+> I think of design patterns as a shared vocabulary for design decisions.
+> When I say "use an Observer here," an experienced engineer immediately
+> understands: there is a Subject that maintains a list of Observers,
+> notifies them on state change, and neither party is tightly coupled to
+> the other. Without that vocabulary, I would need five minutes on a
+> whiteboard to convey the same idea.
+>
+> The deeper value is the problem-solution pairing. Each pattern encodes
+> a decision: the context in which a problem appears, the forces at play,
+> and why this particular structure resolves those forces better than
+> alternatives. When I see a class with ten boolean flags controlling
+> behavior, I recognize "this is a State pattern problem waiting to be
+> solved."
+>
+> The non-obvious insight: patterns describe structure, not implementation.
+> Observer in Java looks different from Observer in JavaScript (events,
+> reactive streams), but the structural relationship is identical. This
+> is why patterns transfer across languages.
 
-> Why patterns exist - three forces:
->
-> Force 1: Recurring problems.
->   Software systems share structural challenges:
->   "create objects without coupling to concrete classes"
->   "add behavior without modifying existing code"
->   "decouple producers from consumers"
->   These problems recur across every codebase.
->
-> Force 2: Communication efficiency.
->   "We used Observer for event propagation" is 7 words.
->   Without the pattern name, you need a whiteboard session.
->   Patterns compress design knowledge into vocabulary.
->   New team members ramp faster when patterns are named.
->
-> Force 3: Proven trade-offs.
->   Each pattern carries known consequences:
->   Singleton: global access but testing difficulty.
->   Observer: decoupling but potential memory leaks.
->   Factory: flexibility but indirection.
->   Knowing the pattern means knowing the trade-off.
->
-> What patterns are NOT:
->   Not copy-paste templates (context matters).
->   Not mandatory (YAGNI applies).
->   Not proof of good design (pattern abuse exists).
->   Not language-specific (they transcend Java).
->
-> Historical context:
->   Christopher Alexander (1977): "A Pattern Language" (architecture).
->   GoF (1994): "Design Patterns" - 23 patterns for OOP.
->   Martin Fowler (2002): "Patterns of Enterprise Application Architecture."
->   Each generation addressed the recurring problems of its era.
+*Adapting up:* At staff level, add: "The real cost of patterns is
+cognitive overhead. Every pattern adds indirection - another class,
+another interface. The decision: does the flexibility justify the
+complexity?"
+
+*Adapting down:* Junior version - "Design patterns are named solutions
+to common problems. Recognize the problem and apply the known solution."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about the fundamental
-purpose of design patterns in software engineering."
+**(1) Restate:** "So you are asking about design patterns - let me
+think through what problem they exist to solve."
 
-**(2) First principles:** "Recurring problems need reusable
-solutions. Patterns name those solutions so teams can
-communicate and reason about trade-offs efficiently."
+**(2) First principles:** "In software, the same structural problems
+appear in many codebases: how to create objects flexibly, how to add
+behavior without changing existing code, how to notify multiple
+components of a change. Rather than solving each ad hoc, patterns
+capture the canonical solution once."
 
-**(3) Bridge:** "Design patterns are to software what
-standard plays are to basketball - named strategies
-that the whole team understands without explanation."
+**(3) Bridge:** "This is similar to algorithms: quicksort is a pattern
+for sorting. The difference is patterns describe class structures and
+object collaborations rather than computational steps."
 
 ---
 
 ### 📘 Concept Explanation
 
-Design patterns solve the communication problem first and
-the technical problem second. A team that shares pattern
-vocabulary makes design decisions in minutes instead of hours.
+**What it is:**
+A design pattern is a named, documented solution to a recurring design
+problem. It describes a class structure, the relationships between
+classes, and the responsibilities of each class in a way that can be
+adapted to many contexts.
 
-**The three categories (GoF):**
+**The problem it solves:**
+Before patterns were catalogued, every team solved the same structural
+problems independently - different shapes, different names, inconsistent
+trade-offs. The pattern movement gave the industry a shared vocabulary
+and a library of proven solutions.
 
-Creational: how objects are created.
-- Singleton, Factory Method, Abstract Factory, Builder, Prototype.
-- Problem solved: decouple object creation from usage.
+**How it works:**
+A pattern consists of four elements:
+1. **Name** - the vocabulary handle (Observer, Strategy, Factory)
+2. **Problem** - the context and forces that create the need
+3. **Solution** - the class structure and their relationships
+4. **Consequences** - what you gain and what you give up
 
-Structural: how objects are composed.
-- Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.
-- Problem solved: build flexible structures from simple parts.
+When you apply a pattern: identify that your problem matches the
+pattern's problem description, then structure your classes to match
+the solution, adapting specific names and types to your domain.
 
-Behavioral: how objects interact.
-- Chain of Responsibility, Command, Iterator, Mediator, Memento,
-  Observer, State, Strategy, Template Method, Visitor.
-- Problem solved: define communication without tight coupling.
+**The key insight:**
+Patterns are about relationships and responsibilities, not code. Two
+completely different codebases can both use Observer with zero shared
+code. The pattern is the structural relationship: Subject knows Observers
+through an interface; Observers do not know each other; Subject does not
+know what Observers do with the notification.
 
-**Beyond GoF:**
+**When to use it:**
+- Designing an object structure and recognizing a recurring force
+- Communicating a design decision clearly to teammates
+- Leveraging known trade-offs rather than discovering them at runtime
+- Writing framework code that others will extend
 
-Enterprise patterns (Fowler): Repository, Unit of Work, DTO,
-Service Layer, Domain Model, Active Record.
+**When NOT to use it:**
+- Simple problems: a function or plain class is enough
+- When you do not have the recurring forces the pattern addresses
+- When indirection obscures intent more than it clarifies it
+- YAGNI: do not add pattern structure for flexibility you will never use
 
-Concurrency patterns: Producer-Consumer, Thread Pool,
-Read-Write Lock, Double-Checked Locking.
+**Alternatives:**
+- **Ad hoc structure** - direct implementation; choose for genuinely
+  one-off problems
+- **Functional composition** - functions as first-class objects replace
+  many behavioral patterns (Strategy becomes a function parameter)
+- **Framework abstractions** - Spring's event system replaces Observer;
+  framework handles the structural complexity
 
-Architectural patterns: MVC, MVVM, Hexagonal, CQRS,
-Event Sourcing, Microservices.
+**First-principles derivation:**
+Given: OO code has recurring structural problems. Options: (A) solve each
+ad hoc - inconsistent. (B) invent a personal library - not shared
+vocabulary. (C) catalogue canonical solutions once, name them, document
+trade-offs. Option C produces the GoF book.
 
-**The pattern format:**
+---
 
-Every pattern documents: Name, Problem, Context, Forces,
-Solution, Consequences, Known Uses, Related Patterns.
-The consequences section is the most important: it tells
-you what you sacrifice when you apply the pattern.
+### 💻 Code Example
+
+```java
+// BAD: ad hoc notification - tight coupling
+public class OrderService {
+    private EmailService emailSvc;
+    private SmsService smsSvc;
+    private AnalyticsService analyticsSvc;
+
+    // Adding a 4th notification: must edit OrderService
+    public void placeOrder(Order order) {
+        // business logic...
+        emailSvc.sendConfirmation(order);
+        smsSvc.sendConfirmation(order);
+        analyticsSvc.recordPurchase(order);
+    }
+}
+```
+
+> **Code walkthrough:** Every new notification channel requires
+> modifying `OrderService`. The class knows all concrete listener
+> types. Adding a 4th listener violates the Open/Closed Principle
+> and creates tight coupling.
+
+```java
+// GOOD: Observer pattern - open for extension
+public interface OrderListener {
+    void onOrderPlaced(Order order);
+}
+
+public class OrderService {
+    private final List<OrderListener> listeners = new ArrayList<>();
+
+    public void addListener(OrderListener listener) {
+        listeners.add(listener);
+    }
+
+    public void placeOrder(Order order) {
+        // business logic...
+        listeners.forEach(l -> l.onOrderPlaced(order));
+    }
+}
+
+// Each listener is independent, added at runtime
+public class EmailNotifier implements OrderListener {
+    public void onOrderPlaced(Order order) { /* send email */ }
+}
+public class AnalyticsNotifier implements OrderListener {
+    public void onOrderPlaced(Order order) { /* record event */ }
+}
+```
+
+> **Code walkthrough:** `OrderService` depends on the `OrderListener`
+> interface, not on concrete classes. Adding a new notification type
+> requires zero changes to `OrderService` - create a new implementation
+> and register it. This is Observer: Subject (`OrderService`) maintains
+> a list of Observers (`OrderListener`), notifies them through an
+> interface. Neither side knows the concrete type of the other.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Junior:** "Design patterns are reusable solutions to
-common software problems. They help teams communicate."
+**Junior / Mid (0-5 years):**
+> Design patterns are named solutions to common object-oriented design
+> problems. The GoF book catalogued 23 of them: Creational (how to
+> create objects), Structural (how to compose objects), and Behavioral
+> (how objects communicate). They give me a vocabulary to communicate
+> design decisions precisely, and a proven structure to apply when I
+> recognize the matching problem.
 
-**Mid:** "Patterns provide a shared vocabulary and encode
-trade-offs. I use Factory for object creation flexibility,
-Strategy for interchangeable algorithms, Observer for
-event-driven decoupling."
-
-**Senior:** "I choose patterns based on the forces present:
-if I need to vary creation independently, Factory. If I
-need to add behavior without subclassing, Decorator. The
-pattern name communicates intent to the team instantly."
-
-**Staff:** "Patterns are a communication tool, not a goal.
-I see teams over-apply patterns (AbstractSingletonProxyFactory)
-which adds complexity without solving a real problem. The
-test: does removing this pattern make the code simpler?
-If yes, remove it."
+*Push deeper:* "I look for patterns as refactoring targets more than
+upfront designs. When I see a class with many boolean flags or a
+growing list of notification types hardcoded in a method, I recognize
+the pattern that applies and refactor toward it."
 
 ---
 
-### ⚠️ Common Misconceptions
+**Senior / Staff (5+ years):**
+> Design patterns are a vocabulary for design decisions and a library
+> of proven solutions to recurring structural problems. The value is
+> two-fold: precise communication between engineers, and encoded
+> trade-offs so you do not rediscover them.
 
-**"Every problem needs a design pattern."**
-False. Patterns solve specific recurring problems. Simple
-problems need simple solutions. Pattern abuse creates
-unnecessary indirection and complexity.
+The production reality: most patterns arise as refactoring targets, not
+upfront designs. You write ad hoc code, feel the pain of inflexibility,
+then recognize "this is an Observer problem" and refactor. Designing
+with patterns upfront requires experience to know which problems you
+will actually hit.
 
-**"Design patterns are Java-specific."**
-False. Patterns are language-agnostic. Some patterns
-(Iterator, Observer) are so common that languages build
-them in natively (for-each loops, event systems).
-
-**"Knowing patterns makes you a good designer."**
-Partially true. Knowing WHEN NOT to use a pattern is
-equally important. Over-engineering with patterns is
-a common anti-pattern itself.
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Diagnosis |
-|---|---|---|
-| Pattern abuse | 15 classes for a simple CRUD | Count indirection layers. If removing pattern simplifies: remove it |
-| Wrong pattern | Strategy applied where a simple if-else suffices | Check: does the variation actually change at runtime? |
-| Pattern cargo-culting | Pattern names in code but incorrect implementation | Review: does the code actually solve the pattern's stated problem? |
-| Missing pattern | Duplicated logic across 10 classes | If you see copy-paste: a pattern is trying to emerge |
+*Push deeper:* "At staff level: which patterns does our framework
+already provide? Spring's ApplicationEvent system gives you Observer.
+Spring AOP gives you Proxy + Decorator. Using the framework's built-in
+pattern implementations is almost always better than hand-rolling them."
 
 ---
 
-### 🎯 Interview Deep-Dive
+### ❓ Questions You Will Be Asked
 
-| Experience | Time | Depth |
-|---|---|---|
-| Junior | 3 min | Name patterns, state purpose |
-| Mid | 5 min | Categorize, give examples, name trade-offs |
-| Senior | 8 min | When NOT to use, pattern abuse, real stories |
-| Staff | 12 min | Design philosophy, pattern evolution, team vocabulary |
+#### Definition
+- "What is a design pattern?"
+- "Can you name the three categories of GoF patterns?"
+- "What is the difference between a pattern and a library?"
 
----
+🗣️ "A design pattern is a named, reusable solution to a recurring
+design problem. It describes class structure and relationships, not
+specific code. GoF catalogued 23 patterns across three categories:
+Creational (object instantiation), Structural (composition), and
+Behavioral (communication). Unlike a library, a pattern is a template -
+you adapt it to your types and context."
 
-**[JUNIOR] Q1 - What are design patterns and why
-do they matter?**
+#### Mechanism
+- "How do you apply a design pattern?"
+- "Walk me through recognizing when a pattern is needed."
 
-*Why they ask:* Baseline awareness of design vocabulary.
+🗣️ "Applying a pattern is three steps. First, I recognize that my
+problem's forces match a known pattern's problem description - for
+example, I need to notify multiple components when an event occurs
+without tight coupling. That matches Observer. Second, I structure
+my classes to match the solution: Subject interface, Observer interface,
+concrete implementations. Third, I adapt the names to my domain -
+`OrderService` as Subject, `OrderListener` as Observer."
 
-Design patterns are reusable solutions to recurring software
-design problems. They matter for three reasons:
+#### Comparison
+- "What is the difference between a pattern and an anti-pattern?"
+- "When are patterns overused?"
 
-First, communication. When I say "we need a Factory here,"
-every engineer on the team understands the intent without
-a lengthy explanation. This shared vocabulary accelerates
-code reviews, design discussions, and onboarding.
+🗣️ "An anti-pattern is a commonly used solution that creates more
+problems than it solves. Singleton looks like clean 'one instance'
+design but is global mutable state that makes testing hard. Patterns
+are overused when the forces they address do not exist in your problem.
+Adding Factory Method when you have one concrete type that never changes
+adds indirection with no benefit. Test: if removing the pattern simplifies
+the code without losing flexibility you actually use - it should not
+have been there."
 
-Second, proven trade-offs. Each pattern carries known
-consequences. Singleton gives global access but hurts
-testability. Observer decouples publishers from subscribers
-but can cause memory leaks if listeners are not removed.
-Knowing the pattern means knowing what you sacrifice.
+#### Scenario
+- "Design a payment processing system. Which patterns would you use?"
+- "Your order service needs multiple notification channels. How do you
+  design it?"
 
-Third, design acceleration. Instead of solving the same
-structural problem from scratch, patterns give you a
-starting point. Factory Method: how to create objects
-without coupling to concrete classes. Strategy: how to
-vary an algorithm independently from its caller.
+🗣️ "For notifications I would reach for Observer: the order service
+fires an event, notification handlers register as listeners. I would
+not start by asking 'which patterns?' - I identify the variable points
+first: what changes across executions, what changes over time, what
+needs to be pluggable. Those variable points drive pattern selection.
+Payment providers vary at runtime - Strategy. The right processor
+depends on configuration - Factory. Downstream notifications must not
+couple to the payment domain - Observer."
 
-The key insight: patterns are not templates to copy.
-They are named solutions that adapt to your specific
-context. Applying a pattern without the matching problem
-is worse than no pattern at all.
+#### Debugging
+- "An Observer notification is not arriving. How do you debug it?"
+- "A Decorator is not wrapping the object you expect. How do you
+  investigate?"
 
-*What separates good from great:* Explaining when NOT
-to use patterns (YAGNI, simplicity) shows maturity beyond
-pattern memorization.
+🗣️ "For missing Observer notifications: three checks. First, is the
+listener registered? Add logging in the registration code. Second, is
+the Subject actually firing? Add a log in the notify loop. Third, is
+an exception in an earlier listener silently swallowing the notification?
+In the production version I wrap each listener call in try/catch so one
+bad listener cannot block the rest. Most 'notification not arriving' bugs
+are registration ordering issues or swallowed exceptions."
 
----
+#### Deep Dive
+- "Why were patterns invented? What industry problem did they solve?"
+- "What are the limitations of the GoF patterns?"
 
-**[MID] Q2 - How do you decide which pattern to apply
-in a given situation?**
-
-*Why they ask:* Tests decision-making, not just knowledge.
-
-I use a forces-based approach. First, I identify the
-problem precisely: what is varying? What constraint am
-I working against?
-
-If object creation is the concern:
-- Need one instance: Singleton (with DI container, not static).
-- Need to vary which class is instantiated: Factory Method.
-- Need complex object assembly: Builder.
-
-If structure/composition is the concern:
-- Need to add behavior dynamically: Decorator.
-- Need to simplify a complex subsystem: Facade.
-- Need to make incompatible interfaces work together: Adapter.
-
-If behavior/interaction is the concern:
-- Need interchangeable algorithms: Strategy.
-- Need to notify multiple listeners: Observer.
-- Need to define a skeleton with variable steps: Template Method.
-
-The second filter: do I actually need this pattern now?
-YAGNI check - if the variation doesn't exist yet and
-isn't likely, a simple implementation is better. I can
-always refactor to a pattern when the need emerges.
-
-Third filter: team familiarity. If the team doesn't know
-Visitor, using it creates a maintenance burden. Prefer
-patterns the team already understands.
-
-*What separates good from great:* The YAGNI filter -
-showing you don't apply patterns preemptively.
-
----
-
-**[SENIOR] Q3 - Give an example where you removed a
-design pattern to improve the code.**
-
-*Why they ask:* Tests mature judgment - pattern removal
-is harder than pattern application.
-
-We had a payment processing service with a full Strategy
-pattern for payment method selection. Three classes:
-PaymentStrategy interface, CreditCardStrategy,
-DebitCardStrategy. Each strategy had identical logic
-except for one field value (payment type enum).
-
-The "pattern" added three files, an interface, two
-implementations, a factory to select between them, and
-a configuration mapping. Total: 5 classes for what was
-essentially an if-else on payment type.
-
-I refactored it to a single PaymentProcessor class with
-an enum parameter. Removed 4 classes, simplified the
-dependency graph, and the team could now read the payment
-flow in one file instead of jumping across 5.
-
-The lesson: Strategy pattern solves "algorithms that
-vary independently and are selected at runtime." Our
-payment types never varied at runtime - they were fixed
-at compile time. The pattern was solving a problem we
-didn't have.
-
-Metric: PR review time for payment changes dropped from
-20 minutes (navigating 5 files) to 3 minutes (one file).
-
-*What separates good from great:* Having a concrete story
-with measurable improvement (PR review time reduction).
-
----
-
-**[STAFF] Q4 - How do you establish pattern vocabulary
-in a team without over-engineering?**
-
-*Why they ask:* Leadership and culture influence.
-
-I use a three-part approach:
-
-Part 1: Pattern recognition in code review.
-Instead of mandating patterns upfront, I identify them
-during review. "This looks like it wants to be a Strategy -
-the algorithm varies by customer tier." This teaches
-patterns in context, not abstractly.
-
-Part 2: ADR documentation.
-When we introduce a pattern, we write a short Architecture
-Decision Record: why this pattern, what it replaces, what
-we sacrifice. Future engineers can evaluate whether the
-pattern is still justified.
-
-Part 3: Anti-pattern examples.
-I maintain a short "patterns we removed" document. Real
-examples from our codebase where a pattern was applied
-prematurely and later simplified. This gives permission
-to not use patterns.
-
-The balance: I prefer "grow patterns from need" over
-"design with patterns upfront." Start simple. When
-duplication or coupling becomes painful, refactor toward
-the pattern. The code tells you when it needs a pattern
-through code smells (duplication, long conditionals,
-tight coupling).
-
-Measurement: I track "classes per feature." If a simple
-feature touches 15 classes, we're over-patterned. If it
-touches 1 god-class, we're under-patterned. Sweet spot:
-3-5 classes for a typical feature.
-
-*What separates good from great:* "Grow patterns from need"
-philosophy with a measurable heuristic (classes per feature).
+🗣️ "GoF patterns solved a knowledge transfer problem. Expert designers
+were solving the same structural problems repeatedly in different projects.
+Capturing these solutions as named structures - not code, but descriptions
+of class relationships - made them transferable. The limitation: they were
+designed for OO languages of the 1990s. Many become unnecessary in
+functional languages: Strategy is a function parameter, Observer is a
+stream subscription. Modern frameworks also provide many patterns built-in,
+reducing the need to hand-roll them. The patterns still have value as
+vocabulary even when the implementation is framework-provided."
 
 | Interviewer Type | Emphasis |
 |---|---|
-| Technical Panel | Name patterns, categorize, give Java examples. |
-| Hiring Manager | Communication, team vocabulary, pragmatism. |
-| Bar Raiser | When NOT to use patterns, removal stories. |
-| Peer Engineer | "We removed 4 Strategy classes. Payment code review: 20min to 3min." |
+| Technical Panel | Name all 3 categories; show mechanism with one coded example. |
+| Hiring Manager | "Shared vocabulary for design decisions - speeds up code review and design discussion." |
+| Bar Raiser | "Patterns add indirection. The question is whether the flexibility justifies the complexity." |
+| Peer Engineer | "I find patterns most useful as vocabulary. Which does your team use most?" |
 
 ---
 
+# GoF Pattern Categories
+
 ---
-
-# Gang of Four Pattern Catalog Overview
-
-**Interview Weight:** foundational - Context question to
-assess whether candidate knows the full landscape or just
-3-4 popular patterns.
-
+id: DP-002
+title: GoF Pattern Categories
+category: Design Patterns
+difficulty: ★☆☆
+interview_weight: high
+asked_at: All
+seniority: all
+tags: #design-patterns, #creational, #structural, #behavioral, #gof
+status: draft
+version: 1
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> The Gang of Four (Gamma, Helm, Johnson, Vlissides) published
-> 23 design patterns in 1994, organized into three categories:
-> Creational (5 patterns - object creation), Structural (7
-> patterns - composition), Behavioral (11 patterns - interaction).
-> In modern Java backend work, about 10-12 of these appear
-> regularly. The others (Memento, Flyweight, Visitor) appear
-> in specialized contexts. Knowing the full catalog means
-> you recognize patterns in frameworks (Spring uses Factory,
-> Proxy, Template Method, Observer extensively).
+> The 23 GoF patterns divide into three categories by purpose. Creational
+> (5 patterns) abstract object creation - you decouple the code that uses
+> objects from the code that creates them. Structural (7 patterns) compose
+> classes and objects into larger structures while keeping them flexible.
+> Behavioral (11 patterns) define how objects communicate and distribute
+> responsibility. Knowing which category a problem falls into narrows the
+> field from 23 patterns to 5, 7, or 11.
 
 **3 minutes (Senior):**
-
-> The 23 GoF patterns mapped to modern Java usage:
+> The category tells you where the complexity lies in your problem. If
+> the problem is "I need different implementations created without the
+> caller knowing which" - that is Creational (Factory Method, Abstract
+> Factory). If the problem is "I have an existing class with the wrong
+> interface and cannot modify it" - that is Structural (Adapter). If the
+> problem is "I need to pass a request through a chain of handlers each
+> of which may or may not handle it" - that is Behavioral (Chain of
+> Responsibility).
 >
-> CREATIONAL (5):
->   Singleton: Spring beans (default scope), connection pools.
->   Factory Method: Spring BeanFactory, JDBC DriverManager.
->   Abstract Factory: GUI toolkits, cross-platform builders.
->   Builder: Lombok @Builder, StringBuilder, Stream pipelines.
->   Prototype: clone(), Spring prototype scope.
->
-> STRUCTURAL (7):
->   Adapter: Spring MVC HandlerAdapter, legacy integration.
->   Bridge: JDBC API (abstraction) vs drivers (impl).
->   Composite: UI trees, file systems, Spring Security filters.
->   Decorator: Java I/O streams, Spring interceptors.
->   Facade: Spring JdbcTemplate, service layers.
->   Flyweight: Integer cache (-128 to 127), string pool.
->   Proxy: Spring AOP, JPA lazy loading, java.lang.reflect.Proxy.
->
-> BEHAVIORAL (11):
->   Chain of Responsibility: Servlet filters, Spring Security.
->   Command: Spring MVC handler, Runnable, undo systems.
->   Iterator: java.util.Iterator, enhanced for-loop.
->   Mediator: Spring ApplicationContext, message brokers.
->   Memento: serialization, undo/redo systems.
->   Observer: Spring Events, Java Beans PropertyChangeListener.
->   State: workflow engines, order status machines.
->   Strategy: Comparator, Spring Resource, validation.
->   Template Method: Spring JdbcTemplate, AbstractController.
->   Visitor: compiler AST processing, reporting.
->
-> Frequency in Java backend interviews (top 10):
->   1. Singleton  2. Factory  3. Builder
->   4. Strategy   5. Observer 6. Decorator
->   7. Proxy      8. Template Method  9. Adapter
->   10. Chain of Responsibility
+> The category system is a mental search index. When I face a design
+> problem I ask: is this about creation, composition, or communication?
+> That narrows the field. Then I match the specific forces within the
+> category.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about the complete GoF
-pattern catalog and its organization."
+**(1) Restate:** "GoF categories - the three groups the 23 patterns
+divide into."
 
-**(2) First principles:** "23 patterns in 3 categories:
-5 Creational (making objects), 7 Structural (composing
-objects), 11 Behavioral (objects communicating)."
+**(2) First principles:** "OO design has three types of problems: how
+to create objects, how to arrange objects, and how objects talk to each
+other. Each category addresses one."
 
-**(3) Bridge:** "Think of it like a toolbox: creational
-tools build things, structural tools connect things,
-behavioral tools coordinate things."
+**(3) Bridge:** "Think of it like grammar: nouns (what object to create
+- Creational), adjectives (how it is structured - Structural), verbs
+(what it does - Behavioral)."
 
 ---
 
 ### 📘 Concept Explanation
 
-The GoF catalog is not a textbook to memorize - it is a
-pattern recognition aid. When you see a problem, the
-catalog helps you find the pattern that solves it.
+**What it is:**
+The 23 GoF patterns organized into three groups by the type of design
+problem they solve.
 
-**Pattern relationships (key connections):**
+**The problem it solves:**
+Without categorization, 23 patterns form a flat list that is hard to
+search. Three categories create a mental index: identify the type of
+problem, then scan only the relevant subset.
 
-Factory + Singleton: factories are often singletons.
-Decorator + Composite: both use recursive composition.
-Strategy + Template Method: both vary behavior (Strategy
-via delegation, Template Method via inheritance).
-Observer + Mediator: Observer for one-to-many broadcast,
-Mediator for many-to-many coordination.
-Proxy + Decorator: both wrap an object (Proxy controls
-access, Decorator adds behavior).
+**How it works:**
 
-**Framework pattern density:**
+```
+CREATIONAL (5 patterns)
+  Purpose: How to create objects
 
-Spring Framework uses at least 15 of the 23 patterns:
-- BeanFactory (Factory Method)
-- ApplicationContext (Mediator)
-- AOP proxies (Proxy)
-- JdbcTemplate (Template Method)
-- ApplicationEvent (Observer)
-- HandlerInterceptor (Chain of Responsibility)
-- @Scope("prototype") (Prototype)
-- bean scopes (Singleton)
+  Singleton        one globally shared instance
+  Factory Method   defer type selection to subclasses
+  Abstract Factory create a family of related objects
+  Builder          step-by-step complex construction
+  Prototype        clone an existing object
 
-Recognizing patterns in frameworks accelerates learning.
+STRUCTURAL (7 patterns)
+  Purpose: How to compose classes and objects
+
+  Adapter    match incompatible interfaces
+  Bridge     separate abstraction from implementation
+  Composite  tree structure, uniform interface for leaf + node
+  Decorator  add behavior without subclassing
+  Facade     simplified interface to a subsystem
+  Flyweight  share fine-grained objects to reduce memory
+  Proxy      surrogate or placeholder for another object
+
+BEHAVIORAL (11 patterns)
+  Purpose: How objects communicate
+
+  Chain of Responsibility  pass request through handlers
+  Command                  encapsulate action as object
+  Interpreter              grammar for a language
+  Iterator                 sequential access without exposure
+  Mediator                 centralized communication hub
+  Memento                  capture and restore state
+  Observer                 notify dependents of state change
+  State                    behavior changes with state
+  Strategy                 swappable algorithms
+  Template Method          algorithm skeleton, defer steps
+  Visitor                  operations on object structure
+```
+
+**The key insight:**
+The category reveals the locus of change. Creational: what changes is
+which object gets built. Structural: what changes is how objects connect.
+Behavioral: what changes is what happens or how objects coordinate.
+Identifying the locus of change first points to the right category.
+
+**When to use it:**
+Use the category as the first filter when facing a design problem:
+classify the problem first, then select from the relevant category.
+
+**When NOT to use it:**
+Do not force a problem into a category. Some modern problems (reactive
+programming, event streaming) are better addressed by patterns outside
+the GoF 23.
+
+**Alternatives:**
+- **POSA (Pattern-Oriented Software Architecture)** - architectural
+  patterns for distributed systems (Broker, Pipes and Filters, Layers)
+- **Enterprise Integration Patterns** - messaging patterns (Message
+  Channel, Router, Splitter)
+- **Functional patterns** - monads, functors, fold/map replace many
+  GoF behavioral patterns
+
+**First-principles derivation:**
+OO design activities: creating objects, organizing them, having them
+work together. Three activities produce three categories.
+
+---
+
+### 💻 Code Example
+
+```java
+// CREATIONAL: Factory Method
+// Problem: caller needs a Notifier but should not know the type
+public abstract class NotifierFactory {
+    // Subclass decides which Notifier to create
+    public abstract Notifier createNotifier();
+
+    public void sendAlert(String msg) {
+        createNotifier().send(msg);
+    }
+}
+
+public class EmailNotifierFactory extends NotifierFactory {
+    public Notifier createNotifier() {
+        return new EmailNotifier();
+    }
+}
+```
+
+> **Code walkthrough:** Factory Method separates object creation from
+> use. `NotifierFactory` knows how to use a `Notifier` but not which
+> concrete type to create. Subclasses fill in the creation. The caller
+> picks the factory subclass at startup; after that, the type is hidden.
+
+```java
+// STRUCTURAL: Decorator
+// Problem: add logging to any service without modifying it
+public interface OrderService {
+    void placeOrder(Order order);
+}
+
+public class LoggingOrderService implements OrderService {
+    private final OrderService delegate;
+
+    public LoggingOrderService(OrderService delegate) {
+        this.delegate = delegate;
+    }
+
+    public void placeOrder(Order order) {
+        log.info("Placing order {}", order.getId());
+        delegate.placeOrder(order);
+        log.info("Order placed {}", order.getId());
+    }
+}
+```
+
+> **Code walkthrough:** Decorator wraps an existing object through the
+> same interface. `LoggingOrderService` adds logging to any `OrderService`
+> without inheritance. This is structurally how Spring AOP works: a proxy
+> wraps the target bean, adding cross-cutting behavior.
+
+```java
+// BEHAVIORAL: Strategy
+// Problem: algorithm varies per customer tier
+public interface DiscountStrategy {
+    double calculate(Order order);
+}
+
+public class OrderProcessor {
+    private final DiscountStrategy discount;
+
+    public OrderProcessor(DiscountStrategy discount) {
+        this.discount = discount;
+    }
+
+    public double finalPrice(Order order) {
+        return order.total() - discount.calculate(order);
+    }
+}
+
+// At runtime:
+// new OrderProcessor(new PremiumDiscount())
+// new OrderProcessor(order -> 0.0)  // lambda: no discount
+```
+
+> **Code walkthrough:** Strategy makes the algorithm pluggable.
+> `OrderProcessor` knows it needs a discount calculation but not how
+> it is computed. In Java 8+, `DiscountStrategy` is a `@FunctionalInterface`
+> and can be a lambda - Strategy becomes a language primitive, not an
+> extra class hierarchy.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Junior:** "GoF has 23 patterns in three categories.
-I use Builder for complex objects, Singleton for shared
-resources, Strategy for interchangeable algorithms."
+**Junior / Mid (0-5 years):**
+> The 23 GoF patterns split into Creational (5), Structural (7), and
+> Behavioral (11). Creational: Singleton, Factory, Builder. Structural:
+> Decorator, Adapter, Proxy. Behavioral: Observer, Strategy, Command.
+> I find the category helpful because it narrows which patterns to
+> consider once I know what kind of problem I have - creation, composition,
+> or communication.
 
-**Mid:** "I can identify patterns in Spring: BeanFactory
-(Factory), AOP (Proxy), JdbcTemplate (Template Method).
-I use this recognition to learn new frameworks faster."
-
-**Senior:** "The GoF patterns are building blocks. Most
-production code uses pattern combinations: Factory +
-Strategy, Observer + Command, Proxy + Decorator. I focus
-on which 10-12 appear in backend systems and ignore the
-rest unless the problem demands them."
-
----
-
-### ⚠️ Common Misconceptions
-
-**"You need to memorize all 23 patterns."**
-False. Know the top 10-12 deeply. Recognize the rest
-when you see them. Memento, Visitor, and Flyweight
-rarely appear in typical Java backend code.
-
-**"GoF patterns are outdated (1994)."**
-Partially true. The patterns are timeless but some
-implementations changed. Java 8 lambdas replaced many
-single-method Strategy/Command classes. Functional
-composition replaced some Decorator chains.
+*Push deeper:* "Behavioral has the most patterns (11) because communication
+problems have the most variety: notification, command queueing, state
+transitions, iteration, request routing - each is a structurally different
+shape."
 
 ---
 
-### 🎯 Interview Deep-Dive
+**Senior / Staff (5+ years):**
+> The three categories are a search index for pattern selection. First
+> identify the locus of change in your problem. If what changes is how
+> objects are created - Creational. If what changes is how classes connect
+> or what interface they expose - Structural. If what changes is what
+> objects do or how they coordinate - Behavioral.
 
-| Experience | Time | Depth |
-|---|---|---|
-| Junior | 3 min | Name categories, list 5-6 patterns |
-| Mid | 5 min | Map patterns to Java/Spring examples |
-| Senior | 8 min | Pattern relationships, frequency analysis |
+In Spring, many GoF patterns are framework primitives. `BeanFactory` =
+Factory. `ApplicationContext` + `ApplicationEvent` = Observer.
+Spring AOP = Proxy + Decorator at the bytecode level. Recognizing the
+underlying pattern helps when customizing framework behavior - you know
+which extension point to use.
 
----
-
-**[JUNIOR] Q1 - Name the three GoF categories and give
-two patterns from each.**
-
-*Why they ask:* Baseline pattern vocabulary.
-
-The three categories are Creational, Structural, and
-Behavioral.
-
-Creational patterns handle object creation. Singleton
-ensures one instance exists (like Spring's default bean
-scope). Builder constructs complex objects step by step
-(like Lombok @Builder or StringBuilder).
-
-Structural patterns handle object composition. Decorator
-wraps objects to add behavior (like Java I/O streams -
-BufferedReader wraps FileReader). Adapter makes incompatible
-interfaces work together (like Spring's HandlerAdapter).
-
-Behavioral patterns handle object interaction. Strategy
-lets you swap algorithms at runtime (like passing a
-Comparator to Collections.sort). Observer notifies
-subscribers of state changes (like Spring's
-ApplicationEventPublisher).
-
-The key insight: these categories answer different
-questions. "How do I create it?" (Creational). "How do
-I compose it?" (Structural). "How does it communicate?"
-(Behavioral).
-
-*What separates good from great:* Giving concrete Java/
-Spring examples instead of abstract definitions.
+*Push deeper:* "Beyond GoF, the category system extends: POSA added
+architectural patterns; EIP added integration patterns; DDD added domain
+model patterns. Each category system reflects the type of problem in its
+domain."
 
 ---
 
-**[MID] Q2 - Which GoF patterns does Spring Framework
-use internally?**
+### ❓ Questions You Will Be Asked
 
-*Why they ask:* Tests whether you understand framework
-internals through pattern recognition.
+#### Definition
+- "Name the three GoF pattern categories."
+- "What kinds of problems does each category solve?"
+- "Which category has the most patterns and why?"
 
-Spring uses at least 12 GoF patterns:
+🗣️ "Three categories: Creational, Structural, and Behavioral. Creational
+(5) addresses object instantiation - decoupling creation logic from usage.
+Structural (7) addresses composition - how objects are wired together
+and what interfaces they expose. Behavioral (11) addresses communication -
+how objects coordinate, delegate, and distribute responsibility. Behavioral
+has the most because communication problems have the most variety: event
+notification, command queueing, state transitions, iteration, request
+routing - each is a structurally distinct shape."
 
-Singleton: default bean scope. One instance per container.
-Factory Method: BeanFactory.getBean() creates beans without
-caller knowing the concrete class.
-Prototype: prototype-scoped beans. New instance per request.
-Template Method: JdbcTemplate, RestTemplate, TransactionTemplate.
-The template defines the skeleton; you supply the variable parts
-(RowMapper, callbacks).
-Proxy: AOP creates JDK dynamic proxies or CGLIB subclasses.
-Every @Transactional, @Cacheable, @Async uses Proxy.
-Observer: ApplicationEvent + ApplicationListener. Publish
-events without coupling publisher to subscriber.
-Chain of Responsibility: Spring Security filter chain.
-Each filter decides to handle or pass to the next.
-Adapter: HandlerAdapter adapts different handler types
-(annotated controllers, simple controllers) to a uniform
-interface that DispatcherServlet can call.
-Facade: JdbcTemplate is a facade over raw JDBC (Connection,
-Statement, ResultSet, exception handling).
-Decorator: HttpServletRequestWrapper, ResponseBodyAdvice.
-Strategy: multiple ViewResolver implementations, multiple
-HandlerMapping implementations.
+#### Mechanism
+- "How do you decide which category a problem belongs to?"
+- "How does knowing the category help you pick a specific pattern?"
 
-This pattern recognition helps when debugging: if
-@Transactional doesn't work, knowing it's Proxy-based
-tells you self-invocation bypasses the proxy.
+🗣️ "I ask: what is varying in this system? If what changes is which
+object gets created or how it is assembled - Creational. If what changes
+is how objects are wired or what interface they expose - Structural. If
+what changes is what happens when an event occurs or how a request is
+processed - Behavioral. Once I have the category, I look at the patterns
+in that group and match the specific forces. For example in Creational:
+do I need one object from a family of related objects (Abstract Factory),
+or do I need to defer the type to a subclass (Factory Method)?"
 
-*What separates good from great:* Connecting pattern
-knowledge to debugging (e.g., Proxy explains @Transactional
-self-invocation bug).
+#### Comparison
+- "Compare Structural Decorator vs Behavioral Strategy."
+- "Proxy and Decorator are both Structural. How do they differ?"
+
+🗣️ "Decorator and Proxy have identical structure: both wrap an object
+through the same interface. The intent differs. Decorator adds behavior -
+the wrapper adds functionality the original did not have (logging,
+caching, validation). Proxy controls access - the wrapper manages how
+and when the original is accessed (lazy loading, remote invocation,
+security checks). In code they look the same; the difference is what
+the wrapper knows about the wrapped object and why it exists."
+
+#### Scenario
+- "Design a plugin system for a reporting tool. Which categories apply?"
+
+🗣️ "A plugin system spans all three categories. Creational: the plugin
+loader uses Factory to instantiate plugin classes without knowing their
+types - loads from configuration. Structural: a Facade provides a clean
+API for plugins to register capabilities without exposing the internal
+report engine. Behavioral: Strategy makes the plugin's report-generation
+algorithm swappable; Observer notifies all registered plugins when a
+report is requested. The category framing helps reason about each concern
+separately."
+
+#### Debugging
+- "A newly added Behavioral pattern creates unexpected dependencies.
+  How do you trace it?"
+
+🗣️ "For unexpected Behavioral dependencies I trace the call chain by
+temporarily adding logging to each observer or handler, which reveals
+execution order and which components are being notified. For unexpected
+Structural dependencies I inspect the object graph - in a DI container,
+I print the bean definition tree to see which wrappers are applied. For
+Creational issues I log in the factory creation method to see which
+concrete type is being instantiated per call site."
+
+#### Deep Dive
+- "Why does Behavioral have the most patterns?"
+- "Are there patterns that span categories?"
+
+🗣️ "Behavioral has 11 because communication and collaboration problems
+have the most variation: sequential access (Iterator), event notification
+(Observer), algorithm selection (Strategy), state-dependent behavior
+(State), responsibility delegation (Chain), command queuing (Command),
+cross-structure operations (Visitor) - each captures a meaningfully
+different structure with different trade-offs.
+Some patterns span categories: Proxy and Decorator are Structural in
+implementation but the distinction is Behavioral in intent. MVC uses
+Observer (Model notifies View), Strategy (Controller selects behavior),
+and Composite (View hierarchy) simultaneously."
 
 | Interviewer Type | Emphasis |
 |---|---|
-| Technical Panel | Name patterns, categorize, framework mapping. |
-| Hiring Manager | Breadth of knowledge, learning speed. |
-| Bar Raiser | Pattern relationships and combinations. |
-| Peer Engineer | "Knowing Spring uses Proxy for AOP helped me debug a @Transactional issue in 5 minutes instead of 2 hours." |
+| Technical Panel | Name all 23 patterns by category; explain one from each category with code. |
+| Hiring Manager | "Categories give the team common classification for design reviews." |
+| Bar Raiser | "Which category is most abused? Behavioral - Strategy gets applied everywhere." |
+| Peer Engineer | "Which patterns do you reach for most? I find Observer and Strategy appear in almost every system." |
 
 ---
 
+# Pattern Anatomy and Recognition
+
 ---
-
-# OOP Design Principles Landscape
-
-**Interview Weight:** foundational - The principles behind
-patterns. Asked to assess design thinking maturity.
-
+id: DP-003
+title: Pattern Anatomy and Recognition
+category: Design Patterns
+difficulty: ★☆☆
+interview_weight: medium
+asked_at: All
+seniority: all
+tags: #design-patterns, #pattern-anatomy, #recognition, #refactoring
+status: draft
+version: 1
 ---
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> OOP design principles are the rules that patterns encode.
-> SOLID (5 principles), plus DRY, KISS, YAGNI, Composition
-> over Inheritance, Tell Don't Ask, Law of Demeter, and
-> Separation of Concerns. SOLID gets the most interview
-> attention: Single Responsibility, Open-Closed, Liskov
-> Substitution, Interface Segregation, Dependency Inversion.
-> These principles guide when and how to apply patterns.
-> Violating them creates rigid, fragile code. Over-applying
-> them creates over-engineered abstractions.
+> A pattern has four elements: name, problem (context and forces),
+> solution (class structure), and consequences (what you gain and
+> give up). Recognizing a pattern in existing code means spotting
+> the structural signature: a set of roles, the interface between
+> them, and the direction of dependency. Once you recognize the
+> structure, you can name it and reason about it using the pattern's
+> known trade-offs.
 
 **3 minutes (Senior):**
-
-> The principle landscape organized by concern:
+> Pattern recognition is the reverse of pattern application.
+> Application starts with a problem and selects a structure.
+> Recognition starts with a structure and identifies the problem
+> it was solving.
 >
-> COHESION principles (what belongs together):
->   SRP: one class, one reason to change.
->   Separation of Concerns: distinct responsibilities in
->     distinct modules.
->   DRY: single source of truth for every piece of knowledge.
+> The structural signatures are the key. Observer always has:
+> Subject with a list of Observers registered through an interface;
+> Subject calls a method on each Observer without knowing the concrete
+> type. That signature is identifiable in code - look for a collection
+> of interface references and a loop that calls a method on each.
+> Decorator always has: two classes implementing the same interface,
+> one wrapping the other.
 >
-> COUPLING principles (what should be independent):
->   DIP: depend on abstractions, not concretions.
->   Law of Demeter: talk to friends, not strangers.
->   ISP: clients shouldn't depend on methods they don't use.
->   Tell Don't Ask: command objects, don't query and decide.
->
-> EXTENSION principles (how to change safely):
->   OCP: open for extension, closed for modification.
->   LSP: subtypes must be substitutable for base types.
->   Composition over Inheritance: prefer has-a over is-a.
->
-> SIMPLICITY principles (when to stop):
->   KISS: simplest solution that works.
->   YAGNI: don't build it until you need it.
->
-> The tension: SOLID pushes toward abstraction and
-> flexibility. KISS/YAGNI push toward simplicity. Senior
-> judgment = knowing where on this spectrum to land for
-> a given context. Startup MVP: lean toward KISS. Platform
-> serving 50 teams: lean toward SOLID.
+> The non-obvious insight: naming the pattern communicates the entire
+> structure and its trade-offs instantly. "This is Observer" tells the
+> team: there is a Subject, there are Observers, notifications are
+> asynchronous from the Subject's perspective, observers are decoupled,
+> and the failure mode is stale or unhandled exceptions per listener.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about the landscape of
-object-oriented design principles."
+**(1) Restate:** "Pattern anatomy - the structure of what makes up
+a pattern description."
 
-**(2) First principles:** "Principles guide how to structure
-code: high cohesion, low coupling, safe extension, appropriate
-simplicity."
+**(2) First principles:** "A pattern needs to be reusable. For
+reusability it needs: a name (vocabulary), a problem description
+(when to apply), a solution (what to build), and trade-offs (gain
+and cost). Those four things are the anatomy."
 
-**(3) Bridge:** "Principles are the grammar rules; patterns
-are sentences written with those rules."
+**(3) Bridge:** "Like a recipe: the name (what dish?), the occasion
+(when to cook it?), the ingredients and method (what to build?),
+and the result and limitations (consequences)."
 
 ---
 
 ### 📘 Concept Explanation
 
-Principles exist in tension. Good design navigates this tension
-rather than maximizing any single principle.
+**What it is:**
+Pattern anatomy is the standard structure for describing a design
+pattern. Pattern recognition is the skill of identifying which pattern
+a piece of existing code implements.
 
-**Principle conflicts:**
+**The problem it solves:**
+Without a standard anatomy, patterns are described inconsistently.
+Without recognition skills, you cannot leverage an existing pattern's
+known trade-offs or refactor toward the correct solution.
 
-DRY vs Readability:
-  Extracting a 2-line duplicate into a helper method
-  adds indirection for minimal DRY gain. Sometimes
-  duplication is cheaper than the wrong abstraction.
+**How it works:**
 
-OCP vs KISS:
-  Making everything extensible via interfaces adds
-  complexity. If only one implementation exists and
-  is unlikely to change, a concrete class is simpler.
+The GoF four-element anatomy:
 
-SRP vs Cohesion:
-  Over-splitting responsibilities creates too many tiny
-  classes. A UserService with createUser, findUser, deleteUser
-  is fine - splitting into three classes violates cohesion.
+```
+NAME:
+  The vocabulary handle.
+  "Use Observer here" - instantly understood by pattern-literate
+  engineers. Without the name, you need 5 minutes on a whiteboard.
 
-**The pragmatic approach:**
+PROBLEM:
+  Context: where this problem arises
+  Forces: competing constraints making the problem hard
+  Example (Observer): "You have a one-to-many dependency. When one
+  object changes state, all dependents need to update automatically.
+  But the Subject should not know the concrete types of dependents."
 
-Start simple (KISS/YAGNI). When pain emerges (duplication,
-tight coupling, difficult testing), apply the relevant
-principle (DRY, DIP, ISP). The code tells you when it
-needs more structure through symptoms: long methods,
-deep nesting, test difficulty, merge conflicts.
+SOLUTION:
+  Which classes/interfaces exist, their responsibilities, and
+  their collaborations. Not code - a structural description you
+  adapt to your types.
+
+CONSEQUENCES:
+  Benefits: what the pattern enables
+  Liabilities: what the pattern costs
+  Observer benefits: loose coupling, broadcast communication.
+  Observer liabilities: unexpected updates, hard-to-trace causation,
+  cascade risk if one observer triggers another.
+```
+
+Structural fingerprints for common patterns:
+
+```
+Observer:
+  Subject holds List<ObserverInterface>
+  Method iterates list, calls notify(event) on each
+  Subject does not hold concrete observer types
+  Risk: exception in one observer blocks remaining observers
+
+Strategy:
+  Class has a field of interface type
+  Key method calls field.execute(args)
+  Field is injected at construction or set via setter
+  Risk: strategy shared across threads if stateful
+
+Decorator:
+  Class implements Interface I, holds field of type I
+  Methods delegate to field, adding behavior before/after
+  Risk: double-wrapping if DI container misconfigured
+
+Factory Method:
+  Abstract class has method returning an interface
+  Concrete subclasses override to return concrete type
+  Risk: class explosion if many variants are needed
+
+Builder:
+  Class with many setter methods returning this
+  Plus a build() method returning the target object
+  Risk: partial builds if build() not called
+```
+
+**The key insight:**
+Every pattern has a structural fingerprint. Once you know the fingerprint,
+you can recognize the pattern in unfamiliar code without comments or
+documentation. And once you name it, you know the known failure modes
+and trade-offs without reading all the code.
+
+**When to use it:**
+Pattern recognition is always valuable: code reviews, architecture
+discussions, refactoring planning, and technical interviews.
+
+**When NOT to use it:**
+Do not force code into a pattern name if the match is partial. A class
+with a list field is not automatically Observer. Check all four elements:
+does the problem match? Does the structure match?
+
+**Alternatives:**
+- **Code smell detection** - identifies structural problems (Large Class,
+  Long Method) without prescribing a solution
+- **Domain-specific vocabulary** - your team's own terms for recurring
+  structures (sometimes clearer than generic pattern names)
+
+**First-principles derivation:**
+For a pattern to be reusable knowledge, it must be: communicable (name),
+applicable (problem), actionable (solution), evaluable (consequences).
+These four requirements produce the four-part anatomy.
+
+---
+
+### 💻 Code Example
+
+```java
+// RECOGNITION: What pattern is this?
+
+public class UserRepository {
+    private final List<UserChangeListener> listeners =
+        new ArrayList<>();
+
+    public void addListener(UserChangeListener l) {
+        listeners.add(l);
+    }
+
+    public void updateUser(User user) {
+        // ... update logic ...
+        listeners.forEach(l -> l.onUserChanged(user));
+    }
+}
+
+public interface UserChangeListener {
+    void onUserChanged(User user);
+}
+```
+
+> **Code walkthrough:** This is Observer. Fingerprint: `UserRepository`
+> (Subject) holds `List<UserChangeListener>` (Observer interface).
+> `updateUser` iterates the list and calls through the interface.
+> Subject does not know concrete listener types. Production gap: if
+> `onUserChanged` throws, remaining listeners are not notified. The
+> correct production version wraps each call in try/catch.
+
+```java
+// RECOGNITION: What pattern is this?
+
+public class SortedList<T extends Comparable<T>> {
+    private final List<T> data = new ArrayList<>();
+    private final Comparator<T> comparator;
+
+    public SortedList(Comparator<T> comparator) {
+        this.comparator = comparator;
+    }
+
+    public void add(T item) {
+        data.add(item);
+        data.sort(comparator);
+    }
+}
+
+// Usage:
+// new SortedList<>(Comparator.naturalOrder())
+// new SortedList<>(Comparator.reverseOrder())
+// new SortedList<>((a,b)->a.getName().compareTo(b.getName()))
+```
+
+> **Code walkthrough:** This is Strategy. `SortedList` holds a
+> `Comparator<T>` field (the Strategy interface). The sort algorithm
+> delegates to the strategy; the caller selects the strategy at
+> construction time. In Java 8+, the strategy is passed as a lambda -
+> Strategy is a language primitive, not a separate class hierarchy.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Junior:** "SOLID principles: Single Responsibility,
-Open-Closed, Liskov, Interface Segregation, Dependency
-Inversion. They help write maintainable code."
+**Junior / Mid (0-5 years):**
+> A pattern has four parts: name, problem, solution, and consequences.
+> To recognize a pattern in code, I look for the structural signature.
+> For Observer: a list of interface references and a loop calling a
+> method on each. For Strategy: a field of interface type called in
+> a key method. Once I recognize it, I can apply the known trade-offs
+> without reading all the code.
 
-**Mid:** "I balance SOLID with YAGNI. I don't create
-interfaces for classes with one implementation. When a
-second implementation appears, I extract the interface."
-
-**Senior:** "Principles are navigation aids, not laws.
-I've seen codebases destroyed by over-application of
-SRP (500 tiny classes) and by under-application (god
-classes). Context determines the right balance."
-
----
-
-### ⚠️ Common Misconceptions
-
-**"Every class needs an interface (DIP)."**
-False. Interfaces exist for polymorphism and testability.
-If a class has one implementation and is easily mockable,
-skip the interface. Extract when a second implementation
-or a testing seam is needed.
-
-**"DRY means never repeat any code."**
-False. DRY means "every piece of KNOWLEDGE has a single
-representation." Two code blocks that look the same but
-represent different business rules should remain separate.
-Premature DRY creates the wrong abstraction.
+*Push deeper:* "The most common patterns in Java codebases: Observer
+(event listeners), Strategy (comparators, handlers), Factory (bean
+creation), Decorator (interceptors, wrappers), Builder (config objects
+with many optional fields)."
 
 ---
 
-### 🎯 Interview Deep-Dive
+**Senior / Staff (5+ years):**
+> Pattern recognition changes how I read code. Without it, I read
+> line by line. With it, I see structure: "this is Observer" means I
+> immediately know the notification model, the coupling direction, and
+> the three failure modes I need to check.
+>
+> In code reviews I look for pattern misuse: the structural signature
+> of a known pattern but with missing safeguards. Observer without
+> exception handling in the notification loop - one bad listener
+> silently prevents all subsequent listeners from running. Pattern
+> recognition finds these issues faster than line-by-line analysis.
 
-| Experience | Time | Depth |
-|---|---|---|
-| Junior | 3 min | Name SOLID, give examples |
-| Mid | 5 min | Principle trade-offs, when to relax |
-| Senior | 8 min | Principle conflicts, team context |
+*Push deeper:* "At staff level, pattern anatomy extends to
+architectural patterns. The anatomy is identical: name, problem,
+solution, consequences. But the solution is boxes and arrows
+(services, queues, databases) rather than classes and interfaces."
 
 ---
 
-**[SENIOR] Q1 - When have you deliberately violated a
-SOLID principle and why?**
+### ❓ Questions You Will Be Asked
 
-*Why they ask:* Tests judgment and pragmatism over dogma.
+#### Definition
+- "What are the four parts of a design pattern?"
+- "What is a structural fingerprint?"
 
-I deliberately violated DIP (Dependency Inversion) in a
-startup's early-stage order service. Instead of defining
-an OrderRepository interface, I used the concrete Spring
-Data JPA repository directly in my service class.
+🗣️ "A pattern has four parts: name (vocabulary handle), problem (context
+and forces), solution (class structure - roles, interfaces, collaborations),
+and consequences (what you gain and give up). In code I recognize a pattern
+by its structural fingerprint - the characteristic combination of roles and
+interfaces that identifies it. Observer's fingerprint: a collection of
+interface references in a Subject, a method iterating that collection and
+calling through the interface. That pattern appears in event listeners,
+message bus subscribers, and reactive streams - all Observer variants."
 
-Why: we had one database (PostgreSQL), one implementation,
-and speed-to-market mattered more than future flexibility.
-Adding an interface would have added a file, import
-complexity, and zero actual benefit since we were not
-going to swap databases.
+#### Mechanism
+- "Walk me through recognizing Observer in unfamiliar code."
+- "How do you verify code is correctly implementing a pattern?"
 
-When we later needed to support both PostgreSQL and DynamoDB
-(multi-region), I extracted the interface then. The
-refactoring took 30 minutes. The 6 months of not maintaining
-an unnecessary interface saved hours of ceremony.
+🗣️ "To recognize Observer: first, find a class with a collection field
+holding an interface type - that is the Subject. Second, find a method
+iterating that collection and calling a method through the interface -
+that is the notification. Third, find other classes implementing that
+interface - those are the Observers. To verify correctness I check the
+consequences: are observers registered before events fire? Is there
+protection against concurrent modification? Is there exception handling
+per observer to prevent one bad observer from blocking the rest?"
 
-The principle: "You Aren't Gonna Need It" until you do.
-When you do need it, refactor. The cost of refactoring
-later was far less than the cost of abstraction overhead
-for 6 months.
+#### Comparison
+- "How does pattern recognition differ from code smell detection?"
 
-The guard rail: I only violate DIP when testing is not
-impacted. If I need to mock the dependency in unit tests,
-I need the interface. If integration tests suffice (which
-they did for this service), concrete is fine.
+🗣️ "Code smell detection identifies structural problems (Large Class,
+Long Method, Feature Envy) without prescribing a solution. Pattern
+recognition identifies structural solutions and names them. They are
+complementary: a code smell says something is wrong; a pattern name
+says the correct structure that resolves it. 'This class has Feature
+Envy' pairs with 'refactor to Strategy - move the behavior to where
+the data lives.' The smell identifies the problem; the pattern names
+the solution."
 
-*What separates good from great:* Naming the specific
-guard rail (testing impact) that decides when violation
-is acceptable.
+#### Scenario
+- "You are reviewing an unfamiliar codebase. How do you build a
+  mental model quickly?"
+
+🗣️ "I start by identifying key interfaces and their implementations.
+Then I look for pattern signatures: does any class hold a list of
+interface references (Observer)? Does any class wrap another of the
+same interface (Decorator/Proxy)? Do methods take interface parameters
+that vary (Strategy)? Are there abstract creation methods (Factory
+Method)? Each pattern I recognize gives me a frame: the intent, the
+coupling direction, and the known failure modes. After 15-20 minutes
+I have a mental architecture map even before understanding any business
+logic."
+
+#### Debugging
+- "A Decorator chain is producing wrong results. How do you diagnose?"
+
+🗣️ "I trace the chain by temporarily logging the class name and
+arguments at each wrapper level. In Java I use `getClass().getSimpleName()`
+and log at entry to each decorator's method. This reveals the actual
+execution order (sometimes wrapping order differs from intention),
+the arguments at each level (a transformation might be applied twice),
+and where behavior diverges from expectations. Root cause is usually
+either double-wrapping (decorator applied twice in DI config) or wrong
+ordering (two decorators in the wrong sequence)."
+
+#### Deep Dive
+- "Which patterns are most commonly misrecognized or confused?"
+- "Can the same code implement multiple patterns simultaneously?"
+
+🗣️ "Most commonly confused pairs: Decorator vs Proxy (same structure,
+different intent), Factory Method vs Abstract Factory (single type vs
+family of objects), Observer vs Mediator (direct vs centralized
+notification). For interviews I always clarify intent: 'It has the
+structure of Decorator, and the intent is to add behavior, so it is
+Decorator. If the intent were access control, same structure but it
+would be Proxy.'
+Yes, the same code can implement multiple patterns: a typical Spring
+controller involves Strategy (request handling), Facade (simplifying
+the service layer), and Template Method (the request processing
+lifecycle in DispatcherServlet)."
 
 | Interviewer Type | Emphasis |
 |---|---|
-| Technical Panel | Name principles, give Java examples. |
-| Hiring Manager | Pragmatism, speed vs quality balance. |
-| Bar Raiser | Principle conflicts, deliberate violations. |
-| Peer Engineer | "No interface for 6 months. Extracted in 30 min when needed. Zero regret." |
-
----
-
----
-
-# Pattern Language and Pattern Thinking
-
-**Interview Weight:** foundational - Tests whether
-candidate thinks in patterns or just memorizes solutions.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Pattern thinking is recognizing recurring problems and
-> mapping them to known solutions. It is the difference
-> between "I need to write code that creates objects" and
-> "I recognize the Factory pattern here." Pattern language
-> is the shared vocabulary that emerges: when a team says
-> "Factory," "Strategy," or "Observer," everyone visualizes
-> the same structure. This vocabulary accelerates design
-> discussions, code reviews, and onboarding. The skill is
-> pattern recognition, not pattern memorization.
-
-**3 minutes (Senior):**
-
-> Pattern thinking operates at three levels:
->
-> Level 1: Recognition.
->   See a switch statement selecting behavior → recognize Strategy.
->   See nested object creation → recognize Builder.
->   See event listeners → recognize Observer.
->   This is pattern detection in existing code.
->
-> Level 2: Selection.
->   Given a problem: "I need to add logging without modifying
->   the service." Map the forces (adding behavior, no modification)
->   to a pattern (Decorator or Proxy). This is pattern application.
->
-> Level 3: Composition.
->   Combine patterns to solve complex problems:
->   Factory + Strategy: create the right strategy dynamically.
->   Observer + Command: queue commands triggered by events.
->   Proxy + Decorator: control access AND add behavior.
->   This is pattern architecture.
->
-> Pattern language in practice:
->   Code review comment: "This feels like Chain of Responsibility."
->   Design meeting: "Let's use Builder for the query construction."
->   Architecture doc: "Event-driven via Observer pattern with
->   Command pattern for replay capability."
->
-> The anti-skill: pattern forcing.
->   "I learned Visitor, so I'll use it here."
->   Forcing patterns creates complexity without solving problems.
->   The test: can you explain WHY this pattern and not another?
->   If you can't articulate the forces, you're forcing.
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about pattern thinking
-as a skill and pattern language as communication."
-
-**(2) First principles:** "Pattern thinking = recognizing
-problems that match known solutions. Pattern language =
-shared vocabulary for those solutions."
-
-**(3) Bridge:** "Pattern thinking is like a doctor recognizing
-symptoms as a known disease - the diagnosis accelerates
-treatment because it maps to a known protocol."
-
----
-
-### 📘 Concept Explanation
-
-Pattern thinking transforms you from a coder into a designer.
-Without it, every problem is novel. With it, 80% of problems
-map to known solutions with known trade-offs.
-
-**How to develop pattern thinking:**
-
-Step 1: Learn patterns by problem, not by solution.
-  Don't memorize "Singleton has a private constructor."
-  Memorize "When I need exactly one instance with global
-  access, I consider Singleton (and its downsides)."
-
-Step 2: Read framework source code through pattern lens.
-  Spring: identify Factory, Proxy, Template Method, Observer.
-  Java I/O: identify Decorator chain.
-  java.util: identify Iterator, Strategy (Comparator).
-
-Step 3: Practice recognition in code reviews.
-  Every PR: "Is there a pattern trying to emerge here?"
-  Long switch → Strategy. Nested creation → Builder.
-  Notification logic → Observer.
-
-Step 4: Practice combination in system design.
-  Real systems use 3-5 patterns working together.
-  E-commerce order: Builder (construction) + State (lifecycle)
-  + Observer (notifications) + Strategy (pricing).
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior:** "Pattern thinking means recognizing which
-pattern fits a problem. Like seeing a switch statement
-and thinking 'that could be a Strategy.'"
-
-**Senior:** "Pattern thinking at Staff level means
-recognizing pattern COMBINATIONS that solve system-level
-problems. An event-driven microservice uses Observer +
-Command + Factory + Strategy composed together."
-
----
-
-### ⚠️ Common Misconceptions
-
-**"Pattern thinking means using more patterns."**
-False. Pattern thinking includes recognizing when a
-pattern is NOT needed. The best pattern thinkers write
-simple code that uses patterns only at natural seams.
-
-**"Pattern language is academic jargon."**
-False. It is engineering communication efficiency. A
-team with shared pattern language makes decisions 5x
-faster in design meetings.
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Experience | Time | Depth |
-|---|---|---|
-| Junior | 3 min | Recognize pattern in code snippet |
-| Senior | 7 min | Pattern composition, when not to pattern |
-
----
-
-**[MID] Q1 - Look at this code. What pattern is it
-implementing? (code shows Strategy-like structure)**
-
-*Why they ask:* Tests pattern recognition in real code.
-
-Looking at this code, I see three elements:
-1. An interface defining an algorithm contract.
-2. Multiple implementations providing different behaviors.
-3. A context class that holds a reference to the interface
-   and delegates execution to it.
-
-This is the Strategy pattern. The interface is the Strategy,
-the implementations are ConcreteStrategies, and the caller
-is the Context.
-
-The giveaway: the behavior varies independently from the
-caller. The caller doesn't know which implementation it
-holds - it just calls the interface method.
-
-In Java backend: Comparator is Strategy (sort algorithm
-varies). Validator implementations are Strategy (validation
-logic varies). Spring's ResourceLoader is Strategy (resource
-loading varies by protocol).
-
-Why it matters: recognizing this pattern tells me:
-- New behaviors can be added without modifying existing code.
-- The algorithm can be swapped at runtime.
-- Testing: I can inject a mock strategy for unit tests.
-
-*What separates good from great:* Going beyond naming
-to explaining the consequences (extensibility, testability,
-runtime swappability).
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Pattern recognition in code. |
-| Hiring Manager | Communication clarity using pattern vocabulary. |
-| Bar Raiser | Pattern composition and when to simplify. |
-| Peer Engineer | "Pattern language in our team cut design meeting time in half." |
+| Technical Panel | Demonstrate recognition on a real code snippet; name the pattern and its failure modes. |
+| Hiring Manager | "Recognition speeds onboarding - I build a mental model of unfamiliar code faster." |
+| Bar Raiser | "What is the cost of misidentifying a pattern? You apply the wrong known trade-offs and miss the real failure mode." |
+| Peer Engineer | "I use pattern names in code reviews to shorthand design concerns: 'This Observer needs per-listener exception handling.'" |

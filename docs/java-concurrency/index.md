@@ -1,30 +1,36 @@
 ---
+layout: default
 title: "Java Concurrency"
-nav_order: 3
+parent: "SK Interview"
+nav_order: 7
 has_children: true
+permalink: /java-concurrency/
 ---
 
 # Java Concurrency
 
-Java concurrency model: threads, synchronization primitives, concurrent
-collections, executor framework, CompletableFuture, and Project Loom
-virtual threads. From race conditions to production deadlock diagnosis.
+Interview-focused notes and concise study material for Java Concurrency.
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Java Concurrency - L0 Orientation](Java%20Concurrency%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Java Concurrency - L1 Foundations](Java%20Concurrency%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Java Concurrency - L2 Synchronization](Java%20Concurrency%20-%20L2%20Synchronization.md) | L2 | 5 | complete |
-| [Java Concurrency - L2 Concurrent Collections](Java%20Concurrency%20-%20L2%20Concurrent%20Collections.md) | L2 | 5 | complete |
-| [Java Concurrency - L3 Thread Pools](Java%20Concurrency%20-%20L3%20Thread%20Pools.md) | L3 | 5 | complete |
-| [Java Concurrency - L3 Async Programming](Java%20Concurrency%20-%20L3%20Async%20Programming.md) | L3 | 5 | complete |
-| [Java Concurrency - L4 Production Depth](Java%20Concurrency%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Java Concurrency - L5 Architecture](Java%20Concurrency%20-%20L5%20Architecture.md) | L5 | 3 | complete |
-| [Java Concurrency - META Patterns](Java%20Concurrency%20-%20META%20Patterns.md) | META | 2 | complete |
-
-**Keywords:** 39 | **Files:** 9 | **Status:** complete
+| nav_order | File | Level | Difficulty | Keywords | Status |
+|-----------|------|-------|------------|----------|--------|
+| 1 | Java Concurrency - L0 Orientation.md | L0 | ★☆☆ | 3 | complete |
+| 2 | Java Concurrency - L1 Thread Basics.md | L1 | ★☆☆ | 3 | complete |
+| 3 | Java Concurrency - L1 Synchronization Basics.md | L1 | ★☆☆ | 3 | complete |
+| 4 | Java Concurrency - L2 Executor Framework.md | L2 | ★★☆ | 2 | complete |
+| 5 | Java Concurrency - L2 Concurrent Collections.md | L2 | ★★☆ | 2 | complete |
+| 6 | Java Concurrency - L2 Locks and Conditions.md | L2 | ★★☆ | 2 | complete |
+| 7 | Java Concurrency - L3 CompletableFuture.md | L3 | ★★☆ | 2 | complete |
+| 8 | Java Concurrency - L3 Synchronizers.md | L3 | ★★☆ | 2 | complete |
+| 9 | Java Concurrency - L3 Atomic Operations.md | L3 | ★★☆ | 2 | complete |
+| 10 | Java Concurrency - L4 Java Memory Model.md | L4 | ★★★ | 1 | complete |
+| 11 | Java Concurrency - L4 Deadlock Diagnosis.md | L4 | ★★★ | 1 | complete |
+| 12 | Java Concurrency - L4 Thread Dump Analysis.md | L4 | ★★★ | 1 | complete |
+| 13 | Java Concurrency - L4 Lock Contention.md | L4 | ★★★ | 1 | complete |
+| 14 | Java Concurrency - L5 Architecture.md | L5 | ★★★ | 1 | complete |
+| 15 | Java Concurrency - L6 Theory.md | L6 | ★★☆ | 2 | complete |
+| 16 | Java Concurrency - META Patterns.md | META | ★☆☆ | 3 | complete |
 
 ---
 
@@ -32,84 +38,111 @@ virtual threads. From race conditions to production deadlock diagnosis.
 
 ### Java Concurrency - L0 Orientation
 
-| #   | Keyword                          | Difficulty | Status  |
-| --- | -------------------------------- | ---------- | ------- |
-| 1   | Concurrency vs Parallelism       | ★☆☆        | complete |
-| 2   | Java Concurrency Overview        | ★☆☆        | complete |
-| 3   | Thread Lifecycle                 | ★☆☆        | complete |
-| 4   | Race Conditions and Thread Safety| ★☆☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 1 | Why Concurrency Exists | ★☆☆ | complete |
+| 2 | The Java Thread Model | ★☆☆ | complete |
+| 3 | Java Concurrency Ecosystem Overview | ★☆☆ | complete |
 
-### Java Concurrency - L1 Foundations
+### Java Concurrency - L1 Thread Basics
 
-| #   | Keyword                                  | Difficulty | Status  |
-| --- | ---------------------------------------- | ---------- | ------- |
-| 1   | Thread Creation and Runnable             | ★☆☆        | complete |
-| 2   | synchronized Keyword                     | ★★☆        | complete |
-| 3   | volatile Keyword                         | ★★☆        | complete |
-| 4   | Thread Interruption and Daemon Threads   | ★☆☆        | complete |
-| 5   | wait notify and notifyAll                | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 4 | Thread Class and Runnable | ★☆☆ | complete |
+| 5 | Thread Lifecycle | ★☆☆ | complete |
+| 6 | Thread Priority and Daemon Threads | ★☆☆ | complete |
 
-### Java Concurrency - L2 Synchronization
+### Java Concurrency - L1 Synchronization Basics
 
-| #   | Keyword                              | Difficulty | Status  |
-| --- | ------------------------------------ | ---------- | ------- |
-| 1   | ReentrantLock                        | ★★☆        | complete |
-| 2   | ReadWriteLock                        | ★★☆        | complete |
-| 3   | Semaphore                            | ★★☆        | complete |
-| 4   | CountDownLatch and CyclicBarrier     | ★★☆        | complete |
-| 5   | AtomicInteger and Atomic Variables   | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 7 | synchronized Keyword | ★☆☆ | complete |
+| 8 | volatile Keyword | ★☆☆ | complete |
+| 9 | Object Monitor and wait/notify | ★☆☆ | complete |
+
+### Java Concurrency - L2 Executor Framework
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 10 | ExecutorService | ★★☆ | complete |
+| 11 | ThreadPoolExecutor | ★★☆ | complete |
 
 ### Java Concurrency - L2 Concurrent Collections
 
-| #   | Keyword                          | Difficulty | Status  |
-| --- | -------------------------------- | ---------- | ------- |
-| 1   | ConcurrentHashMap                | ★★☆        | complete |
-| 2   | CopyOnWriteArrayList             | ★★☆        | complete |
-| 3   | BlockingQueue Implementations    | ★★☆        | complete |
-| 4   | ConcurrentLinkedQueue            | ★★☆        | complete |
-| 5   | Concurrent Collections Design    | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 12 | ConcurrentHashMap | ★★☆ | complete |
+| 13 | BlockingQueue | ★★☆ | complete |
 
-### Java Concurrency - L3 Thread Pools
+### Java Concurrency - L2 Locks and Conditions
 
-| #   | Keyword                          | Difficulty | Status  |
-| --- | -------------------------------- | ---------- | ------- |
-| 1   | ExecutorService and Executor     | ★★☆        | complete |
-| 2   | ThreadPoolExecutor Internals     | ★★★        | complete |
-| 3   | ForkJoinPool and Work Stealing   | ★★★        | complete |
-| 4   | ScheduledExecutorService         | ★★☆        | complete |
-| 5   | Callable and Future              | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 14 | ReentrantLock | ★★☆ | complete |
+| 15 | ReadWriteLock | ★★☆ | complete |
 
-### Java Concurrency - L3 Async Programming
+### Java Concurrency - L3 CompletableFuture
 
-| #   | Keyword                                        | Difficulty | Status  |
-| --- | ---------------------------------------------- | ---------- | ------- |
-| 1   | CompletableFuture Basics                       | ★★☆        | complete |
-| 2   | CompletableFuture Chaining and Composition     | ★★★        | complete |
-| 3   | CompletableFuture Exception Handling           | ★★☆        | complete |
-| 4   | Virtual Threads Project Loom                   | ★★★        | complete |
-| 5   | Reactive Programming vs Threads                | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 16 | CompletableFuture | ★★☆ | complete |
+| 17 | ForkJoinPool | ★★☆ | complete |
 
-### Java Concurrency - L4 Production Depth
+### Java Concurrency - L3 Synchronizers
 
-| #   | Keyword                              | Difficulty | Status  |
-| --- | ------------------------------------ | ---------- | ------- |
-| 1   | Deadlock Detection and Prevention    | ★★★        | complete |
-| 2   | Thread Starvation and Priority Inversion | ★★★    | complete |
-| 3   | Thread Pool Saturation Anti-patterns | ★★★        | complete |
-| 4   | Java Memory Model and Visibility     | ★★★        | complete |
-| 5   | Concurrent Performance Tuning        | ★★★        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 18 | CountDownLatch | ★★☆ | complete |
+| 19 | CyclicBarrier and Semaphore | ★★☆ | complete |
+
+### Java Concurrency - L3 Atomic Operations
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 20 | Atomic Classes | ★★☆ | complete |
+| 21 | Compare-and-Swap (CAS) | ★★☆ | complete |
+
+### Java Concurrency - L4 Java Memory Model
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 22 | Java Memory Model (JMM) | ★★★ | complete |
+
+### Java Concurrency - L4 Deadlock Diagnosis
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 23 | Deadlock Detection and Diagnosis | ★★★ | complete |
+
+### Java Concurrency - L4 Thread Dump Analysis
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 24 | Thread Dump Analysis | ★★★ | complete |
+
+### Java Concurrency - L4 Lock Contention
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 25 | Lock Contention and Profiling | ★★★ | complete |
 
 ### Java Concurrency - L5 Architecture
 
-| #   | Keyword                              | Difficulty | Status  |
-| --- | ------------------------------------ | ---------- | ------- |
-| 1   | Concurrency Architecture Patterns    | ★★★        | complete |
-| 2   | Thread Safety Design Strategies      | ★★★        | complete |
-| 3   | Distributed Locking Strategies       | ★★★        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 26 | Concurrency Architecture Patterns | ★★★ | complete |
+
+### Java Concurrency - L6 Theory
+
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 27 | Lock-Free Algorithms | ★★☆ | complete |
+| 28 | Linearizability and Sequential Consistency | ★★☆ | complete |
 
 ### Java Concurrency - META Patterns
 
-| #   | Keyword                              | Difficulty | Status  |
-| --- | ------------------------------------ | ---------- | ------- |
-| 1   | Concurrency Debugging Mental Model   | ★★☆        | complete |
-| 2   | Concurrency Interview Framework      | ★★☆        | complete |
+| # | Keyword | Difficulty | Status |
+|---|---------|------------|--------|
+| 29 | Concurrency Mental Models | ★☆☆ | complete |
+| 30 | Thread Safety Decision Framework | ★☆☆ | complete |
+| 31 | Production Concurrency Incident Patterns | ★☆☆ | complete |

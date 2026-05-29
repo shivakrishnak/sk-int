@@ -7,2837 +7,1864 @@ nav_order: 1
 permalink: /java-concurrency/l0-orientation/
 ---
 
-## Keywords in This File
-{: .no_toc }
+# Java Concurrency - L0 Orientation
 
-| # | Keyword | Weight |
-| --- | --- | --- |
-| 1 | [Concurrency vs Parallelism](#concurrency-vs-parallelism) | high |
-| 2 | [Java Concurrency Overview](#java-concurrency-overview) | high |
-| 3 | [Thread Lifecycle](#thread-lifecycle) | high |
-| 4 | [Race Conditions and Thread Safety](#race-conditions-and-thread-safety) | critical |
-
----
-
-# Concurrency vs Parallelism
-
-**Interview Weight:** high - Foundational vocabulary question asked
-at every seniority level. Tests whether you have a mental model or
-memorized a definition.
-
----
+## Why Concurrency Exists
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> Concurrency is about structure - dealing with multiple things in
-> progress at overlapping times, even on a single core via
-> interleaving. Parallelism is about execution - running multiple
-> things at the exact same instant on multiple cores. A single-core
-> CPU can be concurrent but not parallel. In Java: threads and
-> virtual threads give concurrency; parallel streams and ForkJoinPool
-> give parallelism.
+> Concurrency exists because modern hardware has multiple CPU cores
+> that single-threaded programs cannot use, and because programs spend
+> significant time waiting for I/O - network calls, disk reads, database
+> queries - during which the CPU sits completely idle. Concurrency lets
+> a program do useful work while waiting and use all available cores,
+> multiplying throughput and keeping systems responsive under load.
 
 **3 minutes (Senior):**
-
-> The distinction drives architecture decisions. For a web service
-> handling 10,000 requests with database I/O, I choose virtual
-> threads - the bottleneck is I/O wait time, not CPU. Virtual threads
-> park cheaply during I/O, allowing millions of concurrent waits
-> without consuming OS thread resources. That is concurrency solving
-> an I/O problem.
+> The fundamental problem concurrency solves is CPU underutilization.
+> Consider a web server handling user requests: each request triggers
+> a database query that takes 20ms to return. Without concurrency, the
+> server processes requests one at a time - while waiting for the database
+> the CPU does nothing. With 1000 concurrent users, you are burning 99.99%
+> of your CPU time blocked on I/O.
 >
-> For batch processing computing ML feature vectors over 50 million
-> records, I choose parallel streams. The bottleneck is CPU
-> computation. I need multiple cores computing simultaneously.
-> Adding threads beyond CPU count adds context-switching overhead
-> with no throughput gain. That is parallelism solving a CPU problem.
+> Before threads, developers used event loops - a single thread polling
+> for I/O completion and dispatching callbacks. That model works but
+> forces you to write code as state machines, which is mentally
+> exhausting. Threads give you the intuitive sequential programming model
+> while the operating system handles interleaving.
 >
-> The non-obvious part: Node.js achieves massive concurrency on a
-> single thread with no parallelism. Java ForkJoinPool achieves
-> parallelism across cores. Both are legitimate - they solve different
-> problems. Mixing them up is the number one Java threading design
-> mistake: parallelStream on I/O-bound code, or assuming adding
-> threads speeds up CPU-saturated work.
+> Java's concurrency model maps each Java Thread to a native OS thread.
+> The OS scheduler distributes threads across CPU cores using preemptive
+> time-slicing. For I/O-bound workloads - web servers, microservices,
+> batch jobs - concurrency produces near-linear throughput gains up to
+> the I/O bottleneck. For CPU-bound workloads, you gain up to one thread
+> per core before context-switching overhead dominates.
+>
+> The non-obvious trade-off: concurrency introduces coordination cost.
+> Any shared mutable state requires synchronization, which has real
+> overhead - memory barriers, cache invalidation, thread coordination.
+> A poorly designed concurrent program can run slower than a
+> single-threaded equivalent. Concurrency is a tool, not a free lunch.
 
-**Framework:** STRUCTURE (concurrency) vs EXECUTION (parallelism)
-then I/O BOUND -> concurrency, CPU BOUND -> parallelism
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
-*Adapting up:* Staff engineers connect this to thread model selection
-- virtual threads vs reactive vs platform threads - and workload
-profiling before architecture decisions.
+*Adapting up:* Add: specific JVM thread-to-core mapping, happens-before
+guarantees, and a production failure story involving race conditions.
 
-*Adapting down:* Junior: concurrency = tasks overlap in time.
-Parallelism = tasks run simultaneously on different cores.
+*Adapting down:* WHAT + WHY only: "Multiple cores exist and programs
+block on I/O - concurrency uses both."
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about concurrency vs parallelism -
-the two ways a system handles multiple tasks."
+**(1) Restate:** "So you are asking why concurrency exists - let me
+think through what problem it solves."
 
-**(2) First principles:** "Every multi-task system faces two
-questions: can tasks overlap in time? (concurrency). Can tasks
-run simultaneously on hardware? (parallelism). These are
-independent properties."
+**(2) First principles:** "From first principles: CPUs run at nanosecond
+speed but network I/O runs at millisecond speed - a 10,000x gap. Any
+program that doesn't overlap work during that gap is throwing away
+99.99% of its throughput potential."
 
-**(3) Bridge:** "A chef managing multiple dishes at once is
-concurrent - switching attention between them. Two chefs each
-cooking different dishes simultaneously is parallel."
+**(3) Bridge:** "This reminds me of a restaurant kitchen - a single
+cook who waits for each dish to finish before starting the next one
+would have terrible throughput. Concurrency is the kitchen's ability
+to have multiple dishes in progress simultaneously."
 
 ---
 
 ### 📘 Concept Explanation
 
 **What it is:**
-
-Concurrency: the ability to deal with multiple tasks in progress at
-overlapping time periods. About program structure and design.
-Parallelism: the ability to execute multiple computations at the
-exact same instant on multiple processors. About execution speed.
+Concurrency is the ability of a program to make progress on multiple
+computations simultaneously - either by interleaving execution on a
+single core or running truly in parallel across multiple cores.
+Java uses the term concurrency to cover both interleaving and
+true parallelism.
 
 **The problem it solves:**
-
-Without this distinction, developers make wrong architecture decisions.
-They add threads to I/O-bound systems expecting speed (correct) but
-also add threads to CPU-bound systems beyond core count (wrong).
-They misdiagnose performance problems: a concurrent system with 1,000
-threads may be slow due to lock contention, not insufficient
-parallelism.
+Before concurrency primitives, two problems made programs inefficient.
+First, CPU waste during I/O: a thread making a database call blocks
+for 10-50ms while the CPU does nothing. Second, hardware
+underutilization: a machine with 16 cores runs single-threaded code
+at 6.25% of its theoretical peak. Concurrency attacks both problems -
+it fills I/O wait time with other work and distributes computation
+across all available cores.
 
 **How it works:**
-
 ```
-CONCURRENCY on 1 core (time-slicing):
-Core 0: [T-A]--[T-B]--[T-A]--[T-B]--
-        OS switches every ~1-10ms
-        Both tasks PROGRESS, never simultaneously.
-
-PARALLELISM on 2 cores (simultaneous):
-Core 0: [Thread A runs end-to-end      ]
-Core 1: [Thread B runs end-to-end      ]
-        Both tasks execute at SAME INSTANT.
-
-BOTH (2 cores, 100 threads):
-Core 0: [T1]-[T2]-[T3]-...[T50]
-Core 1: [T51]-[T52]-...[T100]
-        Parallel across cores,
-        concurrent within each core.
+Thread A: [work]--[wait I/O]--------[work]
+Thread B:         [work]--[wait I/O]------[work]
+Thread C:                 [work]----------[work]
+CPU core: [AAAA][BBBB][CCCC][AAAA][BBBB][CCCC]
 ```
+The JVM creates a Java Thread backed by an OS native thread. The OS
+scheduler uses preemptive time-slicing to assign threads to CPU cores.
+When a thread makes a blocking I/O call, the kernel marks it as WAITING,
+removes it from the run queue, and schedules another thread. When the
+I/O completes, the kernel moves the thread back to RUNNABLE. Each
+thread has its own stack (local variables are thread-private) but all
+threads share the heap (objects are potentially shared).
 
 **The key insight:**
-
-I/O-bound workloads need concurrency - threads progress while waiting
-for network or disk. CPU-bound workloads need parallelism - work must
-physically execute on multiple cores to be faster. Applying
-parallelism to I/O-bound work wastes CPU; applying extra concurrency
-to CPU-bound work creates context-switching overhead.
+Concurrency and parallelism are different. Concurrency is a program
+structure - multiple tasks can be in progress at once. Parallelism is
+physical execution - multiple tasks actually run at the same instant.
+You can have concurrent code that doesn't run in parallel (single-core
+machine) and parallel code with correctness problems (race conditions).
+Most concurrency bugs are not about "too much parallelism" - they are
+about incorrect reasoning about shared state.
 
 **When to use it:**
-
-- Concurrency: request handlers, database calls, API calls, file I/O,
-  any workload that blocks on external resources
-- Parallelism: data transformation, image processing, ML feature
-  computation, sorting - CPU-intensive work on collections
+- Web servers and APIs handling multiple simultaneous requests
+- Background jobs (emails, reports) while the main thread serves requests
+- Parallel data processing across large datasets
+- Any workload where tasks are independent and I/O-heavy
 
 **When NOT to use it:**
-
-- Do not apply parallelStream() to I/O operations - starves the
-  ForkJoinPool common pool, hurts all other parallel operations
-- Do not exceed CPU core count with threads for CPU-bound tasks -
-  context switching overhead eliminates the gain
+- Short-lived scripts with sequential dependencies throughout
+- Simple CRUD where a connection pool already provides concurrency
+- Shared state-heavy code without clear ownership boundaries
+- When correctness is critical and the team lacks concurrency experience
 
 **Alternatives:**
-
-- Reactive (Project Reactor, RxJava) - non-blocking I/O concurrency
-  on a small thread pool via backpressure pipelines
-- Actor model (Akka) - message-passing concurrency, no shared state
-- Single-threaded event loop (Vert.x, Node.js) - high I/O concurrency
-  on one OS thread
+- Reactive programming (Project Reactor, RxJava) - event-driven
+  non-blocking with backpressure; no thread-per-request overhead
+- Virtual threads (Java 21 Loom) - lightweight threads that unblock
+  on blocking calls; looks like threads, costs like coroutines
+- Process isolation - separate JVM processes; better fault isolation
+  but higher memory and IPC overhead
 
 **First-principles derivation:**
-
-Tasks take time. Some tasks wait (I/O). If one task is waiting,
-another can make progress - that is concurrency. Multiple CPU cores
-execute instructions simultaneously - that is parallelism. Given N
-cores and M tasks, if M > N, you need concurrency to schedule them.
-If tasks are CPU-intensive and M <= N, parallelism gives speedup.
-The constraint: adding M beyond N for CPU work gives diminishing
-returns due to context-switch overhead (~1-10 microseconds per switch).
+Given (a) CPUs execute instructions in nanoseconds, (b) network I/O
+takes milliseconds - a 10,000x gap - and (c) modern hardware has 8-128
+cores, a single-threaded program voluntarily ignores 99.9%+ of available
+capacity. The only rational response to these constraints is to schedule
+multiple units of work simultaneously. Every server-side Java application
+benefits from concurrency because every database query, every HTTP call,
+every file read has that 10,000x gap to fill.
 
 ---
 
 ### 💻 Code Example
 
-**Example 1: BAD - parallelStream on I/O vs GOOD - virtual threads**
+> **Code walkthrough:** This example shows the two ways to create threads
+> in Java and the fundamental shared-state problem that makes concurrency
+> non-trivial. The BAD example ignores the race condition on `counter`.
+> The GOOD example uses `AtomicInteger` to eliminate the race. The key
+> lesson: simply "using threads" is not enough - shared mutable state
+> always requires explicit synchronization, or the results are
+> unpredictable.
 
 ```java
-// BAD: parallelStream for I/O-bound work
-// Blocks ForkJoinPool.commonPool() OS threads on I/O
-List<String> bad = urls.parallelStream()
-    .map(url -> httpClient.get(url))  // blocks pool thread
-    .collect(Collectors.toList());
-// ForkJoinPool has CPU_COUNT threads. One slow call
-// blocks an entire OS thread. All parallel operations
-// in the JVM compete for the same exhausted pool.
+// BAD: race condition on shared counter - non-deterministic result
+public class UnsafeCounter {
+    private int counter = 0; // shared mutable state - DANGER
 
-// GOOD: virtual threads for I/O-bound work
-try (ExecutorService exec =
-        Executors.newVirtualThreadPerTaskExecutor()) {
-    List<Future<String>> futures = urls.stream()
-        .map(url -> exec.submit(
-            () -> httpClient.get(url)))  // parks, not blocks
-        .collect(Collectors.toList());
-    List<String> results = new ArrayList<>();
-    for (Future<String> f : futures) {
-        results.add(f.get());
+    public void increment() {
+        counter++; // NOT atomic: read, increment, write - 3 steps
     }
-}
-// Virtual threads park at httpClient.get(). The carrier
-// OS thread is freed to run other virtual threads.
-// Scales to 100,000+ concurrent I/O waits.
-```
-
-> **Code walkthrough:** The BAD pattern ties up ForkJoinPool.commonPool()
-> OS threads waiting for network I/O - a ★★★ mistake that degrades ALL
-> parallel operations in the JVM. The GOOD pattern uses virtual threads
-> that park (not block) during I/O. The carrier OS thread remains
-> available. This is the most common Java concurrency design mistake
-> in services migrating from thread pools to "modern concurrency."
-
-**Example 2: RIGHT tool for CPU-bound (parallelism)**
-
-```java
-// CPU-bound: parallelStream is correct
-// ForkJoinPool.commonPool() parallelism = CPU core count
-List<Double> features = records.parallelStream()
-    .map(r -> computeMLFeatureVector(r))  // CPU-saturating
-    .collect(Collectors.toList());
-// Work is divided across cores. Adding more threads than
-// cores would create context-switching overhead with
-// zero additional throughput.
-```
-
-> **Code walkthrough:** For CPU-saturating work, `parallelStream()` uses
-> ForkJoinPool.commonPool() with parallelism equal to available CPU cores.
-> Work-stealing ensures cores stay busy even with unequal partition sizes.
-> Never set pool parallelism above CPU count for CPU-bound tasks - the
-> OS context-switch cost (~5 microseconds) eliminates any gain.
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior / Mid (0-5 years):**
-
-> Concurrency means multiple tasks can be in progress at the same
-> time, even on a single core via thread interleaving. Parallelism
-> means tasks physically run simultaneously on multiple cores. Java
-> threads give concurrency. ForkJoinPool and parallel streams give
-> parallelism. The key decision: I/O-bound work needs concurrency;
-> CPU-bound work needs parallelism.
-
-*Push deeper:* "parallelStream on a database call would block the
-ForkJoinPool threads and hurt overall throughput. I use virtual
-threads for I/O-heavy concurrency."
-
----
-
-**Senior / Staff (5+ years):**
-
-> Concurrency is a design property I choose deliberately based on
-> workload analysis. For a high-throughput API with heavy database
-> I/O, I choose virtual threads - cheap parking, millions of
-> concurrent waits, simple blocking code. For batch ETL over 100M
-> records, I choose ForkJoinPool parallel streams scaled to CPU
-> count. The deciding factor is always bottleneck analysis first.
-
-*Push deeper:* "Virtual threads changed the Java I/O model. We no
-longer need reactive frameworks for I/O concurrency at scale. Spring
-WebMVC on virtual threads is now competitive with WebFlux for
-I/O-bound workloads. This is a major architectural simplification."
-
----
-
-### ⚠️ Common Misconceptions
-
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "More threads = more parallelism" | Parallelism is bounded by CPU cores; extra threads add context-switch overhead | CPU saturation with no speedup |
-| "parallelStream makes code faster" | Only for CPU-bound in-memory work; harmful for I/O-bound | Starves ForkJoinPool on I/O |
-| "Virtual threads give parallelism" | Virtual threads give I/O concurrency; parallelism still requires CPU cores | Wrong tool for CPU-bound work |
-| "Concurrency requires multiple threads" | Node.js single-threaded event loop is highly concurrent | Architectural confusion |
-| "Thread.sleep makes a thread parallel" | sleep() suspends one thread; other threads may run concurrently but not necessarily in parallel | Misunderstands scheduling |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| parallelStream on I/O ops | Slow under load; CPU below 20% | ForkJoinPool threads blocked on I/O wait | jstack: pool threads in TIMED_WAITING at SocketInputStream.read | Switch to virtual threads or dedicated I/O pool |
-| Thread count > CPU cores for CPU work | CPU at 100%; throughput does not scale with thread count | Context switching overhead exceeds computation time | jcmd Thread.print: thread count >> availableProcessors() | Set pool size = Runtime.getRuntime().availableProcessors() |
-| Assuming sequential behavior | Intermittent data corruption under load | Shared mutable state without synchronization | jstack during load: identify concurrent access to same object | AtomicInteger, synchronized, or immutable design |
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 2-3 min | Define both; give one Java example each |
-| Mid | 4-5 min | I/O vs CPU decision; Java APIs |
-| Senior | 6-8 min | Design story; virtual threads trade-offs |
-| Staff | 10 min | Architecture decisions; migration risks |
-| Bar Raiser | 12 min | Virtual thread pinning; reactive vs Loom |
-
----
-
-**Q1** [CONCEPTUAL] [JUNIOR]
-
-"What is the difference between concurrency and parallelism?"
-
-*Why they ask:* Tests depth beyond memorized definitions. Strong
-answers connect the distinction to practical design decisions.
-
-*Likely follow-up:* "Can you have one without the other?"
-
-**Answer:**
-
-Concurrency is about program structure - multiple tasks can be in
-progress at the same time, even on a single CPU core via time-slicing.
-The OS scheduler interleaves threads every few milliseconds. Neither
-thread executes simultaneously, but both make progress.
-
-Parallelism is about physical execution - multiple tasks run at the
-exact same nanosecond on different CPU cores. This requires multi-core
-hardware and JVM/OS cooperation to assign threads to separate cores.
-
-All parallelism is concurrent (parallel threads are also interleaving
-from the scheduler's perspective), but not all concurrency is parallel
-(a single-core machine can run concurrent threads but not parallel
-ones). Node.js is highly concurrent on one thread - no parallelism.
-Java ForkJoinPool is both: parallel across cores, concurrent within
-each core's thread pool.
-
-The practical decision: I/O-bound work benefits from concurrency
-(threads park during I/O, freeing CPU for others). CPU-bound work
-benefits from parallelism (cores compute simultaneously). Applying
-parallel streams to I/O-bound code is the classic mistake - it blocks
-the ForkJoinPool common pool and degrades all parallel operations.
-
-*What separates good from great:* Connecting the definition to the
-I/O vs CPU design decision rather than staying abstract.
-
----
-
-**Q2** [TRADE-OFF] [MID]
-
-"When would you use virtual threads vs parallel streams?"
-
-*Why they ask:* Tests practical judgment about Java's two concurrency
-mechanisms.
-
-*Likely follow-up:* "What about mixed I/O and CPU work?"
-
-**Answer:**
-
-Virtual threads are for I/O-bound concurrency. When a virtual thread
-blocks on a database call or HTTP request, the JVM parks it - the
-underlying OS thread is freed to run other virtual threads. This
-enables thousands of concurrent I/O operations without thousands of
-OS threads. Virtual threads do not accelerate CPU computation.
-
-Parallel streams (via ForkJoinPool.commonPool()) are for CPU-bound
-parallelism. Work is split across CPU cores, executing simultaneously.
-Best for in-memory data transformation where each element is processed
-independently. Overhead is work-stealing coordination and result merge.
-
-For mixed workloads: fetch data concurrently with virtual threads,
-collect into a list, then process in parallel with streams. Never mix
-in one pipeline - a parallelStream that calls a database per element
-blocks ForkJoinPool threads on I/O, exhausting the pool for all other
-parallel operations in the JVM.
-
-Decision rule: bottleneck is I/O wait time -> virtual threads.
-Bottleneck is CPU computation -> parallel streams. Mixed -> separate
-phases with an intermediate collection between them.
-
-*What separates good from great:* The ForkJoinPool starvation risk -
-parallelStream on I/O causes the common pool to fill with blocked
-OS threads, degrading ALL parallel operations JVM-wide.
-
----
-
-**Q3** [DEBUGGING] [SENIOR]
-
-"Your service has 500 threads but CPU is at 15%. What do you check?"
-
-*Why they ask:* Tests production diagnosis - high thread count with
-low CPU is the signature of blocked/waiting threads.
-
-*Likely follow-up:* "What jstack output would confirm your hypothesis?"
-
-**Answer:**
-
-Low CPU with high thread count is the classic I/O blocking pattern.
-Threads are waiting, not computing.
-
-Step 1: thread dump with jstack PID or jcmd PID Thread.print.
-
-Step 2: look at thread states. If most threads are in TIMED_WAITING
-or WAITING state, they are blocked on I/O or synchronization.
-States to look for: "waiting on condition", "parking to wait for",
-"waiting for monitor entry".
-
-Step 3: read the stack traces. "sun.nio.ch.SocketChannelImpl.read"
-or "java.net.SocketInputStream.read" means network I/O blocking.
-"java.sql.DriverManager.getConnection" means connection pool
-exhaustion or slow database.
-"java.util.concurrent.locks.AbstractQueuedSynchronizer.park" means
-lock contention.
-
-Step 4: identify root cause from the specific blocking location.
-Database pool too small - increase pool or reduce query time.
-Slow downstream API - add circuit breaker, reduce timeout.
-Lock contention - reduce critical section scope, use finer locks.
-
-Step 5: verify the fix with the same jstack pattern post-change.
-CPU utilization should rise closer to actual computation capacity.
-
-*What separates good from great:* Naming exact jstack signatures for
-network I/O, database, and lock blocking rather than vague "check
-threads."
-
----
-
-**Q4** [COMPARISON] [MID]
-
-"How does Node.js achieve high concurrency on one thread?"
-
-*Why they ask:* Tests that you understand concurrency is not
-synonymous with multi-threading.
-
-*Likely follow-up:* "What is Node's limitation at high CPU load?"
-
-**Answer:**
-
-Node.js uses a single-threaded event loop backed by libuv for async
-I/O. Every I/O operation (database, HTTP, file) registers a callback
-with the OS via epoll/kqueue. The thread is never blocked waiting for
-the response - it returns to the event loop immediately and processes
-other events. When I/O completes, the OS notifies the event loop,
-which dequeues and executes the callback.
-
-Result: one OS thread handles thousands of concurrent I/O operations.
-Not by running them simultaneously (that would require parallelism) but
-by never blocking on any one of them. This is pure concurrency without
-parallelism.
-
-Node's limitation: CPU-bound work blocks the event loop. A single
-compute-intensive operation (image processing, encryption, ML
-inference) stalls all I/O callbacks because the thread is occupied.
-Node adds Worker Threads and cluster mode for CPU work.
-
-Java's virtual threads achieve similar I/O concurrency while
-allowing blocking code style. The JVM parks virtual threads during
-I/O, freeing the carrier OS thread - conceptually similar to the
-event loop but without callback pyramid or reactive operators.
-
-*What separates good from great:* Connecting Node's model to Java
-virtual threads and noting the programming model difference (callbacks
-vs blocking) while the concurrency behavior is similar.
-
----
-
-**Q5** [CONCEPTUAL] [JUNIOR]
-
-"Can a program be parallel but not concurrent?"
-
-*Why they ask:* Tests depth beyond the standard textbook answer.
-
-*Likely follow-up:* "Does SIMD count as parallelism?"
-
-**Answer:**
-
-Yes, though it is rare in application code. GPU computing is the
-clearest example: thousands of shader cores execute the same
-instruction on different data simultaneously (massive parallelism),
-but each shader runs independently with no coordination between
-shaders (no concurrency needed, no shared state to manage).
-
-SIMD (Single Instruction, Multiple Data) vector operations on modern
-CPUs are another example: one CPU instruction applies the same
-arithmetic to multiple data elements in parallel across vector
-registers. Java's Vector API exposes this. The programmer writes what
-looks like a single operation; the hardware executes it on multiple
-data elements simultaneously - parallel, not concurrent.
-
-In typical Java applications, parallel programs are almost always
-also concurrent - ForkJoinPool tasks are both simultaneously
-executing (parallelism) and interleaving on the thread pool
-(concurrency). The pure parallelism-without-concurrency case is a
-hardware-level concern, not a typical Java application concern.
-
-*What separates good from great:* Using GPU shaders or SIMD as
-concrete examples. The insight: concurrency involves coordination
-(shared state, scheduling) while pure parallelism can be independent.
-
----
-
-**Q6** [PRODUCTION] [SENIOR]
-
-"You're migrating a 200-thread pool API to virtual threads. What
-risks do you assess before deploying?"
-
-*Why they ask:* Tests whether you know the non-obvious virtual
-thread migration risks beyond "it's faster."
-
-*Likely follow-up:* "What JVM events would you monitor post-deploy?"
-
-**Answer:**
-
-Virtual threads are not a drop-in replacement without assessment.
-Three critical risks:
-
-Risk 1: synchronized block pinning. Virtual threads get pinned to
-carrier OS threads inside synchronized blocks and native method calls.
-Pinning means the carrier thread is blocked - with carrier count equal
-to CPU cores, 8 simultaneous pinned virtual threads saturates all 8
-carriers. I audit: does any synchronized block wrap an I/O operation?
-If yes, convert to ReentrantLock (which supports parking).
-
-Risk 2: ThreadLocal memory inflation. Libraries using ThreadLocal now
-create per-virtual-thread state at massive scale. A framework storing
-request context in ThreadLocal that previously created 200 instances
-may now create 100,000. Memory pressure and GC overhead can increase
-significantly. Audit ThreadLocal usage, consider ScopedValue (Java 21).
-
-Risk 3: database connection pool explosion. With 200 threads, at most
-200 concurrent DB connections. With unlimited virtual threads, the
-service can launch 100,000 concurrent DB queries. Without limiting
-concurrency to the pool size, connection pool exhaustion or database
-CPU saturation occurs. Add a Semaphore or bounded executor to cap
-database concurrency at the pool size.
-
-Post-deploy monitoring: JFR VirtualThreadPinnedEvent (count and
-duration of pinning events), virtual thread count vs carrier thread
-count, database connection pool utilization, p99 latency under load.
-
-*What separates good from great:* Naming all three risks with concrete
-mitigations rather than just "virtual threads have some limitations."
-
----
-
-**Q7** [ARCHITECTURE] [STAFF]
-
-"Virtual threads vs WebFlux for a new 10,000 req/s service. How do
-you decide?"
-
-*Why they ask:* Staff-level technology strategy, not implementation
-details.
-
-*Likely follow-up:* "What would change your recommendation?"
-
-**Answer:**
-
-This is workload characterization plus team capability, not a pure
-performance question.
-
-Workload analysis: at 10,000 req/s on typical cloud hardware (4-8
-cores), both virtual threads and WebFlux handle the throughput
-comfortably. Virtual threads' advantage is programmer ergonomics:
-blocking code, familiar exception handling, standard debugging tools.
-WebFlux's advantage is extreme connection density (100,000+ concurrent
-connections per node) where even virtual thread stack allocation
-becomes a concern.
-
-Team capability: Reactor has a steep learning curve. Debugging
-reactive pipeline backpressure and thread scheduling is harder than
-reading a thread dump. Onboarding new engineers onto WebFlux takes
-significantly longer. For a new service without existing reactive
-investment, virtual threads reduce maintenance cost.
-
-Integration: if the data layer uses R2DBC or reactive repositories,
-staying reactive avoids mixing blocking and non-blocking code in one
-service - that mixing is where subtle bugs appear. If the data layer
-is JDBC (blocking), virtual threads are a natural fit.
-
-My default recommendation for 10,000 req/s with a team not already
-invested in reactive: virtual threads with Spring MVC. Same
-throughput, simpler code, better observability. Change the
-recommendation if: the service must run at 100,000+ concurrent
-connections per node, or the team already owns reactive infrastructure.
-
-*What separates good from great:* Framing the decision as workload +
-team capability + integration cost - not just peak throughput numbers.
-
-| Interviewer Type | Emphasis |
-| --- | --- |
-| Technical Panel | Precise definitions; Java API mapping; ForkJoinPool. |
-| Hiring Manager | Design story: "I chose virtual threads for our API because..." |
-| Bar Raiser | Virtual thread pinning risks; reactive vs Loom trade-offs. |
-| Peer Engineer | "We hit parallelStream on DB calls - pool exhausted." |
-
----
-
-### ⚖️ Comparison Table
-
-*(Omit: ★☆☆ foundational keyword. Detailed mechanism comparison
-is in L2 Synchronization and L3 Thread Pools files.)*
-
----
-
-### 🏛️ System Design
-
-*(Omit: L0 orientation keyword. Concurrency/parallelism model
-selection appears in system design at L4-L5 when designing
-specific service thread architectures.)*
-
----
-
-### 📊 Diagram
-
-```
-CONCURRENCY (1 core - interleaving):
-Time:  0   10   20   30   40   50  ms
-T-A:  [##]      [##]      [##]
-T-B:       [##]      [##]      [##]
-      ^ OS context-switch every 10ms
-      Both progress, never simultaneously.
-
-PARALLELISM (2 cores - simultaneous):
-Time:  0   10   20   30   40   50  ms
-C-0:  [Thread A ....................]
-C-1:  [Thread B ....................]
-      ^ Both executing at same instant.
-
-BOTH (2 cores, 4 threads):
-C-0:  [T-A]-[T-C]-[T-A]-[T-C]...
-C-1:  [T-B]-[T-D]-[T-B]-[T-D]...
-      Concurrent within core, parallel across.
-```
-
-```mermaid
-gantt
-    title Concurrency vs Parallelism
-    dateFormat X
-    axisFormat %Lms
-
-    section 1-Core Concurrent
-    Thread A   :a1, 0, 2
-    Thread B   :b1, 2, 4
-    Thread A   :a2, 4, 6
-    Thread B   :b2, 6, 8
-
-    section 2-Core Parallel
-    Thread A (Core 0) :p1, 0, 8
-    Thread B (Core 1) :p2, 0, 8
-```
-
-> **Diagram walkthrough:** The top section shows single-core
-> concurrency - Thread A and B alternate via OS context switching.
-> Both make progress but never simultaneously. The bottom shows
-> parallelism - both threads execute at the same clock cycle on
-> different cores. In production Java: a thread pool with 100
-> threads on 8 cores is concurrent (100 tasks interleave) and
-> parallel (8 cores execute simultaneously). The ForkJoinPool
-> makes this explicit - parallelism = core count, concurrency =
-> task count >> core count.
-
----
-
----
-# Java Concurrency Overview
-
-**Interview Weight:** high - Ecosystem map question. Tests whether
-you know the full Java concurrency toolbox or only one layer of it.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Java concurrency evolved through three generations: raw threads
-> (Java 1.0), the java.util.concurrent (JUC) framework (Java 5),
-> and virtual threads via Project Loom (Java 21). Today the stack
-> is: synchronized/volatile primitives at the bottom, JUC utilities
-> (locks, semaphores, atomics, concurrent collections, executors)
-> in the middle, CompletableFuture for async composition, and
-> virtual threads for massive I/O concurrency at the top.
-
-**3 minutes (Senior):**
-
-> Understanding the full stack matters because each layer solves
-> a different problem.
->
-> Layer 1 - Primitives (Java 1.0): synchronized (mutual exclusion
-> and visibility), volatile (visibility only, no atomicity), wait/
-> notify (low-level signaling). Correct but difficult to use.
-> Almost never write these directly in new code.
->
-> Layer 2 - JUC framework (Java 5): java.util.concurrent brought
-> ReentrantLock (timed/interruptible locking), Semaphore (access
-> control), CountDownLatch/CyclicBarrier (coordination), Atomic
-> classes (lock-free operations), BlockingQueue (producer/consumer),
-> ConcurrentHashMap (concurrent reads, segmented writes). This is
-> the production workhorse layer.
->
-> Layer 3 - Executors (Java 5+): ExecutorService decouples task
-> submission from thread management. ThreadPoolExecutor gives full
-> control. ForkJoinPool adds work-stealing for recursive tasks.
-> ScheduledExecutorService for timed tasks. Never create raw Thread
-> objects in production - use executors.
->
-> Layer 4 - Async composition (Java 8): CompletableFuture enables
-> non-blocking pipelines: thenApply, thenCompose, thenCombine,
-> allOf. Uses ForkJoinPool.commonPool() by default - a critical
-> detail for I/O operations (do not block the common pool).
->
-> Layer 5 - Virtual threads (Java 21): one virtual thread per task,
-> parking instead of blocking, scales to millions of concurrent
-> I/O waits. Simplifies the async/reactive programming model by
-> allowing blocking code that does not consume OS threads.
-
-**Framework:** PRIMITIVES -> JUC UTILITIES -> EXECUTORS ->
-COMPLETABLE FUTURE -> VIRTUAL THREADS
-
-*Adapting up:* "I recommend virtual threads for new I/O-heavy
-services and ForkJoinPool for CPU-intensive batch work. Reactive
-frameworks are still justified for extreme connection counts or
-when the team already owns that infrastructure."
-
-*Adapting down:* "Java concurrency has three things to know:
-synchronized for shared state, ExecutorService for task management,
-and CompletableFuture for async operations."
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking for an overview of Java concurrency
-- the full toolbox from primitives to modern virtual threads."
-
-**(2) First principles:** "Concurrency needs three things: mutual
-exclusion (don't corrupt state), thread lifecycle management (create,
-run, stop), and task composition (chain async work)."
-
-**(3) Bridge:** "Think of it as layers: synchronized is the
-foundation (like raw assembly), JUC is the standard library (like
-C stdlib), virtual threads are the modern runtime (like Go goroutines)."
-
----
-
-### 📘 Concept Explanation
-
-**What it is:**
-
-The Java concurrency ecosystem is a layered set of APIs for writing
-programs that perform multiple operations concurrently or in parallel.
-It spans from low-level primitives in the language spec (synchronized,
-volatile) to high-level runtime features (virtual threads).
-
-**The problem it solves:**
-
-Writing correct concurrent code is difficult. Raw thread management
-(creating, starting, stopping, communicating between threads) is
-error-prone. JUC standardized proven patterns. Virtual threads
-removed the OS thread bottleneck for I/O-bound workloads without
-requiring reactive programming style.
-
-**How it works:**
-
-```
-Java Concurrency Stack:
-
-Layer 5: Virtual Threads (Java 21)
-  - Executors.newVirtualThreadPerTaskExecutor()
-  - StructuredTaskScope (preview)
-  - Park instead of block; millions of threads
-
-Layer 4: Async Composition (Java 8+)
-  - CompletableFuture<T>
-  - allOf(), anyOf(), thenCompose(), handle()
-  - Uses ForkJoinPool.commonPool() by default
-
-Layer 3: Executors (Java 5+)
-  - ExecutorService, ThreadPoolExecutor
-  - ForkJoinPool (work-stealing)
-  - ScheduledExecutorService
-
-Layer 2: JUC Utilities (Java 5)
-  - Locks: ReentrantLock, ReadWriteLock
-  - Coordination: CountDownLatch, CyclicBarrier
-  - Atomics: AtomicInteger, LongAdder
-  - Collections: ConcurrentHashMap, BlockingQueue
-
-Layer 1: Primitives (Java 1.0)
-  - synchronized keyword (method or block)
-  - volatile keyword
-  - Thread class, Runnable interface
-  - wait() / notify() / notifyAll()
-```
-
-**The key insight:**
-
-The common pool (ForkJoinPool.commonPool()) is shared across all
-CompletableFuture.supplyAsync() calls, parallel streams, and any
-code that does not specify a custom executor. Blocking the common
-pool with I/O operations degrades all users of that pool in the JVM.
-Always supply a custom executor for I/O in CompletableFuture chains.
-
-**When to use it:**
-
-- synchronized: simple shared-state protection in non-hot paths
-- ReentrantLock: when you need tryLock, timeouts, or interruptible lock
-- AtomicInteger: single-variable lock-free counters and CAS operations
-- ConcurrentHashMap: thread-safe map with concurrent reads
-- ExecutorService: any production task management (not raw Thread)
-- CompletableFuture: chaining async operations
-- Virtual threads: I/O-bound services on Java 21+
-
-**When NOT to use it:**
-
-- Do not use Thread directly in production (no lifecycle management)
-- Do not use synchronized for complex coordination (use JUC)
-- Do not block in CompletableFuture chains on the common pool
-- Do not use deprecated Thread.stop(), Thread.suspend()
-
-**Alternatives:**
-
-- Reactive frameworks (Spring WebFlux/Reactor) - non-blocking I/O
-  with backpressure, useful at extreme connection density
-- Actor model (Akka) - message-passing without shared mutable state
-- Structured concurrency (Java preview) - scoped task lifetimes
-  with automatic cancellation propagation
-
-**First-principles derivation:**
-
-Any concurrent system needs mutual exclusion (one writer at a time),
-progress (threads are not permanently blocked), and liveness (work
-eventually completes). synchronized provides mutual exclusion.
-JUC adds liveness through condition queues and timed waits.
-Executors add progress by managing thread creation within bounds.
-Virtual threads add liveness at I/O boundaries by parking instead
-of consuming OS resources while waiting.
-
----
-
-### 💻 Code Example
-
-**Example 1: Evolution of Java concurrency approaches**
-
-```java
-// Generation 1: raw Thread (never in production)
-Thread t = new Thread(() -> process(task));
-t.start();
-// No lifecycle management, no error handling,
-// no reuse of threads.
-
-// Generation 2: ExecutorService (JUC, Java 5)
-ExecutorService pool = Executors.newFixedThreadPool(
-    Runtime.getRuntime().availableProcessors()
-);
-Future<Result> future = pool.submit(() -> process(task));
-// Reuses threads. Handles lifecycle. But Future.get()
-// blocks the calling thread.
-
-// Generation 3: CompletableFuture (Java 8)
-CompletableFuture<Result> cf =
-    CompletableFuture.supplyAsync(
-        () -> process(task),
-        customExecutor  // ALWAYS provide executor for I/O
-    )
-    .thenApply(r -> transform(r))
-    .exceptionally(ex -> fallback());
-// Non-blocking pipeline. Compose stages.
-
-// Generation 4: virtual threads (Java 21)
-try (ExecutorService vExec =
-        Executors.newVirtualThreadPerTaskExecutor()) {
-    List<Future<Result>> futures =
-        tasks.stream()
-             .map(t2 -> vExec.submit(() -> process(t2)))
-             .collect(Collectors.toList());
-    for (Future<Result> f : futures) {
-        handleResult(f.get());  // blocks virtual thread,
-                                 // not OS thread
-    }
-}
-// Simple blocking code; OS thread not consumed during wait.
-```
-
-> **Code walkthrough:** Each generation solves the previous one's
-> limitation. Raw Thread has no management. ExecutorService adds
-> lifecycle but Future.get() still blocks. CompletableFuture chains
-> without blocking but requires callback-style thinking. Virtual
-> threads allow blocking code that does not consume OS threads during
-> I/O waits - combining simplicity with scalability. The critical
-> rule: always supply a custom executor to CompletableFuture.supplyAsync()
-> for I/O operations to avoid starving ForkJoinPool.commonPool().
-
-**Example 2: BAD - blocking common pool vs GOOD - custom executor**
-
-```java
-// BAD: blocking ForkJoinPool.commonPool() with I/O
-CompletableFuture<String> bad =
-    CompletableFuture.supplyAsync(
-        () -> jdbcTemplate.queryForObject(sql, String.class)
-        // ^ no executor: uses commonPool, blocks OS thread
-    );
-
-// GOOD: dedicated executor for I/O-bound tasks
-ExecutorService ioPool =
-    Executors.newVirtualThreadPerTaskExecutor();
-CompletableFuture<String> good =
-    CompletableFuture.supplyAsync(
-        () -> jdbcTemplate.queryForObject(sql, String.class),
-        ioPool  // dedicated executor; virtual threads park
-    );
-```
-
-> **Code walkthrough:** The BAD pattern ties up ForkJoinPool.commonPool()
-> threads waiting on JDBC. Every parallel stream in the JVM competes
-> for those same threads. The GOOD pattern provides a dedicated executor.
-> With virtual threads, the JDBC call parks the virtual thread rather
-> than blocking an OS thread - the carrier OS thread is freed for
-> other work.
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior / Mid (0-5 years):**
-
-> Java concurrency has three layers I use regularly: synchronized
-> and volatile for simple shared-state protection, java.util.concurrent
-> for thread pools (ExecutorService) and safe collections
-> (ConcurrentHashMap), and CompletableFuture for async composition.
-> On Java 21 I also use virtual threads for I/O-heavy services.
-
-*Push deeper:* "The main JUC classes I reach for: ExecutorService for
-task management, ReentrantLock when I need tryLock, AtomicInteger for
-counters, ConcurrentHashMap for thread-safe maps, and BlockingQueue
-for producer-consumer queues."
-
----
-
-**Senior / Staff (5+ years):**
-
-> I think of Java concurrency in layers. For simple exclusive access
-> in non-hot paths: synchronized. For lock control (timeouts,
-> interrupts): ReentrantLock. For concurrent state: Atomic classes
-> over locks where CAS semantics fit. For task execution: dedicated
-> ExecutorService instances (not raw Thread). For I/O-bound services
-> on Java 21: virtual threads with StructuredTaskScope for clean
-> cancellation propagation. I never block ForkJoinPool.commonPool().
-
-*Push deeper:* "The architecture choice for 2024 I/O-heavy services:
-virtual threads over reactive. Same throughput, standard debugging,
-compatible with blocking libraries. I keep reactive for extreme
-connection counts or existing reactive infrastructure."
-
----
-
-### ⚠️ Common Misconceptions
-
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "synchronized is still the primary tool" | JUC has ReentrantLock, Semaphore, and more - synchronized is only for simple exclusive access | Under-using JUC, over-complicating code |
-| "CompletableFuture creates its own threads" | Uses ForkJoinPool.commonPool() by default; I/O operations must use a custom executor | Starving commonPool with I/O |
-| "Virtual threads replace all thread pools" | Virtual threads are for I/O concurrency; ForkJoinPool still optimal for CPU-bound parallelism | Wrong tool for CPU work |
-| "Thread.new is fine for background tasks" | No lifecycle management, no error isolation, no reuse | Resource leaks and unmanaged threads |
-| "Java 21 concurrency is completely different" | Virtual threads run on the existing JUC framework; ExecutorService API is unchanged | Fear of adopting new features |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Raw Thread in production | Threads not cleaned up on shutdown; errors swallowed | No lifecycle management outside of executors | Search codebase for `new Thread(` outside test code | Wrap in ExecutorService or virtual thread executor |
-| Blocking commonPool in CompletableFuture | Parallel streams slow; p99 latency spike under load | I/O operations executing on ForkJoinPool.commonPool() | jstack: ForkJoinPool threads in WAITING at JDBC/HTTP calls | Always pass custom executor to supplyAsync for I/O |
-| synchronized on wrong object | No mutual exclusion despite synchronized keyword | Synchronizing on different object instances | Add logging to critical section; run under load and observe races | Synchronize on a shared, stable final object or use ReentrantLock |
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 2-3 min | Name the layers; give two JUC examples |
-| Mid | 4-5 min | Explain executor service; CompletableFuture risks |
-| Senior | 7-8 min | Architecture decisions; virtual thread trade-offs |
-| Staff | 10 min | Technology selection; team capability considerations |
-| Bar Raiser | 12 min | JUC internals; commonPool design; StructuredConcurrency |
-
----
-
-**Q1** [CONCEPTUAL] [JUNIOR]
-
-"Map the Java concurrency ecosystem for me."
-
-*Why they ask:* Baseline question to assess whether you know
-the full toolbox or just one layer.
-
-*Likely follow-up:* "Which parts do you use most in production?"
-
-**Answer:**
-
-Java concurrency has evolved through four generations, each solving
-the previous generation's limitations.
-
-Generation 1 (Java 1.0): Thread class, Runnable, synchronized,
-volatile, wait/notify. Low-level and error-prone. Correct, but
-most tasks are better served by higher layers.
-
-Generation 2 (Java 5 - JUC): java.util.concurrent introduced the
-production concurrency toolkit. Key additions: ExecutorService for
-thread pool management, ReentrantLock and ReadWriteLock for
-advanced locking, Semaphore and CountDownLatch for coordination,
-AtomicInteger and family for lock-free operations, BlockingQueue
-for producer-consumer, ConcurrentHashMap for safe concurrent maps.
-
-Generation 3 (Java 8): CompletableFuture for non-blocking async
-composition. Chain transformations (thenApply), combine results
-(thenCombine, allOf), handle errors (exceptionally, handle).
-Uses ForkJoinPool.commonPool() by default.
-
-Generation 4 (Java 21): Virtual threads. One virtual thread per
-task, parks instead of blocks during I/O. StructuredTaskScope
-(preview) for scoped cancellation. Scales to millions of
-concurrent I/O tasks with simple blocking code.
-
-In production today I use JUC executors for all task management,
-CompletableFuture with custom executors for async pipelines, and
-virtual threads on Java 21+ services.
-
-*What separates good from great:* Knowing that virtual threads
-use the JUC ExecutorService API unchanged - they are the execution
-layer, not a replacement for the coordination layer.
-
----
-
-**Q2** [COMPARISON] [MID]
-
-"When do you choose ReentrantLock over synchronized?"
-
-*Why they ask:* Tests JUC knowledge depth beyond the basics.
-
-*Likely follow-up:* "What is the performance difference?"
-
-**Answer:**
-
-I choose synchronized for simple mutual exclusion where the lock
-scope is clear and I do not need timed or interruptible waiting.
-It has the advantage of automatic release (even on exception) and
-JVM-level optimization (lock elision, biased locking).
-
-I choose ReentrantLock when I need:
-1. tryLock() - attempt lock acquisition without blocking. Useful
-   for deadlock avoidance: if you cannot acquire, back off and retry.
-2. tryLock(timeout, unit) - bounded wait. Prevents permanent blocking
-   if a lock holder fails or runs slow. Critical in distributed system
-   integrations.
-3. lockInterruptibly() - allow the waiting thread to be interrupted.
-   Enables clean shutdown: interrupt waiting threads so they can exit.
-4. Multiple condition variables - one ReentrantLock can have multiple
-   Condition objects (condition.await(), condition.signal()), allowing
-   precise notification routing. Synchronized has only one condition
-   per object (wait/notifyAll wakes all waiters even if only one should proceed).
-5. Fair lock mode - new ReentrantLock(true) ensures FIFO ordering,
-   preventing starvation. synchronized has no fairness guarantee.
-
-Performance: modern JVMs optimize uncontended synchronized similarly
-to ReentrantLock. Under contention, fairness mode ReentrantLock is
-slower due to FIFO overhead. Default (non-fair) ReentrantLock is
-comparable to synchronized.
-
-*What separates good from great:* The specific conditions (tryLock,
-interruptible, multiple conditions) rather than vague "more features."
-
----
-
-**Q3** [DEBUGGING] [SENIOR]
-
-"CompletableFuture is slow under load. Where do you look?"
-
-*Why they ask:* Tests understanding of ForkJoinPool commonPool
-and async pipeline performance.
-
-*Likely follow-up:* "How do you decide the right pool size?"
-
-**Answer:**
-
-CompletableFuture slowness under load has three common root causes.
-
-Root cause 1: blocking the common pool with I/O. If any stage in
-the pipeline calls a blocking operation (JDBC, HTTP, file I/O) on
-ForkJoinPool.commonPool() - the default executor - OS threads are
-blocked waiting for I/O. The common pool has CPU_COUNT threads; a
-single slow query can block one for seconds. Under load, all common
-pool threads are blocked on I/O and the pipeline stalls.
-
-Diagnostic: jstack shows ForkJoinPool threads in TIMED_WAITING at
-SocketInputStream.read or similar I/O stacks.
-
-Fix: always supply a custom executor to supplyAsync for I/O stages.
-Use virtual threads executor (Java 21) or a dedicated I/O thread pool.
-
-Root cause 2: exception swallowing. If a stage throws an exception
-and no exceptionally/handle is attached, the CompletableFuture
-completes exceptionally but silently. Downstream .get() throws
-ExecutionException. Without proper error handling, failures are
-silent.
-
-Root cause 3: pool size mismatch. CompletableFuture with a
-FixedThreadPool for CPU work - if pool size is too small, tasks
-queue and latency increases. Profile actual CPU utilization.
-
-*What separates good from great:* Diagnosing the commonPool I/O
-blocking pattern specifically - naming the jstack signature.
-
----
-
-**Q4** [CONCEPTUAL] [MID]
-
-"What did virtual threads change about Java concurrency?"
-
-*Why they ask:* Tests awareness of Java 21 paradigm shift.
-
-*Likely follow-up:* "Do virtual threads replace reactive?"
-
-**Answer:**
-
-Virtual threads (JEP 444, Java 21) changed the Java I/O concurrency
-model at the runtime level.
-
-Before virtual threads: writing high-concurrency I/O services in
-Java required either a large thread pool (many OS threads, high
-memory) or a reactive/async programming model (CompletableFuture,
-WebFlux). Reactive is correct but has high cognitive overhead:
-callback composition, backpressure management, debugging reactive
-pipelines is significantly harder than reading thread dumps.
-
-With virtual threads: the JVM multiplexes virtual threads onto a
-small pool of OS carrier threads. When a virtual thread blocks on
-I/O, it parks - the carrier thread is freed and can run another
-virtual thread. This means you write simple, blocking code:
-
-String result = jdbcTemplate.query(sql);  // parks, not blocks
-
-...and the runtime transparently handles the concurrency. A virtual
-thread consumes minimal memory (~1KB stack) vs an OS thread (~1MB),
-enabling millions of concurrent I/O waits.
-
-Virtual threads do NOT replace reactive for every case. Reactive
-frameworks have backpressure semantics (controlling fast producers
-with slow consumers) that virtual threads do not provide natively.
-For services where backpressure is a requirement, reactive is still
-the right model. For the majority of services that are I/O-bound
-with no specific backpressure need, virtual threads simplify the code.
-
-*What separates good from great:* Noting the limitation (no
-backpressure) rather than claiming virtual threads obsolete reactive.
-
----
-
-**Q5** [PRODUCTION] [SENIOR]
-
-"You inherited a Spring Boot service with raw Thread.new() calls
-throughout. How do you migrate to proper executors?"
-
-*Why they ask:* Tests practical migration judgment, not just theory.
-
-*Likely follow-up:* "What risks do you assess before changing it?"
-
-**Answer:**
-
-Raw Thread.new() in production has four problems: no lifecycle
-management (threads may outlive requests), no error isolation
-(uncaught exceptions crash the thread silently), no reuse (OS
-thread creation is expensive at ~1-2ms), and no observability
-(unnamed threads in thread dumps are opaque).
-
-Migration strategy, risk-ordered:
-
-Step 1: audit the usage. Find all Thread.new() calls. Categorize
-by purpose: fire-and-forget tasks, background polling, request
-parallelism, or unknown/legacy.
-
-Step 2: introduce a shared executor service as a Spring bean.
-Inject it via constructor injection. This makes executor lifecycle
-manageable (shutdown on Spring context close).
-
-Step 3: replace fire-and-forget tasks with executor.submit() or
-executor.execute(). Add error handling via Thread.setUncaughtExceptionHandler
-or wrap in try-catch.
-
-Step 4: for Java 21 services, consider virtual threads:
-Executors.newVirtualThreadPerTaskExecutor(). Zero code change from
-the caller's perspective - virtual threads behave like platform
-threads for blocking code.
-
-Step 5: set thread names for observability. VirtualThread.Builder
-supports naming. Custom ThreadFactory allows naming platform threads.
-
-Risk assessment: check if any Thread.new() code relies on
-ThreadLocal values from the creating thread (data inheritance).
-ExecutorService tasks do not inherit ThreadLocal by default.
-
-*What separates good from great:* Flagging ThreadLocal inheritance
-as a subtle migration risk.
-
----
-
-**Q6** [TRADE-OFF] [MID]
-
-"What is the ForkJoinPool common pool and why should you care?"
-
-*Why they ask:* Tests understanding of a shared resource that
-affects JVM-wide parallel performance.
-
-*Likely follow-up:* "How many threads does it have?"
-
-**Answer:**
-
-ForkJoinPool.commonPool() is a JVM-wide shared thread pool used by:
-1. parallelStream() operations
-2. CompletableFuture.supplyAsync() with no explicit executor
-3. Arrays.parallelSort()
-4. Any code using ForkJoinPool.commonPool() directly
-
-Its parallelism is set to Runtime.getRuntime().availableProcessors()
-minus 1 by default (minimum 1). On a 4-core machine: 3 threads.
-
-Why you should care: it is SHARED. If one code path blocks common
-pool threads (I/O operations, sleep, slow calls), every other code
-path using the common pool is affected. A single misconfigured
-CompletableFuture pipeline doing database calls can stall all
-parallel streams in the JVM.
-
-The rule: common pool is for CPU-bound, short-lived tasks only.
-Any I/O operation must use a custom executor.
-
-In Java 21+ services, I replace all common pool I/O usage with
-virtual thread executors. CPU-bound work stays on the common pool.
-
-Configurable via: -Djava.util.concurrent.ForkJoinPool.common.parallelism=N
-
-*What separates good from great:* The "shared, JVM-wide" impact -
-one misconfigured usage affects all other commonPool users.
-
----
-
-**Q7** [ARCHITECTURE] [STAFF]
-
-"You are starting a new Java 21 microservice. How do you structure
-the concurrency architecture?"
-
-*Why they ask:* Tests modern best practices at an architectural level.
-
-*Likely follow-up:* "How does this change for a CPU-intensive batch job?"
-
-**Answer:**
-
-For a new Java 21 I/O-bound microservice, my concurrency architecture
-has three layers.
-
-Layer 1 - Request handling: Spring Boot 3 with virtual thread support
-(-Dspring.threads.virtual.enabled=true). Each HTTP request runs on
-its own virtual thread. The thread-per-request model is back - but
-now it scales to thousands of concurrent requests without OS thread
-overhead.
-
-Layer 2 - Downstream I/O: all database, cache, and API calls happen
-on the request's virtual thread. No CompletableFuture pipelines needed
-for I/O composition - sequential blocking code reads naturally and
-performs well. The JVM parks virtual threads during I/O waits.
-
-Layer 3 - CPU-intensive work: if the service has CPU-intensive
-transformations (data processing, serialization at scale), I use a
-dedicated ForkJoinPool with parallelism = CPU count. This is explicit
-parallelism, not the common pool.
-
-Cross-cutting: I set a Semaphore at the database connection pool
-boundary to prevent virtual thread explosion creating unlimited
-concurrent DB connections. Virtual threads are cheap; DB connections
-are not.
-
-For a CPU-intensive batch job: platform thread pool with
-parallelism = CPU count. Virtual threads add no value for CPU-bound
-work - they park during I/O but CPU-bound code never parks. The
-right tool is a bounded ForkJoinPool or fixed thread pool.
-
-*What separates good from great:* The semaphore at the DB connection
-boundary - the most commonly forgotten detail in virtual thread
-architecture.
-
-| Interviewer Type | Emphasis |
-| --- | --- |
-| Technical Panel | JUC class hierarchy; ForkJoinPool mechanics. |
-| Hiring Manager | Why the evolution matters; what it enables today. |
-| Bar Raiser | Virtual thread pinning; StructuredConcurrency preview. |
-| Peer Engineer | "We blocked commonPool with DB calls in CompletableFuture..." |
-
----
-
-### ⚖️ Comparison Table
-
-*(Omit: ★☆☆ overview keyword. Specific mechanism comparisons
-are in L2 Synchronization and L3 Thread Pools files.)*
-
----
-
-### 🏛️ System Design
-
-*(Omit: L0 orientation keyword. Executor architecture selection
-appears in system design at L3-L4 when designing service
-concurrency models.)*
-
----
-
-### 📊 Diagram
-
-```
-Java Concurrency Stack (bottom to top):
-
-+------------------------------------------+
-| Layer 5 - Virtual Threads (Java 21)      |
-|  newVirtualThreadPerTaskExecutor()       |
-|  Parks during I/O; ~1KB stack per thread |
-+------------------------------------------+
-| Layer 4 - Async Composition (Java 8)     |
-|  CompletableFuture<T>                    |
-|  thenApply / allOf / exceptionally       |
-|  Default: ForkJoinPool.commonPool()      |
-+------------------------------------------+
-| Layer 3 - Executors (Java 5+)            |
-|  ExecutorService (submit, shutdown)      |
-|  ThreadPoolExecutor (full control)       |
-|  ForkJoinPool (work-stealing, parallel)  |
-+------------------------------------------+
-| Layer 2 - JUC Utilities (Java 5)         |
-|  Locks: ReentrantLock, ReadWriteLock     |
-|  Coordination: Latch, Barrier, Semaphore |
-|  Atomics: AtomicInteger, LongAdder       |
-|  Collections: ConcurrentHashMap, BQueue  |
-+------------------------------------------+
-| Layer 1 - Primitives (Java 1.0)          |
-|  synchronized, volatile                  |
-|  Thread, Runnable                        |
-|  wait() / notify()                       |
-+------------------------------------------+
-```
-
-```mermaid
-graph TB
-    V["Layer 5: Virtual Threads (Java 21)\nnewVirtualThreadPerTaskExecutor\nParks on I/O"]
-    C["Layer 4: CompletableFuture (Java 8)\nthenApply / allOf / handle\nUses ForkJoinPool.commonPool by default"]
-    E["Layer 3: Executors (Java 5+)\nExecutorService / ThreadPoolExecutor\nForkJoinPool / ScheduledExecutorService"]
-    J["Layer 2: JUC Utilities (Java 5)\nLocks / Atomics / Coordination\nConcurrentHashMap / BlockingQueue"]
-    P["Layer 1: Primitives (Java 1.0)\nsynchronized / volatile\nThread / wait / notify"]
-
-    V --> C --> E --> J --> P
-```
-
-> **Diagram walkthrough:** Each layer builds on the one below.
-> Primitives provide correctness foundations (mutual exclusion,
-> visibility). JUC utilities standardize patterns on top of primitives.
-> Executors abstract thread lifecycle. CompletableFuture adds async
-> composition. Virtual threads sit at the top - they use the executor
-> API unchanged but change how the JVM handles blocking. Knowing which
-> layer to use for a given problem is the key Java concurrency
-> competency: synchronized for simple shared state, JUC for complex
-> coordination, virtual threads for I/O-heavy services.
-
----
-
----
-# Thread Lifecycle
-
-**Interview Weight:** high - First step in diagnosing deadlocks,
-high CPU, and thread pool saturation. Asked in every Java
-concurrency interview.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> Java threads have 6 states: NEW (created, not started), RUNNABLE
-> (running or ready for CPU), BLOCKED (waiting to acquire a monitor
-> lock), WAITING (indefinitely waiting for a signal), TIMED_WAITING
-> (waiting with timeout), TERMINATED (finished). Understanding which
-> state your threads are in is the first step in diagnosing deadlocks
-> (threads stuck BLOCKED), missed notifications (threads stuck
-> WAITING), and CPU saturation (threads spinning RUNNABLE).
-
-**3 minutes (Senior):**
-
-> The lifecycle starts when you call thread.start() - the thread
-> moves from NEW to RUNNABLE. RUNNABLE does not mean actively
-> executing - it means eligible for CPU. The OS scheduler decides
-> when a RUNNABLE thread actually runs.
->
-> BLOCKED vs WAITING is the diagnostic key. BLOCKED means a thread
-> is waiting for a monitor lock that another thread currently holds.
-> WAITING means the thread called wait() or join() and is waiting
-> for an explicit signal (notify/notifyAll) or thread completion.
-> Deadlocks show as BLOCKED with a circular dependency in jstack.
-> Missed notifications show as WAITING indefinitely.
->
-> Thread.sleep() moves to TIMED_WAITING but critically does not
-> release any monitor locks the thread holds. A thread sleeping
-> inside a synchronized block holds the lock for the sleep duration.
->
-> When a WAITING thread receives notify(), it does not move directly
-> to RUNNABLE - it moves to BLOCKED, competing with other threads
-> for the monitor lock. Only after acquiring the lock does it become
-> RUNNABLE again. This transition detail matters for understanding
-> spurious wakeups and wait-in-loop patterns.
-
-**Framework:** NEW -> RUNNABLE (on start()) -> BLOCKED/WAITING/
-TIMED_WAITING (on blocking ops) -> RUNNABLE (lock/signal) ->
-TERMINATED (on return/exception)
-
-*Adapting up:* "BLOCKED in jstack with a circular dependency = 
-deadlock. All threads in RUNNABLE at 100% CPU = infinite loop or
-busy-wait. WAITING indefinitely = missed notification."
-
-*Adapting down:* "Six states: not started (NEW), running (RUNNABLE),
-waiting for a lock (BLOCKED), waiting for signal (WAITING), timed
-wait (TIMED_WAITING), done (TERMINATED)."
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about the Java thread lifecycle -
-the states a thread goes through from creation to termination."
-
-**(2) First principles:** "A thread needs CPU time and resources.
-States represent WHY a thread is not running: waiting for CPU
-(RUNNABLE but not scheduled), waiting for a lock (BLOCKED),
-waiting for an event (WAITING)."
-
-**(3) Bridge:** "Think of it like a task board: TODO (NEW), IN
-PROGRESS (RUNNABLE), BLOCKED (waiting for dependency), WAITING
-(waiting for review), DONE (TERMINATED)."
-
----
-
-### 📘 Concept Explanation
-
-**What it is:**
-
-A Java thread lifecycle is the set of states a thread passes
-through from creation to termination, defined by Thread.State
-enum: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED.
-
-**The problem it solves:**
-
-Without understanding thread states, diagnosing production issues
-like deadlocks, high CPU, and thread pool saturation is impossible.
-Thread dumps (jstack output) show the state of every thread - reading
-them requires knowing what each state means and which state
-combinations indicate specific problems.
-
-**How it works:**
-
-```
-Thread State Machine:
-
-  thread.start()           OS scheduler
-  NEW ---------> RUNNABLE <-----------> [executing]
-                    |
-          synchronized    wait() / join()
-          block contested LockSupport.park()
-                    |          |
-                 BLOCKED    WAITING
-                    |          |
-          lock released  notify() / interrupt()
-                    \          /
-                     -> BLOCKED -> RUNNABLE
-                               (must re-acquire lock)
-
-  sleep(ms) / wait(ms) / join(ms)
-  RUNNABLE -> TIMED_WAITING -> RUNNABLE (on timeout/notify)
-
-  run() returns or uncaught exception
-  RUNNABLE -> TERMINATED
-```
-
-**The key insight:**
-
-BLOCKED and WAITING are both "not running" but for different
-reasons with different wake-up mechanisms. BLOCKED threads are
-woken up automatically when the lock is released. WAITING threads
-must receive an explicit signal (notify/notifyAll) or interruption.
-A thread cannot stay WAITING forever without a signal - unless
-the notifying thread never runs or the notification is missed.
-
-**When to use it:**
-
-- Read thread states in jstack/JFR to diagnose production issues
-- Design wait-in-loop patterns to handle spurious wakeups
-- Monitor thread pool state to detect saturation
-- Identify deadlocks from BLOCKED circular dependencies
-
-**When NOT to use it:**
-
-- Do not use raw wait()/notify() for complex signaling - use
-  Condition variables from ReentrantLock instead
-- Do not sleep inside synchronized blocks - holds lock for
-  sleep duration, starving other threads
-- Do not busy-wait with RUNNABLE threads - causes 100% CPU
-  on one core with no useful work
-
-**Alternatives:**
-
-- Condition (ReentrantLock.newCondition()) - structured wait/signal
-  with better readability and multiple wait queues
-- BlockingQueue.take() - structured waiting without manual
-  wait/notify
-- LockSupport.park/unpark - lower-level but precise control
-
-**First-principles derivation:**
-
-A CPU can only run one thread per core at a time. Threads waiting
-for different resources should not consume CPU. States model WHY
-a thread is not consuming CPU: BLOCKED (waiting for exclusive
-access to shared state), WAITING (waiting for an event), TIMED_WAITING
-(waiting for an event or timeout). RUNNABLE threads are eligible but
-the OS scheduler decides actual execution timing.
-
----
-
-### 💻 Code Example
-
-**Example 1: Observing thread states programmatically**
-
-```java
-public class ThreadStateDemo {
-    private static final Object lock = new Object();
 
     public static void main(String[] args)
             throws InterruptedException {
-        Thread t = new Thread(() -> {
-            synchronized (lock) {       // may go BLOCKED
-                try {
-                    lock.wait();        // goes WAITING here
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+        UnsafeCounter c = new UnsafeCounter();
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 10_000; i++) c.increment();
         });
-
-        System.out.println(t.getState()); // NEW
-
-        t.start();
-        Thread.sleep(50);
-        System.out.println(t.getState()); // WAITING (in lock.wait())
-
-        synchronized (lock) {
-            lock.notifyAll();  // move t from WAITING to BLOCKED
-        }
-        t.join();
-        System.out.println(t.getState()); // TERMINATED
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 10_000; i++) c.increment();
+        });
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        // Expected: 20000. Actual: anywhere from 10000-20000
+        System.out.println(c.counter);
     }
 }
 ```
-
-> **Code walkthrough:** Before start(), thread is NEW. After start()
-> and entering wait(), thread state is WAITING. After notifyAll(),
-> the thread tries to re-acquire the lock - if the main thread still
-> holds it, state becomes BLOCKED. After the lock is released and
-> run() completes, state is TERMINATED. This sequence reveals the
-> WAITING -> BLOCKED -> RUNNABLE transition that wait/notify uses.
-
-**Example 2: BAD - sleep inside synchronized vs GOOD - Condition.await**
 
 ```java
-// BAD: sleep inside synchronized block
-// holds lock for 5 seconds, starving all other waiters
-synchronized (resource) {
-    if (!resource.isReady()) {
-        Thread.sleep(5000);  // holds lock! other threads BLOCKED
-    }
-    process(resource);
-}
+// GOOD: atomic counter using java.util.concurrent.atomic
+import java.util.concurrent.atomic.AtomicInteger;
 
-// GOOD: Condition.await() releases the lock while waiting
-private final ReentrantLock lock = new ReentrantLock();
-private final Condition ready = lock.newCondition();
-
-lock.lock();
-try {
-    while (!resource.isReady()) {
-        ready.await();  // releases lock and waits
-                        // re-acquires lock on signal
-    }
-    process(resource);
-} finally {
-    lock.unlock();
-}
-```
-
-> **Code walkthrough:** Thread.sleep() moves to TIMED_WAITING but
-> keeps any held monitor locks. Other threads needing the lock go
-> BLOCKED for the full 5-second sleep duration. Condition.await()
-> atomically releases the lock and moves to WAITING - other threads
-> can acquire the lock while this thread waits. The while loop
-> around await() handles spurious wakeups (JVM may wake threads
-> without a corresponding notify call).
-
----
-
-### 🎓 Answers by Seniority
-
-**Junior / Mid (0-5 years):**
-
-> Java threads have six states: NEW, RUNNABLE, BLOCKED, WAITING,
-> TIMED_WAITING, and TERMINATED. The key diagnostic ones: BLOCKED
-> means waiting for a monitor lock (potential deadlock). WAITING
-> means the thread called wait() and is waiting for notify()
-> (potential missed notification). RUNNABLE at 100% CPU suggests
-> a tight loop or busy-wait.
-
-*Push deeper:* "jstack PID shows every thread and its current state.
-I look for BLOCKED threads with a circular dependency (deadlock)
-or WAITING threads that never wake up (missed notification)."
-
----
-
-**Senior / Staff (5+ years):**
-
-> Thread states are my first diagnostic tool in production. A
-> jstack showing 200 threads all BLOCKED on the same lock tells
-> me there is lock contention that needs fixing. All threads
-> WAITING indefinitely tells me a notify() was missed or never
-> called. All threads RUNNABLE with 100% CPU tells me there is
-> a busy-wait or infinite loop. The transition detail I test for:
-> after notify(), a thread goes BLOCKED (not directly RUNNABLE) -
-> it must re-acquire the lock. This matters for understanding
-> why wait-in-loop is mandatory.
-
-*Push deeper:* "At staff level: JFR thread events give me state
-duration over time - I can see exactly how long threads spent
-in each state and find which phase is the bottleneck."
-
----
-
-### ⚠️ Common Misconceptions
-
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "RUNNABLE = actively executing" | RUNNABLE = eligible for CPU; OS scheduler decides when it actually runs | Wrong diagnosis of performance issues |
-| "BLOCKED and WAITING are the same" | BLOCKED waits for a monitor lock release; WAITING waits for explicit notify() | Misdiagnosing deadlock vs missed notification |
-| "sleep() releases the monitor lock" | sleep() holds all held locks for the sleep duration | Lock starvation inside synchronized blocks |
-| "WAITING thread goes directly to RUNNABLE on notify()" | notify() moves to BLOCKED first (must re-acquire lock) | Incorrect mental model of wait/notify flow |
-| "A TERMINATED thread can be restarted" | Thread.start() on a TERMINATED thread throws IllegalThreadStateException | RuntimeError in "retry" logic |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Deadlock | All threads frozen; service stops processing requests | Two or more threads each holding a lock the other needs (BLOCKED circular dependency) | jstack: threads in BLOCKED state with "waiting to lock" pointing at each other's held locks | Lock ordering (always acquire in same order); use tryLock with timeout |
-| Missed notification | Thread stuck in WAITING indefinitely | notify() called before wait(), or notify() called on wrong object | jstack: thread in WAITING for extended period; add logging before/after wait and notify | Use while loop: while(!condition) { wait(); }; prefer BlockingQueue over manual wait/notify |
-| Busy-wait | 100% CPU on one core; low throughput | Thread in tight RUNNABLE loop checking a condition | jstack: thread RUNNABLE in a loop; CPU profiler shows top-of-stack is the loop method | Replace busy-wait with Condition.await() or blocking collection |
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 2-3 min | Name states; explain one transition |
-| Mid | 4-5 min | BLOCKED vs WAITING; read a thread dump |
-| Senior | 7-8 min | Diagnose deadlock from jstack; fix it |
-| Staff | 10 min | JFR state duration analysis; design implications |
-| Bar Raiser | 12 min | Virtual thread state differences; LockSupport semantics |
-
----
-
-**Q1** [CONCEPTUAL] [JUNIOR]
-
-"Describe the Java thread lifecycle states."
-
-*Why they ask:* Baseline check - every Java concurrency interview
-starts here. Weak answers suggest shallow concurrency knowledge.
-
-*Likely follow-up:* "What causes a thread to go from RUNNABLE
-to BLOCKED?"
-
-**Answer:**
-
-Java defines 6 thread states in Thread.State.
-
-NEW: thread object created but thread.start() not yet called.
-The thread is not scheduled by the OS.
-
-RUNNABLE: thread is running or eligible to run. The JVM has
-started the thread; the OS scheduler decides when it actually
-gets CPU time. A thread calling CPU-intensive code stays RUNNABLE.
-A thread waiting in the OS run queue is also RUNNABLE.
-
-BLOCKED: thread is waiting to acquire a monitor lock held by
-another thread. Happens when two threads compete for the same
-synchronized block or method. The thread gets no CPU time while
-BLOCKED.
-
-WAITING: thread is waiting indefinitely for another thread to
-perform a specific action. Caused by: Object.wait() with no
-timeout, Thread.join() with no timeout, LockSupport.park(). Wakes
-up only on notify()/notifyAll(), thread completion, or interrupt().
-
-TIMED_WAITING: same as WAITING but with a timeout. Caused by:
-Thread.sleep(ms), Object.wait(ms), Thread.join(ms),
-LockSupport.parkNanos(). Wakes up on timeout, notify, or interrupt.
-
-TERMINATED: thread.run() has returned or an uncaught exception
-propagated. Thread object still exists but cannot be restarted.
-
-Transition into BLOCKED: any time a thread tries to enter a
-synchronized block or method while another thread holds the
-monitor. Common in: database connection pools (waiting for
-available connection), synchronized service methods under load.
-
-*What separates good from great:* Distinguishing BLOCKED vs WAITING
-precisely - BLOCKED waits for a lock, WAITING waits for a signal.
-
----
-
-**Q2** [COMPARISON] [JUNIOR]
-
-"What is the difference between BLOCKED and WAITING states?"
-
-*Why they ask:* The most-confused pair of states. Critical for
-reading jstack output and diagnosing production problems.
-
-*Likely follow-up:* "How does jstack output look for each state?"
-
-**Answer:**
-
-BLOCKED and WAITING are both "thread not running" but with
-fundamentally different causes and wake-up mechanisms.
-
-BLOCKED means a thread is trying to enter a synchronized block or
-method but the monitor is held by another thread. The thread is
-essentially queued at the lock boundary. It will wake up
-automatically when the lock holder exits the synchronized block.
-No explicit action needed from the lock holder beyond releasing.
-
-WAITING means a thread called wait(), join(), or LockSupport.park()
-and is waiting for an explicit event. It will not wake up
-automatically on any timeout - only when notify()/notifyAll() is
-called, the joined thread terminates, or interrupt() is called.
-
-Diagnostic: BLOCKED with a circular dependency in jstack = deadlock.
-WAITING indefinitely = missed notification or design bug where
-notify() is never called.
-
-jstack output for BLOCKED:
-  "Thread-1" BLOCKED on object@0x1234 owned by "Thread-0"
-
-jstack output for WAITING:
-  "Thread-2" WAITING on object@0x5678
-    waiting for Thread-0 to call notify()
-
-One more difference: after notify(), a WAITING thread moves to
-BLOCKED (must re-acquire the lock), not directly to RUNNABLE.
-This means notified threads can also deadlock on the re-acquire step.
-
-*What separates good from great:* The "notify -> BLOCKED -> RUNNABLE"
-transition rather than "notify -> RUNNABLE" which is the common
-misconception.
-
----
-
-**Q3** [DEBUGGING] [SENIOR]
-
-"How do you find and diagnose a deadlock in production?"
-
-*Why they ask:* Production debugging competency. Expected at
-senior level.
-
-*Likely follow-up:* "How do you fix it without restarting?"
-
-**Answer:**
-
-Step 1: capture a thread dump. jstack PID or kill -3 on Unix, or
-jcmd PID Thread.print. If the JVM is still responsive, multiple
-dumps at 5-second intervals show whether threads are progressing.
-
-Step 2: search for "BLOCKED" threads. Every thread BLOCKED on an
-object is waiting for a lock. Note the object address and the
-thread that owns it (jstack shows "owned by Thread-N").
-
-Step 3: build the wait-for graph. Thread A waits for Thread B's
-lock. Thread B waits for Thread A's lock. If there is a cycle,
-that is a deadlock. With more than 2 threads, the cycle can be
-longer: A waits for B, B waits for C, C waits for A.
-
-Step 4: modern JDKs have DeadlockDetection: jcmd PID
-Thread.print -l shows lock hierarchies, and ThreadMXBean
-findDeadlockedThreads() returns the deadlocked thread IDs
-programmatically.
-
-Fixing without restart: usually not possible for a true deadlock.
-The safest path is controlled restart. Prevention is key: use
-lock ordering (always acquire locks in the same global order),
-use tryLock(timeout) so threads time out and retry, or restructure
-to avoid nested locks entirely.
-
-Post-fix: add a scheduled thread that calls
-ThreadMXBean.findDeadlockedThreads() and alerts if non-null.
-
-*What separates good from great:* The wait-for-graph approach and
-lock ordering as the structural fix, not just "restart the service."
-
----
-
-**Q4** [CONCEPTUAL] [JUNIOR]
-
-"Why doesn't Thread.sleep() release the monitor lock?"
-
-*Why they ask:* Common trap. Many developers assume sleep releases
-locks (it does not).
-
-*Likely follow-up:* "What should you use instead of sleep
-inside a synchronized block?"
-
-**Answer:**
-
-Thread.sleep() is a static method on the Thread class that pauses
-the current thread for a specified duration. It has no relationship
-to object monitors (synchronized locks). sleep() moves the thread
-to TIMED_WAITING but does not interact with any object's monitor
-state. Whatever locks the thread held before calling sleep(), it
-still holds during and after sleep.
-
-This is by design: sleep's purpose is to pause for a time interval,
-not to release coordination state. If you need to "wait and release
-the lock", that is Object.wait() - which does release the monitor
-before waiting.
-
-The production consequence: if you call sleep() inside a synchronized
-block, all other threads trying to enter that synchronized block are
-BLOCKED for the entire sleep duration. Under load, this causes
-visible latency spikes - the sleeping thread is holding the lock
-that 100 other request threads need.
-
-The fix: replace sleep-in-synchronized with Condition.await() from
-ReentrantLock, which atomically releases the lock and waits. If you
-genuinely need a timed pause that holds the lock, reconsider the
-design - locking for the duration of a sleep is almost always wrong.
-
-*What separates good from great:* Explaining the production impact
-(latency spike) and the Condition.await() alternative.
-
----
-
-**Q5** [DEBUGGING] [MID]
-
-"A thread is stuck in WAITING forever. What are the possible causes?"
-
-*Why they ask:* Common production bug - missed notification.
-
-*Likely follow-up:* "How do you prevent it?"
-
-**Answer:**
-
-A thread stuck in WAITING (from wait() without timeout) will never
-wake unless:
-1. Another thread calls notify() or notifyAll() on the same object
-2. Another thread calls interrupt() on the waiting thread
-3. A spurious wakeup occurs (rare, JVM-defined behavior)
-
-Causes of WAITING forever:
-
-Cause 1: missed notification. notify() was called before wait().
-The thread checks condition, condition is not met, notifier fires
-(condition is now met, notify() called), then thread calls wait().
-Notify is missed. Fix: while-loop on the condition; use
-BlockingQueue which handles this correctly.
-
-Cause 2: wrong object. notify() called on a different object
-instance than the one wait() was called on. Each object has its
-own monitor. Fix: ensure both wait() and notify() use the same
-shared object reference.
-
-Cause 3: notify() vs notifyAll(). With multiple waiting threads
-and one notify(), only one thread wakes. If that thread does not
-proceed (condition still not true), the others stay WAITING.
-Fix: use notifyAll() to wake all threads, let them re-check the
-condition.
-
-Cause 4: exception in notifier. If the code that calls notify()
-throws an exception before reaching notify(), no notification is
-sent. Fix: try/finally to ensure notify() is called.
-
-Prevention: prefer BlockingQueue over manual wait/notify.
-BlockingQueue handles all these cases internally and correctly.
-
-*What separates good from great:* The "notify before wait" timing
-case - this is the most common and subtlest cause.
-
----
-
-**Q6** [PRODUCTION] [SENIOR]
-
-"Thread pool shows 200 threads all RUNNABLE but CPU is at 100%
-and throughput is near zero. What is happening?"
-
-*Why they ask:* Busy-wait detection in production.
-
-*Likely follow-up:* "How would you find which code is doing
-the busy-wait?"
-
-**Answer:**
-
-200 threads all RUNNABLE with high CPU and zero throughput is a
-busy-wait pattern. Threads are spinning in a loop checking a
-condition that is never (or rarely) true, consuming CPU without
-doing useful work.
-
-Diagnosis step 1: multiple thread dumps 3 seconds apart. If the
-RUNNABLE threads show the same stack frame across all dumps, they
-are spinning in that code.
-
-Diagnosis step 2: CPU profiler (async-profiler or JFR CPU profiling).
-This shows which methods are consuming CPU. A busy-wait appears as
-a tight loop method at the top of the flame graph.
-
-Common causes:
-- Spin-lock: while(!flag) {} without any parking
-- Polling loop: while(!condition) { Thread.sleep(0); }
-- Event loop without backpressure: continuously polling an empty
-  queue with no blocking
-
-The fix: replace polling/spinning with blocking operations.
-- while(!flag) {} -> LockSupport.parkNanos(1_000_000) or Condition.await()
-- Queue polling -> BlockingQueue.take() (blocks until item available)
-- Custom condition checking -> wait/notify or Semaphore
-
-The root insight: if a thread is waiting for an event, it should
-be WAITING or TIMED_WAITING (sleeping), not RUNNABLE (spinning).
-The OS can schedule other threads while a thread sleeps; a spinning
-thread monopolizes its core.
-
-*What separates good from great:* Using async-profiler or JFR
-CPU profiling to find the exact hot loop, not guessing.
-
----
-
-**Q7** [ARCHITECTURE] [STAFF]
-
-"How do thread state differences affect your choice between
-synchronized, ReentrantLock, and Condition for complex
-multi-thread coordination?"
-
-*Why they ask:* Tests whether you can reason about coordination
-mechanisms from first principles, not just API usage.
-
-*Likely follow-up:* "When would you reach for BlockingQueue
-instead of any of these?"
-
-**Answer:**
-
-The choice depends on what state transitions you need threads to
-make and what control you need over those transitions.
-
-synchronized gives you RUNNABLE -> BLOCKED -> RUNNABLE for mutual
-exclusion, and RUNNABLE -> WAITING -> BLOCKED -> RUNNABLE for
-wait/notify. It is simple but has limitations: one condition per
-lock (all waiters on the same condition queue), no timeout on lock
-acquisition, no interruptibility on the lock wait.
-
-ReentrantLock gives you the same state transitions but with
-control: tryLock() - attempt acquisition without blocking (stays
-RUNNABLE if lock unavailable); lockInterruptibly() - enter BLOCKED
-but wake up on interrupt; tryLock(timeout) - enter TIMED_WAITING
-instead of indefinite BLOCKED. This control is valuable for
-deadlock avoidance and clean shutdown.
-
-Condition (from ReentrantLock.newCondition()) gives you multiple
-wait queues per lock. Producer-consumer with two conditions:
-one for "not empty" (consumer waits), one for "not full" (producer
-waits). This avoids unnecessary wakeups: when consumer adds space,
-notify only the producer's condition queue, not all waiters.
-
-My decision framework: start with BlockingQueue - it handles
-all coordination internally with correct wait/notify and is
-the simplest option. If I need custom conditions beyond "empty/full",
-use ReentrantLock + Condition. If I need lock ordering for deadlock
-avoidance, use ReentrantLock with tryLock. Rarely use raw synchronized
-with wait/notify for complex coordination - too easy to miss the
-re-check-in-loop requirement.
-
-*What separates good from great:* "Start with BlockingQueue" as the
-practical first choice, then escalate to Condition only when custom
-coordination logic is needed.
-
-| Interviewer Type | Emphasis |
-| --- | --- |
-| Technical Panel | State transitions; jstack interpretation. |
-| Hiring Manager | Deadlock diagnosis story; production impact. |
-| Bar Raiser | Spurious wakeups; wait-in-loop requirement; JFR state duration. |
-| Peer Engineer | "We had 200 threads BLOCKED on the DB pool at 2am..." |
-
----
-
-### ⚖️ Comparison Table
-
-*(Omit: ★☆☆ lifecycle keyword. BLOCKED vs WAITING differences
-are explained in depth in the Concept Explanation above.)*
-
----
-
-### 🏛️ System Design
-
-*(Omit: L0 lifecycle keyword. Thread state management in system
-design appears at L3-L4 when designing connection pool sizing,
-deadlock prevention patterns, and thread pool configurations.)*
-
----
-
-### 📊 Diagram
-
-```
-Java Thread State Machine:
-
-         thread.start()
-  NEW ─────────────────> RUNNABLE <──────────────────────┐
-                           │  ^  ^                        │
-         synchronized      │  │  │ lock released or      │
-         block contested   │  │  │ OS scheduler           │
-                           v  │  │                        │
-                         BLOCKED ──────────────────────>─┘
-
-  RUNNABLE                 │
-     │                     │ Object.wait() / join() /
-     │                     │ LockSupport.park()
-     │                     v
-     │                  WAITING ──> notify() / interrupt() ──> BLOCKED
-     │
-     │ sleep(ms) / wait(ms) / join(ms)
-     └─────────────────> TIMED_WAITING ──> timeout/notify ──> RUNNABLE
-
-  RUNNABLE ──> run() returns or uncaught exception ──> TERMINATED
-```
-
-```mermaid
-stateDiagram-v2
-    [*] --> NEW : new Thread()
-    NEW --> RUNNABLE : thread.start()
-    RUNNABLE --> BLOCKED : enters contested synchronized block
-    BLOCKED --> RUNNABLE : lock released, thread wins
-    RUNNABLE --> WAITING : wait() / join() / park()
-    WAITING --> BLOCKED : notify() received (must re-acquire lock)
-    RUNNABLE --> TIMED_WAITING : sleep(ms) / wait(ms) / join(ms)
-    TIMED_WAITING --> RUNNABLE : timeout expires or notified
-    RUNNABLE --> TERMINATED : run() returns
-```
-
-> **Diagram walkthrough:** The critical paths to understand: (1) RUNNABLE
-> to BLOCKED happens every time a thread tries to enter a synchronized
-> block while another thread holds the monitor - this is the deadlock
-> source under circular dependency. (2) WAITING to BLOCKED (not directly
-> to RUNNABLE) after notify() - the notified thread still must compete
-> for the lock. (3) sleep() stays in RUNNABLE->TIMED_WAITING without
-> touching the monitor - it holds all locks. The most important
-> diagnostic rules: BLOCKED circular = deadlock, WAITING forever =
-> missed notify, RUNNABLE 100% CPU = busy-wait.
-
----
-
----
-# Race Conditions and Thread Safety
-
-**Interview Weight:** critical - The #1 Java concurrency interview
-topic. Every seniority level faces this. Race conditions are the
-most common production concurrency bug.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> A race condition occurs when program correctness depends on the
-> relative timing of two or more threads. Thread safety means a
-> class behaves correctly under any interleaving of concurrent
-> access, without requiring external synchronization from callers.
-> Race conditions are the most dangerous concurrency bug: they are
-> intermittent, non-deterministic, and almost never reproduced in
-> tests - they appear under production load.
-
-**3 minutes (Senior):**
-
-> The two classic race condition patterns are check-then-act and
-> read-modify-write. Check-then-act: thread A reads "counter < 100",
-> context switch, thread B reads "counter < 100", both decide to
-> increment, both increment - final value is counter + 1, not
-> counter + 2. Read-modify-write: counter++ is three bytecode
-> instructions (read, increment, write). Thread A reads 5, thread
-> B reads 5, A writes 6, B writes 6 - one increment is lost.
->
-> volatile does not fix this. volatile ensures visibility (a write
-> by one thread is visible to all other threads) but does not provide
-> atomicity. counter++ with volatile is still a race.
->
-> Thread safety has four strategies: immutability (make objects
-> final and freeze state - safest), confinement (keep state in one
-> thread only - thread locals, single-threaded executors), locking
-> (synchronized, ReentrantLock - correct but introduces contention),
-> and lock-free (AtomicInteger, CAS operations - most scalable for
-> single-variable operations).
->
-> The hardest part of race conditions: they depend on timing. A
-> race that loses 1 update in 10 million may only manifest under
-> load, during GC pauses, or in specific CPU cache states. Unit
-> tests on a developer machine with one core may never trigger it.
-
-**Framework:** IDENTIFY (check-then-act? read-modify-write?)
--> CHOOSE STRATEGY (immutable? confined? lock? atomic?)
--> VERIFY (happens-before relationship established?)
-
-*Adapting up:* "I also consider false sharing (independent fields
-on the same cache line causing cache coherence traffic) and
-publication safety (safe publication of shared objects through
-final fields or volatile references)."
-
-*Adapting down:* "Two threads both trying to modify the same data
-at the same time, with the result depending on who goes first,
-is a race condition. Fix: use synchronized or atomic classes."
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about race conditions and thread
-safety - the core correctness problems in concurrent code."
-
-**(2) First principles:** "Two threads sharing mutable state can
-interfere. Correctness requires either: prevent sharing, prevent
-mutation, or control the ordering of access."
-
-**(3) Bridge:** "A race condition is like two people trying to edit
-the same document simultaneously without a revision lock - last
-writer wins, first writer's changes are lost."
-
----
-
-### 📘 Concept Explanation
-
-**What it is:**
-
-Race condition: a program behavior where the output depends on the
-non-deterministic timing of concurrent thread execution. The program
-produces different results on different runs.
-
-Thread safety: a class property guaranteeing correct behavior when
-accessed concurrently from multiple threads, with no additional
-synchronization required from callers.
-
-**The problem it solves:**
-
-Shared mutable state is the root cause of almost all concurrency
-bugs. The Java Memory Model (JMM) does not guarantee that changes
-made by one thread are visible to others unless a happens-before
-relationship exists. Without it, threads may read stale cached
-values. Race conditions corrupt state; visibility failures corrupt
-values.
-
-**How it works:**
-
-```
-READ-MODIFY-WRITE race (counter++):
-
-Thread A         Thread B         Memory
-read  count=5    read  count=5    count=5
-                 count++
-                 write count=6    count=6
-count++
-write count=6    (B's write lost) count=6 (expected 7)
-
-CHECK-THEN-ACT race:
-
-Thread A             Thread B
-if (map.get(k)!=null)    <- context switch
-                     map.remove(k)  <- k removed
-value = map.get(k)   <- NullPointerException!
-
-JAVA MEMORY MODEL - happens-before required:
-
-Thread A write --[happens-before]--> Thread B read
-Without this, Thread B may read a cached (stale) value.
-
-Establishes happens-before:
-  synchronized block exit -> synchronized block entry
-  volatile write -> volatile read (of same variable)
-  Thread.start() -> first action in thread
-  Last action in thread -> Thread.join() return
-```
-
-**The key insight:**
-
-volatile provides visibility (write is seen by all subsequent reads)
-but NOT atomicity (read-modify-write is not atomic). counter++ with
-volatile is still a race condition. AtomicInteger.incrementAndGet()
-uses CAS (compare-and-swap) which IS atomic. This is the single
-most common misconception tested in interviews.
-
-**When to use it:**
-
-- Immutability: state known at construction, never modified - use
-  final fields, Collections.unmodifiableX(), record classes
-- Thread confinement: state only accessed from one thread - use
-  ThreadLocal, single-threaded executor, request-scope patterns
-- Locking: complex multi-variable invariants - synchronized or
-  ReentrantLock with clearly defined scope
-- Lock-free: single-variable counters, flags, references -
-  AtomicInteger, AtomicReference, LongAdder
-
-**When NOT to use it:**
-
-- Do not use volatile for compound operations (check-then-act,
-  read-modify-write) - it only fixes visibility, not atomicity
-- Do not use synchronized with fine-grained locking without
-  analyzing deadlock risk (lock ordering required)
-- Do not use lock-free atomics for multi-variable invariants -
-  they handle one variable atomically, not groups
-
-**Alternatives:**
-
-- Reactive (Project Reactor) - event-driven model without shared
-  mutable state between request handlers
-- Actors (Akka) - no shared state; all communication via messages
-- Functional immutability (Vavr) - persistent data structures
-  that are safe to share between threads
-
-**First-principles derivation:**
-
-The CPU executes instructions, not threads. When two threads
-execute instructions on the same memory address, the result
-depends on the order of instruction execution - which is
-non-deterministic at the OS scheduler level. To make behavior
-deterministic: either prevent concurrent access to the same
-address (lock), use CPU-level atomic instructions (CAS/CAS2),
-or eliminate the shared address (immutability/confinement).
-
----
-
-### 💻 Code Example
-
-**Example 1: BAD (race on counter++) vs GOOD (AtomicInteger)**
-
-```java
-// BAD: race condition on counter++
-// counter++ is: read, increment, write (3 operations, not atomic)
-public class UnsafeCounter {
-    private int count = 0;
-
-    // Race: two threads can both read count=5,
-    // both increment to 6, both write 6.
-    // Expected: 7. Actual: 6. One update lost.
-    public void increment() {
-        count++;  // NOT ATOMIC - race condition!
-    }
-
-    public int get() {
-        return count;  // may return stale value (no visibility)
-    }
-}
-
-// GOOD: AtomicInteger (lock-free, CAS-based)
 public class SafeCounter {
-    private final AtomicInteger count = new AtomicInteger(0);
+    // AtomicInteger uses CAS (Compare-and-Swap) - no lock needed
+    private final AtomicInteger counter = new AtomicInteger(0);
 
-    // compareAndSet loop: read current, compute new,
-    // atomically swap if unchanged. Retry if changed.
     public void increment() {
-        count.incrementAndGet();  // atomic CAS operation
+        counter.incrementAndGet(); // single atomic operation
     }
 
-    public int get() {
-        return count.get();  // always reads latest value
+    public static void main(String[] args)
+            throws InterruptedException {
+        SafeCounter c = new SafeCounter();
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 10_000; i++) c.increment();
+        });
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 10_000; i++) c.increment();
+        });
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println(c.counter.get()); // Always: 20000
     }
 }
 ```
-
-> **Code walkthrough:** counter++ compiles to three bytecode
-> instructions: getfield, iadd, putfield. A context switch between
-> getfield and putfield in two threads causes lost updates. AtomicInteger
-> uses a CPU-level compare-and-swap (CAS) instruction, which is atomic
-> at the hardware level: read-compare-write in a single uninterruptible
-> instruction. If two threads CAS simultaneously, one wins and the
-> other retries. No update is ever lost.
-
-**Example 2: BAD (volatile for compound action) vs GOOD (synchronized)**
-
-```java
-// BAD: volatile does not fix compound action races
-public class ViolatedLazyInit {
-    private volatile Helper helper;
-
-    // BROKEN: check-then-act is not atomic even with volatile
-    public Helper getHelper() {
-        if (helper == null) {           // Thread A checks: null
-                                        // context switch
-                                        // Thread B checks: null
-            helper = new Helper();      // Thread B creates
-        }                               // Thread A creates
-        return helper;  // Two Helpers created; visible via volatile
-                        // but still a race on "was it created"
-    }
-}
-
-// GOOD: synchronized for correct double-checked locking
-public class SafeLazyInit {
-    private volatile Helper helper;
-
-    public Helper getHelper() {
-        if (helper == null) {           // first check (no lock)
-            synchronized (this) {
-                if (helper == null) {   // second check (with lock)
-                    helper = new Helper();
-                    // volatile ensures write is visible
-                    // before lock is released
-                }
-            }
-        }
-        return helper;
-    }
-}
-// Better: just use Holder idiom or enum singleton
-```
-
-> **Code walkthrough:** volatile ensures the write of `helper` is
-> visible to other threads, but does not make the check-then-act
-> atomic. Both threads can pass the null check concurrently. The
-> double-checked locking pattern (with volatile) is correct in Java 5+
-> because volatile guarantees the write visibility before the lock
-> release. Without volatile on helper, the object may be partially
-> constructed when read by Thread A after Thread B's synchronized
-> block exits. The safest lazy init: use an inner static holder class
-> or Holder enum - initialized by the class loader, which is
-> inherently thread-safe.
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
+> Concurrency exists because programs often wait for I/O - like database
+> calls or HTTP requests - and modern hardware has multiple cores. Without
+> concurrency, those cores sit idle while the program blocks. Java provides
+> the Thread class and Runnable interface as the basic building blocks.
+> The main challenge is that threads share heap memory, so you need
+> synchronization whenever multiple threads access the same data.
 
-> A race condition is when two threads access shared mutable state
-> concurrently and the result depends on timing. Thread safety means
-> the class handles concurrent access correctly without the caller
-> needing to synchronize. The common pattern: counter++ is not
-> atomic (three operations: read, increment, write). Fix with
-> AtomicInteger or synchronized.
-
-*Push deeper:* "volatile fixes visibility (reading stale values)
-but not atomicity (read-modify-write races). AtomicInteger fixes
-both for single-variable operations."
+*Push deeper:* Mention `ExecutorService` as the preferred way to manage
+threads in production, and the difference between `synchronized` for
+mutual exclusion and `volatile` for visibility.
 
 ---
 
 **Senior / Staff (5+ years):**
+> Concurrency solves CPU underutilization and I/O wait time. The real
+> insight is that concurrency is not free - every synchronization
+> primitive introduces overhead (memory barriers, cache coherence traffic,
+> context switches). I have seen teams blindly add threads to slow code
+> and make it slower because the bottleneck was lock contention, not
+> parallelism. The decision framework I use: measure first, identify
+> whether the bottleneck is CPU-bound or I/O-bound, then choose
+> the right concurrency tool. For I/O-bound workloads in Java 21+,
+> virtual threads are often better than platform threads because they
+> are cheap enough to have one per I/O operation without a thread pool.
 
-> I design for thread safety rather than bolt it on. Four strategies:
-> immutability (no mutation after construction - safest), confinement
-> (state lives in one thread - ThreadLocal, request scope), locking
-> (synchronized or ReentrantLock for multi-variable invariants), and
-> lock-free atomics (AtomicInteger, LongAdder for single-variable
-> counters). I choose based on the contention pattern: high-contention
-> counters use LongAdder (distributed increment, merged on read).
-> Complex invariants use ReentrantLock with clear scope.
-
-*Push deeper:* "Safe publication matters as much as safe mutation.
-An object constructed and published without a happens-before
-relationship may be seen partially-constructed by other threads.
-Final fields, volatile references, and synchronized publication
-all establish the needed visibility guarantee."
+*Push deeper:* Discuss the Java Memory Model (JMM) happens-before
+relationship, why it exists, and how it governs what a thread is
+guaranteed to see after another thread's writes.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality | Risk |
-| --- | --- | --- |
-| "volatile makes counter++ thread-safe" | volatile ensures visibility; counter++ is still 3 non-atomic ops | Lost updates in critical counters |
-| "Race conditions only happen on multi-core" | Single-core context switches at any bytecode boundary also cause races | Under-testing on dev machines |
-| "My tests pass so no race conditions" | Race conditions are timing-dependent; unit tests rarely expose them | False confidence; bugs appear in prod |
-| "Immutable objects need no synchronization" | True, BUT the reference to the immutable object must be safely published | NPE or seeing old version of reference |
-| "synchronized on different methods = different locks" | synchronized instance methods all use the same object monitor (this) | Unexpected mutual exclusion |
+**Misconception 1: "More threads = more throughput."**
+False above a saturation point. For CPU-bound work, optimal thread
+count is roughly `(number of cores)`. Beyond that, context-switching
+overhead dominates. For I/O-bound work, more threads help until the
+I/O subsystem saturates or thread management overhead exceeds the gain.
+
+**Misconception 2: "Concurrency and parallelism are the same thing."**
+Concurrency is a design property - tasks can make progress without
+waiting for others to complete. Parallelism is a runtime property -
+tasks physically execute simultaneously. A single-core machine can
+run concurrent code that is not parallel.
+
+**Misconception 3: "Thread.sleep() yields the CPU to other threads."**
+`Thread.sleep()` pauses the current thread, but the JVM scheduler
+decides which other thread runs. There is no guarantee of fair
+distribution. Never use `sleep()` for coordination - use the proper
+synchronization primitives.
+
+**Misconception 4: "Java's synchronized keyword is always slow."**
+In low-contention scenarios, the JVM biases or eliminates the lock
+entirely via lock elimination and lock coarsening optimizations. The
+cost of `synchronized` is primarily in contention, not in the keyword
+itself.
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-| Failure | Symptom | Root Cause | Diagnostic | Fix |
-| --- | --- | --- | --- | --- |
-| Lost update | Counters or aggregates slightly wrong under load; non-deterministic results | Read-modify-write without atomicity (counter++) | Load test with 100+ threads; assert final count == expected count | AtomicInteger.incrementAndGet() or synchronized increment |
-| Stale read | Thread reads outdated value; logic branches incorrectly | No happens-before from write to read; missing volatile/sync | jcmd JFR: add memory visibility events; add assertions on expected value | volatile for single-variable visibility; synchronized for compound visibility |
-| TOCTOU (time-of-check to time-of-use) | NullPointerException or KeyNotFoundException under concurrent access | Check then use without atomic guarantee | Review all if-null-then-create patterns; add logging to capture concurrent interleaving | Replace check-then-act with atomic operations: putIfAbsent(), computeIfAbsent() |
+**Failure 1: Race condition - non-deterministic data corruption**
+Symptom: intermittent wrong values, tests pass 95% of the time,
+failures impossible to reproduce consistently.
+Cause: multiple threads read-modify-write shared state without
+synchronization. The `counter++` operation is three separate JVM
+instructions.
+Diagnosis: Run with multiple threads, compare results across runs.
+Use `java.util.concurrent.atomic` classes or `synchronized` blocks.
+
+**Failure 2: Thread starvation - some threads never run**
+Symptom: the application appears hung despite CPU activity;
+some tasks never complete.
+Cause: high-priority threads or unfair scheduling prevent lower-priority
+threads from acquiring the CPU. Common in thread pools where long tasks
+consume all worker threads.
+Diagnosis: take a thread dump (`jstack <pid>`), look for threads in
+RUNNABLE state that never progress.
+
+**Failure 3: Out of memory from uncapped thread creation**
+Symptom: `OutOfMemoryError: unable to create new native thread`
+Cause: creating one thread per incoming request without a thread pool.
+Each thread consumes ~512KB-1MB of stack space. 1000 threads = ~1GB.
+Fix: use `ExecutorService` with a bounded thread pool.
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Level | Time | Expected Depth |
-| --- | --- | --- |
-| Junior | 3 min | Define race condition; give one example with fix |
-| Mid | 5 min | volatile vs atomic; check-then-act vs read-modify-write |
-| Senior | 8 min | Thread safety strategies; safe publication; JMM |
-| Staff | 12 min | Design thread-safe class; analyze invariants |
-| Bar Raiser | 15 min | False sharing; happens-before chain; lock-free design |
+| Question Category | Time to Answer |
+|---|---|
+| Definition | 30-60 seconds |
+| Mechanism | 1-2 minutes |
+| Comparison | 1-2 minutes |
+| Scenario | 2-3 minutes |
+| Debugging | 2-3 minutes |
+| Trade-off | 1-2 minutes |
+| Ecosystem | 1-2 minutes |
 
 ---
 
-**Q1** [CONCEPTUAL] [JUNIOR]
+**Q1 (Definition): What is concurrency and why does it exist?**
 
-"What is a race condition? Give a concrete example."
+A: Concurrency is the ability of a program to have multiple computations
+in progress at the same time. It exists because of two hardware realities
+that make sequential execution inefficient. First, modern hardware has
+multiple CPU cores - a 16-core server running a single-threaded program
+uses 6.25% of its capacity. Second, I/O operations are orders of magnitude
+slower than CPU operations - a database query takes 10-50ms while the
+CPU can execute millions of instructions per millisecond. Concurrency
+fills that gap by scheduling other work while waiting.
 
-*Why they ask:* Absolute baseline for concurrency competency.
-Every Java engineer must be able to answer this.
+The historical context matters: before Java's `Thread` class and the
+`java.util.concurrent` package (Java 5, 2004), developers either used
+raw OS threads (difficult, platform-specific) or event loops (correct
+but mentally taxing to code). Java made concurrency accessible to
+mainstream developers.
 
-*Likely follow-up:* "How would you fix it?"
-
-**Answer:**
-
-A race condition occurs when two or more threads access shared
-mutable state concurrently and the program's correctness depends
-on the relative timing of their execution. The result is
-non-deterministic: the program produces different results on
-different runs, typically under load.
-
-The classic example is a shared counter:
-
-```
-Thread A: reads count=5
-          ← context switch
-Thread B: reads count=5
-          count++ → count=6
-          writes count=6
-Thread A: count++ → count=6 (not 7!)
-          writes count=6
-```
-
-Expected final value: 7. Actual: 6. One increment was lost.
-This is the "lost update" race condition. counter++ is not a single
-operation - it is three: read the current value, increment it,
-write it back. A context switch between any of these steps in two
-threads produces a wrong result.
-
-Fix: use AtomicInteger.incrementAndGet() which performs the
-read-increment-write as a single atomic compare-and-swap instruction.
-Or use a synchronized block to ensure only one thread executes the
-increment at a time.
-
-*What separates good from great:* Explaining WHY counter++ is not
-atomic (three bytecode instructions) rather than just saying
-"use synchronized."
+*What separates good from great:* Mentioning that concurrency is a
+design property (tasks can make progress without waiting for each other)
+while parallelism is a runtime property (tasks execute simultaneously),
+and that single-core machines can run concurrent code that isn't parallel.
 
 ---
 
-**Q2** [CONCEPTUAL] [MID]
+**Q2 (Mechanism): How does Java create and schedule threads?**
 
-"Why isn't volatile enough to make counter++ thread-safe?"
+A: When you call `new Thread()` and `.start()`, the JVM calls the
+OS to create a native thread - a first-class OS scheduling unit.
+The OS scheduler manages these threads using preemptive time-slicing:
+it allocates each thread a time quantum (typically 1-10ms), and when
+the quantum expires, saves the thread's register state (context) and
+switches to another thread.
 
-*Why they ask:* The most common interview trap. Many developers
-believe volatile solves race conditions.
+Each thread gets its own call stack on the OS process's virtual memory.
+The default stack size is 512KB-1MB (configurable with `-Xss`). All
+threads share the JVM heap - this is where objects live and where
+most concurrency problems originate.
 
-*Likely follow-up:* "What exactly does volatile guarantee?"
+The critical transition: when a thread makes a blocking I/O call (socket
+read, file read), the kernel marks it BLOCKED, removes it from the CPU
+run queue, and schedules another thread. When the I/O completes, the
+kernel moves the thread back to RUNNABLE. This is transparent to the
+Java developer - from our perspective, the code just waits for the
+method to return.
 
-**Answer:**
+Java 21 introduced virtual threads (Project Loom), which are lightweight
+threads scheduled by the JVM rather than the OS. When a virtual thread
+blocks on I/O, the JVM parks it on a heap structure and reuses the
+underlying OS thread for another virtual thread - enabling millions of
+concurrent threads with low memory overhead.
 
-volatile guarantees two things: visibility (a write by any thread
-is immediately visible to all other threads - no CPU cache caching)
-and ordering (writes and reads are not reordered across a volatile
-access by the JIT compiler or CPU). It does NOT guarantee atomicity
-of compound operations.
-
-counter++ with volatile:
-1. Read current value from main memory (volatile guarantees latest)
-2. Increment value in register
-3. Write new value to main memory (volatile guarantees visible)
-
-Steps 1-2-3 are separate. A context switch after step 1 allows
-another thread to also read the current value, increment it, and
-write back. Then the first thread writes its (stale) incremented
-value, overwriting the second thread's write. One update is lost.
-
-volatile fixes: reading a stale cached value (visibility problem).
-volatile does NOT fix: two threads both reading before either writes
-(atomicity problem).
-
-AtomicInteger.incrementAndGet() uses CAS (compare-and-swap): one
-CPU instruction that reads, compares to expected, and writes
-atomically. If another thread changed the value between the read
-and the CAS, the CAS fails and retries. No update is ever lost.
-
-*What separates good from great:* Precisely distinguishing visibility
-(what volatile fixes) from atomicity (what AtomicInteger fixes).
+*What separates good from great:* Describing the context-switch cost
+(register save/restore, CPU cache warm-up after switch) and why this
+makes Java 21 virtual threads attractive for I/O-bound workloads.
 
 ---
 
-**Q3** [COMPARISON] [MID]
+**Q3 (Comparison): What is the difference between a process and a thread?**
 
-"What are the four strategies for thread safety? When do you use each?"
+A: A process is an isolated execution environment with its own virtual
+address space, file descriptors, and OS resources. A thread is an
+execution unit within a process that shares the process's address space
+with all other threads in that process.
 
-*Why they ask:* Tests structured thinking about thread safety
-design, not just tactical fixes.
+Key differences:
+- Memory: Processes are isolated (IPC required for communication).
+  Threads share heap memory (easy sharing, but race conditions possible).
+- Creation cost: Forking a process is expensive (~1ms+, memory copy).
+  Creating a thread is cheaper (~100-500 microseconds, shares memory).
+- Failure isolation: A crashed process does not affect others.
+  A thread crash with an unhandled exception can bring down the entire JVM.
+- Communication: Processes use IPC (sockets, pipes, shared memory).
+  Threads communicate via shared objects (fast but requires synchronization).
 
-*Likely follow-up:* "Which strategy scales best under high contention?"
+In Java's single-process model, we only work with threads. The trade-off:
+shared memory makes concurrency fast but requires explicit coordination
+for correctness. Languages like Go and Erlang encourage message-passing
+(no shared state) to avoid this class of bugs.
 
-**Answer:**
-
-Four strategies, ordered from safest to most complex:
-
-Strategy 1 - Immutability: make the object's state final after
-construction. Thread-safe by definition - no mutable state to race on.
-Best for value objects (Money, DateRange, ConfigEntry). Java 16+
-records make this natural. Limitation: cannot express incremental state.
-
-Strategy 2 - Confinement: ensure state is only accessed by one
-thread at a time through design, not locking. ThreadLocal confines
-state to the current thread. Single-threaded executors confine all
-mutations to one thread. Stateless service classes (all state
-in parameters or returned values) are inherently confined.
-Best for request-scoped state in web services.
-
-Strategy 3 - Locking: use synchronized or ReentrantLock to
-serialize access to shared mutable state. Correct but introduces
-contention under high concurrency. Best for complex multi-variable
-invariants where atomic classes cannot model the constraint.
-Lock scope should be as narrow as possible.
-
-Strategy 4 - Lock-free atomics: AtomicInteger, AtomicReference,
-LongAdder. Use CPU-level CAS instructions. Scales better than
-locking under high contention because threads that fail a CAS
-retry rather than blocking. Best for single-variable counters,
-accumulators, and compare-and-set operations.
-
-Scaling under high contention: LongAdder outperforms AtomicInteger
-for high-concurrency counting by distributing increments across
-cells and merging on read. Under low contention, AtomicInteger is
-simpler. Under very high contention (millions of increments/sec),
-LongAdder is the right choice.
-
-*What separates good from great:* Recommending LongAdder over
-AtomicInteger for high-contention counters and explaining why.
+*What separates good from great:* Connecting this to practical decisions -
+why microservices prefer process isolation over thread isolation, and
+the role of Java modules in providing some isolation within a JVM.
 
 ---
 
-**Q4** [CONCEPTUAL] [JUNIOR]
+**Q4 (Scenario): You are building a web API that needs to call 3 external
+services for each request. How does concurrency help?**
 
-"What is the happens-before relationship in the Java Memory Model?"
+A: Without concurrency, each request calls ServiceA (50ms), waits,
+then ServiceB (30ms), waits, then ServiceC (20ms) - total: 100ms per
+request, and each request blocks a thread throughout.
 
-*Why they ask:* The theoretical foundation of Java concurrency.
-Expected at mid level and above.
-
-*Likely follow-up:* "How does synchronized establish happens-before?"
-
-**Answer:**
-
-The Java Memory Model (JMM) defines when writes by one thread are
-guaranteed to be visible to another thread. The happens-before
-relationship is the formal specification of that guarantee.
-
-If action A happens-before action B, the memory effects of A are
-guaranteed to be visible to B. Without a happens-before chain,
-a thread may read a stale cached value even if another thread wrote
-the new value.
-
-Key happens-before relationships in Java:
-
-1. Program order: within a single thread, each statement
-   happens-before the next (sequential consistency within one thread).
-
-2. Monitor lock: unlocking a synchronized block happens-before
-   any subsequent lock of that same monitor. Anything written inside
-   a synchronized block is visible to the next thread that
-   acquires that lock.
-
-3. Volatile: writing to a volatile variable happens-before any
-   subsequent read of that variable. This is the visibility
-   guarantee volatile provides.
-
-4. Thread start: Thread.start() happens-before any action in the
-   started thread. Initial state is visible.
-
-5. Thread join: all actions in a thread happen-before Thread.join()
-   returns. Results are visible after join.
-
-Practical implication: if Thread A writes data and Thread B reads it
-without any of these relationships in the chain, Thread B may see
-stale or inconsistent data. The synchronized-unlock -> synchronized-lock
-chain is the most common way to establish this guarantee.
-
-*What separates good from great:* Explaining practical consequences
-(Thread B may see stale data) rather than just listing the rules.
-
----
-
-**Q5** [DEBUGGING] [SENIOR]
-
-"How do you detect race conditions that only appear under production
-load?"
-
-*Why they ask:* Tests production experience with intermittent bugs.
-
-*Likely follow-up:* "What tools beyond code review help detect races?"
-
-**Answer:**
-
-Race conditions that only appear under load require a multi-layered
-detection approach.
-
-Layer 1: code review for patterns. Review shared mutable state access
-looking for: compound operations on non-atomic variables (check-then-act,
-read-modify-write), accessing multiple shared variables without a lock
-covering all of them, check-then-use patterns without atomic guarantee.
-
-Layer 2: load testing with assertions. Write invariant assertions
-(final counter should equal exact expected value after N concurrent
-increments) and run with 100+ concurrent threads. Races that lose
-one in a million updates will show up in 10 million iterations.
-
-Layer 3: ThreadSanitizer equivalent. Java does not have TSan but
-has alternatives: java-concurrent-animated unit tests, stress testing
-with StressTestRunner (in OpenJDK test infrastructure), and jcstress
-- a specialized Java concurrency stress test harness that systematically
-explores thread interleavings.
-
-Layer 4: static analysis. SpotBugs/FindBugs detects common race
-conditions via static analysis (accessing a field under different
-lock strategies, or accessing a non-volatile field from multiple
-threads). PMD has threading rules.
-
-Layer 5: production monitoring. Unexpected counter divergence, count
-mismatches in audit logs, intermittent NPEs in paths that "should
-never NPE" are race condition signatures. Add monotonic counters and
-compare periodically.
-
-*What separates good from great:* Knowing jcstress - it shows
-production experience with systematic concurrency testing beyond
-unit tests.
-
----
-
-**Q6** [TRADE-OFF] [SENIOR]
-
-"How do you decide between synchronized and AtomicInteger for a
-high-contention shared counter?"
-
-*Why they ask:* Tests understanding of contention characteristics.
-
-*Likely follow-up:* "What about LongAdder?"
-
-**Answer:**
-
-synchronized uses monitor-based blocking: threads that cannot
-acquire the lock are parked (BLOCKED state). Under high contention,
-many threads park and wake repeatedly - each unpark is an OS syscall
-(slow). Throughput degrades under high contention.
-
-AtomicInteger uses compare-and-swap (CAS): a non-blocking CPU
-instruction that reads, compares, and conditionally writes. If the
-CAS fails (another thread changed the value), the operation retries.
-No OS syscall. Under moderate contention, CAS outperforms
-synchronized significantly.
-
-Under VERY HIGH contention (hundreds of threads competing on one
-AtomicInteger), even CAS degrades: failed CAS operations cause
-repeated retries, creating CPU cache coherence traffic (all cores
-attempting to acquire the cache line). This is "CAS contention
-stampede."
-
-LongAdder (Java 8+) solves this: it maintains a distributed array
-of cells. Each thread increments a different cell (reducing contention).
-sum() merges all cells. Under high contention, LongAdder throughput
-is nearly linear with thread count. The trade-off: sum() is not
-guaranteed to reflect a point-in-time value (cells are merged lazily),
-so LongAdder is appropriate for approximate counters (metrics,
-statistics) not exact invariants.
-
-Decision: low contention -> AtomicInteger (simpler). High contention
--> LongAdder. Exact invariant needed -> synchronized (correct but
-slower). Mixed operations (read then conditional write) -> synchronized
-or StampedLock.
-
-*What separates good from great:* Knowing LongAdder and its trade-off
-(eventual vs point-in-time sum) - this separates senior from mid.
-
----
-
-**Q7** [ARCHITECTURE] [STAFF]
-
-"Design a thread-safe cache with expiry that is correct under
-concurrent access."
-
-*Why they ask:* Staff-level design question combining thread safety,
-atomicity, and correctness.
-
-*Likely follow-up:* "How does your design handle concurrent expiry
-and get?"
-
-**Answer:**
-
-Requirements: get(key) returns value if present and not expired.
-put(key, value, ttl) stores with expiry. Expired entries are cleaned
-lazily or eagerly.
-
-Design:
+With concurrency, I would call all three services simultaneously using
+`CompletableFuture.allOf()`:
 
 ```java
-public class ExpiryCache<K, V> {
-    private record Entry<V>(V value, long expiryMs) {}
-    // ConcurrentHashMap: concurrent reads without locking,
-    // segmented writes
-    private final ConcurrentHashMap<K, Entry<V>> map =
-        new ConcurrentHashMap<>();
-
-    public V get(K key) {
-        Entry<V> e = map.get(key);
-        if (e == null) return null;
-        if (System.currentTimeMillis() > e.expiryMs()) {
-            map.remove(key, e); // conditional remove:
-                                // only if value unchanged
-            return null;
-        }
-        return e.value();
-    }
-
-    public void put(K key, V value, long ttlMs) {
-        long expiry = System.currentTimeMillis() + ttlMs;
-        map.put(key, new Entry<>(value, expiry));
-    }
-}
+CompletableFuture<String> a = CompletableFuture
+    .supplyAsync(() -> callServiceA());
+CompletableFuture<String> b = CompletableFuture
+    .supplyAsync(() -> callServiceB());
+CompletableFuture<String> c = CompletableFuture
+    .supplyAsync(() -> callServiceC());
+CompletableFuture.allOf(a, b, c).join();
+// Total latency: max(50, 30, 20) = 50ms instead of 100ms
 ```
 
-Key correctness decisions:
+This cuts latency by 50% and reduces thread blocking time. In a
+high-throughput system, this means your thread pool handles 2x more
+requests with the same number of threads.
 
-1. ConcurrentHashMap.remove(key, e): conditional remove. If another
-   thread already replaced the entry with a fresh one, this remove
-   does nothing (the new entry has a different expiryMs). Prevents
-   removing a freshly inserted valid entry.
+The important follow-up: each `supplyAsync` uses the common
+`ForkJoinPool` by default. If those service calls are blocking (standard
+HTTP), the ForkJoinPool will saturate. I would use a dedicated thread
+pool or, in Java 21, virtual threads to ensure the async tasks don't
+compete with CPU-bound computation.
 
-2. Entry is immutable (record): no race on reading entry state.
-   The reference is read atomically from the map; once we have the
-   reference, entry.value() and entry.expiryMs() are final fields.
+*What separates good from great:* Identifying the ForkJoinPool saturation
+risk and explaining how to pass a custom `Executor` to `supplyAsync`.
 
-3. Lazy expiry: expired entries are removed on access, not by a
-   background thread. Tradeoff: stale entries accumulate if never
-   accessed. For eager cleanup, add a ScheduledExecutorService
-   that calls map.entrySet().removeIf(e -> expired(e.getValue())).
+---
 
-4. No explicit locking for get: ConcurrentHashMap read and the
-   immutable Entry together ensure no race between reading value
-   and reading expiry.
+**Q5 (Debugging): Your application is slowing down under load. How would
+you determine if concurrency is the problem?**
 
-*What separates good from great:* The conditional remove pattern
-(remove(key, e) not remove(key)) - the critical detail that prevents
-a race between expiry check and fresh insertion.
+A: I approach this systematically. First, I look at CPU utilization: if
+CPU is low but threads are high and response time is high, the bottleneck
+is likely locking or thread starvation, not compute.
 
-| Interviewer Type | Emphasis |
-| --- | --- |
-| Technical Panel | volatile vs atomic; happens-before chain. |
-| Hiring Manager | Production impact; how you find races. |
-| Bar Raiser | False sharing; lock-free design; JMM internals. |
-| Peer Engineer | "We had a counter lose ~0.1% updates at peak load..." |
+Step 1: Take a thread dump with `jstack <pid>` or `kill -3 <pid>`.
+Look for threads in BLOCKED state - they are waiting for a monitor lock.
+If many threads are blocked on the same lock, that's lock contention.
+
+Step 2: Check for WAITING or TIMED_WAITING threads - they are waiting on
+`Object.wait()` or `Thread.sleep()`. Excessive waiting threads indicate
+producer-consumer imbalance or thread pool exhaustion.
+
+Step 3: Use Java Flight Recorder (JFR) with the `jdk.ThreadPark` event
+enabled. It shows which object threads are blocking on and for how long.
+
+Step 4: Look at thread pool metrics (if using Spring or Micrometer) -
+active threads, queue depth, rejected tasks. A saturated thread pool
+with a full queue causes request rejections.
+
+Common diagnosis: if I see "BLOCKED on java.lang.Object@..." in the
+thread dump, that's a synchronized block under contention. If I see
+"WAITING on java.util.concurrent.locks.ReentrantLock", that's
+explicit lock contention.
+
+*What separates good from great:* Knowing that a thread dump is a
+snapshot - take 3-5 dumps 5 seconds apart. Threads that appear BLOCKED
+in every snapshot are genuinely stuck, not just caught mid-transition.
+
+---
+
+**Q6 (Trade-off): When would a single-threaded design outperform
+a multi-threaded one?**
+
+A: Several scenarios where single-threaded wins:
+
+1. CPU-bound with low parallelism: if the computation has sequential
+   dependencies (each step depends on the previous), threads compete
+   for the same data and spend time waiting for each other. The lock
+   overhead exceeds the parallelism benefit.
+
+2. In-memory operations without I/O: if your hot path is pure
+   computation on thread-local data (no shared state, no I/O), a
+   single-threaded loop has no synchronization overhead. Redis is
+   deliberately single-threaded for its core data operations - it
+   avoids locking overhead entirely, and I/O multiplexing handles
+   the concurrency at the network layer.
+
+3. Cache locality: a single thread accessing data sequentially has
+   excellent CPU cache behavior. Multiple threads accessing the same
+   memory cause cache invalidation traffic between cores (false sharing).
+   This can reduce throughput by 10-50x for cache-sensitive operations.
+
+4. Correctness simplicity: some domains (financial transaction
+   processing, ledger updates) benefit from a single-threaded actor
+   model - one thread owns all state, no synchronization needed,
+   correctness is much easier to reason about.
+
+*What separates good from great:* Mentioning false sharing by name -
+two threads writing to fields that occupy the same cache line cause
+the CPU to invalidate and re-fetch the cache line on every write,
+even though they are not touching each other's data.
+
+---
+
+**Q7 (Ecosystem): What tools and libraries does the Java ecosystem
+provide for concurrency?**
+
+A: Java's concurrency ecosystem has grown significantly since Java 1.0:
+
+Core JDK:
+- `java.lang.Thread` and `Runnable` - since Java 1.0, low-level
+- `synchronized`/`volatile` - language keywords for mutual exclusion
+  and visibility
+- `java.util.concurrent` (Java 5) - the production concurrency toolkit:
+  `ExecutorService`, `Future`, `CompletableFuture`, `BlockingQueue`,
+  atomic classes, concurrent collections, locks
+- Virtual threads (Java 21) - Project Loom, lightweight threads
+  that unblock the blocking I/O model
+
+Reactive frameworks (non-blocking, event-driven):
+- Project Reactor (`Flux`, `Mono`) - used by Spring WebFlux
+- RxJava - popular in Android and backend
+- Mutiny - Quarkus's reactive library
+
+High-throughput actors:
+- Akka - actor model for distributed concurrent systems
+- Vert.x - event loop based, similar to Node.js
+
+Testing:
+- Awaitility - DSL for testing async code without sleep()
+- jcstress - stress testing for concurrency correctness
+- Thread Weaver - inject delays to expose race conditions
+
+In practice, most Java server-side code uses `ExecutorService` for
+thread management and `CompletableFuture` for async pipelines, with
+reactive frameworks for high-throughput APIs.
+
+*What separates good from great:* Distinguishing reactive (non-blocking
+event loop) from thread-based concurrency (blocking with threads) and
+knowing when each is the right tool.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Strategy | Mechanism | Atomicity | Performance | Use When |
-| --- | --- | --- | --- | --- |
-| synchronized | Monitor lock (OS) | All compound ops | Lower under high contention | Multi-variable invariants |
-| volatile | CPU memory barrier | Visibility only | No throughput cost | Single variable, publish-once |
-| AtomicInteger | CAS instruction | Single variable | High (lock-free) | Single counter, flag, reference |
-| LongAdder | Distributed CAS | Approximate sum | Highest at high contention | High-contention counters |
-| Immutable + final | Compiler/JMM | N/A (no mutation) | Zero overhead | Value objects, configuration |
-
-**The deciding factor:** number of variables in the invariant.
-One variable -> atomic class. Multiple variables -> lock. Never
-mutate -> immutable.
+*(Omit: L0 orientation keyword - comparison table not applicable
+at foundational overview level. See L2+ files for detailed
+concurrency approach comparisons.)*
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: L0 orientation keyword. Thread safety patterns in
-distributed system design appear at L3-L4: distributed counter
-with Redis, optimistic locking in database, CRDT data structures
-for eventual consistency.)*
+*(Omit: L0 orientation keyword - system design context not applicable.
+See L4/L5 files for concurrency architecture and system design patterns.)*
 
 ---
 
 ### 📊 Diagram
 
 ```
-READ-MODIFY-WRITE RACE (counter++):
+Single-threaded (blocking):
+  Thread: [Query A]---wait-->[Query B]---wait-->[Query C]
+  Time:   |--50ms--|---------|--30ms--|---------|--20ms--|
+  Total:  100ms
 
-Thread A        Thread B         Memory: count
-read: 5                          5
-                read: 5          5
-                count++ = 6
-                write: 6         6
-count++ = 6
-write: 6    <- OVERWRITES B!     6 (expected 7)
-
-ATOMIC CAS FIX (AtomicInteger):
-
-Thread A        Thread B         Memory: count
-CAS(5->6)                        5
-    wins: write 6                6
-                CAS(5->6)
-                    FAILS: 5!=6
-                CAS(6->7)
-                    wins: write 7 7
-Final: 7 (correct - no update lost)
-
-VISIBILITY BUG (no volatile):
-
-Thread A             Thread B       CPU Cache A   Main Mem
-write flag=true                     flag=true     flag=false
-                 read flag          (stale)       <- B reads false!
-
-VOLATILE FIX:
-
-Thread A             Thread B    Main Mem
-write volatile flag=true         flag=true
-                 read flag        flag=true (current)
+Concurrent (overlapping):
+  Thread 1: [Query A]---wait-----------[result A]
+  Thread 2: [Query B]---wait------[result B]
+  Thread 3: [Query C]---wait--[result C]
+  Time:     |---50ms (longest)---|
+  Total:    50ms
 ```
 
 ```mermaid
 sequenceDiagram
-    participant A as Thread A
-    participant M as Memory (count=5)
-    participant B as Thread B
+    participant App
+    participant T1 as Thread 1 (Service A)
+    participant T2 as Thread 2 (Service B)
+    participant T3 as Thread 3 (Service C)
 
-    A->>M: read count=5
-    Note over A,B: context switch
-    B->>M: read count=5
-    B->>M: write count=6 (increment)
-    Note over A,B: context switch back
-    A->>M: write count=6 (stale increment!)
-    Note over M: Expected 7, got 6 - LOST UPDATE
+    App->>T1: start (async)
+    App->>T2: start (async)
+    App->>T3: start (async)
+
+    T3-->>App: result C (20ms)
+    T2-->>App: result B (30ms)
+    T1-->>App: result A (50ms)
+
+    Note over App: allOf complete at 50ms
 ```
 
-> **Diagram walkthrough:** The sequence shows the lost update race:
-> both threads read the same value (5) before either writes. The
-> last writer wins; the first writer's increment is silently discarded.
-> The CAS diagram shows the fix: when Thread B fails the CAS (expected
-> 5, found 6), it retries with the new value (6->7). No update is
-> ever lost because the operation fails instead of overwriting.
-> The visibility diagram shows a different problem: without volatile,
-> Thread B may read a cached (stale) flag=false even after Thread A
-> writes true. volatile flushes the write to main memory immediately
-> and invalidates other CPUs' caches.
+> **Diagram walkthrough:** In the sequential model, each service call
+> blocks the thread - total latency is the sum (100ms). In the concurrent
+> model, all three calls start simultaneously and the application waits
+> for the slowest one (50ms). This 2x latency reduction is why concurrent
+> fan-out is the standard pattern for service aggregation. The critical
+> insight is that threads overlap during the I/O wait period - no thread
+> is doing useful computation during that time, so no CPU is "wasted"
+> by the parallelism.
+
+---
+---
+
+## The Java Thread Model
+
+### 🎯 Model Answer
+
+**30 seconds:**
+> Java models concurrency using threads - lightweight execution units
+> within a JVM process that share heap memory but have independent stacks.
+> Each Java thread maps one-to-one to an OS native thread. The JVM
+> delegates scheduling to the OS, which distributes threads across CPU
+> cores using preemptive time-slicing. This model is powerful but
+> requires explicit synchronization whenever threads share mutable data.
+
+**3 minutes (Senior):**
+> Java's threading model is a direct mapping to OS threads. When you
+> call `thread.start()`, the JVM asks the OS to create a native thread.
+> The OS scheduler then controls when that thread runs - Java has no
+> direct control over scheduling decisions.
+>
+> Each thread has three key memory regions: the stack (local variables,
+> method parameters, return addresses - private to the thread), the
+> program counter (which instruction is currently executing - private),
+> and access to the shared heap (all objects - requires coordination).
+>
+> The thread model has a known limitation: each Java thread consumes
+> ~512KB-1MB of OS stack memory. A system with 10,000 concurrent users
+> needs 10,000 threads = 5-10GB of memory just for thread stacks.
+> This is why Java 21's virtual threads are architecturally significant -
+> they are managed by the JVM, cost ~hundreds of bytes, and can number
+> in the millions.
+>
+> The key constraint of the 1:1 thread model: blocking operations block
+> the OS thread. A thread waiting on a database query holds its OS thread
+> hostage for the entire wait. Virtual threads decouple this - a virtual
+> thread blocking on I/O releases its carrier OS thread, which can then
+> run another virtual thread.
+
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
+
+*Adapting up:* Add JMM happens-before, how the JIT compiler can
+reorder instructions (and why this matters for synchronization), and
+how virtual threads change the architecture of high-throughput services.
+
+*Adapting down:* "A thread is like a worker - they share the office
+(heap) but have their own desk (stack). Multiple workers can work
+simultaneously but need to coordinate when touching shared resources."
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "So you are asking how Java's thread model works -
+let me think through the key components."
+
+**(2) First principles:** "From first principles, a program needs to
+track: what code is executing (program counter), what variables are in
+scope (stack), and what data is shared between executions (heap). A
+thread is the unit that has its own program counter and stack."
+
+**(3) Bridge:** "This reminds me of tabs in a browser - each tab is
+a separate execution context with its own JavaScript call stack, but
+they all share browser memory and DOM. Java threads work the same way."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+A thread in Java is an independent sequence of execution within a single
+JVM process. Multiple threads share the process's heap memory but each
+has its own stack, program counter, and register state. This is the
+foundation of all Java concurrency.
+
+**The problem it solves:**
+Without threads, a JVM process executes instructions sequentially -
+one at a time. Web servers, database connection pools, and background
+job processors all require handling multiple tasks simultaneously.
+Threads provide the OS-level mechanism for this multiplexing.
+
+**How it works:**
+```
+JVM Process
+  +------ Shared Heap (all objects) --------+
+  |  Thread 1    Thread 2    Thread 3        |
+  |  [Stack]     [Stack]     [Stack]          |
+  |  [PC]        [PC]        [PC]             |
+  +------------------------------------------+
+         |              |              |
+    OS Thread 1    OS Thread 2    OS Thread 3
+         |              |              |
+    CPU Core 0     CPU Core 1    CPU Core 0
+```
+
+Thread creation in Java:
+1. `new Thread(runnable).start()` - JVM calls `pthread_create()` (Linux)
+2. OS allocates stack memory and creates a kernel thread
+3. OS scheduler adds thread to run queue
+4. On `start()`, JVM calls the thread's `run()` method
+
+Thread states (from `Thread.State` enum):
+- `NEW` - created but not started
+- `RUNNABLE` - executing or ready to execute
+- `BLOCKED` - waiting to acquire a monitor lock
+- `WAITING` - indefinitely waiting (Object.wait(), join())
+- `TIMED_WAITING` - waiting with timeout (sleep(), wait(timeout))
+- `TERMINATED` - execution complete
+
+**The key insight:**
+The 1:1 mapping between Java threads and OS threads is both a strength
+and a limitation. It means Java threads get real CPU time and blocking
+I/O is transparent, but it also means thread creation is expensive and
+you cannot have millions of threads. Java 21 virtual threads break this
+constraint by multiplexing millions of virtual threads onto a small
+pool of OS carrier threads.
+
+**When to use it:**
+- Anywhere Java concurrency is needed - threads are the foundation
+- Explicitly when you need fine-grained control over thread behavior
+  (thread name, priority, uncaught exception handler)
+- When you need to block for I/O without yielding (though virtual
+  threads are preferred in Java 21+)
+
+**When NOT to use it:**
+- Don't create raw `Thread` objects for application tasks - use
+  `ExecutorService` which manages lifecycle, pooling, and errors
+- Don't use raw threads for parallelizing computations - use
+  `ForkJoinPool` or parallel streams
+
+**Alternatives:**
+- Virtual threads (`Thread.ofVirtual()`) - Java 21+, lightweight
+  threads suitable for high-concurrency I/O workloads
+- `ExecutorService` - manages a pool of threads with lifecycle control
+- Reactive streams - no threads-per-request; event-driven callback model
+
+**First-principles derivation:**
+An OS process is an isolated container: memory, file handles, OS
+resources. To have multiple execution paths in one process without
+creating separate processes (expensive, isolated), you need a lighter
+unit of execution that shares the process's memory but has its own
+instruction pointer. That is precisely what a thread is - a shared-memory
+concurrent execution unit.
+
 ---
+
+### 💻 Code Example
+
+> **Code walkthrough:** The BAD example shows the pitfall of extending
+> Thread directly - it makes the class non-reusable and ties business
+> logic to infrastructure. The GOOD example separates concerns: Runnable
+> holds the logic, Thread holds the execution context. The production
+> example shows `ExecutorService` - the real-world way to manage threads
+> that handles pooling, lifecycle, and error propagation correctly.
+
+```java
+// BAD: extending Thread couples logic to thread lifecycle
+public class BadWorker extends Thread {
+    @Override
+    public void run() {
+        // Business logic inside Thread subclass
+        // Cannot reuse this logic in an Executor or CompletableFuture
+        processData();
+    }
+}
+```
+
+```java
+// GOOD: implement Runnable to separate logic from execution
+public class GoodWorker implements Runnable {
+    private final String taskId;
+
+    public GoodWorker(String taskId) {
+        this.taskId = taskId;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName()
+            + " processing " + taskId);
+        processData(taskId);
+    }
+}
+
+// Usage - still using raw Thread (acceptable for demos)
+Thread t = new Thread(new GoodWorker("task-1"));
+t.setName("worker-1");         // name shows in thread dumps
+t.setDaemon(false);            // false = JVM waits for this thread
+t.start();
+t.join();                      // wait for completion
+```
+
+```java
+// PRODUCTION: use ExecutorService - manages pooling and lifecycle
+import java.util.concurrent.*;
+
+ExecutorService pool = Executors.newFixedThreadPool(
+    Runtime.getRuntime().availableProcessors()
+);
+try {
+    Future<String> result = pool.submit(() -> {
+        return expensiveComputation();
+    });
+    String value = result.get(30, TimeUnit.SECONDS); // timeout
+} catch (TimeoutException e) {
+    // Handle timeout - task may still be running
+} finally {
+    pool.shutdown();
+    pool.awaitTermination(60, TimeUnit.SECONDS);
+}
+```
+
+---
+
+### 🎓 Answers by Seniority
+
+**Junior / Mid (0-5 years):**
+> A Java thread is an independent unit of execution inside the JVM.
+> You create one by either extending Thread and overriding run(), or
+> implementing Runnable and passing it to a Thread. Calling start()
+> makes it run concurrently - calling run() directly just runs it
+> on the current thread. Each thread has its own stack but shares the
+> heap with all other threads, which is why you need synchronization
+> for shared data.
+
+*Push deeper:* Explain thread states - RUNNABLE, BLOCKED, WAITING,
+TIMED_WAITING - and what transitions cause each state change.
+
+---
+
+**Senior / Staff (5+ years):**
+> Java threads are 1:1 mapped to OS threads. The OS scheduler manages
+> them using preemptive time-slicing - Java cannot control when the
+> scheduler preempts a thread or which core it runs on. This matters for
+> performance: context switches are ~1-10 microseconds, and cache misses
+> after a context switch can double that cost. In high-throughput services,
+> I would use Java 21 virtual threads for I/O-heavy workloads - they
+> allow one virtual thread per request without the memory and scheduling
+> overhead of OS threads. For CPU-bound work, I still use platform threads
+> sized to the core count.
+
+*Push deeper:* Discuss how the JVM maps `Thread.setPriority()` to OS
+thread priorities (the mapping is platform-specific and often ignored
+by the scheduler), and why pinning virtual threads to carrier threads
+can happen with native synchronized blocks.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: "thread.run() starts a new thread."**
+Calling `run()` directly executes the runnable on the calling thread
+sequentially. Only `start()` creates a new OS thread. This is one of
+the most common beginner mistakes.
+
+**Misconception 2: "Daemon threads are low-priority threads."**
+Daemon vs non-daemon is about JVM shutdown behavior, not priority.
+The JVM exits when all non-daemon threads have finished. Daemon threads
+are terminated abruptly when the JVM exits - regardless of what they
+were doing. Use daemon threads for background cleanup tasks, not for
+work that must complete.
+
+**Misconception 3: "Thread.yield() guarantees another thread runs."**
+`yield()` is a hint to the scheduler - it can be ignored. Never use
+`yield()` for correctness guarantees. Use proper synchronization.
+
+**Misconception 4: "Thread priority is reliable across platforms."**
+Java thread priorities (1-10) map to OS-level priorities, but the
+mapping varies by OS and JVM implementation. On Linux with the default
+scheduler, Java thread priorities are often ignored. Never rely on
+priority for correctness - only use it as a performance hint.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Calling run() instead of start()**
+Symptom: code appears to work but is sequential, not concurrent.
+Performance is single-threaded. No concurrency errors appear.
+Diagnosis: check if you called `thread.run()` instead of
+`thread.start()`. The thread dump will show one thread instead of many.
+
+**Failure 2: Thread leaks from unmanaged thread creation**
+Symptom: JVM memory grows steadily over time. OOM with
+"unable to create new native thread". High thread count in monitoring.
+Cause: creating new threads per request without pooling or cleanup.
+Diagnosis: `jstack <pid>` to count threads. Add thread count metrics.
+Fix: use `ExecutorService` with bounded thread pools.
+
+**Failure 3: Not joining threads and missing results**
+Symptom: program exits before background threads finish, or produces
+empty results from threads that hadn't completed yet.
+Cause: forgetting to call `thread.join()` or `future.get()`.
+Diagnosis: add logging to thread completion; check if results are
+populated before reading them.
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Question Category | Time to Answer |
+|---|---|
+| Definition | 30-60 seconds |
+| Mechanism | 1-2 minutes |
+| Comparison | 1-2 minutes |
+| Scenario | 2-3 minutes |
+| Debugging | 2-3 minutes |
+| Trade-off | 1-2 minutes |
+| Advanced | 2-3 minutes |
+
+---
+
+**Q1 (Definition): What is a Java thread?**
+
+A: A thread is the smallest unit of execution within a JVM process.
+It consists of a program counter (which instruction is currently
+executing), a call stack (local variables and method frames), and
+access to the shared heap. Multiple threads in the same JVM process
+share heap memory, which is the root cause of most concurrency challenges.
+
+The JVM backs each Java thread with an OS native thread (on current
+versions of HotSpot), so the OS scheduler controls when threads run.
+Java 21 introduced virtual threads - lightweight threads managed
+by the JVM scheduler, not the OS - which can exist in millions
+with low memory overhead.
+
+*What separates good from great:* Mentioning that the Thread object
+in Java is a user-space wrapper around an OS thread, and distinguishing
+this from Java 21's virtual threads which are a fundamentally different
+mechanism.
+
+---
+
+**Q2 (Mechanism): What happens between thread.start() and thread.run()?**
+
+A: Calling `thread.start()` triggers this sequence:
+1. JVM calls the native OS API to create a kernel thread
+   (pthread_create on Linux, CreateThread on Windows)
+2. The OS allocates stack memory for the thread (default 512KB-1MB,
+   configurable with `-Xss`)
+3. The OS adds the new thread to the scheduler's run queue
+4. At some point (non-deterministic), the OS scheduler assigns the
+   thread to a CPU core
+5. The thread begins executing at `Thread.run()`, which calls
+   `runnable.run()`
+
+The non-obvious detail: `start()` returns immediately on the calling
+thread. The new thread is ready to run but may not start executing for
+several milliseconds depending on OS scheduling. This is why you cannot
+assume a thread has started its work immediately after `start()` returns.
+
+*What separates good from great:* Explaining that calling `run()` directly
+instead of `start()` executes the runnable on the calling thread with no
+new OS thread created - a common mistake that produces sequential
+rather than concurrent execution.
+
+---
+
+**Q3 (Comparison): When would you use a raw Thread vs ExecutorService?**
+
+A: Raw Thread is appropriate when:
+- You need direct control over thread properties (name, daemon status,
+  uncaught exception handler, stack size)
+- Single long-lived background thread with a defined lifecycle
+- Educational code or simple scripts
+
+ExecutorService is almost always better for production:
+- Thread pooling: reusing threads avoids creation/destruction overhead
+- Lifecycle management: orderly shutdown with `shutdown()` and
+  `awaitTermination()`
+- Work queuing: when all threads are busy, tasks queue rather than
+  failing
+- Future support: `submit()` returns a `Future` for result retrieval
+  and exception handling
+- Monitoring: thread pool metrics (active threads, queue depth) are
+  easily observable
+
+The rule I follow: if the code is running in a production service,
+use `ExecutorService`. If I am writing a one-time script or demo,
+raw Thread is fine. I have seen production outages caused by
+unlimited thread creation - a single code path creating one thread
+per incoming request, with no pool cap, exhausting OS thread limits
+under traffic spikes.
+
+*What separates good from great:* Knowing that `Executors.newFixedThreadPool(n)`
+uses a `LinkedBlockingQueue` with no capacity bound, which can cause
+OOM under sustained high load. In production, use `ThreadPoolExecutor`
+with explicit queue capacity and a rejection handler.
+
+---
+
+**Q4 (Scenario): How would you implement a background health check
+that runs every 30 seconds?**
+
+A: For a periodic background task, I would use `ScheduledExecutorService`:
+
+```java
+ScheduledExecutorService scheduler =
+    Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "health-check-thread");
+        t.setDaemon(true); // JVM can exit without waiting for it
+        return t;
+    });
+
+scheduler.scheduleAtFixedRate(() -> {
+    try {
+        checkHealth();
+    } catch (Exception e) {
+        // Must catch all exceptions - an uncaught exception
+        // silently stops future executions
+        log.error("Health check failed", e);
+    }
+}, 0, 30, TimeUnit.SECONDS);
+```
+
+The critical detail: `scheduleAtFixedRate` silently stops if the
+task throws an unchecked exception. You must wrap the task body in
+try-catch to prevent this. I have debugged "health checks stopped
+working" issues caused by a NullPointerException in the task that
+suppressed all future executions.
+
+Also: the thread is set as daemon so the JVM can exit during shutdown
+without waiting for the health check to complete. For critical cleanup
+tasks, you would use a non-daemon thread and explicitly shut down the
+executor during application shutdown.
+
+*What separates good from great:* The exception suppression behavior
+of ScheduledExecutorService is a well-known trap. Mentioning it shows
+production experience.
+
+---
+
+**Q5 (Debugging): A thread is printing "done" before the task is
+complete. How would you debug this?**
+
+A: This is almost always a visibility problem or a missing join/get.
+
+First check: is the task result being read on the same thread that
+set it? If the producer thread writes a result and a consumer thread
+reads it without synchronization, the consumer may see stale data.
+Java's memory model does not guarantee visibility across threads
+without a happens-before relationship.
+
+Second check: is `thread.join()` (or `future.get()`) being called
+before reading the result? Without join, the calling thread may
+execute past the read before the worker thread has finished writing.
+
+Diagnosis approach:
+1. Add `System.err.println` with thread names at key checkpoints
+2. Run with `-ea` (assertions enabled) and add assertion on final state
+3. Run with jcstress (if this is a reproducibility issue) to
+   stress-test thread interleavings
+4. Use `volatile` on the result field, or better, use
+   `CompletableFuture` which handles visibility correctly
+
+The root pattern: printing "done" is probably on the main thread,
+and the check is reading a field that was written by a worker thread
+without a visibility guarantee. Adding `volatile` or wrapping in
+`CompletableFuture.get()` fixes it.
+
+*What separates good from great:* Explaining the Java Memory Model
+visibility rule: without a happens-before relationship (via
+synchronized, volatile, or concurrent API), writes in one thread
+are not guaranteed to be visible in another.
+
+---
+
+**Q6 (Trade-off): What are the costs of creating too many threads?**
+
+A: Three categories of cost:
+
+Memory: each OS thread allocates a fixed stack frame - default 512KB
+in HotSpot. 1,000 threads = 512MB just for stacks. 10,000 threads =
+5GB. This is the most concrete limit - you hit OOM before running out
+of CPU.
+
+Scheduling overhead: the OS scheduler must decide which thread runs
+at each time slice. With hundreds of threads all wanting CPU time,
+context-switching overhead increases. Each context switch takes ~1-5
+microseconds and pollutes CPU caches, reducing effective throughput.
+Beyond ~(2 * core count) threads for CPU-bound work, throughput
+saturates and latency increases.
+
+Application complexity: more threads means more potential for race
+conditions, deadlocks, and starvation. The debugging surface area
+grows combinatorially with thread count - any pair of threads can
+interact, and thread interleavings are non-deterministic.
+
+The practical guide: for CPU-bound work, use `Runtime.getRuntime()
+.availableProcessors()` threads. For I/O-bound work, use
+`availableProcessors() * (1 + wait_time / compute_time)` - the
+"Little's Law" calculation. In Java 21, use virtual threads for
+I/O-bound work and avoid manual sizing entirely.
+
+*What separates good from great:* Knowing the default Xss is
+configurable and that reducing it to 256KB doubles the thread
+count you can create before OOM - a technique used by some
+high-throughput servers.
+
+---
+
+**Q7 (Advanced): How do virtual threads in Java 21 change the
+threading model?**
+
+A: Virtual threads (Project Loom) decouple the 1:1 mapping between
+Java threads and OS threads. Instead, a small pool of OS "carrier"
+threads runs many virtual threads, multiplexed by the JVM scheduler.
+
+The key behavior change: when a virtual thread blocks on I/O
+(socket read, database call), the JVM scheduler detects the block,
+"unmounts" the virtual thread from its carrier OS thread, and mounts
+a different virtual thread to run. The carrier OS thread is never
+idle while virtual threads have work to do.
+
+This means:
+- Thread creation cost drops from ~1ms to ~microseconds
+- Memory per thread drops from ~512KB to ~hundreds of bytes
+- You can have millions of virtual threads with reasonable memory
+- No more thread pool sizing calculations for I/O-bound code
+
+Code change: `Thread.ofVirtual().start(runnable)` or pass a
+virtual-thread executor to `ExecutorService`. Blocking code that
+previously required complex async rewrites can be written as
+simple sequential code.
+
+Caveats: virtual threads are not better for CPU-bound work (they
+still run on OS threads). They can "pin" to carrier threads when
+executing synchronized blocks with native code inside, which
+reduces the multiplexing benefit. And thread-local variables become
+more complex because millions of virtual threads means millions
+of thread-local values.
+
+*What separates good from great:* Understanding pinning - the scenario
+where `synchronized` around blocking code prevents the virtual thread
+from unmounting, eliminating the benefit of virtual threads. The fix
+is to replace `synchronized` with `ReentrantLock` in those critical
+sections.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: L0 foundational concept - comparison table not applicable.
+See L2+ files for thread vs ExecutorService vs virtual thread
+comparison tables.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L0 foundational concept - system design context not applicable.
+See L5 Architecture file for concurrency architecture patterns.)*
+
+---
+
+### 📊 Diagram
+
+```
+Java Thread Memory Model:
+
+JVM Process Memory
++-----------------------------------------------+
+| Heap (SHARED - all threads access)             |
+|  [Object A] [Object B] [Object C]...           |
++-----------------------------------------------+
+|  Thread 1       Thread 2       Thread 3        |
+|  +----------+   +----------+   +----------+   |
+|  | Stack    |   | Stack    |   | Stack    |   |
+|  | [frame3] |   | [frame1] |   | [frame2] |   |
+|  | [frame2] |   +----------+   +----------+   |
+|  | [frame1] |   | PC: 0x42 |   | PC: 0x7A |   |
+|  +----------+   +----------+   +----------+   |
+|  | PC: 0x1F |                                  |
++-----------------------------------------------+
+       |                |                |
+  OS Thread 1      OS Thread 2      OS Thread 3
+       |                |
+  CPU Core 0        CPU Core 1
+```
+
+```mermaid
+graph TD
+    P[JVM Process] --> H[Shared Heap - Objects]
+    P --> T1[Thread 1]
+    P --> T2[Thread 2]
+    P --> T3[Thread 3]
+    T1 --> S1[Stack 1 - local vars]
+    T1 --> PC1[Program Counter 1]
+    T2 --> S2[Stack 2 - local vars]
+    T2 --> PC2[Program Counter 2]
+    T3 --> S3[Stack 3 - local vars]
+    T3 --> PC3[Program Counter 3]
+    T1 --> H
+    T2 --> H
+    T3 --> H
+    T1 -->|1:1 mapping| OT1[OS Thread 1]
+    T2 -->|1:1 mapping| OT2[OS Thread 2]
+    OT1 --> C1[CPU Core 0]
+    OT2 --> C2[CPU Core 1]
+```
+
+> **Diagram walkthrough:** Each Java thread owns its stack (local
+> variables, method call frames) and program counter (current
+> instruction pointer) - these are thread-private and never shared.
+> The heap is fully shared: any thread can read or write any object.
+> This shared heap is the source of all Java concurrency challenges.
+> Platform threads map 1:1 to OS threads; the OS scheduler assigns
+> OS threads to physical CPU cores. Virtual threads (Java 21) replace
+> the 1:1 mapping with M:N - many virtual threads per OS thread.
+
+---
+---
+
+## Java Concurrency Ecosystem Overview
+
+### 🎯 Model Answer
+
+**30 seconds:**
+> Java's concurrency ecosystem evolved from raw threads in Java 1.0 to
+> the comprehensive `java.util.concurrent` package in Java 5, which added
+> thread pools, concurrent collections, atomic variables, and explicit
+> locks. Java 8 added `CompletableFuture` for async pipelines. Java 21
+> delivered virtual threads via Project Loom, fundamentally changing
+> the scalability ceiling for I/O-bound Java applications.
+
+**3 minutes (Senior):**
+> The Java concurrency ecosystem has three distinct eras, each solving
+> a different class of problem.
+>
+> Era 1 (Java 1-4): raw `Thread` and `synchronized`. Sufficient for
+> basic concurrent programming but no high-level abstractions.
+> Creating one thread per task was the only pattern, which didn't scale.
+>
+> Era 2 (Java 5, 2004): Doug Lea's `java.util.concurrent` package.
+> This was a watershed release: `ExecutorService` for thread pooling,
+> `ConcurrentHashMap` for thread-safe maps, `BlockingQueue` for
+> producer-consumer patterns, `AtomicInteger` and friends for lock-free
+> counters, `ReentrantLock` for explicit locking with timeouts and
+> try-lock. This package is the foundation of production Java concurrency.
+>
+> Era 3 (Java 8+): `CompletableFuture` for composable async pipelines,
+> parallel streams for data-parallel computation, and eventually (Java
+> 21) virtual threads that allow writing simple blocking code that scales
+> like async code.
+>
+> The reactive ecosystem (Project Reactor, RxJava) exists alongside
+> these because for truly high-throughput event-driven systems, the
+> non-blocking model still offers advantages even with virtual threads.
+>
+> The practical hierarchy I use: for new code in Java 21+, use virtual
+> threads for I/O and parallel streams for CPU parallelism. For Java
+> 8-17, use `CompletableFuture` for async and `ExecutorService` for
+> I/O. Avoid raw `Thread` in production.
+
+**Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
+
+*Adapting up:* Add discussion of virtual thread pinning, structured
+concurrency (JEP 428/453), and scoped values (replacing ThreadLocal).
+
+*Adapting down:* The three main things to know: Thread/ExecutorService
+for basic concurrency, CompletableFuture for async, virtual threads in
+Java 21 for high-throughput I/O.
+
+**Blank Mind Recovery:**
+
+**(1) Restate:** "So you want an overview of Java's concurrency
+ecosystem - let me map the key components."
+
+**(2) First principles:** "From first principles: you need a way to
+create concurrent work (threads/executors), coordinate it (locks,
+barriers), safely share data (concurrent collections, atomics), and
+compose async operations (futures). The Java ecosystem has a library
+for each of these."
+
+**(3) Bridge:** "This is similar to how a kitchen is organized -
+you have the raw tools (knives = raw Thread), prep stations
+(Executors = thread pools), serving coordination (BlockingQueue
+= producer-consumer), and order tracking (Future = async results)."
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+The Java concurrency ecosystem is the set of language features,
+JVM primitives, and standard library classes that enable safe,
+efficient multi-threaded programming. It spans from language keywords
+(`synchronized`, `volatile`) through the `java.util.concurrent`
+package to modern reactive frameworks.
+
+**The problem it solves:**
+Raw threads are powerful but dangerous: no pooling, no cancellation,
+no timeout handling, no safe data structures. The ecosystem provides
+higher-level abstractions that make concurrent programming correct
+by default, with production-grade lifecycle and error handling.
+
+**How it works:**
+The ecosystem layers from low-level to high-level:
+
+```
+Level 1 (Language):
+  synchronized, volatile, final
+
+Level 2 (JDK Core - java.util.concurrent):
+  Thread primitives: Executor, ExecutorService, ScheduledExecutorService
+  Futures: Future, CompletableFuture
+  Concurrent data: ConcurrentHashMap, CopyOnWriteArrayList,
+                   BlockingQueue, ConcurrentLinkedQueue
+  Synchronizers: CountDownLatch, CyclicBarrier, Semaphore, Phaser
+  Atomic: AtomicInteger, AtomicReference, LongAdder
+  Locks: ReentrantLock, ReadWriteLock, StampedLock
+
+Level 3 (JDK Modern):
+  Virtual threads (Java 21): Thread.ofVirtual()
+  Structured concurrency (preview): StructuredTaskScope
+  Scoped values (preview): ScopedValue
+
+Level 4 (Third-party):
+  Reactive: Project Reactor, RxJava, Mutiny
+  Actors: Akka, Eclipse Vert.x
+  Testing: jcstress, Awaitility
+```
+
+**The key insight:**
+The concurrent collections (`ConcurrentHashMap`, `BlockingQueue`) are
+not just synchronized wrappers - they are purpose-built concurrent
+data structures with reduced lock contention. `ConcurrentHashMap` uses
+segment-level locking (Java 7) / CAS-based bucket locking (Java 8+),
+allowing multiple threads to write to different segments simultaneously.
+This is fundamentally different from `Collections.synchronizedMap()`
+which locks the entire map on every operation.
+
+**When to use it:**
+Match the tool to the problem:
+- Thread pool management: `ExecutorService`
+- Async pipelines: `CompletableFuture`
+- Producer-consumer: `BlockingQueue`
+- Thread-safe counter: `AtomicLong` or `LongAdder`
+- High-throughput I/O (Java 21): virtual threads
+- Event-driven high-throughput: reactive frameworks
+
+**When NOT to use it:**
+- Don't use `Vector` or `Hashtable` - they are synchronized
+  but not designed for concurrent access patterns
+- Don't use `Collections.synchronizedList()` for iteration -
+  you still need external synchronization during traversal
+- Don't use `CopyOnWriteArrayList` for write-heavy workloads -
+  each write copies the entire array
+
+**Alternatives:**
+- Kotlin coroutines - structured concurrency built into the language
+- Go goroutines - cheap user-space threads + channels for communication
+- Erlang/Elixir - actor model with process isolation by default
+
+**First-principles derivation:**
+Concurrent programming requires four capabilities: (1) starting
+concurrent work, (2) coordinating start/end of multiple tasks,
+(3) safely sharing data, and (4) communicating results. Every class
+in `java.util.concurrent` addresses one of these four needs. The
+ecosystem grew by identifying which raw Thread + synchronized solutions
+were too low-level, error-prone, or unscalable, then providing
+type-safe, well-tested higher-level abstractions.
+
+---
+
+### 💻 Code Example
+
+> **Code walkthrough:** This example shows the progression from Era 1
+> (raw threads with race conditions) to Era 2 (ExecutorService with
+> futures and concurrent collections) to Era 3 (CompletableFuture
+> pipelines). Each version solves the same problem - processing a
+> list of URLs - with increasing safety and expressiveness. The key
+> lesson: using the right abstraction level eliminates entire categories
+> of bugs (thread leaks, race conditions, lost exceptions).
+
+```java
+// ERA 1 (Java 1-4): Raw threads - error-prone
+List<String> results = new ArrayList<>(); // NOT thread-safe!
+List<Thread> threads = new ArrayList<>();
+for (String url : urls) {
+    Thread t = new Thread(() -> {
+        results.add(fetch(url)); // RACE CONDITION - ArrayList
+    });
+    threads.add(t);
+    t.start();
+}
+for (Thread t : threads) t.join(); // manual lifecycle
+// results may be corrupt - ArrayList not thread-safe
+```
+
+```java
+// ERA 2 (Java 5+): ExecutorService with concurrent collection
+List<String> results =
+    Collections.synchronizedList(new ArrayList<>());
+ExecutorService exec =
+    Executors.newFixedThreadPool(10);
+List<Future<?>> futures = new ArrayList<>();
+
+for (String url : urls) {
+    futures.add(exec.submit(() -> results.add(fetch(url))));
+}
+for (Future<?> f : futures) f.get(); // propagates exceptions
+exec.shutdown();
+```
+
+```java
+// ERA 3 (Java 8+): CompletableFuture pipeline - idiomatic
+ExecutorService exec = Executors.newFixedThreadPool(10);
+
+List<CompletableFuture<String>> futures = urls.stream()
+    .map(url -> CompletableFuture
+        .supplyAsync(() -> fetch(url), exec)
+        .thenApply(content -> parse(content))
+        .exceptionally(ex -> "error: " + ex.getMessage()))
+    .collect(Collectors.toList());
+
+// Wait for all and collect results
+List<String> results = futures.stream()
+    .map(CompletableFuture::join)
+    .collect(Collectors.toList());
+exec.shutdown();
+```
+
+---
+
+### 🎓 Answers by Seniority
+
+**Junior / Mid (0-5 years):**
+> Java's main concurrency tools are: Thread and ExecutorService for
+> managing concurrent work, synchronized and volatile keywords for
+> basic synchronization, CompletableFuture for async programming, and
+> ConcurrentHashMap and BlockingQueue for thread-safe data sharing.
+> Java 21 added virtual threads which make concurrent I/O much easier.
+> The general rule: use ExecutorService instead of raw Thread, use
+> concurrent collections instead of synchronized wrappers, and use
+> CompletableFuture instead of manually managing futures.
+
+*Push deeper:* Describe the difference between `ConcurrentHashMap`
+and `Collections.synchronizedMap()` in terms of lock granularity
+and iteration behavior.
+
+---
+
+**Senior / Staff (5+ years):**
+> I evaluate Java concurrency tools by three axes: the level of
+> abstraction (raw thread vs executor vs reactive), the data-sharing
+> model (shared mutable state vs message passing vs immutability), and
+> the target workload (CPU-bound vs I/O-bound). For production services
+> in Java 17+, my default stack is: ExecutorService with bounded thread
+> pool for CPU work, CompletableFuture for async fan-out, BlockingQueue
+> for producer-consumer, and in Java 21 virtual threads for anything
+> that blocks on I/O. I avoid reactive frameworks unless the team has
+> the expertise and the throughput requirements genuinely demand them -
+> reactive code is significantly harder to debug and maintain.
+
+*Push deeper:* Discuss structured concurrency (JEP 453) - the idea
+that concurrent tasks should have the same lifecycle scope as their
+calling code, preventing thread leaks and improving observability.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: "java.util.concurrent replaced synchronized."**
+No - synchronized is still used and correct for many use cases.
+`java.util.concurrent` adds higher-level abstractions for cases where
+synchronized is too low-level or too coarse-grained.
+
+**Misconception 2: "Concurrent collections are always safe for
+all operations."**
+Atomic read and atomic write are safe. But compound operations
+(check-then-act) are not automatically safe. Example:
+`if (!map.containsKey(k)) map.put(k, v)` is a race condition
+even with `ConcurrentHashMap`. Use `map.putIfAbsent()` instead.
+
+**Misconception 3: "Virtual threads replace all thread pools."**
+Virtual threads replace thread pools for I/O-bound work. For CPU-bound
+work, you still need a pool sized to core count. Virtual threads do not
+execute on the same OS thread in parallel - they still need OS threads.
+
+**Misconception 4: "Reactive programming is always faster than
+thread-based concurrency."**
+With virtual threads in Java 21, blocking code can achieve equivalent
+or better throughput than reactive code for most I/O-bound workloads,
+with dramatically simpler code. Reactive still wins for extremely
+high-throughput event-driven systems, but the performance gap has
+narrowed.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Using wrong executor type for workload**
+Symptom: CPU-bound tasks run in `CachedThreadPool`, causing thread
+explosion under load. Or I/O tasks run in `FixedThreadPool` sized to
+core count, causing unnecessary queuing.
+Fix: match executor type to workload. CPU-bound: fixed pool sized
+to core count. I/O-bound: larger pool, cached pool, or virtual threads.
+
+**Failure 2: Silent exception suppression in futures**
+Symptom: tasks submitted to ExecutorService silently fail with no
+error logged. Background processing appears to work but produces
+no output.
+Cause: `ExecutorService.submit()` wraps exceptions in `Future` - if
+you never call `future.get()`, exceptions are silently discarded.
+Fix: always call `future.get()` or add an uncaught exception handler.
+With `CompletableFuture`, always chain `.exceptionally()` or
+`.whenComplete()`.
+
+**Failure 3: ConcurrentModificationException in "concurrent" code**
+Symptom: `ConcurrentModificationException` thrown during iteration
+over a `ConcurrentHashMap`.
+Cause: using `for (Entry e : map.entrySet())` while another thread
+is modifying the map. `ConcurrentHashMap` iterators provide
+weakly-consistent semantics but throw `ConcurrentModificationException`
+only from structural modifications during iteration in some paths.
+Fix: use `map.forEach()` or collect keys first, then process.
+
+---
+
+### 🎯 Interview Deep-Dive
+
+| Question Category | Time to Answer |
+|---|---|
+| Definition | 30-60 seconds |
+| Mechanism | 1-2 minutes |
+| Comparison | 1-2 minutes |
+| Scenario | 2-3 minutes |
+| Debugging | 2-3 minutes |
+| Evolution | 1-2 minutes |
+| Trade-off | 1-2 minutes |
+
+---
+
+**Q1 (Definition): Name the major packages and classes in Java's
+concurrency toolkit.**
+
+A: Java's concurrency toolkit is organized in `java.util.concurrent`
+and its sub-packages. The major components:
+
+Thread management: `Executor`, `ExecutorService`, `ScheduledExecutorService`,
+`ThreadPoolExecutor`, `ForkJoinPool`. These manage thread lifecycle,
+pooling, and work scheduling.
+
+Futures and async: `Future`, `CompletableFuture`. Future represents a
+pending result. CompletableFuture (Java 8+) adds chainable async
+transformations, exception handling, and combining multiple futures.
+
+Concurrent data structures: `ConcurrentHashMap`, `CopyOnWriteArrayList`,
+`BlockingQueue` (and implementations: `LinkedBlockingQueue`,
+`ArrayBlockingQueue`, `SynchronousQueue`), `ConcurrentLinkedQueue`.
+
+Synchronizers: `CountDownLatch` (one-time gate), `CyclicBarrier`
+(reusable rendezvous), `Semaphore` (permit management), `Phaser`
+(flexible barrier with dynamic participant count).
+
+Atomic variables: `AtomicInteger`, `AtomicLong`, `AtomicReference`,
+`AtomicBoolean`, `LongAdder` (high-concurrency counter).
+
+Explicit locks: `ReentrantLock`, `ReadWriteLock`, `StampedLock`.
+
+*What separates good from great:* Explaining that `LongAdder` is
+preferred over `AtomicLong` for high-concurrency counters because it
+stripes the counter across cells to reduce CAS contention.
+
+---
+
+**Q2 (Mechanism): How does ConcurrentHashMap achieve thread safety
+without locking the entire map?**
+
+A: In Java 8+, `ConcurrentHashMap` uses a combination of CAS operations
+and synchronized blocks on individual bucket heads rather than a single
+global lock.
+
+For reads: no locking at all. The `Node` array entries are `volatile`,
+so reads are always fresh without locks.
+
+For writes to an empty bucket: CAS (Compare-and-Swap) atomically inserts
+the first node without acquiring any lock.
+
+For writes to a non-empty bucket: the implementation synchronized on
+only the head node of the specific bucket (the first entry in that
+hash slot). This means two threads writing to different buckets can
+proceed in parallel - only threads writing to the same bucket contend.
+
+The resize operation is distributed: instead of one thread doing all
+the work, multiple threads can cooperate on transferring entries to
+the new array.
+
+Result: reads scale linearly with core count (no contention). Writes
+contend only within the same bucket (1/n contention of a global lock).
+
+*What separates good from great:* Contrasting with Java 7's
+`ConcurrentHashMap` which used 16 explicit segments (ReentrantLocks),
+and why Java 8's approach is better (lower memory overhead, finer
+granularity, better resize performance).
+
+---
+
+**Q3 (Comparison): When should you use CompletableFuture vs a
+reactive framework like Project Reactor?**
+
+A: `CompletableFuture` is the right choice when:
+- Team is familiar with sequential Java programming
+- The async pipeline is moderately complex (fan-out, fan-in, chained transforms)
+- You're integrating with blocking Java APIs that don't have reactive drivers
+- Debugging and maintenance simplicity are priorities
+- You don't need backpressure (controlling producer rate to match consumer rate)
+
+Project Reactor (`Flux`/`Mono`) is better when:
+- The data flow is genuinely streaming (unbounded sequences of events)
+- Backpressure is required (high-volume event streams, streaming data)
+- The team has reactive expertise and the codebase is already reactive
+- You need advanced operators (windowing, groupBy, merge with backpressure)
+- Integrating with reactive drivers (R2DBC, reactive HTTP clients)
+
+The honest trade-off: reactive code is harder to read, debug, and test.
+Stack traces become nearly unreadable. Error handling is non-intuitive.
+With Java 21 virtual threads, the performance argument for reactive
+(thread efficiency) has weakened significantly. I would only choose
+reactive for new projects when the use case genuinely requires
+streaming semantics with backpressure.
+
+*What separates good from great:* Distinguishing that `CompletableFuture`
+and reactive are not just stylistic choices - they represent different
+execution models (pull vs push, eager vs lazy) with different semantics
+for backpressure and cancellation.
+
+---
+
+**Q4 (Scenario): You are migrating a service from Java 11 to Java 21.
+What concurrency improvements can you take advantage of?**
+
+A: Java 21 brings three major concurrency improvements:
+
+1. Virtual threads (stable): drop-in replacement for platform threads
+   for I/O-bound workloads. Change `Executors.newFixedThreadPool(n)`
+   to `Executors.newVirtualThreadPerTaskExecutor()` for services that
+   do a lot of blocking I/O. This eliminates thread pool sizing
+   calculations and allows thousands of concurrent I/O operations
+   with low memory overhead. Spring Boot 3.2+ auto-configures this
+   for Tomcat.
+
+2. Sequenced collections (stable): `SequencedCollection`,
+   `SequencedMap` interfaces make ordered collection operations
+   explicit (`getFirst()`, `getLast()`, `reversed()`). Less concurrency-
+   specific but useful for queue-based patterns.
+
+3. Structured concurrency (preview): `StructuredTaskScope` enforces
+   that subtasks complete before the scope exits. This prevents the
+   thread-leak patterns common with `CompletableFuture` where errors
+   in one branch can leave other branches running indefinitely.
+
+Migration strategy: identify all thread pools that handle I/O (database
+connections, HTTP clients, file I/O). Benchmark with virtual threads.
+For most services, this requires minimal code change - just replacing
+the executor factory - and can yield 2-5x more concurrency capacity.
+
+*What separates good from great:* Mentioning virtual thread pinning
+- if `synchronized` blocks wrap blocking I/O in libraries, virtual
+threads pin to carrier threads and lose their benefit. Audit
+dependencies for synchronized+blocking patterns.
+
+---
+
+**Q5 (Debugging): A service's thread pool is exhausted and requests
+are queueing. How do you diagnose and fix it?**
+
+A: Thread pool exhaustion is a common production issue. Diagnosis steps:
+
+1. Get a thread dump immediately: `jstack <pid>` or via JMX.
+   Look at what all the pool threads are doing - BLOCKED, WAITING,
+   or RUNNABLE? If BLOCKED, they are waiting for a lock. If WAITING,
+   they are waiting for I/O or a condition. If RUNNABLE with the
+   same stack frame, there may be an infinite loop.
+
+2. Check pool metrics: active thread count, completed task count,
+   queue size. If queue size is growing and tasks are completing
+   normally, the pool is undersized for the load. If tasks are not
+   completing (stuck), there is a leak or blocking issue.
+
+3. Common causes:
+   - Slow downstream dependency (database, external API slow) -
+     threads accumulate waiting for responses
+   - Deadlock between pool threads - rare but catastrophic
+   - Thread pool submitted work waiting on the same pool (deadlock)
+   - Incorrect pool size for workload type
+
+Short-term fix: increase pool size (if I/O-bound) or add circuit
+breakers to fast-fail slow dependencies. Long-term fix: identify
+root cause (slow dependency, sizing mismatch, blocking issue) and
+address it. For Java 21, migrate I/O work to virtual threads.
+
+*What separates good from great:* Knowing the thread-pool deadlock
+pattern: task A is in the pool, submits task B to the same pool,
+and waits for B's result. If the pool is full, B never starts and
+A waits forever - deadlock. Fix: use a separate pool for sub-tasks
+or CompletableFuture with a different executor.
+
+---
+
+**Q6 (Trade-off): What are the trade-offs of using immutable objects
+vs synchronized mutable objects for shared state?**
+
+A: Immutable objects are the gold standard for concurrent shared state
+because threads can read them simultaneously without any synchronization.
+No locks, no memory barriers, no cache coherence traffic. The compiler
+and JIT can also optimize more aggressively.
+
+Trade-offs of immutability:
+- Creating new objects for every mutation has GC pressure. For high-
+  frequency updates (counters, accumulators), allocation cost can
+  exceed synchronization cost.
+- Not all data structures have efficient immutable equivalents. Java's
+  Collections.unmodifiableList wraps a mutable list - it prevents writes
+  but the underlying list can still change (shallow immutability).
+- Circular references between immutable objects require careful
+  construction ordering.
+
+When synchronized mutable wins:
+- When mutation is frequent and the critical section is short
+  (e.g., updating a counter with AtomicLong - one CAS instruction)
+- When the data structure has complex invariants that require
+  atomic multi-field updates
+- When memory allocation would dominate (tight loops over large objects)
+
+The modern approach: prefer immutability for shared configuration and
+request-scoped data; use atomic classes (AtomicLong, LongAdder) for
+counters; use concurrent collections for shared mutable maps and queues.
+Mutable synchronized state is the last resort.
+
+*What separates good from great:* Mentioning that Java records (Java 16+)
+make defining immutable value objects trivial, reducing the argument
+against immutability for simple data carriers.
+
+---
+
+**Q7 (Advanced): What is structured concurrency and why does it matter?**
+
+A: Structured concurrency (JEP 453, preview in Java 21) is a programming
+model that enforces that concurrent subtasks have the same lifetime as
+the code scope that created them - mirroring how structured programming
+enforced that control flow stays within a function.
+
+The problem it solves: with `CompletableFuture` and `ExecutorService`,
+it is easy to start tasks that outlive their creating scope, leak
+threads on cancellation, or lose error context when one of multiple
+parallel tasks fails.
+
+The primitive: `StructuredTaskScope`:
+
+```java
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    Future<String> user = scope.fork(() -> fetchUser(userId));
+    Future<String> order = scope.fork(() -> fetchOrder(orderId));
+    scope.join();      // wait for both
+    scope.throwIfFailed(); // propagate any exception
+    return new Result(user.get(), order.get());
+}
+// When scope exits: all forked tasks are guaranteed complete/cancelled
+```
+
+Key properties:
+- If any subtask fails, all others are cancelled (ShutdownOnFailure)
+- Or, return first success (ShutdownOnSuccess for race patterns)
+- Thread leaks are impossible - exiting the scope cancels remaining tasks
+- Error handling is predictable and at the right scope level
+- Observability improves: the thread tree mirrors the call tree
+
+Why it matters long-term: structured concurrency + virtual threads
+creates a model where you write concurrent code that looks like
+sequential code, has structured error handling, and is free of
+common async bugs (thread leaks, lost cancellations, exception swallowing).
+
+*What separates good from great:* Connecting structured concurrency
+to the analogy of structured programming: just as goto was replaced
+by if/for/function, unstructured concurrent task creation should be
+replaced by structured task scopes that make the lifetime of
+concurrent work explicit and bounded.
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: L0 ecosystem overview - comparison table not applicable
+at this orientation level. See L2+ files for specific tool
+comparisons within the ecosystem.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: L0 orientation keyword - system design context not applicable.
+See L5 Architecture file for concurrency architecture in system design.)*
+
+---
+
+### 📊 Diagram
+
+```
+Java Concurrency Ecosystem Layers:
+
++--------------------------------------------------+
+| LANGUAGE KEYWORDS                                |
+| synchronized  volatile  final  Thread            |
++--------------------------------------------------+
+| java.util.concurrent (Java 5+)                   |
+| Executors | Future/CF | Atomics | Concurrent Coll|
+| Locks     | Synchrz   | ForkJoin| BlockingQueue  |
++--------------------------------------------------+
+| Java 8+ Additions                                |
+| CompletableFuture | Parallel Streams             |
++--------------------------------------------------+
+| Java 21+ Additions                               |
+| Virtual Threads | Structured Concurrency         |
++--------------------------------------------------+
+| Third-Party Frameworks                           |
+| Project Reactor | RxJava | Akka | Vert.x         |
++--------------------------------------------------+
+```
+
+```mermaid
+mindmap
+  root((Java Concurrency))
+    Language
+      synchronized
+      volatile
+      final
+    java.util.concurrent
+      Thread Management
+        ExecutorService
+        ThreadPoolExecutor
+        ForkJoinPool
+      Async / Futures
+        Future
+        CompletableFuture
+      Concurrent Data
+        ConcurrentHashMap
+        BlockingQueue
+        CopyOnWriteArrayList
+      Synchronizers
+        CountDownLatch
+        CyclicBarrier
+        Semaphore
+      Atomic
+        AtomicInteger
+        LongAdder
+      Locks
+        ReentrantLock
+        StampedLock
+    Java 21
+      Virtual Threads
+      Structured Concurrency
+      Scoped Values
+    Third Party
+      Project Reactor
+      RxJava
+      Akka
+```
+
+> **Diagram walkthrough:** The ecosystem is layered from primitive
+> language keywords at the bottom to high-level third-party frameworks
+> at the top. The `java.util.concurrent` package (Java 5, 2004) is the
+> production workhorse - everything you need for thread pools, async
+> programming, thread-safe data structures, and synchronization
+> primitives. Java 21 adds a fundamentally new execution model
+> (virtual threads) and a safer concurrency composition model
+> (structured concurrency). Third-party frameworks like Project Reactor
+> add streaming semantics with backpressure on top of this foundation.

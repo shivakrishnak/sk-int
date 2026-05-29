@@ -34,7 +34,7 @@ The fastest path is through the `/interview` agent in Copilot Chat:
 Manual path (without the agent):
 
 ```pwsh
-# 1. Scaffold topic skeleton from a dictionary category or keyword list
+# 1. Generate topic keyword list
 pwsh -File scripts/generate_topics.ps1 -Topic "Angular"
 
 # 2. Generate content

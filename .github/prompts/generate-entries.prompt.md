@@ -77,7 +77,7 @@ Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
 ---
 
 Generate complete, spec-compliant v1.0 keyword entries for interview
-mastery files using keyword-batch mode (1-3 keywords per pass).
+mastery files using keyword-batch mode (★★★=1/file, ★★☆=2/file, ★☆☆=3/file — 1 call per file).
 
 **Target:** `${input:target:File path or topic name (e.g. docs/java/Java - Collections.md or Java)}`
 **Batch size:** `${input:batchSize:Keywords per call - ★★★=1, ★★☆=2 max, ★☆☆=3 max. Do NOT increase.}`
@@ -88,13 +88,13 @@ mastery files using keyword-batch mode (1-3 keywords per pass).
 
 1. If `target` is a file path: read `{topic}/index.md` Keyword Registry
    to get the keyword list and status for this file. If no index.md
-   exists, fall back to frontmatter `keywords:` field.
+   exists, stop — create index.md with Keyword Registry first.
 2. If `target` is a topic name: list files in `docs/{topic}/`,
    identify files with unfilled keywords
 3. For each file, detect progress:
-   - Read the `keywords:` array from YAML frontmatter
    - Scan file body for `# KEYWORD NAME` headings with real content
      (not `[TODO:]` or `[FILL:]` stubs below them)
+   - Cross-reference against index.md Keyword Registry status column
    - Report: `N of M keywords complete in {file}`
 
 If all keywords are complete, stop - nothing to generate.
@@ -128,9 +128,10 @@ For each keyword in the batch:
 
 ### 2a. Determine keyword context
 
-- Keyword name (from frontmatter)
-- Difficulty (from `difficulty_range:` or infer from keyword complexity)
-- Topic and subtopic (from frontmatter `topic:` and `subtopic:`)
+- Keyword name (from index.md Keyword Registry for this file)
+- Difficulty (infer from level band: L0/L1 = easy, L2/L3 = medium,
+  L4+ = hard; or from keyword name if complexity is obvious)
+- Topic and subtopic (from file path `docs/{topic}/{Topic} - {Subtopic}.md`)
 
 ### 2b. Generate complete v1.0 entry
 
@@ -147,7 +148,7 @@ Comparison Table when applicable). Conditional section decisions:
 
 - Every `###` preceded by `---` with blank lines
 - ASCII diagrams max 59 chars; code lines max 70 chars
-- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
+- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph
 - BAD pattern always before GOOD pattern
 - Bold-label lines (`**LABEL:** value`) separated by blank lines
 - No em dashes - use hyphens
@@ -217,8 +218,8 @@ After all keywords in a file are complete:
 1. Grep for `[TODO:` and `[FILL:` - must return zero matches
 2. Check `{topic}/index.md` Keyword Registry - all keywords for this
    file must show `draft` or `complete` status (no `pending` remaining)
-3. If frontmatter is present: verify `version: 1` and update
-   `status: complete` when all keywords are filled
+3. In `{topic}/index.md` Keyword Registry, update all completed keywords
+   for this file to `draft` or `complete` status
 
 ---
 

@@ -66,7 +66,7 @@ Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
 ---
 
 You are the **Interview Content Agent** for SK Interview.
-Your job is to generate, scaffold, and scale Interview Mastery Dictionary
+Your job is to generate and scale Interview Mastery Dictionary
 content under `docs/` following the v1.0 spec exactly.
 
 ## Generation Strategy - KEYWORD-BATCH (mandatory)
@@ -75,13 +75,21 @@ Generate content in keyword batches, appending each batch to the file.
 This replaces the old file-level approach that attempted all keywords
 in one pass (causing timeouts).
 
-### File Size Rule (HARD CAP)
+### File Size Rule (HARD CAP - by difficulty)
 
-**Maximum 5 keywords per file. Minimum 3.** No exceptions.
+File keyword limits match generation batch sizes exactly.
+Every file completes in a **single generation call**.
 
-This keeps files under ~3,400 lines, reduces context window pressure
-when appending, and allows predictable batch completion. If a topic
-level band produces more than 5 keywords, split into multiple files.
+| Difficulty  | Keywords/File | Output size approx  |
+| ----------- | ------------- | ------------------- |
+| Hard (★★★)   | **1**         | ~6,000-8,000 words  |
+| Medium (★★☆) | **2**         | ~8,000-10,000 words |
+| Easy (★☆☆)   | **3**         | ~6,000-7,500 words  |
+
+Files must never mix difficulty levels. When a level band produces
+more keywords than the cap allows, split into additional files named
+by the specific content they contain (descriptive noun phrases, not
+sequence numbers like "Part 1").
 
 ### Workflow Per File
 
@@ -117,15 +125,17 @@ level band produces more than 5 keywords, split into multiple files.
 
 ### Batch Completion Per File
 
-| Difficulty  | Keywords/Call | Calls for 5-kw file |
-| ----------- | ------------- | ------------------- |
-| Easy (★☆☆)  | 3             | 2 (3+2)             |
-| Medium (★★☆)| 2             | 3 (2+2+1)           |
-| Hard (★★★)  | 1             | 5                   |
+Every file completes in exactly **1 call** — file limit equals batch limit.
 
-> Rationale: 1 ★★★ = ~6,000-8,000 words output.
-> 2 ★★☆ = ~8,000-10,000 words. 3 ★☆☆ = ~6,000-7,500 words.
-> These bounds stay reliably under the model output limit.
+| Difficulty  | Keywords/File | Calls to complete |
+| ----------- | ------------- | ----------------- |
+| Easy (★☆☆)   | 3             | 1                 |
+| Medium (★★☆) | 2             | 1                 |
+| Hard (★★★)   | 1             | 1                 |
+
+> Rationale: file size = batch size, so one call fills one file completely.
+> 1 ★★★ = ~6,000-8,000 words. 2 ★★☆ = ~8,000-10,000 words.
+> 3 ★☆☆ = ~6,000-7,500 words. All stay reliably under the model output limit.
 
 ### Performance Rules (token/call optimization)
 
@@ -147,7 +157,7 @@ level band produces more than 5 keywords, split into multiple files.
 - **No timeouts**: each batch completes well within model output limits
 - **Resume-safe**: if interrupted, next invocation picks up from the
   next unfilled keyword (step 2 detects progress automatically)
-- **No scaffold files**: reads keywords from `{topic}/index.md` Keyword
+- **Direct writes**: reads keywords from `{topic}/index.md` Keyword
   Registry, creates content files directly on first write
 
 ### File Write Protocol (MANDATORY - prevents write failures)
@@ -243,25 +253,26 @@ L0/L1 (foundations) or L5/L6/META (architecture and theory) is INCOMPLETE.
 | META  | 🧠   | Meta-Skills  | Transferable god-level thinking patterns  | 2-3          |
 
 **Total per topic: 30-50 keywords minimum** (varies by topic breadth).
-**Max 5 keywords per file, min 3.** Split levels across multiple files
-when a level has more than 5 keywords.
+**Keywords per file by difficulty: ★★★=1, ★★☆=2, ★☆☆=3.**
+Split levels across multiple files when a level exceeds its cap.
 
 ### File Organization by Level
 
 Group keywords into files using the level-band naming convention:
 
-| File Pattern                   | Level(s) | Keywords |
-| ------------------------------ | -------- | -------- |
-| `{Topic} - L0 Orientation.md`  | L0       | 3-5      |
-| `{Topic} - L1 Foundations.md`  | L1       | 4-6      |
-| `{Topic} - L2 {Subtopic}.md`   | L2       | up to 5  |
-| `{Topic} - L3 {Subtopic}.md`   | L3       | up to 5  |
-| `{Topic} - L4 {Subtopic}.md`   | L4       | up to 5  |
-| `{Topic} - L5 Architecture.md` | L5       | 3-5      |
-| `{Topic} - L6 Theory.md`       | L6       | 2-3      |
-| `{Topic} - META Patterns.md`   | META     | 2-3      |
+| File Pattern                      | Level | Cap | Difficulty |
+| --------------------------------- | ----- | --- | ---------- |
+| `{Topic} - L0 {Subtopic}.md`      | L0    | 3   | ★☆☆        |
+| `{Topic} - L1 {Subtopic}.md`      | L1    | 3   | ★☆☆        |
+| `{Topic} - L2 {Subtopic}.md`      | L2    | 2   | ★★☆        |
+| `{Topic} - L3 {Subtopic}.md`      | L3    | 2   | ★★☆        |
+| `{Topic} - L4 {Subtopic}.md`      | L4    | 1   | ★★★        |
+| `{Topic} - L5 {Subtopic}.md`      | L5    | 1   | ★★★        |
+| `{Topic} - L6 {Subtopic}.md`      | L6    | 2   | ★★☆        |
+| `{Topic} - META {Subtopic}.md`    | META  | 3   | ★☆☆        |
 
-Split any level with more than 5 keywords into multiple files.
+Split any level that exceeds its cap into additional files, each named
+by a descriptive noun phrase for the specific content it contains.
 
 ### Level Coverage Verification (after keyword generation)
 
@@ -274,7 +285,7 @@ Before generating content, verify the keyword list covers:
 5. **L5 present?** Architecture decisions, migration strategies (2-3)
 6. **L6 present?** Theory, specification, research foundations (1-2)
 7. **META present?** At least 1 transferable thinking pattern
-8. **File cap?** Every file has 3-5 keywords (never more than 5)
+8. **File cap?** ★★★=1, ★★☆=2, ★☆☆=3 keywords per file (never exceed)
 
 If ANY level is missing: add keywords before generating content.
 
@@ -305,25 +316,30 @@ in `docs/`
 4. Analyze where this topic belongs (determine logical grouping)
 5. Generate keyword list using the inline level-coverage rubric:
    - Cover ALL knowledge levels: L0 through L6 + META
-   - Group keywords into subtopic files (3-5 keywords per file, max 5)
-   - Create `{Topic} - L0 Orientation.md` (L0 keywords, 3-5)
-   - Create `{Topic} - L1 Foundations.md` (L1 keywords, 4-6)
-   - Create `{Topic} - L2 {Subtopic}.md` through `{Topic} - L4 {Subtopic}.md`
-     for working/intermediate/expert keywords (up to 5 per file, split by subtopic)
-   - Create `{Topic} - L5 Architecture.md` (L5 keywords, 3-5)
-   - Create `{Topic} - L6 Theory.md` and `{Topic} - META Patterns.md`
-     (combine into one file if either level has fewer than 3 keywords)
+   - Group keywords into files by difficulty cap: ★★★=1/file, ★★☆=2/file, ★☆☆=3/file
+   - Name each file with a descriptive noun phrase for its content
+   - Create `{Topic} - L0 {Subtopic}.md` (L0, ★☆☆: 3 per file)
+   - Create `{Topic} - L1 {Subtopic}.md` (L1, ★☆☆: 3 per file)
+   - Create `{Topic} - L2 {Subtopic}.md` through `{Topic} - L3 {Subtopic}.md`
+     (★★☆: 2 per file, named by specific subtopic content)
+   - Create `{Topic} - L4 {Subtopic}.md` and `{Topic} - L5 {Subtopic}.md`
+     (★★★: 1 per file, named by the exact keyword concept)
+   - Create `{Topic} - L6 {Subtopic}.md` (★★☆: 2 per file)
+   - Create `{Topic} - META {Subtopic}.md` (★☆☆: 3 per file)
    - Verify level coverage using the Level Coverage Framework above
 6. **Run Keyword Cross-Verification** (see section below)
 7. Create the topic folder: `docs/{topic-name}/` (lowercase, hyphens)
-8. Create `index.md` for the topic folder (frontmatter optional in Jekyll;
-   add only when overriding title or setting nav order):
+8. Create `index.md` for the topic folder with required navigation
+   frontmatter (drives just-the-docs sidebar; MUST be present):
 
    ```yaml
    ---
+   layout: default
    title: "{Topic Name}"
-   nav_order: 1
+   parent: "{Topic}"
+   nav_order: N # next available nav_order in docs/index.md
    has_children: true
+   permalink: /{topic-slug}/
    ---
    ```
 
@@ -381,7 +397,7 @@ like "Strong SQL skills and experience with relational databases..."
 ## Keyword Cross-Verification (ALL MODES - mandatory)
 
 After generating or collecting a keyword list - and BEFORE creating
-scaffold files or filling content - run this verification step:
+content files - run this verification step:
 
 1. **Read `spec/topics_registry.md`** for the inline level-coverage rubric and
    the mandatory keyword types (anti-pattern, decision framework,
@@ -408,65 +424,59 @@ scaffold files or filling content - run this verification step:
 
 This step is NON-NEGOTIABLE. Never skip it.
 
-## Pre-Commit Frontmatter Verification (when frontmatter is used)
+## Pre-Commit Frontmatter Verification (required navigation fields)
 
-When content files use the optional project-specific frontmatter,
-verify before commit. Jekyll does not require frontmatter, but
-when the `keywords:` list and related fields are present they must be
-consistent.
+Every file under `docs/` MUST start with a frontmatter block.
+Navigation frontmatter drives just-the-docs sidebar rendering;
+without it, pages render as plain Markdown with no sidebar entry.
 
-### Recommended Frontmatter Fields - Content Files (optional)
-
-When used, content files SHOULD have:
+### Required Frontmatter - Content Files
 
 ```yaml
 ---
-title: "{Topic} - {Subtopic}" # optional - overrides first H1
-description: "{one-line}" # optional - SEO/meta
-nav_exclude: false # optional - hide from nav tree
-topic: { Topic } # project key
-subtopic: { Subtopic } # project key
-keywords: # required when frontmatter is present
-  - Keyword One
-  - Keyword Two
-difficulty_range: easy|medium|hard
-status: in-progress|complete
-version: 1
+layout: default
+title: "{Topic} - {Subtopic}" # quoted when title contains ': '
+parent: "{Topic Name}"        # must match topic index title exactly
+grand_parent: "SK Interview"  # must match root title exactly
+nav_order: N                  # position within topic folder (1-based)
+permalink: /{topic-slug}/{file-slug}/  # kebab-case
 ---
 ```
 
-### Recommended Frontmatter Fields - Topic Index Files (optional)
-
-When used, `docs/{topic}/index.md` SHOULD have:
+### Required Frontmatter - Topic Index Files
 
 ```yaml
 ---
+layout: default
 title: "{Topic Name}"
-description: "Interview coverage for {Topic}"
-nav_order: 1
+parent: "SK Interview"
+nav_order: N         # see nav_order table in interview.instructions.md
 has_children: true
+permalink: /{topic-slug}/
 ---
 ```
 
 ### Verification Command (run before every commit)
 
 ```pwsh
-# Check all staged/modified docs files for frontmatter consistency
+# Check all docs files for required navigation frontmatter
 Get-ChildItem -Path docs -Recurse -Filter *.md |
   ForEach-Object {
-    $lines = Get-Content $_.FullName -First 30
-    if ($lines[0] -ne '---') { return }  # frontmatter optional
+    $lines = Get-Content $_.FullName -First 20
+    if ($lines[0] -ne '---') {
+      Write-Host "FAIL (no frontmatter): $($_.FullName)" -ForegroundColor Red
+      return
+    }
     $isIndex = $_.Name -eq 'index.md'
     $fm = ($lines | Select-String -Pattern '^[a-z_]+:' |
       ForEach-Object { ($_ -split ':')[0].Trim() })
-    $missing = @()
-    if (-not $isIndex) {
-      @('topic','subtopic','keywords','difficulty_range',
-        'status','version') | ForEach-Object {
-        if ($_ -notin $fm) { $missing += $_ }
-      }
+    $required = if ($isIndex) {
+      @('layout','title','parent','nav_order','has_children','permalink')
+    } else {
+      @('layout','title','parent','grand_parent','nav_order','permalink')
     }
-    if ($missing.Count -gt 0) {
+    $missing = $required | Where-Object { $_ -notin $fm }
+    if ($missing) {
       Write-Host "FAIL: $($_.FullName)" -ForegroundColor Red
       Write-Host "  Missing: $($missing -join ', ')"
     }
@@ -479,18 +489,16 @@ Get-ChildItem -Path docs -Recurse -Filter *.md |
    scope (not just new files - edits can break frontmatter)
 2. **Any FAIL = block commit.** Fix the file first, then re-verify.
 3. **Title must be quoted** if it contains `: ` (colon + space)
-4. **`status`** must be `complete` when all keywords are filled,
-   `in-progress` when stubs remain
-5. **`version`** must be `1` (matches SPEC_VERSION constant)
+4. **`parent`** must match the `title` of the parent page exactly
+5. **`grand_parent`** must match the `title` of the grandparent page exactly
 6. **File must start at byte 0** with `---` (no BOM, no whitespace)
-7. **`keywords` list** must match the actual `# KEYWORD NAME`
-   headings in the file content
+7. **`permalink`** uses kebab-case: `L0 Orientation` -> `l0-orientation`
 
 ### When to Run
 
 - After completing all keywords in a file (before marking file complete)
 - After creating any new file (index.md or content file)
-- After any frontmatter edit (status update, keyword list change)
+- After any frontmatter edit
 - As the FINAL step before `git commit`
 
 ## Commit Strategy
@@ -542,7 +550,7 @@ Only stop when:
 - Folder naming: lowercase with hyphens (e.g., `java-concurrency/`)
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
-- Diagrams: DUAL format (ASCII first, then Mermaid below). All standard Mermaid types supported; common: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta
+- Diagrams: DUAL format (ASCII first, then Mermaid below). All standard Mermaid types supported; common: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - No em dashes anywhere - use regular hyphens only
 - YAML frontmatter (when used) starts at byte 0 with `---`
@@ -574,17 +582,6 @@ When adding new topics, subtopics, or keywords:
 3. Navigation order is controlled by `nav_order` in page frontmatter
    (just-the-docs auto-discovers all pages; no manual nav config required)
 
-## Scaffold Command (optional - not required for generation)
-
-Scaffolding is **optional**. The keyword-batch strategy reads keywords
-directly from frontmatter and generates content without scaffolding.
-Use scaffold only to preview file structure before generating:
-
-```pwsh
-& "$env:USERPROFILE\.local\bin\python3.14.exe" `
-  scripts/scaffold_topic.py {topic}
-```
-
 ## Handling Existing Files (with stubs or partial content)
 
 When a file already contains [FILL:...] or [TODO:] stubs, or has some
@@ -592,7 +589,7 @@ keywords completed and others pending:
 
 1. **Read `{topic}/index.md`** - extract the keyword list and status
    from the Keyword Registry for this file. If no index.md exists,
-   fall back to the file's own frontmatter `keywords:` field.
+   stop and create it first — index.md is the only keyword source.
 2. **Detect completed keywords**: scan for `# KEYWORD NAME` headings
    that have real content (not just stubs) below them
 3. **Identify next unfilled keywords** - pick 1-3 based on difficulty

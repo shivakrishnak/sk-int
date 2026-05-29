@@ -17,7 +17,7 @@ southstar/
     index.md                  Homepage
     {topic}/                  Topic folders (java/, spring/, etc)
       index.md                Topic landing page
-      {Topic} - {Subtopic}.md Content files (3-5 keywords each)
+      {Topic} - {Subtopic}.md Content files (★★★=1 kw, ★★☆=2 kw, ★☆☆=3 kw per file)
 
   spec/                       Generation specs (excluded from build)
     interview_content_generator.md  Master generation spec v1.0
@@ -25,8 +25,7 @@ southstar/
     README.md                 Contributor entry point
 
   scripts/                    Automation (excluded from build)
-    scaffold_topic.py         Scaffold generator (Python 3.14)
-    generate_topics.ps1       Topic + keyword scaffolding
+    generate_topics.ps1       Topic + keyword generation
     generate_content.ps1      Batch content generation (5 modes)
     validate.ps1              Pre-commit validator
 
@@ -38,7 +37,6 @@ southstar/
       interview.instructions.md   Auto-attaches under docs/, spec/, scripts/
     prompts/
       generate-entries.prompt.md     @generate-entries
-      scaffold.prompt.md             @scaffold
     workflows/
       deploy.yml              Jekyll build + GitHub Pages deploy
     dependabot.yml            Weekly bundler + github-actions updates
@@ -54,7 +52,7 @@ southstar/
 | Any interaction                                  | This file (lean overview + shared rules)           |
 | Editing `docs/**`, `spec/**`, `scripts/**` files | + `.github/instructions/interview.instructions.md` |
 | Using `/interview` agent                         | Agent instructions + reads spec on demand          |
-| Using `@generate-entries` / `@scaffold`          | Prompt-specific instructions + agent tools         |
+| Using `@generate-entries`                        | Prompt-specific instructions + agent tools         |
 
 ## Shared Rules
 
@@ -217,7 +215,6 @@ genuinely excellent'?"_ If uncertain: rewrite. Masterclass = target.
 | ------------------ | ------------------------------------------------ |
 | Full spec          | `spec/interview_content_generator.md`            |
 | Topic registry     | `spec/topics_registry.md`                        |
-| Scaffold generator | `scripts/scaffold_topic.py`                      |
 | Topic generator    | `scripts/generate_topics.ps1`                    |
 | Content generator  | `scripts/generate_content.ps1`                   |
 | Validator          | `scripts/validate.ps1`                           |

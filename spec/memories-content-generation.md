@@ -28,10 +28,11 @@
   ```
 - Pattern: create_file for keyword 1, Add-Content for keywords 2 through N
 
-### M3 - File-level generation causes output limit timeouts
+### M3 - Exceeding file difficulty cap causes output limit timeouts
 
-- Cause: all 5 keywords in one pass = 15,000-25,000 words
-- Fix: keyword-batch strategy - 1 per call (hard), 2 (medium), 3 (easy)
+- Cause: generating beyond the difficulty cap in one pass
+  (★★★: >1 kw, ★★☆: >2 kw, ★☆☆: >3 kw)
+- Fix: file cap = batch cap: 1 per file/call (★★★), 2 (★★☆), 3 (★☆☆)
 
 ### M4 - Frontmatter as keyword source breaks when frontmatter is absent
 
@@ -71,11 +72,12 @@
 
 ## OPTIMIZATION TECHNIQUES
 
-### O1 - Keyword-batch sizing (exact numbers, non-negotiable)
+### O1 - Keyword-batch sizing = file sizing (exact numbers, non-negotiable)
 
-- hard (★★★): 1 per call
-- medium (★★☆): 2 per call
-- easy (★☆☆): 3 per call
+- hard (★★★): 1 per file/call
+- medium (★★☆): 2 per file/call
+- easy (★☆☆): 3 per file/call
+- File cap equals batch cap — every file is completed in exactly 1 call
 
 ### O2 - File write pattern
 

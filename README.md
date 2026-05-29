@@ -28,7 +28,7 @@ southstar/
   Gemfile             Ruby dependencies
   docs/               Published content (homepage + topic folders)
   spec/               Generation spec, topic registry, contributor guide
-  scripts/            Scaffold + content-generation automation
+  scripts/            Content-generation automation
   .github/            Copilot agents, instructions, prompts, CI workflows
   .githooks/          Local git hooks (enable via core.hooksPath)
   .vscode/            Editor settings + recommended extensions
@@ -39,7 +39,6 @@ southstar/
 Open the workspace in VS Code with the GitHub Copilot Chat extension and use:
 
 - `/interview` - full agent for new topics, new subtopics, gap-filling
-- `@scaffold` - run the scaffold generator for a topic
 - `@generate-entries` - generate keyword content in batches
 - `@fill-content` - fill stubs in existing files
 

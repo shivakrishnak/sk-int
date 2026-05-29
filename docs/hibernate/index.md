@@ -1,124 +1,127 @@
 ---
+layout: default
 title: "Hibernate"
-nav_order: 7
+parent: "SK Interview"
+nav_order: 20
 has_children: true
+permalink: /hibernate/
 ---
 
 # Hibernate
 
-Hibernate ORM: SessionFactory, entity mapping, caching strategies,
-fetching, dirty checking, locking, batch processing, and production
-diagnostics. From basic CRUD to diagnosing LazyInitializationException
-at 3 AM.
+Interview-focused reference for Hibernate ORM - the most widely used
+Java persistence framework. From the ORM impedance mismatch fundamentals
+to N+1 diagnostics, second-level cache internals, and enterprise-scale
+persistence architecture decisions.
+
+Covers all seniority levels from junior to staff/principal.
+
+## Keyword Registry
+
+### Hibernate - L0 Orientation.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Why ORM Exists: The Object-Relational Mismatch | complete |
+| 2 | Hibernate vs JDBC vs JPA: The Persistence Stack | complete |
+| 3 | Hibernate Ecosystem and JPA Standards | complete |
+
+### Hibernate - L1 Foundational.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Entity Mapping Fundamentals | complete |
+| 2 | Session, SessionFactory, and Persistence Context | complete |
+| 3 | HQL and JPQL Queries | complete |
+
+### Hibernate - L2 Associations.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Associations: OneToMany and ManyToMany | complete |
+| 2 | Fetch Types: Lazy vs Eager Loading | complete |
+
+### Hibernate - L2 Caching.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Hibernate Caching: First and Second Level Cache | complete |
+| 2 | Criteria API and Dynamic Queries | complete |
+
+### Hibernate - L2 Transactions.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Transaction Management and Isolation Levels | complete |
+| 2 | Schema Generation and DDL Validation | complete |
+
+### Hibernate - L3 Performance.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | The N+1 Problem: Detection and Solutions | complete |
+| 2 | Batch Processing and JDBC Batch Inserts | complete |
+
+### Hibernate - L3 Advanced Mapping.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Inheritance Mapping Strategies | complete |
+| 2 | Optimistic and Pessimistic Locking | complete |
+
+### Hibernate - L4 Internals.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Hibernate Internals: Bytecode Enhancement and Proxies | complete |
+
+### Hibernate - L4 Diagnostics.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Connection Pool Tuning and Hibernate Performance Diagnostics | complete |
+
+### Hibernate - L5 Migration.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Migrating from Hibernate to Spring Data JPA | complete |
+
+### Hibernate - L5 Scale.md (★★★)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Hibernate at Scale: Sharding and Read Replicas | complete |
+
+### Hibernate - L6 Theory.md (★★☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | ORM Theory and Impedance Mismatch Deep Dive | complete |
+| 2 | Persistence Context Lifecycle and Unit of Work | complete |
+
+### Hibernate - META Patterns.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | ORM Decision Framework: Hibernate vs Raw SQL | complete |
+| 2 | Hibernate Debugging Mental Model | complete |
+| 3 | N+1 Detection Checklist | complete |
 
 ## Files
 
 | File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Hibernate - L0 Orientation](Hibernate%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Hibernate - L1 Foundations](Hibernate%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Hibernate - L2 Mapping](Hibernate%20-%20L2%20Mapping.md) | L2 | 5 | complete |
-| [Hibernate - L2 Caching and Fetching](Hibernate%20-%20L2%20Caching%20and%20Fetching.md) | L2 | 5 | complete |
-| [Hibernate - L3 Internals](Hibernate%20-%20L3%20Internals.md) | L3 | 5 | complete |
-| [Hibernate - L3 Advanced Features](Hibernate%20-%20L3%20Advanced%20Features.md) | L3 | 5 | complete |
-| [Hibernate - L4 Production Depth](Hibernate%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Hibernate - L5 Architecture](Hibernate%20-%20L5%20Architecture.md) | L5 | 3 | complete |
-| [Hibernate - L6 Theory](Hibernate%20-%20L6%20Theory.md) | L6 | 2 | complete |
-| [Hibernate - META Patterns](Hibernate%20-%20META%20Patterns.md) | META | 2 | complete |
-
-**Keywords:** 41 | **Files:** 10 | **Status:** complete
-
----
-
-## Keyword Registry
-
-### Hibernate - L0 Orientation
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | ORM Concept and Why Hibernate          | ★☆☆        | draft   |
-| 2   | Hibernate vs JDBC Trade-offs           | ★☆☆        | draft   |
-| 3   | Hibernate Ecosystem and Versions       | ★☆☆        | draft   |
-| 4   | Hibernate vs JPA Relationship          | ★☆☆        | draft   |
-
-### Hibernate - L1 Foundations
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | SessionFactory and Session             | ★☆☆        | draft   |
-| 2   | Entity Mapping with @Entity and @Id    | ★☆☆        | draft   |
-| 3   | Basic CRUD with Hibernate              | ★☆☆        | draft   |
-| 4   | HQL Hibernate Query Language           | ★★☆        | draft   |
-| 5   | Hibernate Configuration and Dialects   | ★★☆        | draft   |
-
-### Hibernate - L2 Mapping
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | One-to-One and One-to-Many Mappings    | ★★☆        | draft   |
-| 2   | Many-to-Many with Join Tables          | ★★☆        | draft   |
-| 3   | Inheritance Mapping Strategies         | ★★☆        | draft   |
-| 4   | Embedded Objects and Components        | ★★☆        | draft   |
-| 5   | Collection Mappings                    | ★★☆        | draft   |
-
-### Hibernate - L2 Caching and Fetching
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Eager vs Lazy Loading                  | ★★☆        | draft   |
-| 2   | First-Level Cache Session Cache        | ★★☆        | draft   |
-| 3   | Second-Level Cache                     | ★★★        | draft   |
-| 4   | N+1 Problem Detection                  | ★★★        | draft   |
-| 5   | Query Cache                            | ★★☆        | draft   |
-
-### Hibernate - L3 Internals
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Hibernate Session States               | ★★★        | draft   |
-| 2   | Dirty Checking and Automatic Flush     | ★★★        | draft   |
-| 3   | Optimistic Locking with @Version       | ★★★        | draft   |
-| 4   | Pessimistic Locking Strategies         | ★★★        | draft   |
-| 5   | Cascade Types and Orphan Removal       | ★★☆        | draft   |
-
-### Hibernate - L3 Advanced Features
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Batch Processing and Bulk Operations   | ★★★        | draft   |
-| 2   | Native SQL Queries and Result Set Mapping | ★★☆     | draft   |
-| 3   | Hibernate Interceptors and Listeners   | ★★★        | draft   |
-| 4   | Multi-tenancy Strategies               | ★★★        | draft   |
-| 5   | Hibernate Security HQL Injection and Sensitive Data | ★★★ | draft   |
-
-### Hibernate - L4 Production Depth
-
-| #   | Keyword                                        | Difficulty | Status  |
-| --- | ---------------------------------------------- | ---------- | ------- |
-| 1   | LazyInitializationException Root Cause         | ★★★        | draft   |
-| 2   | Hibernate Performance Anti-Patterns            | ★★★        | draft   |
-| 3   | Connection Pool Tuning for Hibernate           | ★★★        | draft   |
-| 4   | Hibernate Statistics and Slow Query Detection  | ★★★        | draft   |
-| 5   | Schema Migration with Hibernate and Flyway     | ★★★        | draft   |
-
-### Hibernate - L5 Architecture
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Hibernate in Microservices             | ★★★        | draft   |
-| 2   | Hibernate vs R2DBC Decision Framework  | ★★★        | draft   |
-| 3   | ORM Layer Architecture Decisions       | ★★★        | draft   |
-
-### Hibernate - L6 Theory
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Object-Relational Impedance Mismatch   | ★★★        | draft   |
-| 2   | Hibernate SPI and Extension Model      | ★★★        | draft   |
-
-### Hibernate - META Patterns
-
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | ORM Anti-Pattern Recognition           | ★★☆        | draft   |
-| 2   | Hibernate Interview Mental Model       | ★★☆        | draft   |
+|------|-------|----------|--------|
+| Hibernate - L0 Orientation.md | L0 | 3 | complete |
+| Hibernate - L1 Foundational.md | L1 | 3 | complete |
+| Hibernate - L2 Associations.md | L2 | 2 | complete |
+| Hibernate - L2 Caching.md | L2 | 2 | complete |
+| Hibernate - L2 Transactions.md | L2 | 2 | complete |
+| Hibernate - L3 Performance.md | L3 | 2 | complete |
+| Hibernate - L3 Advanced Mapping.md | L3 | 2 | complete |
+| Hibernate - L4 Internals.md | L4 | 1 | complete |
+| Hibernate - L4 Diagnostics.md | L4 | 1 | complete |
+| Hibernate - L5 Migration.md | L5 | 1 | complete |
+| Hibernate - L5 Scale.md | L5 | 1 | complete |
+| Hibernate - L6 Theory.md | L6 | 2 | complete |
+| Hibernate - META Patterns.md | META | 3 | complete |

@@ -1,125 +1,160 @@
 ---
+layout: default
 title: "Spring"
-nav_order: 6
+parent: "SK Interview"
+nav_order: 2
 has_children: true
+permalink: /spring/
 ---
 
 # Spring
 
-Spring Framework and Spring Boot: IoC container, dependency injection,
-AOP, MVC, WebFlux, transactions, caching, events, security, and the
-full Spring ecosystem. From first bean to production microservice.
+Spring Framework and Spring Boot interview preparation - from orientation
+to architect level. Covers dependency injection, bean lifecycle, AOP,
+transaction management, Spring MVC, Spring Security, Spring Data, Spring
+Boot auto-configuration, performance tuning, and microservices design.
 
 ## Files
 
-| File | Level | Keywords | Status |
-| ---- | ----- | -------- | ------ |
-| [Spring - L0 Orientation](Spring%20-%20L0%20Orientation.md) | L0 | 4 | complete |
-| [Spring - L1 Foundations](Spring%20-%20L1%20Foundations.md) | L1 | 5 | complete |
-| [Spring - L2 Core](Spring%20-%20L2%20Core.md) | L2 | 5 | complete |
-| [Spring - L2 Spring Boot](Spring%20-%20L2%20Spring%20Boot.md) | L2 | 5 | complete |
-| [Spring - L3 MVC and REST](Spring%20-%20L3%20MVC%20and%20REST.md) | L3 | 5 | complete |
-| [Spring - L3 Data and Transactions](Spring%20-%20L3%20Data%20and%20Transactions.md) | L3 | 5 | complete |
-| [Spring - L4 Production Depth](Spring%20-%20L4%20Production%20Depth.md) | L4 | 5 | complete |
-| [Spring - L5 Architecture](Spring%20-%20L5%20Architecture.md) | L5 | 4 | complete |
-| [Spring - L6 Theory](Spring%20-%20L6%20Theory.md) | L6 | 2 | complete |
-| [Spring - META Patterns](Spring%20-%20META%20Patterns.md) | META | 3 | complete |
+| File | Level | Keywords | Difficulty | Status |
+|------|-------|----------|------------|--------|
+| [Spring - L0 Orientation.md](Spring - L0 Orientation.md) | L0 | 3 | ★☆☆ | complete |
+| [Spring - L1 Core Concepts.md](Spring - L1 Core Concepts.md) | L1 | 3 | ★☆☆ | complete |
+| [Spring - L1 Spring Boot Basics.md](Spring - L1 Spring Boot Basics.md) | L1 | 3 | ★☆☆ | complete |
+| [Spring - L2 Bean Mechanics.md](Spring - L2 Bean Mechanics.md) | L2 | 2 | ★★☆ | complete |
+| [Spring - L2 Injection and MVC.md](Spring - L2 Injection and MVC.md) | L2 | 2 | ★★☆ | complete |
+| [Spring - L2 Data and Configuration.md](Spring - L2 Data and Configuration.md) | L2 | 2 | ★★☆ | complete |
+| [Spring - L3 AOP and Transactions.md](Spring - L3 AOP and Transactions.md) | L3 | 2 | ★★☆ | complete |
+| [Spring - L3 Security and Observability.md](Spring - L3 Security and Observability.md) | L3 | 2 | ★★☆ | complete |
+| [Spring - L3 Profiles and Advanced Config.md](Spring - L3 Profiles and Advanced Config.md) | L3 | 2 | ★★☆ | complete |
+| [Spring - L4 Context Refresh Internals.md](Spring - L4 Context Refresh Internals.md) | L4 | 1 | ★★★ | complete |
+| [Spring - L4 Bean Post-Processors.md](Spring - L4 Bean Post-Processors.md) | L4 | 1 | ★★★ | complete |
+| [Spring - L4 OAuth2 and JWT Security.md](Spring - L4 OAuth2 and JWT Security.md) | L4 | 1 | ★★★ | complete |
+| [Spring - L4 Spring Boot Performance.md](Spring - L4 Spring Boot Performance.md) | L4 | 1 | ★★★ | complete |
+| [Spring - L5 Microservices Architecture.md](Spring - L5 Microservices Architecture.md) | L5 | 1 | ★★★ | complete |
+| [Spring - L5 Cloud Configuration.md](Spring - L5 Cloud Configuration.md) | L5 | 1 | ★★★ | complete |
+| [Spring - L6 Framework Internals.md](Spring - L6 Framework Internals.md) | L6 | 2 | ★★☆ | complete |
+| [Spring - META Patterns.md](Spring - META Patterns.md) | META | 3 | ★☆☆ | complete |
 
-**Keywords:** 43 | **Files:** 10 | **Status:** complete
+**Total: 32 keywords across 17 files**
 
 ---
 
 ## Keyword Registry
 
-### Spring - L0 Orientation
+### Spring - L0 Orientation.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Spring Ecosystem Overview              | ★☆☆        | draft   |
-| 2   | Spring vs Java EE History              | ★☆☆        | draft   |
-| 3   | Why Spring Boot Exists                 | ★☆☆        | draft   |
-| 4   | Spring vs Spring Boot vs Spring Cloud  | ★☆☆        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-001 | Spring Framework Overview | ★☆☆ | 1 | draft |
+| SPR-002 | Spring vs EJB - The Simplicity Revolution | ★☆☆ | 3 | draft |
+| SPR-003 | Spring Ecosystem Map | ★☆☆ | 1 | draft |
 
-### Spring - L1 Foundations
+### Spring - L1 Core Concepts.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | IoC Container and ApplicationContext   | ★☆☆        | draft   |
-| 2   | Dependency Injection Types             | ★★☆        | draft   |
-| 3   | Bean Lifecycle                         | ★★☆        | draft   |
-| 4   | Spring Stereotypes and Component Scanning | ★☆☆     | draft   |
-| 5   | Spring Configuration Styles            | ★★☆        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-004 | Dependency Injection | ★☆☆ | 3 | draft |
+| SPR-005 | Spring Bean | ★☆☆ | 1 | draft |
+| SPR-006 | ApplicationContext | ★☆☆ | 1 | draft |
 
-### Spring - L2 Core
+### Spring - L1 Spring Boot Basics.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Bean Scopes                            | ★★☆        | draft   |
-| 2   | Spring AOP and Proxy Mechanics         | ★★☆        | draft   |
-| 3   | Spring Profiles and Conditional Beans  | ★★☆        | draft   |
-| 4   | Spring Environment and Property Sources | ★★☆       | draft   |
-| 5   | Spring Expression Language SpEL        | ★★☆        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-007 | Spring Boot Auto-configuration | ★☆☆ | 1 | draft |
+| SPR-008 | @SpringBootApplication | ★☆☆ | 1 | draft |
+| SPR-009 | Embedded Server | ★☆☆ | 1 | draft |
 
-### Spring - L2 Spring Boot
+### Spring - L2 Bean Mechanics.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | Spring Boot Auto-Configuration         | ★★☆        | draft   |
-| 2   | Spring Boot Starters                   | ★★☆        | draft   |
-| 3   | Spring Boot Actuator                   | ★★☆        | draft   |
-| 4   | Spring Boot Testing                    | ★★☆        | draft   |
-| 5   | Spring Boot Externalized Configuration | ★★☆        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-010 | Bean Scopes | ★★☆ | 2 | draft |
+| SPR-011 | Bean Lifecycle | ★★☆ | 2 | draft |
 
-### Spring - L3 MVC and REST
+### Spring - L2 Injection and MVC.md
 
-| #   | Keyword                                | Difficulty | Status  |
-| --- | -------------------------------------- | ---------- | ------- |
-| 1   | DispatcherServlet Request Lifecycle    | ★★★        | draft |
-| 2   | REST Controller Patterns               | ★★☆        | draft |
-| 3   | Spring MVC Exception Handling          | ★★☆        | draft |
-| 4   | Spring WebFlux Reactive Model          | ★★★        | draft |
-| 5   | Content Negotiation and MessageConverters | ★★☆     | draft |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-012 | @Autowired and Injection Types | ★★☆ | 2 | draft |
+| SPR-013 | Spring MVC Request Lifecycle | ★★☆ | 2 | draft |
 
-### Spring - L3 Data and Transactions
+### Spring - L2 Data and Configuration.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Spring Transaction Management               | ★★★        | draft |
-| 2   | Transaction Propagation and Isolation       | ★★★        | draft |
-| 3   | Spring Data JPA Repositories                | ★★☆        | draft |
-| 4   | Spring Cache Abstraction                    | ★★☆        | draft |
-| 5   | Spring Events and ApplicationEventPublisher | ★★☆        | draft |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-014 | Spring Data JPA Repository | ★★☆ | 2 | draft |
+| SPR-015 | @ConfigurationProperties | ★★☆ | 2 | draft |
 
-### Spring - L4 Production Depth
+### Spring - L3 AOP and Transactions.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | BeanPostProcessor and Extension Points      | ★★★        | draft |
-| 2   | Transactional Self-Invocation Anti-Pattern  | ★★★        | draft |
-| 3   | Spring Proxy Anti-Patterns                  | ★★★        | draft |
-| 4   | Spring Security Architecture                | ★★★        | draft |
-| 5   | Spring Performance Diagnostics              | ★★★        | draft |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-016 | Spring AOP and Proxies | ★★☆ | 2 | draft |
+| SPR-017 | @Transactional and Transaction Management | ★★☆ | 2 | draft |
 
-### Spring - L5 Architecture
+### Spring - L3 Security and Observability.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Spring in Microservices Architecture        | ★★★        | draft   |
-| 2   | Spring Cloud Service Discovery and Config   | ★★★        | draft   |
-| 3   | Spring Application Migration Strategy       | ★★★        | draft   |
-| 4   | Spring Security OAuth2 at Scale             | ★★★        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-018 | Spring Security Filter Chain | ★★☆ | 3 | draft |
+| SPR-019 | Spring Boot Actuator | ★★☆ | 3 | draft |
 
-### Spring - L6 Theory
+### Spring - L3 Profiles and Advanced Config.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Inversion of Control Principle              | ★★★        | draft   |
-| 2   | Spring Container Design Internals           | ★★★        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-020 | Spring Profiles | ★★☆ | 3 | draft |
+| SPR-021 | Conditional Beans and @ConditionalOnX | ★★☆ | 3 | draft |
 
-### Spring - META Patterns
+### Spring - L4 Context Refresh Internals.md
 
-| #   | Keyword                                     | Difficulty | Status  |
-| --- | ------------------------------------------- | ---------- | ------- |
-| 1   | Spring Anti-Pattern Catalog                 | ★★☆        | draft   |
-| 2   | Spring Interview Mental Model               | ★★☆        | draft   |
-| 3   | Framework Magic Decision Framework          | ★★★        | draft   |
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-022 | Spring Context Startup and Refresh | ★★★ | 4 | draft |
+
+### Spring - L4 Bean Post-Processors.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-023 | BeanFactoryPostProcessor and BeanPostProcessor | ★★★ | 4 | draft |
+
+### Spring - L4 OAuth2 and JWT Security.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-024 | Spring Security OAuth2 and JWT | ★★★ | 4 | draft |
+
+### Spring - L4 Spring Boot Performance.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-025 | Spring Boot Startup Performance and Optimization | ★★★ | 4 | draft |
+
+### Spring - L5 Microservices Architecture.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-026 | Spring Microservices with Spring Cloud | ★★★ | 4 | draft |
+
+### Spring - L5 Cloud Configuration.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-027 | Spring Cloud Config and Service Discovery | ★★★ | 4 | draft |
+
+### Spring - L6 Framework Internals.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-028 | Spring Framework Design Patterns | ★★☆ | 3 | draft |
+| SPR-029 | Custom Spring Boot Starter Design | ★★☆ | 3 | draft |
+
+### Spring - META Patterns.md
+
+| ID | Keyword | Difficulty | Type | Status |
+|----|---------|------------|------|--------|
+| SPR-030 | IoC Container as Dependency Graph Mental Model | ★☆☆ | 1 | draft |
+| SPR-031 | Convention Over Configuration Transfer | ★☆☆ | 1 | draft |
+| SPR-032 | Proxy Pattern as Universal Spring Mechanism | ★☆☆ | 1 | draft |

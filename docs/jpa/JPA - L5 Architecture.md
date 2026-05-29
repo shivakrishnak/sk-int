@@ -3,782 +3,522 @@ layout: default
 title: "JPA - L5 Architecture"
 parent: "JPA"
 grand_parent: "SK Interview"
-nav_order: 8
+nav_order: 13
 permalink: /jpa/l5-architecture/
 ---
 
-## Keywords in This File
-{: .no_toc }
+# JPA - L5 Architecture
 
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [JPA in Domain-Driven Design](#jpa-in-domain-driven-design) | critical |
-| 2 | [CQRS with JPA Read Models](#cqrs-with-jpa-read-models) | critical |
-| 3 | [JPA Multi-tenancy Architecture](#jpa-multi-tenancy-architecture) | critical |
-
----
-
-# JPA in Domain-Driven Design
-
-**Interview Weight:** critical - DDD with JPA is a
-Staff/Principal level topic. Interviewers test whether
-candidates understand the tension between rich domain
-models and JPA's persistence requirements.
-
----
+## JPA at Scale: Aggregates, Repository Pattern, and Domain Model Design
 
 ### 🎯 Model Answer
 
 **30 seconds:**
-
-> DDD aggregates map to JPA entities, but with a
-> critical constraint: JPA entities must have a no-arg
-> constructor, getters, and setters - which violates
-> OOP encapsulation. Solutions: use package-private
-> constructor + protected no-arg for JPA; expose
-> behavior methods, not setters; return unmodifiable
-> collections. The aggregate root controls consistency:
-> only the root has a public repository. Child entities
-> are loaded through the root, not independently.
+> JPA at scale: DDD aggregates map to JPA entities with a single aggregate root per transaction.
+> Repository pattern: one `@Repository` per aggregate root (not per entity). Avoid "anemic domain
+> model": entities have behavior, not just fields. Large aggregates (e.g., Order with 10,000 items)
+> need decomposition to avoid loading the entire object graph per operation.
 
 **3 minutes (Senior):**
-
-> DDD + JPA design decisions:
+> JPA architecture at scale:
 >
-> Aggregate Root → @Entity + Repository
->   Only aggregate roots have repositories.
->   Children accessed via root.getChildren()
->   not ChildRepository.findAll()
+> 1. **Aggregate boundaries**: an aggregate is a cluster of entities treated as one unit for
+>    consistency. One transaction: one aggregate. Rules: (1) only reference other aggregates by ID
+>    (no cross-aggregate entity references with `@ManyToOne`). (2) Only the aggregate root has a
+>    repository. (3) External aggregates: loaded in a separate query, not navigated via association.
 >
-> Value Objects → @Embeddable
->   DDD value objects have no identity.
->   @Embeddable stores them in the same table.
->   Immutable: no setters, final fields,
->   constructor-only creation.
+> 2. **Rich domain model**: entities have business methods (`order.addItem()`, `account.debit()`).
+>    Validation inside the method. Services: orchestrate aggregates, don't contain business logic.
+>    Anemic model: entity is a data holder; all logic in services. More verbose, harder to test.
 >
-> Encapsulation challenge:
->   JPA needs: no-arg constructor + setters
->   (for proxy creation and field injection)
->   DDD wants: constructor enforcement, no setters
->   Solution: protected/package-private no-arg for JPA
->   Public methods for business operations (not setters)
->   Collections: return unmodifiable view
+> 3. **Large aggregate problem**: `Order` with 5,000 `OrderItem` entities. Loading the order:
+>    loads all 5,000 items (even if you only need the order's status). Solution: (a) lazy loading
+>    (only loads items on access). (b) Decompose: split `OrderSummary` (status, total) from
+>    `OrderItems` collection. (c) Pagination at the item level: don't model items as a collection
+>    in the aggregate; use a repository with pagination.
 >
-> Repository pattern:
->   DDD: Repository is a collection of aggregates
->   JPA: Spring Data JPA Repository interface
->   Mapping: interface matches, but:
->   - Repository should be an interface in domain layer
->   - Implementation is in infrastructure layer
->   - Domain layer has no JPA imports
->
-> Domain events:
->   Domain events published on state changes.
->   Spring's @DomainEvents + @AfterDomainEventPublication
->   or ApplicationEventPublisher.
+> 4. **Repository vs Spring Data repository**: Spring Data `JpaRepository` covers CRUD. For
+>    complex queries: custom methods with `@Query`. For aggregate-specific operations: add custom
+>    methods to the repository interface. Avoid: generic `save(entity)` for complex business
+>    operations that have side effects. Prefer: explicit named methods.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about using JPA with
-Domain-Driven Design - making JPA serve a rich domain
-model."
+**(1) Restate:** "Aggregate root: one repository. Cross-aggregate: ID reference only. Rich model: entities have behavior. Large aggregate: lazy + decompose. Repository: one per aggregate root, custom methods for business operations."
 
-**(2) First principles:** "DDD puts behavior in entities,
-not services. JPA requires persistence mechanisms.
-The challenge: satisfy JPA's technical requirements
-without compromising domain model integrity."
+**(2) First principles:** "Consistency boundaries: one transaction = one aggregate. Cross-aggregate consistency: eventual (separate transactions + domain events). The ORM models the persistence. The domain model models the business. Keep them aligned but separate concerns."
 
-**(3) Bridge:** "DDD + JPA is a design negotiation:
-domain model wins on behavior, JPA wins on persistence
-mechanics. Protected no-arg constructor is the
-compromise: JPA can create instances, but callers can't."
+**(3) Bridge:** "Aggregate is a team with a captain (aggregate root). Only the captain talks to the outside world. Internal team members report to the captain. Another team (aggregate): communicate through formal channels (IDs, not direct access)."
+
+---
+
+### 📘 Concept Explanation
+
+**Aggregates, repository pattern, and domain model design:**
+```
+AGGREGATE DESIGN IN JPA:
+
+  // Order aggregate: root + child entities:
+  @Entity
+  public class Order {  // AGGREGATE ROOT
+      @Id @GeneratedValue
+      private Long id;
+      
+      // Cross-aggregate reference by ID only:
+      private Long customerId;  // NOT: @ManyToOne Customer customer
+      // Reason: Customer is a separate aggregate.
+      // Loading Order should NOT load the Customer graph.
+      // Update Order: single aggregate transaction. No Customer lock.
+      
+      @OneToMany(mappedBy = "order",
+                 cascade = CascadeType.ALL,
+                 orphanRemoval = true)
+      private List<OrderItem> items = new ArrayList<>();  // CHILD entities
+      
+      @Embedded
+      private Money total;  // value object
+      
+      @Enumerated(EnumType.STRING)
+      private OrderStatus status;
+      
+      // RICH DOMAIN MODEL: business logic in the entity:
+      public void addItem(Product product, int quantity) {
+          if (this.status != OrderStatus.DRAFT) {
+              throw new IllegalStateException("Cannot modify non-draft order");
+          }
+          
+          // Validate + update:
+          OrderItem item = new OrderItem(this, product.getId(),
+                                         quantity, product.getPrice());
+          items.add(item);
+          recalculateTotal();  // encapsulated behavior
+      }
+      
+      public void submit() {
+          if (items.isEmpty()) {
+              throw new IllegalStateException("Cannot submit empty order");
+          }
+          this.status = OrderStatus.SUBMITTED;
+          // raise domain event: OrderSubmitted (if using events)
+      }
+      
+      private void recalculateTotal() {
+          this.total = items.stream()
+              .map(OrderItem::getSubtotal)
+              .reduce(Money.ZERO, Money::add);
+      }
+  }
+  
+  @Entity
+  public class OrderItem {  // CHILD entity: only accessible via Order
+      @Id @GeneratedValue Long id;
+      
+      @ManyToOne(fetch = FetchType.LAZY)
+      @JoinColumn(name = "order_id")
+      private Order order;  // reference to aggregate root
+      
+      private Long productId;  // cross-aggregate: ID only
+      private int quantity;
+      private Money price;
+      
+      public Money getSubtotal() {
+          return price.multiply(quantity);
+      }
+  }
+
+ONE REPOSITORY PER AGGREGATE ROOT:
+
+  // CORRECT: one repository for the Order aggregate:
+  @Repository
+  public interface OrderRepository extends JpaRepository<Order, Long> {
+      
+      Optional<Order> findByIdAndCustomerId(Long id, Long customerId);
+      
+      @Query("SELECT o FROM Order o WHERE o.status = :status AND o.customerId = :customerId")
+      List<Order> findByStatusAndCustomer(
+          @Param("status") OrderStatus status,
+          @Param("customerId") Long customerId);
+  }
+  
+  // WRONG: repository for every entity including child entities:
+  @Repository interface OrderItemRepository extends JpaRepository<OrderItem, Long> {}
+  // OrderItem is a child entity: never accessed directly without its Order.
+  // Direct access bypasses aggregate invariants (e.g., cannot check order status).
+  // Creates a "leaky aggregate": OrderItems accessible and modifiable outside the Order.
+
+ANEMIC vs RICH DOMAIN MODEL:
+
+  // ANEMIC MODEL (anti-pattern):
+  @Entity
+  public class Order {
+      // Just fields, no behavior:
+      private OrderStatus status;
+      private List<OrderItem> items;
+      // getters and setters only
+  }
+  
+  // Service: all logic in the service:
+  @Service
+  public class OrderService {
+      public void addItem(Long orderId, Long productId, int qty) {
+          Order order = orderRepo.findById(orderId).orElseThrow();
+          if (order.getStatus() != OrderStatus.DRAFT) {  // validation here
+              throw new IllegalStateException("...");
+          }
+          OrderItem item = new OrderItem();
+          item.setOrderId(orderId);
+          item.setProductId(productId);
+          item.setQuantity(qty);
+          order.getItems().add(item);
+          // Recalculate total: also here in service
+          BigDecimal total = ...;
+          order.setTotal(total);
+          orderRepo.save(order);
+      }
+  }
+  // Problems: (1) Logic duplicated if another service needs to add items.
+  //           (2) Order invariants (status check, total recalc) can be bypassed.
+  //           (3) Hard to test (requires Spring context to test service).
+  
+  // RICH MODEL (correct):
+  // See Order.addItem() above.
+  // Service only orchestrates:
+  @Service
+  public class OrderService {
+      public void addItemToOrder(Long orderId, Long productId, int qty) {
+          Order order = orderRepo.findById(orderId).orElseThrow();
+          Product product = productRepo.findById(productId).orElseThrow();
+          order.addItem(product, qty);  // behavior in entity
+          orderRepo.save(order);
+      }
+  }
+
+LARGE AGGREGATE DECOMPOSITION:
+
+  // Problem: Order with thousands of items:
+  @Entity
+  public class Order {
+      @OneToMany(mappedBy="order", fetch=FetchType.LAZY)
+      private List<OrderItem> items;  // 5,000 items
+      
+      // Loading order for status check: still loads items on first access.
+      // Using @Size(max=100) validator: loads all 5,000 items.
+      // Any Spring event listener that touches items: loads all 5,000.
+  }
+  
+  // Solution: move items to a separate query when needed:
+  // Use pagination in the service, not a collection in the entity:
+  
+  @Repository
+  public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+      // Items accessed via query, not via Order.getItems():
+      Page<OrderItem> findByOrderId(Long orderId, Pageable pageable);
+  }
+  
+  @Entity
+  public class Order {
+      // Remove the items collection from the aggregate root:
+      // (or keep it but never navigate it; access via OrderItemRepository)
+      private int itemCount;  // denormalized count to avoid collection load
+      private Money total;    // denormalized total
+  }
+```
 
 ---
 
 ### 💻 Code Example
 
+> **Code walkthrough:** The cross-aggregate ID reference pattern eliminates the most common JPA
+> performance problem: accidentally loading a large aggregate graph because of an entity reference.
+
 ```java
-// BAD: Anemic domain model with JPA
+// WRONG: cross-aggregate @ManyToOne reference:
 @Entity
 public class Order {
-    @Id @GeneratedValue
-    private Long id;
-    private String status;
-
-    // Public no-arg + setters = no encapsulation
-    public Order() {}
-    public void setStatus(String status) {
-        this.status = status;  // Any caller can set!
-    }
+    // Cross-aggregate reference to Customer via @ManyToOne:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;  // BAD: loads Customer graph with Order
+    
+    // Accessing order.getCustomer().getAddress() loads:
+    //   Customer + Address + nested aggregates.
+    // Order and Customer modified in the same transaction:
+    //   Locks BOTH aggregates. Reduces concurrency.
 }
 
-// Service does all logic (anemic model)
-orderService.updateStatus(orderId, "SHIPPED");
-// Domain logic lives in service, not Order
-
-// GOOD: Rich domain model with JPA-friendly design
+// RIGHT: cross-aggregate reference by ID:
 @Entity
-@Table(name = "orders")
 public class Order {
-
-    @Id @GeneratedValue
-    private Long id;
-
-    private String status;
-    private BigDecimal total;
-
-    @OneToMany(
-        mappedBy = "order",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
-    private List<OrderItem> items =
-        new ArrayList<>();
-
-    // JPA needs this - protected, not public
-    protected Order() {}
-
-    // Domain constructor - callers use this
-    public Order(
-            Customer customer,
-            List<OrderItem> items) {
-
-        Objects.requireNonNull(customer);
-        this.status = "PENDING";
-        this.total = items.stream()
-            .map(OrderItem::getSubtotal)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        this.items.addAll(items);
-    }
-
-    // Behavior method, not setter
-    public void ship() {
-        if (!"PAID".equals(status)) {
-            throw new InvalidStateException(
-                "Only PAID orders can be shipped");
-        }
-        this.status = "SHIPPED";
-        registerEvent(new OrderShippedEvent(id));
-    }
-
-    // Unmodifiable collection view
-    public List<OrderItem> getItems() {
-        return Collections.unmodifiableList(items);
-    }
-
-    // Domain events (Spring Data)
-    @Transient
-    private List<Object> domainEvents =
-        new ArrayList<>();
-
-    @DomainEvents
-    public List<Object> getDomainEvents() {
-        return domainEvents;
-    }
-
-    @AfterDomainEventPublication
-    public void clearDomainEvents() {
-        domainEvents.clear();
-    }
-
-    private void registerEvent(Object event) {
-        domainEvents.add(event);
-    }
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;  // GOOD: ID reference only
+    
+    // To get Customer: separate query when needed.
+    // Order save: only touches Order table. Customer unaffected.
 }
 
-// Value Object as @Embeddable
-@Embeddable
-public class Money {
-    private BigDecimal amount;
-    private String currency;
-
-    protected Money() {}  // JPA
-
-    public Money(BigDecimal amount, String currency) {
-        this.amount = Objects.requireNonNull(amount);
-        this.currency = Objects.requireNonNull(currency);
-    }
-
-    // No setters - immutable
-    public BigDecimal getAmount() { return amount; }
-    public String getCurrency() { return currency; }
-
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency))
-            throw new IllegalArgumentException();
-        return new Money(
-            this.amount.add(other.amount), currency);
-    }
+// Service: load both when genuinely needed (two queries, two transactions):
+public OrderDetailView getOrderDetail(Long orderId, Long customerId) {
+    Order order = orderRepository.findByIdAndCustomerId(orderId, customerId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+    Customer customer = customerRepository.findById(order.getCustomerId())
+        .orElseThrow();
+    return OrderDetailView.from(order, customer);
 }
 ```
 
-> **Code walkthrough:** The GOOD Order has protected
-> no-arg constructor (JPA can create it, callers cannot).
-> State changes via ship() not setStatus() - the method
-> enforces the business rule (only PAID → SHIPPED). The
-> domain events pattern integrates with Spring: @DomainEvents
-> returns events to publish; @AfterDomainEventPublication
-> clears them after Spring publishes. Money as @Embeddable
-> is immutable (no setters, final behavior via add()).
+> **Code walkthrough:** The wrong version uses `@ManyToOne Customer customer` on `Order`. This
+> couples the two aggregates: every `Order` transaction may touch the Customer row. The right
+> version stores only `customerId`. To get customer details: an explicit second query. The key
+> insight: separate queries = separate transactions = separate locks. When orders are processed
+> concurrently, they don't contend for the same customer row lock.
 
 ---
 
 ### 🎓 Answers by Seniority
 
-**Senior:** "The key JPA+DDD pattern: protected no-arg
-constructor for JPA, public business methods instead
-of setters. Value Objects as @Embeddable. Aggregate
-root controls child entity access. Repository interface
-in domain layer, Spring Data JPA implementation in
-infrastructure."
+**Junior / Mid (0-5 years):**
+> Repository per aggregate root. Child entities: no separate repository. Cross-aggregate: ID
+> reference. Rich domain model: business logic in entities, not services. Anemic model: entity is
+> just a data structure (less ideal). Large aggregate: lazy loading + decompose when items exceed
+> hundreds.
 
-**Staff:** "I separate domain model from JPA model
-for large systems: domain layer (no framework imports),
-JPA persistence layer (infrastructure). The domain
-model is pure Java objects; JPA entities map to them.
-More code but true hexagonal architecture. For smaller
-systems: @Entity directly with JPA-friendly DDD patterns."
+---
+
+**Senior / Staff (5+ years):**
+> Aggregate design is the hardest part of DDD + JPA. Common over-design: too many small aggregates
+> (each `@ManyToMany` tag becomes its own aggregate, requiring ID references and extra queries).
+> Under-design: one God aggregate (the entire order domain in one entity graph). Calibrate: an
+> aggregate should be the smallest cluster of objects that can be modified atomically in one
+> transaction. For e-commerce: `Order` + `OrderItem` + `Address` (embedded) = one aggregate.
+> `Customer`, `Product`, `Inventory` = separate aggregates. Domain events (`OrderSubmitted`):
+> async notification to other aggregates without coupling them in the same transaction.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception: "One repository per `@Entity` is the correct JPA pattern."**
+Spring Data JPA makes it easy to create a repository for every entity. This is technically possible
+but architecturally incorrect for DDD aggregates. A child entity repository (`OrderItemRepository`)
+allows code to modify `OrderItem` directly, bypassing the `Order` aggregate root. The business rule
+"you cannot add items to a submitted order" lives in `Order.addItem()`. Direct `OrderItem` creation
+via `OrderItemRepository.save()` bypasses that check. The result: an `OrderItem` can be inserted
+for a submitted order, violating the aggregate invariant. Correct: one repository for the aggregate
+root (`OrderRepository`). Child entities modified through the aggregate root's methods only.
+
+---
+
+### ⚖️ Comparison Table
+
+| Design Pattern | JPA Approach | Trade-off | Use When |
+|---|---|---|---|
+| Rich domain model | Logic in `@Entity` methods | Harder to persist computed state | Domain is complex, business rules |
+| Anemic model | Logic in `@Service` | Logic scattered, duplicated | Simple CRUD, no invariants |
+| Cross-aggregate ID ref | `Long customerId` field | Extra query to load the aggregate | Default for all cross-aggregate refs |
+| Cross-aggregate entity ref | `@ManyToOne Customer` | Couples lifecycles, locks | Only within the same aggregate |
+| Repository per root | One `JpaRepository` per root | Less flexible for direct child access | Default (DDD-aligned) |
+| Repository per entity | One per `@Entity` | Bypasses aggregate invariants | Simple CRUD, no DDD needed |
+
+---
+
+### 🏛️ System Design
+
+**Order management system: JPA aggregate design at scale:**
+```
+AGGREGATE BOUNDARIES:
+
+  Order Aggregate (root: Order)
+  ├── Order (root, @Entity)
+  ├── OrderItem (@Entity, child)
+  ├── ShippingAddress (@Embeddable)
+  └── OrderRepository (single entry point)
+
+  Customer Aggregate (root: Customer)
+  ├── Customer (root, @Entity)
+  ├── Address (@Embeddable)
+  └── CustomerRepository
+
+  Inventory Aggregate (root: Inventory)
+  ├── Inventory (root, @Entity)
+  └── InventoryRepository
+
+  Product Aggregate (root: Product)
+  ├── Product (root, @Entity)
+  ├── ProductCategory (@ManyToOne within same aggregate)
+  └── ProductRepository
+
+CROSS-AGGREGATE REFERENCES (by ID only):
+
+  Order: customerId (Long)       -> Customer aggregate
+  Order: [OrderItem.productId]   -> Product aggregate
+  Inventory: productId (Long)    -> Product aggregate
+
+CONSISTENCY:
+
+  Within aggregate: ACID (single transaction)
+  Across aggregates: eventual consistency via domain events
+
+  OrderService.submit(orderId):
+    1. Order.submit() [one ACID tx on Order aggregate]
+    2. Publish OrderSubmittedEvent
+    
+    Event handlers (async, separate transactions):
+    3. InventoryService: decrementInventory(productId, qty)
+    4. CustomerService: addOrderToHistory(customerId, orderId)
+    5. NotificationService: sendConfirmationEmail(customerId)
+```
+
+---
+
+### 📊 Diagram
+
+**Aggregate boundary visualization:**
+
+```
+  ╔══════════════════════╗   ID ref    ╔══════════════════════╗
+  ║   Order Aggregate    ║------------>║  Customer Aggregate  ║
+  ║                      ║             ║                      ║
+  ║  ┌─────────────────┐ ║             ║  ┌───────────────┐   ║
+  ║  │ Order (root)    │ ║             ║  │ Customer      │   ║
+  ║  │  customerId: Long│ ║ (not @ManyToOne) │  (root)   │   ║
+  ║  └─────────────────┘ ║             ║  └───────────────┘   ║
+  ║         |            ║             ╚══════════════════════╝
+  ║  ┌──────▼──────────┐ ║
+  ║  │  OrderItem      │ ║   ID ref    ╔══════════════════════╗
+  ║  │  (@Entity child)│ ║------------>║  Product Aggregate   ║
+  ║  └─────────────────┘ ║             ╚══════════════════════╝
+  ║         |            ║
+  ║  ┌──────▼──────────┐ ║
+  ║  │ ShippingAddress │ ║
+  ║  │ (@Embeddable)   │ ║
+  ║  └─────────────────┘ ║
+  ║                      ║
+  ╚══════════════════════╝
+  OrderRepository: single entry point
+```
+
+```mermaid
+graph TD
+    subgraph OrderAgg["Order Aggregate"]
+        OR[Order - root]
+        OI[OrderItem - child]
+        SA[ShippingAddress - embedded]
+        OR -->|contains| OI
+        OR -->|embeds| SA
+    end
+
+    subgraph CustomerAgg["Customer Aggregate"]
+        CU[Customer - root]
+        CA[Address - embedded]
+        CU -->|embeds| CA
+    end
+
+    subgraph ProductAgg["Product Aggregate"]
+        PR[Product - root]
+        PC[ProductCategory]
+        PR -->|many-to-one| PC
+    end
+
+    subgraph InventoryAgg["Inventory Aggregate"]
+        INV[Inventory - root]
+    end
+
+    OR -.->|customerId: Long| CU
+    OI -.->|productId: Long| PR
+    INV -.->|productId: Long| PR
+
+    REPO_O[OrderRepository] -->|manages| OrderAgg
+    REPO_C[CustomerRepository] -->|manages| CustomerAgg
+    REPO_P[ProductRepository] -->|manages| ProductAgg
+    REPO_I[InventoryRepository] -->|manages| InventoryAgg
+
+    style OrderAgg fill:#e8f4fd,stroke:#1565C0
+    style CustomerAgg fill:#e8f5e9,stroke:#2E7D32
+    style ProductAgg fill:#fff3e0,stroke:#E65100
+    style InventoryAgg fill:#fce4ec,stroke:#880E4F
+```
+
+> **Diagram walkthrough:** The diagram shows four aggregates with clear boundaries. Solid lines
+> within an aggregate: entity references (`@ManyToOne`, `@OneToMany`). Dashed lines between
+> aggregates: ID-only references (`Long customerId`). Each aggregate has exactly one repository
+> (the entry point). The `OrderItem` has no direct repository: it is only accessible through
+> `OrderRepository -> Order -> OrderItem`. This enforces that all modifications to items go
+> through `Order.addItem()`, preserving the aggregate invariants.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure: Aggregate design fails under concurrent order processing.**
+```
+Symptom: Order.submit() throws OptimisticLockException under load.
+  100 concurrent order submissions fail with version conflicts.
+  Root cause analysis: not an optimistic locking bug.
+
+Real root cause: Order aggregate is too large.
+  Order aggregate includes: Order + OrderItems + ShippingDetails + PaymentInfo + AuditLog.
+  @Version on Order bumps on ANY change to any child entity.
+  Concurrent audit log entries: each causes a version bump on Order.
+  100 audit entries for 100 concurrent requests: 100 version conflicts.
+
+Analysis:
+  Not a locking strategy problem.
+  It is an aggregate size problem.
+  Audit log changes should NOT bump the Order version.
+  Audit log is a separate aggregate (or a separate append-only table outside JPA aggregates).
+
+Fix:
+  Move AuditLog out of the Order aggregate.
+  AuditLog: separate @Entity, separate repository, no @Version on Order needed for audit.
+  Order version: only bumped by meaningful order state changes (add item, submit, etc.).
+  100 concurrent audit logs: no Order version conflicts.
+
+Lesson: every child entity in an aggregate shares the root's @Version. If a child changes
+  frequently and independently: extract it to its own aggregate.
+```
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 7 min | Aggregate root, @Embeddable, protected constructor |
-| Staff | 12 min | Hexagonal architecture, domain events, separation |
-
----
-
-**[STAFF] Q1 - How do you handle JPA's requirement
-for public setters when following DDD with rich domain
-models?**
-
-*Why they ask:* DDD-JPA tension is a real design challenge.
-
-Options, in order of trade-off:
-
-1. **Protected no-arg + business methods only:**
-   JPA uses protected no-arg for proxy creation.
-   Use business-named methods (pay(), ship()) instead
-   of setters. No setter for status.
-   Best for most cases.
-
-2. **@Access(AccessType.FIELD):**
-   JPA accesses fields directly (not via getters).
-   You can have getter methods without setters.
-   No public setter needed.
-   Caveat: field access works for all JPA fields.
-
-3. **Domain model + persistence model separation:**
-   Domain model: pure Java, no JPA.
-   Persistence model: @Entity with all JPA requirements.
-   Mapper: between domain and persistence models.
-   Full encapsulation, more code.
-   Best for large systems where domain integrity > cost.
-
-4. **Kotlin data classes:**
-   val fields = immutable. JPA plugin generates
-   no-arg constructor automatically.
-   Copy semantics for value changes.
-
-*What separates good from great:* Knowing @Access(FIELD)
-as the minimal-change solution for eliminating setters.
-
-| Interviewer Type | Emphasis |
+| Question Category | Time to Answer |
 |---|---|
-| Technical Panel | Aggregate root, @Embeddable, protected constructor. |
-| Hiring Manager | DDD + JPA = business logic in domain, not service. |
-| Bar Raiser | Hexagonal architecture separation, domain events, @Access(FIELD). |
-| Peer Engineer | "I use @Access(FIELD) on every entity. No setters, JPA still works, domain model is clean." |
+| Aggregate definition | 2 minutes |
+| One repository per aggregate | 2 minutes |
+| Cross-aggregate ID reference | 2 minutes |
+| Rich vs anemic domain model | 2 minutes |
+| Large aggregate problem | 2 minutes |
+| Domain events for cross-aggregate | 2 minutes |
+| @Version on aggregate root | 1 minute |
+| Transaction boundary = aggregate | 1 minute |
+| Decomposing a God aggregate | 2 minutes |
+| Repository vs DAO pattern | 1 minute |
+| Testing aggregate behavior | 1 minute |
+| Eventual consistency trade-off | 1 minute |
 
 ---
 
----
+**Q1 (design): How do you decide where aggregate boundaries should be in a JPA domain model?**
+
+A: Aggregate boundaries are consistency boundaries: what needs to change together, atomically, in
+one transaction? Use case analysis: (1) "Add item to order": Order + OrderItem change together.
+Same aggregate. (2) "View customer profile": Customer + Address displayed together, but no
+simultaneous write needed. May be same aggregate. (3) "Process payment for order": Order status
+changes AND inventory changes. Different domains, different timing. Different aggregates + domain
+events for eventual consistency. Rules: (a) If two objects are always modified together in a
+single user operation: candidate for same aggregate. (b) If one object is modified frequently
+independently: should be its own aggregate. (c) If accessing one requires loading a large graph:
+the aggregate is too big. (d) Cross-aggregate references: only by ID. If you're tempted to put a
+`@ManyToOne` to another aggregate: make it a Long ID field instead.
+
+*What separates good from great:* The "unbounded aggregate" failure mode. A team models a Customer
+aggregate: Customer -> Orders -> OrderItems -> Products -> ProductCategories. Everything in one
+graph. Loading a customer: loads the entire order history (could be 10,000 orders). Adding a
+product category: requires locking the Customer row (because of the entity reference chain).
+Customer update and product category update: in the same transaction (lock contention on the
+Customer row). Solution: "Customer aggregate" contains only Customer + Address (never looked up
+without the address). "Order aggregate" contains Order + OrderItems (one order per transaction).
+Orders reference CustomerID by Long. Products: separate aggregate. The heuristic: each aggregate
+should be loadable in one query (or a very small number). If loading the aggregate requires a JOIN
+with more than 3 tables: it's likely too large.
 
-# CQRS with JPA Read Models
-
-**Interview Weight:** critical - CQRS (Command Query
-Responsibility Segregation) with JPA is an architectural
-pattern that separates write and read models. Tested
-at Staff level for architectural thinking.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> CQRS separates writes (commands) from reads (queries).
-> In JPA: write side uses full @Entity aggregates with
-> business methods; read side uses DTO projections or
-> separate read entities mapped to views/denormalized
-> tables. This allows independent optimization: write
-> side optimizes for consistency, read side for query
-> performance. Spring Data projections implement the
-> read model without separate tables.
-
-**3 minutes (Senior):**
-
-> CQRS with JPA patterns:
->
-> Pattern 1: Projections as read model
->   Write: OrderRepository extends JpaRepository<Order,Long>
->   Read: interface OrderListView with specific getters
->   Same table, different SQL (read uses optimized SELECT)
->   Simple to implement, limited optimization potential
->
-> Pattern 2: Read entity to database view
->   Create a DB view: view_order_summary
->   Map a separate @Entity (OrderSummary) to the view
->   @Table(name = "view_order_summary")
->   @Immutable (Hibernate: this entity never changes)
->   Read queries hit the view; writes hit the base tables
->   Good for complex read queries with JOINs
->
-> Pattern 3: Separate read store
->   Commands write to relational DB (JPA)
->   Events trigger write to read store (Elasticsearch,
->   Redis, MongoDB)
->   Read queries hit the read store
->   Eventual consistency required
->   Full CQRS at infrastructure level
->
-> @Immutable (Hibernate):
->   Entity that should never be updated or deleted.
->   Hibernate skips dirty checking for @Immutable.
->   All updates/deletes throw ImmutableEntityException.
->   Use for read-only projections mapped to views.
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about separating read
-and write models in JPA using the CQRS pattern."
-
-**(2) First principles:** "Read and write operations
-have different optimization requirements. Writes need
-ACID, normalization, consistency. Reads need performance,
-joins across multiple tables, shaped for the UI."
-
-**(3) Bridge:** "CQRS with JPA is like a restaurant
-kitchen: the chef (write model) controls cooking.
-The waiter's presentation (read model) is optimized
-for the diner, not the chef."
-
----
-
-### 💻 Code Example
-
-```java
-// Write side: full aggregate entity
-@Entity
-@Table(name = "orders")
-public class Order {
-    @Id @GeneratedValue
-    private Long id;
-    private String status;
-    private BigDecimal total;
-    private Long customerId;
-
-    @OneToMany(cascade = ALL, orphanRemoval = true)
-    private List<OrderItem> items;
-
-    // Business methods
-    public void pay(PaymentDetails payment) {
-        this.status = "PAID";
-        registerEvent(new OrderPaidEvent(this));
-    }
-}
-
-// Read side: projections (Pattern 1)
-public interface OrderListView {
-    Long getId();
-    String getStatus();
-    BigDecimal getTotal();
-    String getCustomerName();  // nested: JOIN
-}
-
-public interface OrderRepository
-        extends JpaRepository<Order, Long> {
-
-    // Write: full entity
-    Optional<Order> findById(Long id);
-
-    // Read: projection
-    List<OrderListView> findAllProjectedBy();
-}
-
-// Read side: database view entity (Pattern 2)
-// SQL VIEW: CREATE VIEW order_summary AS
-// SELECT o.id, o.status, o.total,
-//        c.name AS customer_name,
-//        COUNT(i.id) AS item_count
-// FROM orders o JOIN customers c
-//   ON o.customer_id = c.id
-// LEFT JOIN order_items i ON i.order_id = o.id
-// GROUP BY o.id, o.status, o.total, c.name
-
-@Entity
-@Table(name = "order_summary")
-@Immutable   // Hibernate: read-only, skip dirty check
-@Subselect("SELECT o.id, o.status, o.total, "
-    + "c.name AS customer_name "
-    + "FROM orders o JOIN customers c "
-    + "ON o.customer_id = c.id")
-public class OrderSummary {
-    @Id private Long id;
-    private String status;
-    private BigDecimal total;
-    private String customerName;
-
-    // No setters, no modifying operations
-    public Long getId() { return id; }
-    public String getStatus() { return status; }
-    public BigDecimal getTotal() { return total; }
-    public String getCustomerName() {
-        return customerName;
-    }
-}
-
-@Repository
-public interface OrderSummaryRepository
-        extends Repository<OrderSummary, Long> {
-    List<OrderSummary> findAll();
-    Page<OrderSummary> findByStatus(
-        String status, Pageable pageable);
-    // Read operations only
-}
-```
-
-> **Code walkthrough:** Write side uses full Order
-> entity with business methods. Read side has two
-> implementations: (1) projection interface for simple
-> column selection, (2) @Immutable entity mapped to
-> a database view for complex denormalized reads. The
-> @Subselect alternative to DB view: Hibernate uses
-> the subquery as the "table" - no DB view required.
-> @Immutable tells Hibernate to never dirty-check
-> OrderSummary or generate UPDATE/DELETE for it.
-
----
-
-### 🎓 Answers by Seniority
-
-**Senior:** "Three CQRS levels: (1) projections (same
-table, different SELECT), (2) @Immutable entity to DB
-view (same DB, read-optimized SELECT), (3) separate
-read store (different DB, eventual consistency).
-Choose based on query complexity and scale requirements."
-
-**Staff:** "CQRS separates the optimization concerns.
-Write model optimizes for ACID and business invariants.
-Read model optimizes for the UI's data shape. The
-simplest effective level: DTO projections for most
-reads. @Subselect for read models needing JOINs.
-Separate read store only when projections can't meet
-SLA."
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 7 min | Projections, @Immutable, @Subselect |
-| Staff | 12 min | Three CQRS levels, trade-off selection, eventual consistency |
-
----
-
-**[STAFF] Q1 - How do you keep the read model
-consistent with the write model in CQRS with JPA?**
-
-*Why they ask:* Consistency is the hard part of CQRS.
-
-Consistency options by pattern:
-
-**Pattern 1 (projections):** Always consistent.
-Same database, same transaction. Read projects the
-same data the write model stored. Zero consistency lag.
-
-**Pattern 2 (DB view/subselect):** Always consistent.
-Same database, same underlying tables. View refreshes
-on read.
-
-**Pattern 3 (separate read store):** Eventually consistent.
-Write event → event bus → consumer updates read store.
-Lag: milliseconds to seconds depending on pipeline.
-
-For Pattern 3, keeping the read model fresh:
-1. Domain events (OrderPaidEvent) trigger read model update
-2. Event consumer updates Elasticsearch/Redis
-3. Idempotent consumer: processing same event twice is safe
-4. Replay: rebuild read model from all events (event sourcing)
-
-Spring @TransactionalEventListener:
-```java
-@TransactionalEventListener
-public void onOrderPaid(OrderPaidEvent event) {
-    // Called AFTER commit of write transaction
-    // Safe to update read model
-    readModelService.updateOrder(event.getOrderId());
-}
-```
-
-*What separates good from great:* @TransactionalEventListener
-timing: after commit (not after call) prevents read model
-update if the write transaction rolls back.
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Projections, @Immutable, @Subselect syntax. |
-| Hiring Manager | CQRS = separate optimization for reads and writes. |
-| Bar Raiser | Three CQRS levels, consistency models, @TransactionalEventListener. |
-| Peer Engineer | "Pattern 2 (@Subselect) is underused. No new infrastructure, consistent read model, complex JOINs in one query." |
-
----
-
----
-
-# JPA Multi-tenancy Architecture
-
-**Interview Weight:** critical - Multi-tenancy is an
-architectural topic for Staff engineers. Interviewers
-test awareness of the three strategies and their
-trade-offs.
-
----
-
-### 🎯 Model Answer
-
-**30 seconds:**
-
-> JPA multi-tenancy: three strategies. (1) Schema-per-tenant:
-> each tenant has their own schema, same DB. High
-> isolation, complex connection management. (2) Database-per-tenant:
-> each tenant has their own database. Maximum isolation,
-> most operational overhead. (3) Shared table with
-> discriminator column (tenant_id): all tenants in
-> same table, filtered by tenant_id in every query.
-> Most efficient (hardware sharing), most risk (tenant
-> data leak if filter missed). Hibernate native multi-tenancy
-> support manages connections per tenant.
-
-**3 minutes (Senior):**
-
-> Multi-tenancy strategies:
->
-> Discriminator column (tenant_id in table):
-> Pros: simplest, no schema duplication, efficient
-> Cons: tenants share storage, one missed filter = data leak
->   Requires tenant_id filter in every query
->   Row Level Security (DB-native) can enforce this
->
-> Schema-per-tenant:
-> Pros: data isolation, different schemas can have
->   different structure per tenant
-> Cons: schema migration must run N times
->   connection must switch schema per request
->
-> Database-per-tenant:
-> Pros: maximum isolation (different DB instances)
->   independent backups/compliance per tenant
-> Cons: most resources (N database instances)
->   most operational complexity
->
-> Hibernate multi-tenancy:
->   CurrentTenantIdentifierResolver: returns current tenant ID
->     (from thread local, security context, etc.)
->   MultiTenantConnectionProvider: returns correct connection
->     (schema-based: SET search_path = tenant_schema)
->     (database-based: different connection string per tenant)
->   Hibernate uses these to route each query
-
-**Blank Mind Recovery:**
-
-**(1) Restate:** "You are asking about JPA/Hibernate
-multi-tenancy - running multiple tenants from one
-application."
-
-**(2) First principles:** "Multiple tenants share
-infrastructure. Their data must be isolated. The choice:
-how to enforce that isolation."
-
-**(3) Bridge:** "Multi-tenancy strategies are rooms
-in a building: shared office (discriminator column:
-same room, each person's desk has their name),
-separate offices (schema per tenant: different rooms
-in the same building), separate buildings (database per tenant)."
-
----
-
-### 💻 Code Example
-
-```java
-// Strategy 1: Discriminator column
-// Add @TenantId to every entity (Hibernate 6)
-@Entity
-@Table(name = "orders")
-public class Order {
-    @Id @GeneratedValue
-    private Long id;
-
-    @TenantId           // Hibernate 6 annotation
-    private String tenantId;
-    // Hibernate auto-filters WHERE tenant_id=?
-    // Hibernate auto-sets on persist
-
-    private String status;
-}
-
-// Strategy 2/3: Hibernate multi-tenancy components
-// CurrentTenantIdentifierResolver
-@Component
-public class TenantResolver
-        implements CurrentTenantIdentifierResolver {
-
-    @Override
-    public String resolveCurrentTenantIdentifier() {
-        // Extract from security context or request header
-        return TenantContext.getCurrentTenant();
-        // Thread-local set by filter per request
-    }
-
-    @Override
-    public boolean validateExistingCurrentSessions() {
-        return true;
-    }
-}
-
-// MultiTenantConnectionProvider (schema-based)
-@Component
-public class SchemaBasedConnectionProvider
-        extends AbstractMultiTenantConnectionProvider {
-
-    @Override
-    protected DataSource selectAnyDataSource() {
-        return defaultDataSource;
-    }
-
-    @Override
-    protected DataSource selectDataSource(
-            String tenantId) {
-        return dataSourceMap.get(tenantId);
-        // Returns different DataSource per tenant
-    }
-}
-
-// Request filter: set tenant from JWT or header
-@Component
-public class TenantFilter
-        implements Filter {
-
-    @Override
-    public void doFilter(
-            ServletRequest req,
-            ServletResponse res,
-            FilterChain chain)
-            throws IOException, ServletException {
-
-        String tenantId = extractTenant(
-            (HttpServletRequest) req);
-        TenantContext.setCurrentTenant(tenantId);
-        try {
-            chain.doFilter(req, res);
-        } finally {
-            TenantContext.clear();
-            // CRITICAL: clear to prevent thread reuse leak
-        }
-    }
-
-    private String extractTenant(
-            HttpServletRequest req) {
-        // From JWT claim, subdomain, or header
-        String host = req.getServerName();
-        return host.split("\\.")[0];
-        // tenant1.example.com → tenant1
-    }
-}
-```
-
-> **Code walkthrough:** Hibernate 6 @TenantId annotation
-> auto-filters all queries for the discriminator column
-> strategy. TenantContext (thread-local) stores the
-> current tenant per request. TenantFilter sets it at
-> request start and clears it in the finally block
-> (critical: thread pool reuse means previous tenant
-> bleeds into next request if not cleared). The
-> MultiTenantConnectionProvider routes to different
-> DataSources per tenant for schema/database isolation.
-
----
-
-### 🎓 Answers by Seniority
-
-**Senior:** "Three strategies: discriminator (shared
-table), schema-per-tenant, database-per-tenant. For
-most SaaS: schema-per-tenant balances isolation and
-resource sharing. Hibernate's CurrentTenantIdentifierResolver
-routes queries to the right schema."
-
-**Staff:** "Multi-tenancy choice: compliance requirements
-drive it. HIPAA/SOC2 for large enterprises may require
-database-per-tenant. SaaS with hundreds of small tenants:
-discriminator with Row Level Security at the database
-level (enforced by DB, not application). Hibernate's
-@TenantId is the least error-prone discriminator column
-implementation."
-
----
-
-### 🎯 Interview Deep-Dive
-
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 7 min | Three strategies, trade-offs, Hibernate components |
-| Staff | 12 min | Compliance drivers, RLS, @TenantId, thread-local leak |
-
----
-
-**[STAFF] Q1 - Why is the TenantContext finally block
-critical in a multi-tenancy application?**
-
-*Why they ask:* Security bug from thread pool reuse.
-
-Web application servers use thread pools. When a
-request completes, the thread returns to the pool for
-the next request. If the TenantContext (thread-local)
-is not cleared:
-
-Request 1 (tenant A) → sets TenantContext = "tenantA"
-Request 1 completes → thread returns to pool
-Request 2 (tenant B) → thread reused → TenantContext still "tenantA"
-Request 2 queries run with tenant A's filter!
-Tenant B sees tenant A's data.
-
-This is a critical data isolation breach.
-
-Fix: always clear in finally block (guarantees clear
-even on exception). Or use ThreadLocal.remove() in
-an interceptor's afterCompletion (Spring's
-HandlerInterceptor.afterCompletion is always called).
-
-```java
-@Override
-public void afterCompletion(
-        HttpServletRequest req,
-        HttpServletResponse res,
-        Object handler, Exception ex) {
-    TenantContext.clear();
-    // Called even on exception
-    // Servlet filter finally block also works
-}
-```
-
-*What separates good from great:* Thread pool reuse
-as the root cause of the security leak.
-
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Three strategies, Hibernate components. |
-| Hiring Manager | Multi-tenancy = SaaS isolation architecture. |
-| Bar Raiser | Thread-local leak (security bug), RLS, Hibernate 6 @TenantId, compliance drivers. |
-| Peer Engineer | "We learned about the thread-local leak in production. Tenant A's data was briefly visible to tenant B. Fixed with finally block." |
