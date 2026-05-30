@@ -67,6 +67,12 @@ southstar/
 - No em dashes anywhere - use regular hyphens only
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
+- **Liquid safety:** `render_with_liquid: false` is set globally in
+  `_config.yml` via `defaults`. Code examples with `{{ }}` or `{% %}`
+  (GitHub Actions, Docker inspect, Prometheus, JSX, Angular templates)
+  do NOT need `{% raw %}` / `{% endraw %}` wrappers. Write them as-is.
+  If the build breaks with a Liquid error, check that `_config.yml`
+  still contains the `defaults: render_with_liquid: false` block.
 - Diagrams: DUAL format - ASCII block first (universal fallback),
   then Mermaid block immediately below (MAY enhance using native features
   like click events, custom shapes, data charts). Supported Mermaid types

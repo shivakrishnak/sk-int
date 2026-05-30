@@ -195,6 +195,29 @@ Full rules for each section are in the Condensed Generation Reference below.
 - Question order: foundational → advanced → expert
 - No duplicate questions across keywords in the same file
 
+## Jekyll / Liquid Safety
+
+**Rule:** `render_with_liquid: false` is set globally in `_config.yml`
+via the `defaults` key. This prevents Jekyll from parsing `{{ }}` and
+`{% %}` syntax in all docs page content as Liquid templates.
+
+**What this means for content generation:**
+- Code examples containing `{{ }}` or `{% %}` do NOT need `{% raw %}`
+  / `{% endraw %}` wrappers. Examples: GitHub Actions `${{ secrets.X }}`,
+  Docker `--format '{{.State.Pid}}'`, Prometheus `{{ $value | humanize }}`,
+  JSX `style={{ color: 'red' }}`, Angular `{{ count }}`.
+- Do NOT add `{% raw %}` / `{% endraw %}` tags - they are unnecessary
+  and add noise to the Markdown source.
+- If a new code example uses `{{ }}` or `{%  %}` syntax, write it as-is.
+  The `_config.yml` setting handles the escaping at the build level.
+
+**If the build breaks with a Liquid error in a docs file:**
+- Root cause: the `render_with_liquid: false` default may have been
+  accidentally removed from `_config.yml`.
+- Fix: verify `_config.yml` contains the `defaults:` block with
+  `render_with_liquid: false` under `scope.path: ""`.
+- Do NOT fix by adding `{% raw %}` to individual files.
+
 ## Formatting Rules
 
 - Code lines: max 70 characters

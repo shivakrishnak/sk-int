@@ -69,6 +69,18 @@ enable_copy_code_button: true
 mermaid:
   version: "10.9.0"
 
+# ── Disable Liquid processing in page content ──────────────
+# Code examples contain {{ }} and {% %} syntax (GitHub Actions,
+# Docker inspect, Prometheus, JSX/React, Angular templates, etc.)
+# that Jekyll would otherwise try to parse as Liquid templates.
+# render_with_liquid: false prevents this for all docs pages.
+# Layouts and frontmatter are unaffected by this setting.
+defaults:
+  - scope:
+      path: ""
+    values:
+      render_with_liquid: false
+
 # ── Markdown renderer: GitHub Flavored Markdown ────────────
 kramdown:
   input: GFM
