@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /jpa/l2-transactions/
+render_with_liquid: false
 ---
 
 # JPA - L2 Transactions

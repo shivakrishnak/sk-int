@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /messaging/l4-performance-tuning/
+render_with_liquid: false
 ---
 
 # Message Queue Performance Tuning

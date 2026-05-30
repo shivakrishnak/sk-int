@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /java-performance/l4-memory-diagnosis/
+render_with_liquid: false
 ---
 
 # Java Performance - L4 Memory Diagnosis

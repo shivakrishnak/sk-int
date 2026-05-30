@@ -4,6 +4,7 @@ title: "RAG - L1 Pipeline Basics"
 parent: "RAG"
 nav_order: 3
 permalink: /rag/l1-pipeline-basics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

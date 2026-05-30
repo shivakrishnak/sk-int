@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /database-sql/l3-query-optimization/
+render_with_liquid: false
 ---
 
 # Query Optimizer - Statistics, Cardinality, and Plan Selection

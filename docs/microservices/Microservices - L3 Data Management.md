@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /microservices/l3-data-management/
+render_with_liquid: false
 ---
 
 # Distributed Data Management - Database per Service

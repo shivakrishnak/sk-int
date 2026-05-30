@@ -4,6 +4,7 @@ title: "TypeScript - L1 Functions and Generics"
 parent: "TypeScript"
 nav_order: 3
 permalink: /typescript/l1-functions-and-generics/
+render_with_liquid: false
 ---
 
 # TypeScript Functions and Overloads

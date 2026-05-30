@@ -4,6 +4,7 @@ title: "Java EE - L4 App Server Tuning"
 parent: "Java EE"
 nav_order: 10
 permalink: /java-ee/l4-app-server-tuning/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Java Concurrency"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /java-concurrency/meta-patterns/
+render_with_liquid: false
 ---
 
 # Java Concurrency - META Patterns

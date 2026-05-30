@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /jpa/l6-theory/
+render_with_liquid: false
 ---
 
 # JPA - L6 Theory

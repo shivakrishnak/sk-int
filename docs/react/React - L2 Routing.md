@@ -4,6 +4,7 @@ title: "React - L2 Routing"
 parent: "React"
 nav_order: 7
 permalink: /react/l2-routing/
+render_with_liquid: false
 ---
 
 # React Router and Client-side Routing

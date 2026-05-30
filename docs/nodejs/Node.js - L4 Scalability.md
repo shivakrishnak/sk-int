@@ -4,6 +4,7 @@ title: "Node.js - L4 Scalability"
 parent: "Node.js"
 nav_order: 10
 permalink: /nodejs/l4-scalability/
+render_with_liquid: false
 ---
 
 # Clustering and Horizontal Scaling

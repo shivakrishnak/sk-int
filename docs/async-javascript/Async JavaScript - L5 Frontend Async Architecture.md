@@ -4,6 +4,7 @@ title: "Async JavaScript - L5 Frontend Async Architecture"
 parent: "Async JavaScript"
 nav_order: 14
 permalink: /async-javascript/l5-frontend-async-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

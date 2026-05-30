@@ -4,6 +4,7 @@ title: "Java EE - META Patterns"
 parent: "Java EE"
 nav_order: 16
 permalink: /java-ee/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /microservices/l4-service-mesh/
+render_with_liquid: false
 ---
 
 # Service Mesh Deep Dive

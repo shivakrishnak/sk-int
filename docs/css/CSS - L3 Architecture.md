@@ -4,6 +4,7 @@ title: "CSS - L3 Architecture"
 parent: "CSS"
 nav_order: 8
 permalink: /css/l3-architecture/
+render_with_liquid: false
 ---
 
 # CSS Methodologies (BEM, SMACSS, OOCSS)

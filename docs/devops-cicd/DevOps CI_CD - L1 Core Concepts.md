@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /devops-cicd/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # Continuous Integration Fundamentals

@@ -4,6 +4,7 @@ title: "Platform Engineering - L1 Core Concepts"
 parent: "Platform Engineering"
 nav_order: 3
 permalink: /platform-engineering/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

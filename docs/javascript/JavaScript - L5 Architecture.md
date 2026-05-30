@@ -4,6 +4,7 @@ title: "JavaScript - L5 Architecture"
 parent: "JavaScript"
 nav_order: 16
 permalink: /javascript/l5-architecture/
+render_with_liquid: false
 ---
 
 # JavaScript Architecture at Scale

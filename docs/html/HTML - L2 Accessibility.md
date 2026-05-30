@@ -4,6 +4,7 @@ title: "HTML - L2 Accessibility"
 parent: "HTML"
 nav_order: 5
 permalink: /html/l2-accessibility/
+render_with_liquid: false
 ---
 
 # ARIA Roles and Attributes

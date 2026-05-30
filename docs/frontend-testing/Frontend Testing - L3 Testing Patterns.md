@@ -4,6 +4,7 @@ title: "Frontend Testing - L3 Testing Patterns"
 parent: "Frontend Testing"
 nav_order: 7
 permalink: /frontend-testing/l3-testing-patterns/
+render_with_liquid: false
 ---
 
 # Testing Patterns (AAA, Given-When-Then)

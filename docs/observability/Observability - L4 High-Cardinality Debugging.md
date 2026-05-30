@@ -4,6 +4,7 @@ title: "Observability - L4 High-Cardinality Debugging"
 parent: "Observability"
 nav_order: 11
 permalink: /observability/l4-high-cardinality-debugging/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

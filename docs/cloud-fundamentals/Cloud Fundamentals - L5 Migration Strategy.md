@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L5 Migration Strategy"
 parent: "Cloud Fundamentals"
 nav_order: 14
 permalink: /cloud-fundamentals/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

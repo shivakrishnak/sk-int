@@ -4,6 +4,7 @@ title: "JavaScript - L4 Security"
 parent: "JavaScript"
 nav_order: 14
 permalink: /javascript/l4-security/
+render_with_liquid: false
 ---
 
 # JavaScript Security (XSS, Prototype Pollution, CSRF)

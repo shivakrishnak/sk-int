@@ -4,6 +4,7 @@ title: "AWS - L2 Messaging"
 parent: "AWS"
 nav_order: 5
 permalink: /aws/l2-messaging/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

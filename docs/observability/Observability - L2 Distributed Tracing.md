@@ -4,6 +4,7 @@ title: "Observability - L2 Distributed Tracing"
 parent: "Observability"
 nav_order: 6
 permalink: /observability/l2-distributed-tracing/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

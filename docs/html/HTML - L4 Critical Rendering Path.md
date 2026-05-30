@@ -4,6 +4,7 @@ title: "HTML - L4 Critical Rendering Path"
 parent: "HTML"
 nav_order: 10
 permalink: /html/l4-critical-rendering-path/
+render_with_liquid: false
 ---
 
 # Critical Rendering Path

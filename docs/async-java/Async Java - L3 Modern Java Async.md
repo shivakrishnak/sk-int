@@ -4,6 +4,7 @@ title: "Async Java - L3 Modern Java Async"
 parent: "Async Java"
 nav_order: 7
 permalink: /async-java/l3-modern-java-async/
+render_with_liquid: false
 ---
 
 # Async Java - L3 Modern Java Async

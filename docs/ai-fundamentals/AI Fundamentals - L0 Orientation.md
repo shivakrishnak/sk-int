@@ -4,6 +4,7 @@ title: "AI Fundamentals - L0 Orientation"
 parent: "AI Fundamentals"
 nav_order: 1
 permalink: /ai-fundamentals/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

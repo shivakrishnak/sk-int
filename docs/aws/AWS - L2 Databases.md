@@ -4,6 +4,7 @@ title: "AWS - L2 Databases"
 parent: "AWS"
 nav_order: 4
 permalink: /aws/l2-databases/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

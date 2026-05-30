@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /java-language/l2-lambdas-and-streams/
+render_with_liquid: false
 ---
 
 # Java Language - L2 Lambdas and Streams

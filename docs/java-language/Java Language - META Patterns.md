@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 20
 permalink: /java-language/meta-patterns/
+render_with_liquid: false
 ---
 
 # Java Language - META Patterns

@@ -5,6 +5,7 @@ parent: "System Design"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /system-design/l5-architecture/
+render_with_liquid: false
 ---
 
 # System Design - L5 Architecture

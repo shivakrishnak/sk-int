@@ -5,6 +5,7 @@ parent: "Quarkus"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /quarkus/l5-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

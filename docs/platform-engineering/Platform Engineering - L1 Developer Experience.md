@@ -4,6 +4,7 @@ title: "Platform Engineering - L1 Developer Experience"
 parent: "Platform Engineering"
 nav_order: 4
 permalink: /platform-engineering/l1-developer-experience/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

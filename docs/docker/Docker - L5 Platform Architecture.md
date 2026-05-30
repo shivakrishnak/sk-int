@@ -5,6 +5,7 @@ parent: "Docker"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /docker/l5-platform-architecture/
+render_with_liquid: false
 ---
 
 # Docker - L5 Platform Architecture

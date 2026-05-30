@@ -4,6 +4,7 @@ title: "Java EE - L5 Strategic Decision"
 parent: "Java EE"
 nav_order: 14
 permalink: /java-ee/l5-strategic-decision/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

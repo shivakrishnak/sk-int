@@ -4,6 +4,7 @@ title: "AI Fundamentals - L4 Production LLM"
 parent: "AI Fundamentals"
 nav_order: 8
 permalink: /ai-fundamentals/l4-production-llm/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "HTML - L3 Security"
 parent: "HTML"
 nav_order: 9
 permalink: /html/l3-security/
+render_with_liquid: false
 ---
 
 # HTML Injection and XSS Prevention

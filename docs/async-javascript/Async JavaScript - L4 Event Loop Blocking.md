@@ -4,6 +4,7 @@ title: "Async JavaScript - L4 Event Loop Blocking"
 parent: "Async JavaScript"
 nav_order: 12
 permalink: /async-javascript/l4-event-loop-blocking/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

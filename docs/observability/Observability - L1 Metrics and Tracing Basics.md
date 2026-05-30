@@ -4,6 +4,7 @@ title: "Observability - L1 Metrics and Tracing Basics"
 parent: "Observability"
 nav_order: 4
 permalink: /observability/l1-metrics-and-tracing-basics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

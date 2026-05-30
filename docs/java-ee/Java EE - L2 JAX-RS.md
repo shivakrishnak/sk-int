@@ -4,6 +4,7 @@ title: "Java EE - L2 JAX-RS"
 parent: "Java EE"
 nav_order: 4
 permalink: /java-ee/l2-jax-rs/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

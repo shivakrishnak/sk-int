@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 23
 permalink: /distributed-systems/meta-patterns/
+render_with_liquid: false
 ---
 
 # Resilience Mental Model

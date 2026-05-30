@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /design-patterns/l1-behavioral/
+render_with_liquid: false
 ---
 
 # Observer Pattern

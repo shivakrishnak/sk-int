@@ -4,6 +4,7 @@ title: "LLM APIs - META Patterns"
 parent: "LLM APIs"
 nav_order: 10
 permalink: /llm-apis/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

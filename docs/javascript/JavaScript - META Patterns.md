@@ -4,6 +4,7 @@ title: "JavaScript - META Patterns"
 parent: "JavaScript"
 nav_order: 18
 permalink: /javascript/meta-patterns/
+render_with_liquid: false
 ---
 
 # Async Mental Models

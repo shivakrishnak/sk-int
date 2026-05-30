@@ -4,6 +4,7 @@ title: "MCP - L2 Advanced Patterns"
 parent: "MCP"
 nav_order: 5
 permalink: /mcp/l2-advanced-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

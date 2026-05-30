@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /spring/l4-context-refresh-internals/
+render_with_liquid: false
 ---
 
 # Spring - L4 Context Refresh Internals

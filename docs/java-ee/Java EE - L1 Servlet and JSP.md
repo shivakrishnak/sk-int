@@ -4,6 +4,7 @@ title: "Java EE - L1 Servlet and JSP"
 parent: "Java EE"
 nav_order: 2
 permalink: /java-ee/l1-servlet-and-jsp/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

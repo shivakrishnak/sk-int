@@ -4,6 +4,7 @@ title: "TypeScript - L5 Migration Strategy"
 parent: "TypeScript"
 nav_order: 11
 permalink: /typescript/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 # Migrating JavaScript to TypeScript at Scale

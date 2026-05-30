@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /java-jvm/l4-gc-diagnostics/
+render_with_liquid: false
 ---
 
 # Java JVM - L4 GC Diagnostics

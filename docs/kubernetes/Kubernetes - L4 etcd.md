@@ -5,6 +5,7 @@ parent: "Kubernetes"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /kubernetes/l4-etcd/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

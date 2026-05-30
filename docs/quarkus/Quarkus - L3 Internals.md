@@ -5,6 +5,7 @@ parent: "Quarkus"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /quarkus/l3-internals/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

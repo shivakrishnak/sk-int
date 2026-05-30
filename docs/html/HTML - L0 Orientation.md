@@ -4,6 +4,7 @@ title: "HTML - L0 Orientation"
 parent: "HTML"
 nav_order: 1
 permalink: /html/l0-orientation/
+render_with_liquid: false
 ---
 
 # HTML Origins and Purpose

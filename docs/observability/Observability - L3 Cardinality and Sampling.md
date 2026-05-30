@@ -4,6 +4,7 @@ title: "Observability - L3 Cardinality and Sampling"
 parent: "Observability"
 nav_order: 8
 permalink: /observability/l3-cardinality-and-sampling/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

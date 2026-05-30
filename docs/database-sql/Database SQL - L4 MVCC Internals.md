@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /database-sql/l4-mvcc-internals/
+render_with_liquid: false
 ---
 
 # MVCC (Multi-Version Concurrency Control) Internals

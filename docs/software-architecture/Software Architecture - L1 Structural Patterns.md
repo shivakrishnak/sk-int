@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /software-architecture/l1-structural-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

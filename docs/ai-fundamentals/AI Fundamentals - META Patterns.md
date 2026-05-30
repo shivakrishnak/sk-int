@@ -4,6 +4,7 @@ title: "AI Fundamentals - META Patterns"
 parent: "AI Fundamentals"
 nav_order: 11
 permalink: /ai-fundamentals/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

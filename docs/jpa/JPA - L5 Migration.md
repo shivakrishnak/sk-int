@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /jpa/l5-migration/
+render_with_liquid: false
 ---
 
 # JPA - L5 Migration

@@ -4,6 +4,7 @@ title: "Node.js - L3 Performance"
 parent: "Node.js"
 nav_order: 7
 permalink: /nodejs/l3-performance/
+render_with_liquid: false
 ---
 
 # Node.js Performance Profiling

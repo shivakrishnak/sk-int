@@ -4,6 +4,7 @@ title: "Observability - L2 Metrics Collection"
 parent: "Observability"
 nav_order: 5
 permalink: /observability/l2-metrics-collection/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

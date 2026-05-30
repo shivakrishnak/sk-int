@@ -4,6 +4,7 @@ title: "RAG - L2 Retrieval Techniques"
 parent: "RAG"
 nav_order: 5
 permalink: /rag/l2-retrieval-techniques/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

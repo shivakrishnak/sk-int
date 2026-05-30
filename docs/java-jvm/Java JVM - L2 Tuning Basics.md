@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /java-jvm/l2-tuning-basics/
+render_with_liquid: false
 ---
 
 # Java JVM - L2 Tuning Basics

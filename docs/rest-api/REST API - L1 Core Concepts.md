@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /rest-api/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # HTTP Methods in REST APIs

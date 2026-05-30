@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /messaging/meta-thinking-patterns/
+render_with_liquid: false
 ---
 
 # Temporal Decoupling Mental Model

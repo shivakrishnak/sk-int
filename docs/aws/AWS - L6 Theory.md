@@ -4,6 +4,7 @@ title: "AWS - L6 Theory"
 parent: "AWS"
 nav_order: 16
 permalink: /aws/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

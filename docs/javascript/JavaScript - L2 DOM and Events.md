@@ -4,6 +4,7 @@ title: "JavaScript - L2 DOM and Events"
 parent: "JavaScript"
 nav_order: 7
 permalink: /javascript/l2-dom-and-events/
+render_with_liquid: false
 ---
 
 # DOM Manipulation and Query API

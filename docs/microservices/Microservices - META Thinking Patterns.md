@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /microservices/meta-thinking-patterns/
+render_with_liquid: false
 ---
 
 # Single Responsibility Principle at Service Level

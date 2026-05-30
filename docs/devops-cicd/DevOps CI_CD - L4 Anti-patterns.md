@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /devops-cicd/l4-anti-patterns/
+render_with_liquid: false
 ---
 
 # CI/CD Anti-patterns and Recovery

@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /microservices/l5-platform-engineering/
+render_with_liquid: false
 ---
 
 # Platform Engineering for Microservices at Enterprise Scale

@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-core/l2-collections/
+render_with_liquid: false
 ---
 
 # Java Core - L2 Collections

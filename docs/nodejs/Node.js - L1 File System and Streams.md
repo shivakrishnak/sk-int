@@ -4,6 +4,7 @@ title: "Node.js - L1 File System and Streams"
 parent: "Node.js"
 nav_order: 3
 permalink: /nodejs/l1-file-system-streams/
+render_with_liquid: false
 ---
 
 # File System API (fs)

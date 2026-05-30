@@ -4,6 +4,7 @@ title: "Frontend Testing - L4 CI Strategy"
 parent: "Frontend Testing"
 nav_order: 10
 permalink: /frontend-testing/l4-ci-strategy/
+render_with_liquid: false
 ---
 
 # Frontend Testing Strategy in CI/CD

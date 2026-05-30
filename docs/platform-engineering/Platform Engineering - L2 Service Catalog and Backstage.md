@@ -4,6 +4,7 @@ title: "Platform Engineering - L2 Service Catalog and Backstage"
 parent: "Platform Engineering"
 nav_order: 5
 permalink: /platform-engineering/l2-service-catalog-and-backstage/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

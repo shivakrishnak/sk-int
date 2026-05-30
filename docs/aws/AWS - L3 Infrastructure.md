@@ -4,6 +4,7 @@ title: "AWS - L3 Infrastructure"
 parent: "AWS"
 nav_order: 9
 permalink: /aws/l3-infrastructure/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

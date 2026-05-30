@@ -4,6 +4,7 @@ title: "Node.js - L4 Event Loop Internals"
 parent: "Node.js"
 nav_order: 9
 permalink: /nodejs/l4-event-loop-internals/
+render_with_liquid: false
 ---
 
 # Event Loop Phases and libuv Internals

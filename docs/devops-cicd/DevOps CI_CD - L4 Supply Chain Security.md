@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /devops-cicd/l4-supply-chain-security/
+render_with_liquid: false
 ---
 
 # Supply Chain Security and SBOM

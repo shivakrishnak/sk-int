@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /database-sql/l2-performance-basics/
+render_with_liquid: false
 ---
 
 # EXPLAIN and Query Execution Plans

@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /kafka/l2-topic-config-and-connect/
+render_with_liquid: false
 ---
 
 # Kafka - L2 Topic Config and Connect

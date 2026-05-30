@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 21
 permalink: /database-sql/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 # Schema Migration Strategy at Scale - Zero-Downtime Deployments

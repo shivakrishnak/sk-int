@@ -4,6 +4,7 @@ title: "AI Fundamentals - L5 AI Strategy"
 parent: "AI Fundamentals"
 nav_order: 10
 permalink: /ai-fundamentals/l5-ai-strategy/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

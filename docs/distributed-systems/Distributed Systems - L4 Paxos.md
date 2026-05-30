@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /distributed-systems/l4-paxos/
+render_with_liquid: false
 ---
 
 # Paxos Consensus Algorithm

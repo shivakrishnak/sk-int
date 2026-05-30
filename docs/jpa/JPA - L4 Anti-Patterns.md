@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /jpa/l4-anti-patterns/
+render_with_liquid: false
 ---
 
 # JPA - L4 Anti-Patterns

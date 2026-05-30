@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L3 Cost Optimization"
 parent: "Cloud Fundamentals"
 nav_order: 9
 permalink: /cloud-fundamentals/l3-cost-optimization/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

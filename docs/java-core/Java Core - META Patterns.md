@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /java-core/meta-patterns/
+render_with_liquid: false
 ---
 
 # Java Core - META Patterns

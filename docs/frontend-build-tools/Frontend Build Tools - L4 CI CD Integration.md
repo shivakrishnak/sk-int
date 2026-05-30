@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L4 CI CD Integration"
 parent: "Frontend Build Tools"
 nav_order: 11
 permalink: /frontend-build-tools/l4-ci-cd-integration/
+render_with_liquid: false
 ---
 
 # Frontend Build Pipeline in CI/CD

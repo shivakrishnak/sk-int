@@ -4,6 +4,7 @@ title: "AI Agents - L6 Theory"
 parent: "AI Agents"
 nav_order: 11
 permalink: /ai-agents/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "JavaScript - L2 Async Await"
 parent: "JavaScript"
 nav_order: 6
 permalink: /javascript/l2-async-await/
+render_with_liquid: false
 ---
 
 # Async/Await Syntax and Error Handling

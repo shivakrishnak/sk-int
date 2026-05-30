@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /distributed-systems/l3-consistency-patterns/
+render_with_liquid: false
 ---
 
 # Eventual Consistency and Convergence

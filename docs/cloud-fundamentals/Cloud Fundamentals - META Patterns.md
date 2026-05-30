@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - META Patterns"
 parent: "Cloud Fundamentals"
 nav_order: 15
 permalink: /cloud-fundamentals/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

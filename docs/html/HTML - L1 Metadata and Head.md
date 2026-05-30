@@ -4,6 +4,7 @@ title: "HTML - L1 Metadata and Head"
 parent: "HTML"
 nav_order: 4
 permalink: /html/l1-metadata-and-head/
+render_with_liquid: false
 ---
 
 # HTML Head and Metadata

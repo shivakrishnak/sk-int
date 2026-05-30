@@ -4,6 +4,7 @@ title: "Observability - L3 OpenTelemetry"
 parent: "Observability"
 nav_order: 9
 permalink: /observability/l3-opentelemetry/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

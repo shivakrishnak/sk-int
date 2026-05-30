@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L0 Orientation"
 parent: "Cloud Fundamentals"
 nav_order: 1
 permalink: /cloud-fundamentals/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

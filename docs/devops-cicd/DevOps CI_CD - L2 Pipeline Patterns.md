@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /devops-cicd/l2-pipeline-patterns/
+render_with_liquid: false
 ---
 
 # Pipeline as Code

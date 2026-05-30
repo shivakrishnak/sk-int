@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-jvm/l2-heap-internals/
+render_with_liquid: false
 ---
 
 # Java JVM - L2 Heap Internals

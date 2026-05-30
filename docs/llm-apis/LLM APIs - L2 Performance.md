@@ -4,6 +4,7 @@ title: "LLM APIs - L2 Performance"
 parent: "LLM APIs"
 nav_order: 5
 permalink: /llm-apis/l2-performance/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

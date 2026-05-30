@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /java-performance/meta-patterns/
+render_with_liquid: false
 ---
 
 # Java Performance - META Patterns

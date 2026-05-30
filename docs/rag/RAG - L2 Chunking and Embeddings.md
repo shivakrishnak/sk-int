@@ -4,6 +4,7 @@ title: "RAG - L2 Chunking and Embeddings"
 parent: "RAG"
 nav_order: 4
 permalink: /rag/l2-chunking-and-embeddings/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

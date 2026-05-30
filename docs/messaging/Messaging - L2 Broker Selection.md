@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /messaging/l2-broker-selection/
+render_with_liquid: false
 ---
 
 # RabbitMQ vs Kafka - Choosing a Broker

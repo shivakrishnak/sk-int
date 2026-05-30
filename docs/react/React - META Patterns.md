@@ -4,6 +4,7 @@ title: "React - META Patterns"
 parent: "React"
 nav_order: 16
 permalink: /react/meta-patterns/
+render_with_liquid: false
 ---
 
 # Component Composition Mental Model

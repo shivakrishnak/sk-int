@@ -4,6 +4,7 @@ title: "Java EE - L0 Orientation"
 parent: "Java EE"
 nav_order: 1
 permalink: /java-ee/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

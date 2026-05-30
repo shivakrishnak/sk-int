@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /rest-api/l4-oauth2-and-jwt/
+render_with_liquid: false
 ---
 
 # OAuth2 and JWT Authentication Internals

@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /java-language/l3-functional-programming/
+render_with_liquid: false
 ---
 
 # Java Language - L3 Functional Programming

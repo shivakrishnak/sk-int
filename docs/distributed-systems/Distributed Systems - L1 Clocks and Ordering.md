@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /distributed-systems/l1-clocks-and-ordering/
+render_with_liquid: false
 ---
 
 # Logical Clocks and Lamport Timestamps

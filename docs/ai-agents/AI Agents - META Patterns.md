@@ -4,6 +4,7 @@ title: "AI Agents - META Patterns"
 parent: "AI Agents"
 nav_order: 12
 permalink: /ai-agents/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "CSS - L3 Specificity and Selectors"
 parent: "CSS"
 nav_order: 10
 permalink: /css/l3-specificity-and-selectors/
+render_with_liquid: false
 ---
 
 # CSS Specificity and Cascade Control

@@ -5,6 +5,7 @@ parent: "Kubernetes"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /kubernetes/l4-hpa-autoscaling/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

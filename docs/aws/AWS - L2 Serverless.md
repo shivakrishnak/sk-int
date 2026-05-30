@@ -4,6 +4,7 @@ title: "AWS - L2 Serverless"
 parent: "AWS"
 nav_order: 7
 permalink: /aws/l2-serverless/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

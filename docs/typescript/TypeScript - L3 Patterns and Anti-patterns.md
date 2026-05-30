@@ -4,6 +4,7 @@ title: "TypeScript - L3 Patterns and Anti-patterns"
 parent: "TypeScript"
 nav_order: 8
 permalink: /typescript/l3-patterns-and-anti-patterns/
+render_with_liquid: false
 ---
 
 # TypeScript Design Patterns

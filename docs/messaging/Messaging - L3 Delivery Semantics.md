@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /messaging/l3-delivery-semantics/
+render_with_liquid: false
 ---
 
 # Exactly-Once Delivery Semantics

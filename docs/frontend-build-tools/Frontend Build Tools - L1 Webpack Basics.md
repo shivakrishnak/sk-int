@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L1 Webpack Basics"
 parent: "Frontend Build Tools"
 nav_order: 3
 permalink: /frontend-build-tools/l1-webpack-basics/
+render_with_liquid: false
 ---
 
 # Webpack Entry, Output, and Loaders

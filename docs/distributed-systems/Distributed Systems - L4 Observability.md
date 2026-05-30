@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /distributed-systems/l4-observability/
+render_with_liquid: false
 ---
 
 # Distributed Tracing and Observability

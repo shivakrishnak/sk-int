@@ -4,6 +4,7 @@ title: "Java EE - L2 EJB"
 parent: "Java EE"
 nav_order: 5
 permalink: /java-ee/l2-ejb/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

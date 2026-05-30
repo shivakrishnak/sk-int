@@ -4,6 +4,7 @@ title: "JavaScript - L2 Async Programming"
 parent: "JavaScript"
 nav_order: 5
 permalink: /javascript/l2-async-programming/
+render_with_liquid: false
 ---
 
 # Callbacks and Callback Hell

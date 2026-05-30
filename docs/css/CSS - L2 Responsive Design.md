@@ -4,6 +4,7 @@ title: "CSS - L2 Responsive Design"
 parent: "CSS"
 nav_order: 6
 permalink: /css/l2-responsive-design/
+render_with_liquid: false
 ---
 
 # CSS Media Queries

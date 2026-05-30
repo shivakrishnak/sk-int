@@ -4,6 +4,7 @@ title: "CSS - L1 Selectors and Properties"
 parent: "CSS"
 nav_order: 2
 permalink: /css/l1-selectors-and-properties/
+render_with_liquid: false
 ---
 
 # CSS Selectors

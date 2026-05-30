@@ -4,6 +4,7 @@ title: "JavaScript - L3 Memory and WeakRefs"
 parent: "JavaScript"
 nav_order: 10
 permalink: /javascript/l3-memory-and-weakrefs/
+render_with_liquid: false
 ---
 
 # JavaScript Memory Model and Garbage Collection

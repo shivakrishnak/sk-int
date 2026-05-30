@@ -4,6 +4,7 @@ title: "AI Fundamentals - L2 Prompting Techniques"
 parent: "AI Fundamentals"
 nav_order: 4
 permalink: /ai-fundamentals/l2-prompting-techniques/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

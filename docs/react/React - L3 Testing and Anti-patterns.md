@@ -4,6 +4,7 @@ title: "React - L3 Testing and Anti-patterns"
 parent: "React"
 nav_order: 10
 permalink: /react/l3-testing-and-anti-patterns/
+render_with_liquid: false
 ---
 
 # React Testing Library Patterns

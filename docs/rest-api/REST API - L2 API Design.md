@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /rest-api/l2-api-design/
+render_with_liquid: false
 ---
 
 # API Versioning Strategies

@@ -4,6 +4,7 @@ title: "MCP - META Patterns"
 parent: "MCP"
 nav_order: 9
 permalink: /mcp/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

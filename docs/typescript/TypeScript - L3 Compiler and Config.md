@@ -4,6 +4,7 @@ title: "TypeScript - L3 Compiler and Config"
 parent: "TypeScript"
 nav_order: 7
 permalink: /typescript/l3-compiler-and-config/
+render_with_liquid: false
 ---
 
 # TypeScript Compiler and tsconfig Options

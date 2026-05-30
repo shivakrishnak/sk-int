@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L3 Advanced Config"
 parent: "Frontend Build Tools"
 nav_order: 7
 permalink: /frontend-build-tools/l3-advanced-config/
+render_with_liquid: false
 ---
 
 # Advanced Webpack Configuration Patterns

@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /java-performance/l3-memory/
+render_with_liquid: false
 ---
 
 # Java Performance - L3 Memory

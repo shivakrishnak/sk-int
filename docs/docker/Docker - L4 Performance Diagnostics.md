@@ -5,6 +5,7 @@ parent: "Docker"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /docker/l4-performance-diagnostics/
+render_with_liquid: false
 ---
 
 # Docker - L4 Performance Diagnostics

@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /database-sql/l4-index-internals/
+render_with_liquid: false
 ---
 
 # B-Tree Index Internals - Page Splits, Fill Factor, Bloat

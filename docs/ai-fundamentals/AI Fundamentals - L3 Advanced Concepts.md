@@ -4,6 +4,7 @@ title: "AI Fundamentals - L3 Advanced Concepts"
 parent: "AI Fundamentals"
 nav_order: 6
 permalink: /ai-fundamentals/l3-advanced-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /java-core/l5-api-design/
+render_with_liquid: false
 ---
 
 # Java Core - L5 API Design

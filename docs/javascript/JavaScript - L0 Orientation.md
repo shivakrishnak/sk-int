@@ -4,6 +4,7 @@ title: "JavaScript - L0 Orientation"
 parent: "JavaScript"
 nav_order: 1
 permalink: /javascript/l0-orientation/
+render_with_liquid: false
 ---
 
 # JavaScript Origins and Purpose

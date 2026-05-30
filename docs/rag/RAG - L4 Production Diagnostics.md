@@ -4,6 +4,7 @@ title: "RAG - L4 Production Diagnostics"
 parent: "RAG"
 nav_order: 8
 permalink: /rag/l4-production-diagnostics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

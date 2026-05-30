@@ -4,6 +4,7 @@ title: "Observability - L4 Observability Security"
 parent: "Observability"
 nav_order: 16
 permalink: /observability/l4-observability-security/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

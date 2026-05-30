@@ -4,6 +4,7 @@ title: "TypeScript - META Patterns"
 parent: "TypeScript"
 nav_order: 13
 permalink: /typescript/meta-patterns/
+render_with_liquid: false
 ---
 
 # TypeScript Decision Framework

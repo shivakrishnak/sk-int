@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /jpa/l1-entity-mapping/
+render_with_liquid: false
 ---
 
 # JPA - L1 Entity Mapping

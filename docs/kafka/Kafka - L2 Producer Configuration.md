@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /kafka/l2-producer-configuration/
+render_with_liquid: false
 ---
 
 # Kafka - L2 Producer Configuration

@@ -4,6 +4,7 @@ title: "JavaScript - L1 Types and Variables"
 parent: "JavaScript"
 nav_order: 2
 permalink: /javascript/l1-types-and-variables/
+render_with_liquid: false
 ---
 
 # JavaScript Data Types

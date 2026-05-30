@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 23
 permalink: /database-sql/l6-theory/
+render_with_liquid: false
 ---
 
 # Relational Algebra and Codd's 12 Rules

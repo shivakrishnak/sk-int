@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /design-patterns/l4-dynamic-proxy/
+render_with_liquid: false
 ---
 
 # Dynamic Proxy and AOP

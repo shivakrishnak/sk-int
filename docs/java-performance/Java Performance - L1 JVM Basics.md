@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-performance/l1-jvm-basics/
+render_with_liquid: false
 ---
 
 # Java Performance - L1 JVM Basics

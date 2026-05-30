@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /java-language/l3-modern-language-features/
+render_with_liquid: false
 ---
 
 # Java Language - L3 Modern Language Features

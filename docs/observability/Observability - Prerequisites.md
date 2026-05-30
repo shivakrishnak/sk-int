@@ -4,6 +4,7 @@ title: "Observability - Prerequisites"
 parent: "Observability"
 nav_order: 1
 permalink: /observability/prerequisites/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

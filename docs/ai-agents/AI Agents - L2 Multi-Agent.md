@@ -4,6 +4,7 @@ title: "AI Agents - L2 Multi-Agent"
 parent: "AI Agents"
 nav_order: 5
 permalink: /ai-agents/l2-multi-agent/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /design-patterns/l6-theory/
+render_with_liquid: false
 ---
 
 # GoF Pattern Origins and Theory

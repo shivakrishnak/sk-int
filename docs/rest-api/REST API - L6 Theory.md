@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /rest-api/l6-theory/
+render_with_liquid: false
 ---
 
 # Roy Fielding REST Architectural Style

@@ -4,6 +4,7 @@ title: "Frontend Testing - L6 Theory"
 parent: "Frontend Testing"
 nav_order: 12
 permalink: /frontend-testing/l6-theory/
+render_with_liquid: false
 ---
 
 # Test Confidence vs Coverage Trade-off

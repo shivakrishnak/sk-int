@@ -4,6 +4,7 @@ title: "Async JavaScript - L5 Reactive vs Imperative"
 parent: "Async JavaScript"
 nav_order: 15
 permalink: /async-javascript/l5-reactive-vs-imperative/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

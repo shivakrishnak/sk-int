@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /devops-cicd/l4-pipeline-performance/
+render_with_liquid: false
 ---
 
 # Pipeline Performance and Parallelization

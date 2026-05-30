@@ -4,6 +4,7 @@ title: "React - L3 Performance"
 parent: "React"
 nav_order: 8
 permalink: /react/l3-performance/
+render_with_liquid: false
 ---
 
 # React Performance Optimization Techniques

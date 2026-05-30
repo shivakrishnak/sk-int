@@ -4,6 +4,7 @@ title: "Platform Engineering - L3 Platform Design Decisions"
 parent: "Platform Engineering"
 nav_order: 9
 permalink: /platform-engineering/l3-platform-design-decisions/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L3 Platform Design Decisions

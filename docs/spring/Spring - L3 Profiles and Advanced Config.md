@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /spring/l3-profiles-and-advanced-config/
+render_with_liquid: false
 ---
 
 # Spring - L3 Profiles and Advanced Config

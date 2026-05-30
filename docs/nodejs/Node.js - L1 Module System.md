@@ -4,6 +4,7 @@ title: "Node.js - L1 Module System"
 parent: "Node.js"
 nav_order: 5
 permalink: /nodejs/l1-module-system/
+render_with_liquid: false
 ---
 
 # CommonJS Modules

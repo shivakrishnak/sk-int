@@ -4,6 +4,7 @@ title: "React - L2 Component Patterns"
 parent: "React"
 nav_order: 6
 permalink: /react/l2-component-patterns/
+render_with_liquid: false
 ---
 
 # Higher-Order Components

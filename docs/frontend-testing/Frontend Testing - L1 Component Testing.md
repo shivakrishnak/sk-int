@@ -4,6 +4,7 @@ title: "Frontend Testing - L1 Component Testing"
 parent: "Frontend Testing"
 nav_order: 3
 permalink: /frontend-testing/l1-component-testing/
+render_with_liquid: false
 ---
 
 # React Testing Library Philosophy

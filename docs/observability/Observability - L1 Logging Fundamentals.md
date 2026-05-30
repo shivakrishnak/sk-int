@@ -4,6 +4,7 @@ title: "Observability - L1 Logging Fundamentals"
 parent: "Observability"
 nav_order: 3
 permalink: /observability/l1-logging-fundamentals/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

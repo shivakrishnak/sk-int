@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /software-architecture/l3-anti-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L2 Optimization"
 parent: "Frontend Build Tools"
 nav_order: 5
 permalink: /frontend-build-tools/l2-optimization/
+render_with_liquid: false
 ---
 
 # Code Splitting and Lazy Loading

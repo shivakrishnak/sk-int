@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /java-core/l4-classloader/
+render_with_liquid: false
 ---
 
 # Java Core - L4 ClassLoader

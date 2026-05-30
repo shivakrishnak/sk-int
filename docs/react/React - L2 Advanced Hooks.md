@@ -4,6 +4,7 @@ title: "React - L2 Advanced Hooks"
 parent: "React"
 nav_order: 4
 permalink: /react/l2-advanced-hooks/
+render_with_liquid: false
 ---
 
 # useMemo and useCallback Optimization

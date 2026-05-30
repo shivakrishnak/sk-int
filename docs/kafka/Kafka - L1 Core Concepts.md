@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /kafka/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # Kafka - L1 Core Concepts

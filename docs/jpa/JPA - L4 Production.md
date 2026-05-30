@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /jpa/l4-production/
+render_with_liquid: false
 ---
 
 # JPA - L4 Production

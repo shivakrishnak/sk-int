@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L3 Security"
 parent: "Frontend Build Tools"
 nav_order: 9
 permalink: /frontend-build-tools/l3-security/
+render_with_liquid: false
 ---
 
 # Supply Chain Security (npm audit, lockfiles, provenance)

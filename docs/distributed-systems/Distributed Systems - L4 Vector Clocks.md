@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /distributed-systems/l4-vector-clocks/
+render_with_liquid: false
 ---
 
 # Vector Clocks and Causal Consistency

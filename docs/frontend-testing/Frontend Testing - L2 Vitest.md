@@ -4,6 +4,7 @@ title: "Frontend Testing - L2 Vitest"
 parent: "Frontend Testing"
 nav_order: 6
 permalink: /frontend-testing/l2-vitest/
+render_with_liquid: false
 ---
 
 # Vitest and Vite-native Testing

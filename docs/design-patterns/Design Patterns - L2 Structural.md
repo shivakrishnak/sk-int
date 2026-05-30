@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /design-patterns/l2-structural/
+render_with_liquid: false
 ---
 
 # Proxy Pattern

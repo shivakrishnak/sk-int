@@ -5,6 +5,7 @@ parent: "Kubernetes"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /kubernetes/l3-observability/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

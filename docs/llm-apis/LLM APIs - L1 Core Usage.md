@@ -4,6 +4,7 @@ title: "LLM APIs - L1 Core Usage"
 parent: "LLM APIs"
 nav_order: 2
 permalink: /llm-apis/l1-core-usage/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

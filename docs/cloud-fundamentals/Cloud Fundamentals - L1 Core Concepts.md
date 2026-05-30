@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L1 Core Concepts"
 parent: "Cloud Fundamentals"
 nav_order: 2
 permalink: /cloud-fundamentals/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

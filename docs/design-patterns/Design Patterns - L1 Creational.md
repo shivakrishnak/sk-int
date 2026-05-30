@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /design-patterns/l1-creational/
+render_with_liquid: false
 ---
 
 # Singleton Pattern

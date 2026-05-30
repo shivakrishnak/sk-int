@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /database-sql/l4-wal-durability/
+render_with_liquid: false
 ---
 
 # Write-Ahead Log (WAL) - Crash Recovery Internals

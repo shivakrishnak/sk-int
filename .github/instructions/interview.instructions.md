@@ -197,26 +197,31 @@ Full rules for each section are in the Condensed Generation Reference below.
 
 ## Jekyll / Liquid Safety
 
-**Rule:** `render_with_liquid: false` is set globally in `_config.yml`
-via the `defaults` key. This prevents Jekyll from parsing `{{ }}` and
-`{% %}` syntax in all docs page content as Liquid templates.
+**Rule:** Every content file frontmatter MUST contain
+`render_with_liquid: false`. This is belt-and-suspenders over the global
+`_config.yml` default. The global default alone is unreliable across
+Jekyll versions when `Gemfile.lock` is not committed to the repo.
+
+**Mandatory frontmatter field - REQUIRED in every content file:**
+```yaml
+render_with_liquid: false
+```
+Place it as the last field before the closing `---`.
 
 **What this means for content generation:**
 - Code examples containing `{{ }}` or `{% %}` do NOT need `{% raw %}`
   / `{% endraw %}` wrappers. Examples: GitHub Actions `${{ secrets.X }}`,
   Docker `--format '{{.State.Pid}}'`, Prometheus `{{ $value | humanize }}`,
-  JSX `style={{ color: 'red' }}`, Angular `{{ count }}`.
-- Do NOT add `{% raw %}` / `{% endraw %}` tags - they are unnecessary
-  and add noise to the Markdown source.
-- If a new code example uses `{{ }}` or `{%  %}` syntax, write it as-is.
-  The `_config.yml` setting handles the escaping at the build level.
+  JSX `style={{ color: 'red' }}`, Angular `{{ count }}`,
+  CSS custom properties `style={{ '--progress': \`${value}%\` }}`.
+- Do NOT add `{% raw %}` / `{% endraw %}` tags - they add noise.
+- Write `{{ }}` and `{% %}` code as-is. The frontmatter flag handles it.
 
-**If the build breaks with a Liquid error in a docs file:**
-- Root cause: the `render_with_liquid: false` default may have been
-  accidentally removed from `_config.yml`.
-- Fix: verify `_config.yml` contains the `defaults:` block with
-  `render_with_liquid: false` under `scope.path: ""`.
-- Do NOT fix by adding `{% raw %}` to individual files.
+**If a build breaks with a Liquid Exception in a docs file:**
+- Check that the failing file has `render_with_liquid: false` in its
+  frontmatter. Add it if missing.
+- Do NOT fix by adding `{% raw %}` to individual code blocks.
+- Run the frontmatter verification script to find other affected files.
 
 ## Formatting Rules
 
@@ -410,8 +415,15 @@ title: "{Topic} - {Subtopic}" # e.g. "Java Language - L0 Orientation"
 parent: "{Topic Name}"        # must match topic index title exactly
 nav_order: N                  # position within topic folder (1-based)
 permalink: /{topic-slug}/{file-slug}/ # kebab-case slug
+render_with_liquid: false     # MANDATORY - prevents Liquid parsing of code
 ---
 ```
+
+> `render_with_liquid: false` is **MANDATORY** in every content file.
+> The global `_config.yml` default alone is not reliable when `Gemfile.lock`
+> is not committed (CI may use a different Jekyll version). Per-file
+> frontmatter is the only guaranteed protection for `{{ }}` and `{% %}` in
+> code examples.
 
 ### Frontmatter Rules (Non-Negotiable)
 

@@ -4,6 +4,7 @@ title: "Node.js - L1 Core Modules"
 parent: "Node.js"
 nav_order: 4
 permalink: /nodejs/l1-core-modules/
+render_with_liquid: false
 ---
 
 # Node.js File System Module

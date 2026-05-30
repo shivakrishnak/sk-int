@@ -5,6 +5,7 @@ parent: "Java Concurrency"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /java-concurrency/l2-concurrent-collections/
+render_with_liquid: false
 ---
 
 # Java Concurrency - L2 Concurrent Collections

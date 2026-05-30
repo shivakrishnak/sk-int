@@ -4,6 +4,7 @@ title: "React - L4 Concurrent Features"
 parent: "React"
 nav_order: 12
 permalink: /react/l4-concurrent-features/
+render_with_liquid: false
 ---
 
 # React Server Components and Suspense

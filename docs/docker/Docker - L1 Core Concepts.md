@@ -5,6 +5,7 @@ parent: "Docker"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /docker/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # Docker - L1 Core Concepts

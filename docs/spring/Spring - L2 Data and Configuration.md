@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /spring/l2-data-and-configuration/
+render_with_liquid: false
 ---
 
 # Spring - L2 Data and Configuration

@@ -4,6 +4,7 @@ title: "RAG - L5 Architecture"
 parent: "RAG"
 nav_order: 10
 permalink: /rag/l5-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

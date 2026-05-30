@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 22
 permalink: /distributed-systems/l6-theory/
+render_with_liquid: false
 ---
 
 # FLP Impossibility Theorem

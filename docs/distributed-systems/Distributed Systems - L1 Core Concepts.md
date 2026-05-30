@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /distributed-systems/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # CAP Theorem

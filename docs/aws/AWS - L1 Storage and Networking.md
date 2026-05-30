@@ -4,6 +4,7 @@ title: "AWS - L1 Storage and Networking"
 parent: "AWS"
 nav_order: 3
 permalink: /aws/l1-storage-and-networking/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

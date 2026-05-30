@@ -4,6 +4,7 @@ title: "Observability - META Patterns"
 parent: "Observability"
 nav_order: 20
 permalink: /observability/meta-patterns/
+render_with_liquid: false
 ---
 
 # Observability - META Patterns

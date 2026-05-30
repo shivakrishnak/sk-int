@@ -4,6 +4,7 @@ title: "TypeScript - L0 Orientation"
 parent: "TypeScript"
 nav_order: 1
 permalink: /typescript/l0-orientation/
+render_with_liquid: false
 ---
 
 # Why TypeScript Exists

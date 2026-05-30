@@ -4,6 +4,7 @@ title: "Frontend Testing - L5 Architecture"
 parent: "Frontend Testing"
 nav_order: 11
 permalink: /frontend-testing/l5-architecture/
+render_with_liquid: false
 ---
 
 # Frontend Quality Architecture and Test Platform Design

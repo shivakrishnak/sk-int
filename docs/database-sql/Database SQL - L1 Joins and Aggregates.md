@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /database-sql/l1-joins-aggregates/
+render_with_liquid: false
 ---
 
 # INNER JOIN - Combining Tables on Matching Rows

@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L1 npm Basics"
 parent: "Frontend Build Tools"
 nav_order: 2
 permalink: /frontend-build-tools/l1-npm-basics/
+render_with_liquid: false
 ---
 
 # npm Package Management

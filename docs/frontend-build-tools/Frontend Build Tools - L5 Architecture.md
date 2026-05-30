@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L5 Architecture"
 parent: "Frontend Build Tools"
 nav_order: 12
 permalink: /frontend-build-tools/l5-architecture/
+render_with_liquid: false
 ---
 
 # Module Federation and Micro-frontend Build Architecture

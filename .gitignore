@@ -4,6 +4,13 @@ _site/
 .jekyll-metadata
 Gemfile.lock
 
+# --- Local build environment (Windows / RubyInstaller) ---
+.bundle/
+cacert.pem
+build.log
+bundle_install.log
+_tmp_kw.md
+
 # --- MkDocs (legacy output) ---
 site/
 

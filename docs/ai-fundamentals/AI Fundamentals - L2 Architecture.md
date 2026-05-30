@@ -4,6 +4,7 @@ title: "AI Fundamentals - L2 Architecture"
 parent: "AI Fundamentals"
 nav_order: 5
 permalink: /ai-fundamentals/l2-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

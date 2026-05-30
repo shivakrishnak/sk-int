@@ -4,6 +4,7 @@ title: "RAG - L6 Theory"
 parent: "RAG"
 nav_order: 11
 permalink: /rag/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

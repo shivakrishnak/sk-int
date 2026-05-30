@@ -4,6 +4,7 @@ title: "CSS - L1 Layout Basics"
 parent: "CSS"
 nav_order: 3
 permalink: /css/l1-layout-basics/
+render_with_liquid: false
 ---
 
 # CSS Display Property

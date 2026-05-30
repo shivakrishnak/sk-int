@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /rest-api/l2-security-and-cors/
+render_with_liquid: false
 ---
 
 # Authentication in REST APIs

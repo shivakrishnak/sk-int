@@ -4,6 +4,7 @@ title: "Frontend Testing - L2 Mocking"
 parent: "Frontend Testing"
 nav_order: 4
 permalink: /frontend-testing/l2-mocking/
+render_with_liquid: false
 ---
 
 # Mocking with Jest (jest.mock, spies, stubs)

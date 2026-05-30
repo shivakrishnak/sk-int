@@ -4,6 +4,7 @@ title: "Behavioral - L2 Conflict Resolution"
 parent: "Behavioral Interview Skills"
 nav_order: 6
 permalink: /behavioral/l2-conflict-resolution/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

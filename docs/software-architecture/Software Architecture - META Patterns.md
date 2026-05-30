@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 18
 permalink: /software-architecture/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

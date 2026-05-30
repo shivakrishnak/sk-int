@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /design-patterns/l2-creational/
+render_with_liquid: false
 ---
 
 # Abstract Factory Pattern

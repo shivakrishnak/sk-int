@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /devops-cicd/l3-gitops-release-management/
+render_with_liquid: false
 ---
 
 # GitOps

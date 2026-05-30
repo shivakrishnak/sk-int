@@ -5,6 +5,7 @@ parent: "SRE"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /sre/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 1
 permalink: /microservices/l0-orientation/
+render_with_liquid: false
 ---
 
 # What Are Microservices and Why They Emerged

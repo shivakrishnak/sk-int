@@ -4,6 +4,7 @@ title: "Platform Engineering - L4 Platform SLOs"
 parent: "Platform Engineering"
 nav_order: 12
 permalink: /platform-engineering/l4-platform-slos/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L4 Platform SLOs

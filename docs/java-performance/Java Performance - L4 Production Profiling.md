@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /java-performance/l4-production-profiling/
+render_with_liquid: false
 ---
 
 # Java Performance - L4 Production Profiling

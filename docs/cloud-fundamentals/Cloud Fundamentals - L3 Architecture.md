@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L3 Architecture"
 parent: "Cloud Fundamentals"
 nav_order: 7
 permalink: /cloud-fundamentals/l3-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

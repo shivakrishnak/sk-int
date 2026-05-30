@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /rest-api/l3-performance/
+render_with_liquid: false
 ---
 
 # HTTP Caching for REST APIs

@@ -5,6 +5,7 @@ parent: "REST API"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /rest-api/meta-thinking-patterns/
+render_with_liquid: false
 ---
 
 # Resource-Oriented Thinking Mental Model

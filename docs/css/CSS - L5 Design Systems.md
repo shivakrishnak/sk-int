@@ -4,6 +4,7 @@ title: "CSS - L5 Design Systems"
 parent: "CSS"
 nav_order: 13
 permalink: /css/l5-design-systems/
+render_with_liquid: false
 ---
 
 # CSS Design Token Architecture at Scale

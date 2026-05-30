@@ -4,6 +4,7 @@ title: "JavaScript - L4 Event Loop"
 parent: "JavaScript"
 nav_order: 12
 permalink: /javascript/l4-event-loop/
+render_with_liquid: false
 ---
 
 # JavaScript Event Loop and Microtask Queue

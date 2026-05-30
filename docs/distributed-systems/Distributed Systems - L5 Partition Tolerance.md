@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 19
 permalink: /distributed-systems/l5-partition-tolerance/
+render_with_liquid: false
 ---
 
 # Designing for Network Partition Tolerance

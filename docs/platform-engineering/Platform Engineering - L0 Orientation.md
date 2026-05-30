@@ -4,6 +4,7 @@ title: "Platform Engineering - L0 Orientation"
 parent: "Platform Engineering"
 nav_order: 2
 permalink: /platform-engineering/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

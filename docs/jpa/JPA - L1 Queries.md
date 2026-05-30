@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /jpa/l1-queries/
+render_with_liquid: false
 ---
 
 # JPA - L1 Queries

@@ -4,6 +4,7 @@ title: "Platform Engineering - L2 GitOps and Automation"
 parent: "Platform Engineering"
 nav_order: 6
 permalink: /platform-engineering/l2-gitops-and-automation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

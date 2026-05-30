@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L3 Bundle Analysis"
 parent: "Frontend Build Tools"
 nav_order: 8
 permalink: /frontend-build-tools/l3-bundle-analysis/
+render_with_liquid: false
 ---
 
 # Bundle Analysis and Size Optimization

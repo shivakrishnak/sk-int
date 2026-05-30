@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /distributed-systems/l2-coordination-basics/
+render_with_liquid: false
 ---
 
 # Leader Election

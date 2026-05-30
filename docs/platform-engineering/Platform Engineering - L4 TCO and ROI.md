@@ -4,6 +4,7 @@ title: "Platform Engineering - L4 TCO and ROI"
 parent: "Platform Engineering"
 nav_order: 14
 permalink: /platform-engineering/l4-tco-and-roi/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L4 TCO and ROI

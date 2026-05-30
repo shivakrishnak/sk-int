@@ -5,6 +5,7 @@ parent: "Micronaut"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /micronaut/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

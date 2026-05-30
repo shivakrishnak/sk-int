@@ -4,6 +4,7 @@ title: "TypeScript - L2 Utility Types"
 parent: "TypeScript"
 nav_order: 5
 permalink: /typescript/l2-utility-types/
+render_with_liquid: false
 ---
 
 # Built-in Utility Types

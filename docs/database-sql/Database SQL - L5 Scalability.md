@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 20
 permalink: /database-sql/l5-scalability/
+render_with_liquid: false
 ---
 
 # Database Scalability - Read Replicas, Sharding, and Partitioning

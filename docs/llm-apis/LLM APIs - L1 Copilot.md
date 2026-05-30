@@ -4,6 +4,7 @@ title: "LLM APIs - L1 Copilot"
 parent: "LLM APIs"
 nav_order: 3
 permalink: /llm-apis/l1-copilot/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

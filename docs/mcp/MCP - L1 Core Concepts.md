@@ -4,6 +4,7 @@ title: "MCP - L1 Core Concepts"
 parent: "MCP"
 nav_order: 2
 permalink: /mcp/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

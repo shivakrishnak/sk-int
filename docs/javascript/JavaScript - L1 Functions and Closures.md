@@ -4,6 +4,7 @@ title: "JavaScript - L1 Functions and Closures"
 parent: "JavaScript"
 nav_order: 3
 permalink: /javascript/l1-functions-and-closures/
+render_with_liquid: false
 ---
 
 # Functions and Arrow Functions

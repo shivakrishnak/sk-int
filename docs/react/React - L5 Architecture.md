@@ -4,6 +4,7 @@ title: "React - L5 Architecture"
 parent: "React"
 nav_order: 14
 permalink: /react/l5-architecture/
+render_with_liquid: false
 ---
 
 # React Architecture at Scale and Micro-frontends

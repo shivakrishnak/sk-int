@@ -4,6 +4,7 @@ title: "Node.js - L6 Theory"
 parent: "Node.js"
 nav_order: 13
 permalink: /nodejs/l6-theory/
+render_with_liquid: false
 ---
 
 # V8 Engine Internals

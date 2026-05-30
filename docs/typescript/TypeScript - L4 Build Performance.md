@@ -4,6 +4,7 @@ title: "TypeScript - L4 Build Performance"
 parent: "TypeScript"
 nav_order: 10
 permalink: /typescript/l4-build-performance/
+render_with_liquid: false
 ---
 
 # TypeScript Build Performance at Scale

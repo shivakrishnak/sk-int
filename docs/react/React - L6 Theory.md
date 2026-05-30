@@ -4,6 +4,7 @@ title: "React - L6 Theory"
 parent: "React"
 nav_order: 15
 permalink: /react/l6-theory/
+render_with_liquid: false
 ---
 
 # Algebraic Effects and React Concurrency Model

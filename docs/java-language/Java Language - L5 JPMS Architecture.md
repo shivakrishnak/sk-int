@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 18
 permalink: /java-language/l5-jpms-architecture/
+render_with_liquid: false
 ---
 
 # Java Language - L5 JPMS Architecture

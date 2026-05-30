@@ -4,6 +4,7 @@ title: "Async Java - L5 Reactive Architecture"
 parent: "Async Java"
 nav_order: 14
 permalink: /async-java/l5-reactive-architecture/
+render_with_liquid: false
 ---
 
 # Async Java - L5 Reactive Architecture

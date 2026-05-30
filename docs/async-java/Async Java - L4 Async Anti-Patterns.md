@@ -4,6 +4,7 @@ title: "Async Java - L4 Async Anti-Patterns"
 parent: "Async Java"
 nav_order: 13
 permalink: /async-java/l4-async-anti-patterns/
+render_with_liquid: false
 ---
 
 # Async Java - L4 Async Anti-Patterns

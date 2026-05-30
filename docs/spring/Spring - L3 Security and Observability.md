@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /spring/l3-security-and-observability/
+render_with_liquid: false
 ---
 
 # Spring - L3 Security and Observability

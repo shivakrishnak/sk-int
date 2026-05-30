@@ -4,6 +4,7 @@ title: "HTML - L6 Theory"
 parent: "HTML"
 nav_order: 13
 permalink: /html/l6-theory/
+render_with_liquid: false
 ---
 
 # HTML Living Standard and WHATWG Parsing Algorithm

@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L4 Multi-Tenancy"
 parent: "Cloud Fundamentals"
 nav_order: 12
 permalink: /cloud-fundamentals/l4-multi-tenancy/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

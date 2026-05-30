@@ -4,6 +4,7 @@ title: "AI Fundamentals - L1 Core Concepts"
 parent: "AI Fundamentals"
 nav_order: 2
 permalink: /ai-fundamentals/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

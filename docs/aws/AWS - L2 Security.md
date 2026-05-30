@@ -4,6 +4,7 @@ title: "AWS - L2 Security"
 parent: "AWS"
 nav_order: 6
 permalink: /aws/l2-security/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

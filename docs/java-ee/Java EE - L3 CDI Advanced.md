@@ -4,6 +4,7 @@ title: "Java EE - L3 CDI Advanced"
 parent: "Java EE"
 nav_order: 8
 permalink: /java-ee/l3-cdi-advanced/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

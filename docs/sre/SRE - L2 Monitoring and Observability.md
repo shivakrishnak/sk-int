@@ -5,6 +5,7 @@ parent: "SRE"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /sre/l2-monitoring-and-observability/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

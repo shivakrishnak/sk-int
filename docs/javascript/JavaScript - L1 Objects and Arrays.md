@@ -4,6 +4,7 @@ title: "JavaScript - L1 Objects and Arrays"
 parent: "JavaScript"
 nav_order: 4
 permalink: /javascript/l1-objects-and-arrays/
+render_with_liquid: false
 ---
 
 # Objects and Prototypes

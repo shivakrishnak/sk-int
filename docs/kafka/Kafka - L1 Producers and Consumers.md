@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /kafka/l1-producers-and-consumers/
+render_with_liquid: false
 ---
 
 # Kafka - L1 Producers and Consumers

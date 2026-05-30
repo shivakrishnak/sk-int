@@ -4,6 +4,7 @@ title: "Observability - L3 Alerting and Anti-Patterns"
 parent: "Observability"
 nav_order: 10
 permalink: /observability/l3-alerting-and-anti-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

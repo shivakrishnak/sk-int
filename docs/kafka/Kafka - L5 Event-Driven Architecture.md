@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /kafka/l5-event-driven-architecture/
+render_with_liquid: false
 ---
 
 # Kafka - L5 Event-Driven Architecture

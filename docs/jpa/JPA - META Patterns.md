@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /jpa/meta-patterns/
+render_with_liquid: false
 ---
 
 # JPA - META Patterns

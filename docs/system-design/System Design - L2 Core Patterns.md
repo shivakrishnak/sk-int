@@ -5,6 +5,7 @@ parent: "System Design"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /system-design/l2-core-patterns/
+render_with_liquid: false
 ---
 
 # System Design - L2 Core Patterns

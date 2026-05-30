@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /jpa/l3-caching/
+render_with_liquid: false
 ---
 
 # JPA - L3 Caching

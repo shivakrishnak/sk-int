@@ -4,6 +4,7 @@ title: "AWS - L3 Observability"
 parent: "AWS"
 nav_order: 8
 permalink: /aws/l3-observability/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

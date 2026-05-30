@@ -4,6 +4,7 @@ title: "JavaScript - L2 ES6 Features"
 parent: "JavaScript"
 nav_order: 8
 permalink: /javascript/l2-es6-features/
+render_with_liquid: false
 ---
 
 # ES6 Classes and Inheritance

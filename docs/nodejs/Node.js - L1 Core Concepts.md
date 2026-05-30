@@ -4,6 +4,7 @@ title: "Node.js - L1 Core Concepts"
 parent: "Node.js"
 nav_order: 2
 permalink: /nodejs/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # Event Loop Fundamentals

@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /distributed-systems/l4-raft-consensus/
+render_with_liquid: false
 ---
 
 # Raft Consensus Algorithm

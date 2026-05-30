@@ -4,6 +4,7 @@ title: "Platform Engineering - L3 Team Topologies"
 parent: "Platform Engineering"
 nav_order: 8
 permalink: /platform-engineering/l3-team-topologies/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L3 Team Topologies

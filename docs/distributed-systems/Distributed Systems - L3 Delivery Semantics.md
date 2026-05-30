@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /distributed-systems/l3-delivery-semantics/
+render_with_liquid: false
 ---
 
 # Idempotency in Distributed Systems

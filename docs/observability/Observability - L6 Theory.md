@@ -4,6 +4,7 @@ title: "Observability - L6 Theory"
 parent: "Observability"
 nav_order: 19
 permalink: /observability/l6-theory/
+render_with_liquid: false
 ---
 
 # Observability - L6 Theory

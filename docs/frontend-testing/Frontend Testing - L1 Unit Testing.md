@@ -4,6 +4,7 @@ title: "Frontend Testing - L1 Unit Testing"
 parent: "Frontend Testing"
 nav_order: 2
 permalink: /frontend-testing/l1-unit-testing/
+render_with_liquid: false
 ---
 
 # Jest Test Structure and Lifecycle

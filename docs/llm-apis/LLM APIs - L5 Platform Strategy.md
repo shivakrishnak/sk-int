@@ -4,6 +4,7 @@ title: "LLM APIs - L5 Platform Strategy"
 parent: "LLM APIs"
 nav_order: 9
 permalink: /llm-apis/l5-platform-strategy/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

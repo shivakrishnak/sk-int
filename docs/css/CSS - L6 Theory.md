@@ -4,6 +4,7 @@ title: "CSS - L6 Theory"
 parent: "CSS"
 nav_order: 14
 permalink: /css/l6-theory/
+render_with_liquid: false
 ---
 
 # CSS Object Model (CSSOM) and Houdini

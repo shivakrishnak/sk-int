@@ -4,6 +4,7 @@ title: "Frontend Testing - L2 E2E Testing"
 parent: "Frontend Testing"
 nav_order: 5
 permalink: /frontend-testing/l2-e2e-testing/
+render_with_liquid: false
 ---
 
 # Playwright Fundamentals

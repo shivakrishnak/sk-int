@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L1 Compute and Access"
 parent: "Cloud Fundamentals"
 nav_order: 3
 permalink: /cloud-fundamentals/l1-compute-and-access/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

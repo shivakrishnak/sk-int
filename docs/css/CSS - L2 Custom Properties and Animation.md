@@ -4,6 +4,7 @@ title: "CSS - L2 Custom Properties and Animation"
 parent: "CSS"
 nav_order: 7
 permalink: /css/l2-custom-properties-and-animation/
+render_with_liquid: false
 ---
 
 # CSS Custom Properties (Variables)

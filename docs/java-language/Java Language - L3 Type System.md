@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /java-language/l3-type-system/
+render_with_liquid: false
 ---
 
 # Java Language - L3 Type System

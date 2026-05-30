@@ -4,6 +4,7 @@ title: "React - L4 Security"
 parent: "React"
 nav_order: 13
 permalink: /react/l4-security/
+render_with_liquid: false
 ---
 
 # React Security Vulnerabilities and Mitigations

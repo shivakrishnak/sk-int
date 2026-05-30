@@ -4,6 +4,7 @@ title: "CSS - L4 Performance"
 parent: "CSS"
 nav_order: 11
 permalink: /css/l4-performance/
+render_with_liquid: false
 ---
 
 # CSS Performance, Reflow, and Repaint

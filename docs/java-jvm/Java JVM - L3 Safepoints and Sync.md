@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /java-jvm/l3-safepoints-and-sync/
+render_with_liquid: false
 ---
 
 # Java JVM - L3 Safepoints and Sync

@@ -4,6 +4,7 @@ title: "Behavioral - L2 Teamwork Collaboration"
 parent: "Behavioral Interview Skills"
 nav_order: 4
 permalink: /behavioral/l2-teamwork-collaboration/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

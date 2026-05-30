@@ -4,6 +4,7 @@ title: "Observability - L5 Platform Design"
 parent: "Observability"
 nav_order: 17
 permalink: /observability/l5-platform-design/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

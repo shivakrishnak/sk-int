@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /messaging/l4-anti-patterns/
+render_with_liquid: false
 ---
 
 # Messaging Anti-patterns and Failure Recovery

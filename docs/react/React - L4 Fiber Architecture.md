@@ -4,6 +4,7 @@ title: "React - L4 Fiber Architecture"
 parent: "React"
 nav_order: 11
 permalink: /react/l4-fiber-architecture/
+render_with_liquid: false
 ---
 
 # React Fiber Reconciler Internals

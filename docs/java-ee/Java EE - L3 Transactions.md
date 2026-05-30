@@ -4,6 +4,7 @@ title: "Java EE - L3 Transactions"
 parent: "Java EE"
 nav_order: 7
 permalink: /java-ee/l3-transactions/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

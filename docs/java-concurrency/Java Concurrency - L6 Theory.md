@@ -5,6 +5,7 @@ parent: "Java Concurrency"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /java-concurrency/l6-theory/
+render_with_liquid: false
 ---
 
 # Java Concurrency - L6 Theory

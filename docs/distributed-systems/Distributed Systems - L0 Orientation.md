@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 1
 permalink: /distributed-systems/l0-orientation/
+render_with_liquid: false
 ---
 
 # What Is a Distributed System

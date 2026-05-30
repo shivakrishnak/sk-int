@@ -4,6 +4,7 @@ title: "HTML - META Patterns"
 parent: "HTML"
 nav_order: 14
 permalink: /html/meta-patterns/
+render_with_liquid: false
 ---
 
 # Progressive Enhancement

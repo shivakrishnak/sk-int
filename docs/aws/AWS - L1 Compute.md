@@ -4,6 +4,7 @@ title: "AWS - L1 Compute"
 parent: "AWS"
 nav_order: 2
 permalink: /aws/l1-compute/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

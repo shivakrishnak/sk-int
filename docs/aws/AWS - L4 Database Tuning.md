@@ -4,6 +4,7 @@ title: "AWS - L4 Database Tuning"
 parent: "AWS"
 nav_order: 13
 permalink: /aws/l4-database-tuning/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

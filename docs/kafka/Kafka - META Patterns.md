@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /kafka/meta-patterns/
+render_with_liquid: false
 ---
 
 # Kafka - META Patterns

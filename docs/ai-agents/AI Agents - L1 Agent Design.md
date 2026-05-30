@@ -4,6 +4,7 @@ title: "AI Agents - L1 Agent Design"
 parent: "AI Agents"
 nav_order: 3
 permalink: /ai-agents/l1-agent-design/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

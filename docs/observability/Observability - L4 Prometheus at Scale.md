@@ -4,6 +4,7 @@ title: "Observability - L4 Prometheus at Scale"
 parent: "Observability"
 nav_order: 13
 permalink: /observability/l4-prometheus-at-scale/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

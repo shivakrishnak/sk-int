@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /spring/l1-core-concepts/
+render_with_liquid: false
 ---
 
 # Spring - L1 Core Concepts

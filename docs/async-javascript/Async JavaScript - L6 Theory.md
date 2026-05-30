@@ -4,6 +4,7 @@ title: "Async JavaScript - L6 Theory"
 parent: "Async JavaScript"
 nav_order: 16
 permalink: /async-javascript/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

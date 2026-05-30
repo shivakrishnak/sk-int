@@ -5,6 +5,7 @@ parent: "Quarkus"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /quarkus/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "Platform Engineering - L4 Platform Anti-Patterns"
 parent: "Platform Engineering"
 nav_order: 13
 permalink: /platform-engineering/l4-platform-anti-patterns/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L4 Platform Anti-Patterns

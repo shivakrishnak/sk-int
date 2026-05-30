@@ -4,6 +4,7 @@ title: "Async Java - L6 Theory"
 parent: "Async Java"
 nav_order: 16
 permalink: /async-java/l6-theory/
+render_with_liquid: false
 ---
 
 # Async Java - L6 Theory

@@ -4,6 +4,7 @@ title: "Frontend Build Tools - META Patterns"
 parent: "Frontend Build Tools"
 nav_order: 14
 permalink: /frontend-build-tools/meta-patterns/
+render_with_liquid: false
 ---
 
 # Build Tool Selection Framework

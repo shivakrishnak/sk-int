@@ -4,6 +4,7 @@ title: "CSS - META Patterns"
 parent: "CSS"
 nav_order: 15
 permalink: /css/meta-patterns/
+render_with_liquid: false
 ---
 
 # Visual Consistency Mental Model

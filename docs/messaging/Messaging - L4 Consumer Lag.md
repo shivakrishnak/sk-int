@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /messaging/l4-consumer-lag/
+render_with_liquid: false
 ---
 
 # Consumer Lag Management and Diagnosis

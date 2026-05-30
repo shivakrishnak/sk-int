@@ -4,6 +4,7 @@ title: "TypeScript - L1 Basic Types"
 parent: "TypeScript"
 nav_order: 2
 permalink: /typescript/l1-basic-types/
+render_with_liquid: false
 ---
 
 # TypeScript Primitive Types

@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-core/l1-oop-basics/
+render_with_liquid: false
 ---
 
 # Java Core - L1 OOP Basics

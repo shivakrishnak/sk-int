@@ -4,6 +4,7 @@ title: "MCP - L2 Implementation"
 parent: "MCP"
 nav_order: 4
 permalink: /mcp/l2-implementation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

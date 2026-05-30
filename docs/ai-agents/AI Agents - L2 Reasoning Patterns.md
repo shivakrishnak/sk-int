@@ -4,6 +4,7 @@ title: "AI Agents - L2 Reasoning Patterns"
 parent: "AI Agents"
 nav_order: 4
 permalink: /ai-agents/l2-reasoning-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

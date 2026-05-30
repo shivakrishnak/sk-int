@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 17
 permalink: /java-jvm/l6-theory/
+render_with_liquid: false
 ---
 
 # Java JVM - L6 Theory

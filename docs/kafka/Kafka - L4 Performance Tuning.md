@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /kafka/l4-performance-tuning/
+render_with_liquid: false
 ---
 
 # Kafka - L4 Performance Tuning

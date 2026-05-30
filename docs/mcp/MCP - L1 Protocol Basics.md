@@ -4,6 +4,7 @@ title: "MCP - L1 Protocol Basics"
 parent: "MCP"
 nav_order: 3
 permalink: /mcp/l1-protocol-basics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

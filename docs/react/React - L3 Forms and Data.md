@@ -4,6 +4,7 @@ title: "React - L3 Forms and Data"
 parent: "React"
 nav_order: 9
 permalink: /react/l3-forms-and-data/
+render_with_liquid: false
 ---
 
 # Controlled vs Uncontrolled Components

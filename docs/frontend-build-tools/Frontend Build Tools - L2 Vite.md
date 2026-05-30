@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L2 Vite"
 parent: "Frontend Build Tools"
 nav_order: 4
 permalink: /frontend-build-tools/l2-vite/
+render_with_liquid: false
 ---
 
 # Vite Development Server and ESM-native Dev

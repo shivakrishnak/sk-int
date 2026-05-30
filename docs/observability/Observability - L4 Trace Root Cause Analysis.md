@@ -4,6 +4,7 @@ title: "Observability - L4 Trace Root Cause Analysis"
 parent: "Observability"
 nav_order: 12
 permalink: /observability/l4-trace-root-cause-analysis/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

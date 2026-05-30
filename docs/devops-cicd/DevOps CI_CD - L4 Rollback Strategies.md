@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /devops-cicd/l4-rollback-strategies/
+render_with_liquid: false
 ---
 
 # Rollback Strategies and Release Failure Recovery

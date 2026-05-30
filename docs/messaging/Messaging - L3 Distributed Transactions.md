@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /messaging/l3-distributed-transactions/
+render_with_liquid: false
 ---
 
 # Saga Pattern and Distributed Transactions via Messaging

@@ -4,6 +4,7 @@ title: "Java EE - L4 Security Vulnerabilities"
 parent: "Java EE"
 nav_order: 11
 permalink: /java-ee/l4-security-vulnerabilities/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "Observability - L5 Cost and ROI"
 parent: "Observability"
 nav_order: 18
 permalink: /observability/l5-cost-and-roi/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

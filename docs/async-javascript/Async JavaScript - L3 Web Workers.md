@@ -4,6 +4,7 @@ title: "Async JavaScript - L3 Web Workers"
 parent: "Async JavaScript"
 nav_order: 7
 permalink: /async-javascript/l3-web-workers/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

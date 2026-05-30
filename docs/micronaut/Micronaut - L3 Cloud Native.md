@@ -5,6 +5,7 @@ parent: "Micronaut"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /micronaut/l3-cloud-native/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

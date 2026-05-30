@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /devops-cicd/l2-infrastructure-monitoring/
+render_with_liquid: false
 ---
 
 # Infrastructure as Code in CI/CD

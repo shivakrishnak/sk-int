@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /jpa/l2-performance/
+render_with_liquid: false
 ---
 
 # JPA - L2 Performance

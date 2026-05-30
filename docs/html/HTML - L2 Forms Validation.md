@@ -4,6 +4,7 @@ title: "HTML - L2 Forms Validation"
 parent: "HTML"
 nav_order: 6
 permalink: /html/l2-forms-validation/
+render_with_liquid: false
 ---
 
 # HTML5 Constraint Validation API

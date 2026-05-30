@@ -5,6 +5,7 @@ parent: "GraalVM"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /graalvm/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

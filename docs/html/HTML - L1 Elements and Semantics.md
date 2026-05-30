@@ -4,6 +4,7 @@ title: "HTML - L1 Elements and Semantics"
 parent: "HTML"
 nav_order: 2
 permalink: /html/l1-elements-and-semantics/
+render_with_liquid: false
 ---
 
 # HTML Elements and Tags

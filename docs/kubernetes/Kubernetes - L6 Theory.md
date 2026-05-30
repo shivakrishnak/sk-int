@@ -5,6 +5,7 @@ parent: "Kubernetes"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /kubernetes/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

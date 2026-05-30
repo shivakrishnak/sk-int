@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 21
 permalink: /distributed-systems/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 # Monolith to Distributed System Migration

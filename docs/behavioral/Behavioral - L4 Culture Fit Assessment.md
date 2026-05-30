@@ -4,6 +4,7 @@ title: "Behavioral - L4 Culture Fit Assessment"
 parent: "Behavioral Interview Skills"
 nav_order: 12
 permalink: /behavioral/l4-culture-fit-assessment/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

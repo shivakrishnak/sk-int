@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /kafka/l2-consumer-patterns/
+render_with_liquid: false
 ---
 
 # Kafka - L2 Consumer Patterns

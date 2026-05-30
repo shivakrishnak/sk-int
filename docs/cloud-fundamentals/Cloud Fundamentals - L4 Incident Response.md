@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L4 Incident Response"
 parent: "Cloud Fundamentals"
 nav_order: 11
 permalink: /cloud-fundamentals/l4-incident-response/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

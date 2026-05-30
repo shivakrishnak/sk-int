@@ -4,6 +4,7 @@ title: "Platform Engineering - Prerequisites"
 parent: "Platform Engineering"
 nav_order: 1
 permalink: /platform-engineering/prerequisites/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "System Design"
 grand_parent: "SK Interview"
 nav_order: 5
 permalink: /system-design/l3-distributed-concepts/
+render_with_liquid: false
 ---
 
 # System Design - L3 Distributed Concepts

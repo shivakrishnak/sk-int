@@ -4,6 +4,7 @@ title: "AWS - L4 Architecture"
 parent: "AWS"
 nav_order: 12
 permalink: /aws/l4-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

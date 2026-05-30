@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 16
 permalink: /software-architecture/l5-platform-engineering/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

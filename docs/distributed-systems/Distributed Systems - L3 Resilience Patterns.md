@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /distributed-systems/l3-resilience-patterns/
+render_with_liquid: false
 ---
 
 # Circuit Breaker Pattern

@@ -4,6 +4,7 @@ title: "TypeScript - L6 Theory"
 parent: "TypeScript"
 nav_order: 12
 permalink: /typescript/l6-theory/
+render_with_liquid: false
 ---
 
 # Structural vs Nominal Typing

@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /distributed-systems/l3-transactions/
+render_with_liquid: false
 ---
 
 # Distributed Transactions and Two-Phase Commit

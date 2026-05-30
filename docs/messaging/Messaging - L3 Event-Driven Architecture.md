@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /messaging/l3-event-driven-architecture/
+render_with_liquid: false
 ---
 
 # Event-Driven Architecture Patterns

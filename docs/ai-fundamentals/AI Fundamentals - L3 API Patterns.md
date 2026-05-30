@@ -4,6 +4,7 @@ title: "AI Fundamentals - L3 API Patterns"
 parent: "AI Fundamentals"
 nav_order: 7
 permalink: /ai-fundamentals/l3-api-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

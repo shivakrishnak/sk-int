@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 22
 permalink: /database-sql/l5-architecture-decisions/
+render_with_liquid: false
 ---
 
 # Database Architecture Decisions - SQL, NewSQL, and Polyglot Persistence

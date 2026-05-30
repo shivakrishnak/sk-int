@@ -4,6 +4,7 @@ title: "HTML - L3 Web Components"
 parent: "HTML"
 nav_order: 8
 permalink: /html/l3-web-components/
+render_with_liquid: false
 ---
 
 # Custom Elements and Shadow DOM

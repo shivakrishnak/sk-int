@@ -4,6 +4,7 @@ title: "Node.js - L5 Architecture"
 parent: "Node.js"
 nav_order: 12
 permalink: /nodejs/l5-architecture/
+render_with_liquid: false
 ---
 
 # Node.js Service Architecture at Scale

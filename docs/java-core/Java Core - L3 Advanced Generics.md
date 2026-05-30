@@ -5,6 +5,7 @@ parent: "Java Core"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /java-core/l3-advanced-generics/
+render_with_liquid: false
 ---
 
 # Java Core - L3 Advanced Generics

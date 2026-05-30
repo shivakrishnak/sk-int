@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /database-sql/l3-schema-design/
+render_with_liquid: false
 ---
 
 # Database Normalization - 1NF through BCNF

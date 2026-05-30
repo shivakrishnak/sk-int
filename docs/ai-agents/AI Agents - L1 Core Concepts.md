@@ -4,6 +4,7 @@ title: "AI Agents - L1 Core Concepts"
 parent: "AI Agents"
 nav_order: 2
 permalink: /ai-agents/l1-core-concepts/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

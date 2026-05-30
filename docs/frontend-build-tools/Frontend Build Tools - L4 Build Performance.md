@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L4 Build Performance"
 parent: "Frontend Build Tools"
 nav_order: 10
 permalink: /frontend-build-tools/l4-build-performance/
+render_with_liquid: false
 ---
 
 # Build Performance at Scale (esbuild, SWC, Turbopack)

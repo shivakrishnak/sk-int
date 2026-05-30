@@ -5,6 +5,7 @@ parent: "SRE"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /sre/l3-reliability-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

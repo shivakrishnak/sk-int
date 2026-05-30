@@ -4,6 +4,7 @@ title: "AI Agents - L5 Architecture"
 parent: "AI Agents"
 nav_order: 10
 permalink: /ai-agents/l5-architecture/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 6
 permalink: /software-architecture/l2-domain-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

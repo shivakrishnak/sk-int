@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 11
 permalink: /kafka/l4-replication-and-isr/
+render_with_liquid: false
 ---
 
 # Kafka - L4 Replication and ISR

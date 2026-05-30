@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 1
 permalink: /design-patterns/l0-orientation/
+render_with_liquid: false
 ---
 
 # What Are Design Patterns

@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L6 Theory"
 parent: "Frontend Build Tools"
 nav_order: 13
 permalink: /frontend-build-tools/l6-theory/
+render_with_liquid: false
 ---
 
 # Bundler Internals (AST, Module Graph, Tree Walking)

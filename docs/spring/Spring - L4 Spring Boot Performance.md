@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 13
 permalink: /spring/l4-spring-boot-performance/
+render_with_liquid: false
 ---
 
 # Spring - L4 Spring Boot Performance

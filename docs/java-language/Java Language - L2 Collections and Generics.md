@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-language/l2-collections-and-generics/
+render_with_liquid: false
 ---
 
 # Java Language - L2 Collections and Generics

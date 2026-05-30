@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /jpa/l4-internals/
+render_with_liquid: false
 ---
 
 # JPA - L4 Internals

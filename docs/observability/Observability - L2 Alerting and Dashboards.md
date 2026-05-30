@@ -4,6 +4,7 @@ title: "Observability - L2 Alerting and Dashboards"
 parent: "Observability"
 nav_order: 7
 permalink: /observability/l2-alerting-and-dashboards/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

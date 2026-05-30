@@ -4,6 +4,7 @@ title: "Platform Engineering - L6 Theory"
 parent: "Platform Engineering"
 nav_order: 18
 permalink: /platform-engineering/l6-theory/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L6 Theory

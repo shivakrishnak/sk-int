@@ -5,6 +5,7 @@ parent: "Java Concurrency"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-concurrency/l1-thread-basics/
+render_with_liquid: false
 ---
 
 # Java Concurrency - L1 Thread Basics

@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L2 Networking"
 parent: "Cloud Fundamentals"
 nav_order: 5
 permalink: /cloud-fundamentals/l2-networking/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

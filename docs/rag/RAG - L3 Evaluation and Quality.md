@@ -4,6 +4,7 @@ title: "RAG - L3 Evaluation and Quality"
 parent: "RAG"
 nav_order: 7
 permalink: /rag/l3-evaluation-and-quality/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

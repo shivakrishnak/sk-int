@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /spring/l1-spring-boot-basics/
+render_with_liquid: false
 ---
 
 # Spring - L1 Spring Boot Basics

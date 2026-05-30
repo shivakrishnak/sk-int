@@ -4,6 +4,7 @@ title: "CSS - L2 Grid"
 parent: "CSS"
 nav_order: 5
 permalink: /css/l2-grid/
+render_with_liquid: false
 ---
 
 # CSS Grid Layout

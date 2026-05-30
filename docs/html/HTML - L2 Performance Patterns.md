@@ -4,6 +4,7 @@ title: "HTML - L2 Performance Patterns"
 parent: "HTML"
 nav_order: 7
 permalink: /html/l2-performance-patterns/
+render_with_liquid: false
 ---
 
 # Resource Hints and Preloading

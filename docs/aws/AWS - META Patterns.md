@@ -4,6 +4,7 @@ title: "AWS - META Patterns"
 parent: "AWS"
 nav_order: 17
 permalink: /aws/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

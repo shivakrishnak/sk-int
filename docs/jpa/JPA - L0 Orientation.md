@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 1
 permalink: /jpa/l0-orientation/
+render_with_liquid: false
 ---
 
 # JPA - L0 Orientation

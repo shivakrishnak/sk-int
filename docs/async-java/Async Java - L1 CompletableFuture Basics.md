@@ -4,6 +4,7 @@ title: "Async Java - L1 CompletableFuture Basics"
 parent: "Async Java"
 nav_order: 2
 permalink: /async-java/l1-completablefuture-basics/
+render_with_liquid: false
 ---
 
 # Async Java - L1 CompletableFuture Basics

@@ -4,6 +4,7 @@ title: "JavaScript - L6 Theory"
 parent: "JavaScript"
 nav_order: 17
 permalink: /javascript/l6-theory/
+render_with_liquid: false
 ---
 
 # ECMAScript Specification and TC39 Process

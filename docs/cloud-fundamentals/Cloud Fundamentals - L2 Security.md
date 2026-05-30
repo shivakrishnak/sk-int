@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L2 Security"
 parent: "Cloud Fundamentals"
 nav_order: 6
 permalink: /cloud-fundamentals/l2-security/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

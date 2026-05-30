@@ -5,6 +5,7 @@ parent: "Kafka"
 grand_parent: "SK Interview"
 nav_order: 9
 permalink: /kafka/l3-storage-and-partitioning/
+render_with_liquid: false
 ---
 
 # Kafka - L3 Storage and Partitioning

@@ -4,6 +4,7 @@ title: "Java EE - L5 Migration Strategy"
 parent: "Java EE"
 nav_order: 13
 permalink: /java-ee/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

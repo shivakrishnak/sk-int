@@ -5,6 +5,7 @@ parent: "Hibernate"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /hibernate/l4-internals/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

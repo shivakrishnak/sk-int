@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L5 Multi-Cloud"
 parent: "Cloud Fundamentals"
 nav_order: 13
 permalink: /cloud-fundamentals/l5-multi-cloud/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

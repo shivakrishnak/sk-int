@@ -4,6 +4,7 @@ title: "RAG - L4 RAG Security"
 parent: "RAG"
 nav_order: 9
 permalink: /rag/l4-rag-security/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "Java EE - L6 Theory"
 parent: "Java EE"
 nav_order: 15
 permalink: /java-ee/l6-theory/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

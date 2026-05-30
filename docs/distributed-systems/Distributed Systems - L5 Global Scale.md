@@ -5,6 +5,7 @@ parent: "Distributed Systems"
 grand_parent: "SK Interview"
 nav_order: 20
 permalink: /distributed-systems/l5-global-scale/
+render_with_liquid: false
 ---
 
 # Global-Scale Distributed System Design

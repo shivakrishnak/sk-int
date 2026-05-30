@@ -4,6 +4,7 @@ title: "LLM APIs - L3 Decision Framework"
 parent: "LLM APIs"
 nav_order: 7
 permalink: /llm-apis/l3-decision-framework/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

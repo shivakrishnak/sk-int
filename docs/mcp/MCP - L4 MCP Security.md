@@ -4,6 +4,7 @@ title: "MCP - L4 MCP Security"
 parent: "MCP"
 nav_order: 7
 permalink: /mcp/l4-mcp-security/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

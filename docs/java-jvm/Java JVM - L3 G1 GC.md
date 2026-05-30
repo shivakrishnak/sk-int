@@ -5,6 +5,7 @@ parent: "Java JVM"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-jvm/l3-g1-gc/
+render_with_liquid: false
 ---
 
 # Java JVM - L3 G1 GC

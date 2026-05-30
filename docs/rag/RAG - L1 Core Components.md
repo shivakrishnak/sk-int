@@ -4,6 +4,7 @@ title: "RAG - L1 Core Components"
 parent: "RAG"
 nav_order: 2
 permalink: /rag/l1-core-components/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

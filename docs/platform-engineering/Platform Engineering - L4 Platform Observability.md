@@ -4,6 +4,7 @@ title: "Platform Engineering - L4 Platform Observability"
 parent: "Platform Engineering"
 nav_order: 11
 permalink: /platform-engineering/l4-platform-observability/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L4 Platform Observability

@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /messaging/l5-global-scale/
+render_with_liquid: false
 ---
 
 # Messaging at Scale - Multi-Region and Global Patterns

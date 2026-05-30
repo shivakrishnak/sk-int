@@ -4,6 +4,7 @@ title: "AWS - L5 Multi-Region"
 parent: "AWS"
 nav_order: 14
 permalink: /aws/l5-multi-region/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

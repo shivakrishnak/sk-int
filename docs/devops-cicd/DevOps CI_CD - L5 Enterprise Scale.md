@@ -5,6 +5,7 @@ parent: "DevOps CI/CD"
 grand_parent: "SK Interview"
 nav_order: 15
 permalink: /devops-cicd/l5-enterprise-scale/
+render_with_liquid: false
 ---
 
 # CI/CD at Enterprise Scale and Governance

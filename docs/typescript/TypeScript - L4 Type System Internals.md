@@ -4,6 +4,7 @@ title: "TypeScript - L4 Type System Internals"
 parent: "TypeScript"
 nav_order: 9
 permalink: /typescript/l4-type-system-internals/
+render_with_liquid: false
 ---
 
 # TypeScript Type Inference Algorithm

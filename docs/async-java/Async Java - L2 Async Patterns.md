@@ -4,6 +4,7 @@ title: "Async Java - L2 Async Patterns"
 parent: "Async Java"
 nav_order: 5
 permalink: /async-java/l2-async-patterns/
+render_with_liquid: false
 ---
 
 # Async Java - L2 Async Patterns

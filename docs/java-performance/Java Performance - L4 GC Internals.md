@@ -5,6 +5,7 @@ parent: "Java Performance"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-performance/l4-gc-internals/
+render_with_liquid: false
 ---
 
 # Java Performance - L4 GC Internals

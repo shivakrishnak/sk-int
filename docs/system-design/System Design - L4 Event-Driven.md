@@ -5,6 +5,7 @@ parent: "System Design"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /system-design/l4-event-driven/
+render_with_liquid: false
 ---
 
 # System Design - L4 Event-Driven

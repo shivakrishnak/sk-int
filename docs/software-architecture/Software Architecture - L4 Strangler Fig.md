@@ -5,6 +5,7 @@ parent: "Software Architecture"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /software-architecture/l4-strangler-fig/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

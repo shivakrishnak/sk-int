@@ -4,6 +4,7 @@ title: "MCP - L3 Design Decisions"
 parent: "MCP"
 nav_order: 6
 permalink: /mcp/l3-design-decisions/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

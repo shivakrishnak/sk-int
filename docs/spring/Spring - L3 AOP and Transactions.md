@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 7
 permalink: /spring/l3-aop-and-transactions/
+render_with_liquid: false
 ---
 
 # Spring - L3 AOP and Transactions

@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /database-sql/l1-core-queries/
+render_with_liquid: false
 ---
 
 # SELECT Statement - Reading Rows from Tables

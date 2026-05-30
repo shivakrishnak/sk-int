@@ -4,6 +4,7 @@ title: "HTML - L5 Architecture"
 parent: "HTML"
 nav_order: 12
 permalink: /html/l5-architecture/
+render_with_liquid: false
 ---
 
 # HTML Standards Governance and Design System Integration

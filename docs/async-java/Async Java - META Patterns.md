@@ -4,6 +4,7 @@ title: "Async Java - META Patterns"
 parent: "Async Java"
 nav_order: 17
 permalink: /async-java/meta-patterns/
+render_with_liquid: false
 ---
 
 # Async Java - META Patterns

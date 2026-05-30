@@ -5,6 +5,7 @@ parent: "Design Patterns"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /design-patterns/l1-structural/
+render_with_liquid: false
 ---
 
 # Decorator Pattern

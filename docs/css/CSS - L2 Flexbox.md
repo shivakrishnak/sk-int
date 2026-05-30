@@ -4,6 +4,7 @@ title: "CSS - L2 Flexbox"
 parent: "CSS"
 nav_order: 4
 permalink: /css/l2-flexbox/
+render_with_liquid: false
 ---
 
 # CSS Flexbox Model

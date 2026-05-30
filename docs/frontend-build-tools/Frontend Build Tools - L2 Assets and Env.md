@@ -4,6 +4,7 @@ title: "Frontend Build Tools - L2 Assets and Env"
 parent: "Frontend Build Tools"
 nav_order: 6
 permalink: /frontend-build-tools/l2-assets-and-env/
+render_with_liquid: false
 ---
 
 # CSS and Static Asset Processing

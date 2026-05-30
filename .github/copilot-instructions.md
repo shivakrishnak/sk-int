@@ -67,15 +67,16 @@ southstar/
 - No em dashes anywhere - use regular hyphens only
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
-- **Liquid safety:** `render_with_liquid: false` is set globally in
-  `_config.yml` via `defaults`. Code examples with `{{ }}` or `{% %}`
-  (GitHub Actions, Docker inspect, Prometheus, JSX, Angular templates)
-  do NOT need `{% raw %}` / `{% endraw %}` wrappers. Write them as-is.
-  If the build breaks with a Liquid error, check that `_config.yml`
-  still contains the `defaults: render_with_liquid: false` block.
-  NOTE: `assets/` is excluded from this rule - the just-the-docs theme
-  SCSS files use Liquid `{% include %}` for CSS generation and must
-  keep `render_with_liquid: true`.
+- **Liquid safety:** Every content file frontmatter MUST include
+  `render_with_liquid: false`. This is belt-and-suspenders over the
+  global `_config.yml` default (which is unreliable across Jekyll
+  versions when `Gemfile.lock` is not committed). Code examples with
+  `{{ }}` or `{% %}` (GitHub Actions, Docker inspect, Prometheus, JSX,
+  Angular templates, CSS custom properties) do NOT need
+  `{% raw %}` / `{% endraw %}` wrappers - the per-file frontmatter
+  flag handles it. Do NOT add `{% raw %}` tags.
+  NOTE: `assets/` is excluded - the just-the-docs theme SCSS files
+  use Liquid `{% include %}` for CSS generation.
 - Diagrams: DUAL format - ASCII block first (universal fallback),
   then Mermaid block immediately below (MAY enhance using native features
   like click events, custom shapes, data charts). Supported Mermaid types
@@ -101,7 +102,7 @@ southstar/
 - **Navigation frontmatter is required** for just-the-docs sidebar rendering.
   Without it, pages render as plain Markdown with no sidebar entry.
   Topic `index.md` required fields: `title`, `nav_order`, `has_children`
-  Content files required fields: `layout`, `title`, `parent`, `nav_order`, `permalink`
+  Content files required fields: `layout`, `title`, `parent`, `nav_order`, `permalink`, `render_with_liquid: false`
 - **Topic index files (`docs/{topic}/index.md`) MUST NOT have `parent`, `layout`,
   or `permalink`** - adding `parent` nests them under another page instead of root level.
 - **Project metadata fields are optional** (`keywords`, `status`, `difficulty_range`,

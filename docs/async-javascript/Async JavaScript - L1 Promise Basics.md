@@ -4,6 +4,7 @@ title: "Async JavaScript - L1 Promise Basics"
 parent: "Async JavaScript"
 nav_order: 2
 permalink: /async-javascript/l1-promise-basics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

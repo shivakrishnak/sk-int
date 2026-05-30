@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 12
 permalink: /database-sql/l3-concurrency-control/
+render_with_liquid: false
 ---
 
 # Transaction Isolation Levels - Read Phenomena and Trade-offs

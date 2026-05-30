@@ -5,6 +5,7 @@ parent: "JPA"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /jpa/l2-fetch-strategies/
+render_with_liquid: false
 ---
 
 # JPA - L2 Fetch Strategies

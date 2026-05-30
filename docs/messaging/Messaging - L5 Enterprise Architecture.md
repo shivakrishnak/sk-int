@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /messaging/l5-enterprise-architecture/
+render_with_liquid: false
 ---
 
 # Event Mesh and Enterprise Messaging Architecture

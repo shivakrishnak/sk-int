@@ -4,6 +4,7 @@ title: "RAG - META Patterns"
 parent: "RAG"
 nav_order: 12
 permalink: /rag/meta-patterns/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

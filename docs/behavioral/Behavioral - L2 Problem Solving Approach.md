@@ -4,6 +4,7 @@ title: "Behavioral - L2 Problem Solving Approach"
 parent: "Behavioral Interview Skills"
 nav_order: 5
 permalink: /behavioral/l2-problem-solving-approach/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -4,6 +4,7 @@ title: "Platform Engineering - L2 Kubernetes Platform Layer"
 parent: "Platform Engineering"
 nav_order: 7
 permalink: /platform-engineering/l2-kubernetes-platform-layer/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L2 Kubernetes Platform Layer

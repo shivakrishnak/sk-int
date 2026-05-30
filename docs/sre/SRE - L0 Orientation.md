@@ -5,6 +5,7 @@ parent: "SRE"
 grand_parent: "SK Interview"
 nav_order: 2
 permalink: /sre/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

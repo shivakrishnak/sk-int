@@ -4,6 +4,7 @@ title: "React - L1 Hooks Basics"
 parent: "React"
 nav_order: 3
 permalink: /react/l1-hooks-basics/
+render_with_liquid: false
 ---
 
 # useEffect and Side Effect Management

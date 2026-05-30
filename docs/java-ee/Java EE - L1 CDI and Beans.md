@@ -4,6 +4,7 @@ title: "Java EE - L1 CDI and Beans"
 parent: "Java EE"
 nav_order: 3
 permalink: /java-ee/l1-cdi-and-beans/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

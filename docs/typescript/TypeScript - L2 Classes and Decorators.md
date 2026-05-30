@@ -4,6 +4,7 @@ title: "TypeScript - L2 Classes and Decorators"
 parent: "TypeScript"
 nav_order: 6
 permalink: /typescript/l2-classes-and-decorators/
+render_with_liquid: false
 ---
 
 # TypeScript Classes and Access Modifiers

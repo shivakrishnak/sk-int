@@ -4,6 +4,7 @@ title: "Observability - L4 Continuous Profiling"
 parent: "Observability"
 nav_order: 15
 permalink: /observability/l4-continuous-profiling/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

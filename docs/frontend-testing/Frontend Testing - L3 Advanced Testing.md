@@ -4,6 +4,7 @@ title: "Frontend Testing - L3 Advanced Testing"
 parent: "Frontend Testing"
 nav_order: 8
 permalink: /frontend-testing/l3-advanced-testing/
+render_with_liquid: false
 ---
 
 # Visual Regression Testing (Chromatic, Percy)

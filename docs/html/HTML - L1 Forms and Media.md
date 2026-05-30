@@ -4,6 +4,7 @@ title: "HTML - L1 Forms and Media"
 parent: "HTML"
 nav_order: 3
 permalink: /html/l1-forms-and-media/
+render_with_liquid: false
 ---
 
 # HTML Forms

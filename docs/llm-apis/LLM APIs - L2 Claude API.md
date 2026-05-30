@@ -4,6 +4,7 @@ title: "LLM APIs - L2 Claude API"
 parent: "LLM APIs"
 nav_order: 4
 permalink: /llm-apis/l2-claude-api/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

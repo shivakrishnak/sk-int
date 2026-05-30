@@ -4,6 +4,7 @@ title: "AWS - L3 Cost and Caching"
 parent: "AWS"
 nav_order: 10
 permalink: /aws/l3-cost-and-caching/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

@@ -5,6 +5,7 @@ parent: "Database SQL"
 grand_parent: "SK Interview"
 nav_order: 24
 permalink: /database-sql/meta-patterns/
+render_with_liquid: false
 ---
 
 # ACID Reasoning as Universal Correctness Framework

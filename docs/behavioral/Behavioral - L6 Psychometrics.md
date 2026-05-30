@@ -4,6 +4,7 @@ title: "Behavioral - L6 Psychometrics"
 parent: "Behavioral Interview Skills"
 nav_order: 14
 permalink: /behavioral/l6-psychometrics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

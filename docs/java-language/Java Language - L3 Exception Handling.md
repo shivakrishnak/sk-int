@@ -5,6 +5,7 @@ parent: "Java Language"
 grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-language/l3-exception-handling/
+render_with_liquid: false
 ---
 
 # Java Language - L3 Exception Handling

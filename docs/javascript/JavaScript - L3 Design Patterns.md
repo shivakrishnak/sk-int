@@ -4,6 +4,7 @@ title: "JavaScript - L3 Design Patterns"
 parent: "JavaScript"
 nav_order: 9
 permalink: /javascript/l3-design-patterns/
+render_with_liquid: false
 ---
 
 # JavaScript Design Patterns

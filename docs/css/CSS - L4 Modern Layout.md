@@ -4,6 +4,7 @@ title: "CSS - L4 Modern Layout"
 parent: "CSS"
 nav_order: 12
 permalink: /css/l4-modern-layout/
+render_with_liquid: false
 ---
 
 # CSS Container Queries and Subgrid

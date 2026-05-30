@@ -5,6 +5,7 @@ parent: "Java Concurrency"
 grand_parent: "SK Interview"
 nav_order: 8
 permalink: /java-concurrency/l3-synchronizers/
+render_with_liquid: false
 ---
 
 # Java Concurrency - L3 Synchronizers

@@ -5,6 +5,7 @@ parent: "Messaging"
 grand_parent: "SK Interview"
 nav_order: 3
 permalink: /messaging/l1-reliability-fundamentals/
+render_with_liquid: false
 ---
 
 # Message Serialization and Schema

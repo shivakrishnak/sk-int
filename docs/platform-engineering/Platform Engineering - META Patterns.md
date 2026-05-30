@@ -4,6 +4,7 @@ title: "Platform Engineering - META Patterns"
 parent: "Platform Engineering"
 nav_order: 19
 permalink: /platform-engineering/meta-patterns/
+render_with_liquid: false
 ---
 
 # Platform Engineering - META Patterns

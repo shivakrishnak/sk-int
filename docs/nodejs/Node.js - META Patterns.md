@@ -4,6 +4,7 @@ title: "Node.js - META Patterns"
 parent: "Node.js"
 nav_order: 14
 permalink: /nodejs/meta-patterns/
+render_with_liquid: false
 ---
 
 # Node.js Decision Framework

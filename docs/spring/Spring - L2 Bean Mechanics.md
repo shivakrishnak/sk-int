@@ -5,6 +5,7 @@ parent: "Spring"
 grand_parent: "SK Interview"
 nav_order: 4
 permalink: /spring/l2-bean-mechanics/
+render_with_liquid: false
 ---
 
 # Spring - L2 Bean Mechanics

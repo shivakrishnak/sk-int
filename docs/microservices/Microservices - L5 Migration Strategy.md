@@ -5,6 +5,7 @@ parent: "Microservices"
 grand_parent: "SK Interview"
 nav_order: 14
 permalink: /microservices/l5-migration-strategy/
+render_with_liquid: false
 ---
 
 # Microservices Migration Strategy from Monolith

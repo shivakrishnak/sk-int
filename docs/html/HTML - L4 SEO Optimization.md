@@ -4,6 +4,7 @@ title: "HTML - L4 SEO Optimization"
 parent: "HTML"
 nav_order: 11
 permalink: /html/l4-seo-optimization/
+render_with_liquid: false
 ---
 
 # Structured Data and HTML SEO

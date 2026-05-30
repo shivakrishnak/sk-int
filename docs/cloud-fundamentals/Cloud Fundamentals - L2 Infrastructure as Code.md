@@ -4,6 +4,7 @@ title: "Cloud Fundamentals - L2 Infrastructure as Code"
 parent: "Cloud Fundamentals"
 nav_order: 4
 permalink: /cloud-fundamentals/l2-infrastructure-as-code/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

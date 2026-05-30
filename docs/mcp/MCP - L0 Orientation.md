@@ -4,6 +4,7 @@ title: "MCP - L0 Orientation"
 parent: "MCP"
 nav_order: 1
 permalink: /mcp/l0-orientation/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

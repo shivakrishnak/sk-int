@@ -4,6 +4,7 @@ title: "AI Fundamentals - L1 Language Model Basics"
 parent: "AI Fundamentals"
 nav_order: 3
 permalink: /ai-fundamentals/l1-language-model-basics/
+render_with_liquid: false
 ---
 
 ## Keywords in This File

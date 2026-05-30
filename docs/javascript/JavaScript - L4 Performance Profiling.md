@@ -4,6 +4,7 @@ title: "JavaScript - L4 Performance Profiling"
 parent: "JavaScript"
 nav_order: 15
 permalink: /javascript/l4-performance-profiling/
+render_with_liquid: false
 ---
 
 # JavaScript Performance Profiling and Debugging

@@ -4,6 +4,7 @@ title: "Platform Engineering - L3 Security and Compliance"
 parent: "Platform Engineering"
 nav_order: 10
 permalink: /platform-engineering/l3-security-and-compliance/
+render_with_liquid: false
 ---
 
 # Platform Engineering - L3 Security and Compliance
