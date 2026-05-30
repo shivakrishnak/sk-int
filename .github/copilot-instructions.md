@@ -73,6 +73,9 @@ southstar/
   do NOT need `{% raw %}` / `{% endraw %}` wrappers. Write them as-is.
   If the build breaks with a Liquid error, check that `_config.yml`
   still contains the `defaults: render_with_liquid: false` block.
+  NOTE: `assets/` is excluded from this rule - the just-the-docs theme
+  SCSS files use Liquid `{% include %}` for CSS generation and must
+  keep `render_with_liquid: true`.
 - Diagrams: DUAL format - ASCII block first (universal fallback),
   then Mermaid block immediately below (MAY enhance using native features
   like click events, custom shapes, data charts). Supported Mermaid types

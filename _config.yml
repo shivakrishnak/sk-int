@@ -75,11 +75,17 @@ mermaid:
 # that Jekyll would otherwise try to parse as Liquid templates.
 # render_with_liquid: false prevents this for all docs pages.
 # Layouts and frontmatter are unaffected by this setting.
+# IMPORTANT: assets/ is excluded - just-the-docs SCSS files use
+# Liquid {% include %} tags to generate CSS and must stay enabled.
 defaults:
   - scope:
       path: ""
     values:
       render_with_liquid: false
+  - scope:
+      path: "assets/"
+    values:
+      render_with_liquid: true
 
 # ── Markdown renderer: GitHub Flavored Markdown ────────────
 kramdown:
