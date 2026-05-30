@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Java Concurrency"
-parent: "SK Interview"
 nav_order: 7
 has_children: true
-permalink: /java-concurrency/
 ---
 
 # Java Concurrency

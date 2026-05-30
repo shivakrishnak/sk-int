@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Java Language"
-parent: "SK Interview"
 nav_order: 10
 has_children: true
-permalink: /java-language/
 ---
 
 # Java Language

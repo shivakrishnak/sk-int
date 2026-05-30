@@ -26,7 +26,7 @@ Keyword list per level       9-section entry per keyword            Published si
 
 **Step 1** — Generate keyword list using `topics_generator.md`
 **Step 2** — Generate entry content using `interview_content_generator.md`
-**Step 3** — Practice using the entry's Questions & Spoken Answers (4.6), Field Q&A (4.8), and Diagram (4.10) sections
+**Step 3** — Practice using the entry's Interview Deep-Dive (Section 8), Field Q&A (4.8), and Diagram (4.10) sections
 
 ---
 
@@ -78,7 +78,7 @@ Each entry follows the 9-section structure (4.1–4.10). Output to `docs/{topic-
 
 Use the entry's own sections:
 
-- **Section 4.6** (Questions & Spoken Answers) — speak the 🗣️ templates aloud, timed
+- **Section 8** (Interview Deep-Dive) — work through numbered questions, speak answers aloud timed
 - **Section 4.8** (Field Q&A) — simulate production failure and candidate mistake drills
 - **Section 4.10** (Diagram) — draw from memory, then verify against the ASCII + Mermaid
 

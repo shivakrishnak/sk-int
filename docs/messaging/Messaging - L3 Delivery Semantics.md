@@ -199,7 +199,31 @@ public void processPayment(
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Exactly-once delivery means the message is transmitted exactly once.**
+
+Exactly-once delivery is a guarantee about the OBSERVABLE EFFECT, not about physical message transmission. Messages may be transmitted, acknowledged, and retried multiple times internally; the guarantee is that the side effect (a database write, an output topic record) appears exactly once to the application. This is achieved via idempotency tokens (deduplication by producer sequence number) combined with transactional writes, not by preventing physical retransmission.
+
+**Misconception 2: Kafka's exactly-once transactional API provides end-to-end exactly-once semantics including external databases.**
+
+Kafka's transactions provide atomicity only WITHIN Kafka: a batch of messages is either fully committed to output topics or fully aborted. They do NOT coordinate with external systems (databases, REST APIs, file systems). Writing to both Kafka AND a database atomically requires the Outbox Pattern: write to the database and a Kafka outbox table in the same database transaction, then have a CDC connector (Debezium) relay the outbox records to Kafka. Kafka's transactional API alone cannot guarantee exactly-once against a non-Kafka data store.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Exactly-once producer causes 30-50% throughput reduction.**
+
+Symptom: producer throughput drops significantly after enabling `enable.idempotence=true` and transactional APIs; `request-latency-avg` metric increases. Root cause: each transaction adds a `beginTransaction` + `commitTransaction` round trip to the broker; with small batches, per-transaction overhead dominates. Diagnosis: measure `record-send-rate` and `request-latency-avg` with and without idempotence; compare batch sizes. Fix: tune `linger.ms` (100-200ms for batching) and `batch.size` (512KB-1MB) to amortize per-transaction overhead across more records per transaction commit.
+
+**Failure Mode 2: Zombie producer causes `ProducerFencedException` and consumer reads incomplete transactions.**
+
+Symptom: producer throws `ProducerFencedException`; consumers in read-committed isolation mode see gaps in the output topic where the zombie's incomplete transactions were aborted. Root cause: two producer instances with the same `transactional.id` - the new instance fences the old (zombie) instance during initialization. Diagnosis: verify `transactional.id` uniqueness across all producer instances; check for lingering old producer processes in deployment logs. Fix: include a unique deployment ID or pod name in the `transactional.id`; ensure old producer instances are fully terminated before new ones initialize.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is exactly-once delivery and why is it hard to achieve?"
@@ -480,7 +504,31 @@ public class IdempotentPaymentConsumer {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Idempotent consumers are only needed when using at-least-once delivery.**
+
+Idempotent consumers are necessary regardless of the delivery guarantee because: consumer restarts replay messages from the last committed offset (which may be before the last processed message), infrastructure failovers can cause double delivery, and bugs in offset management periodically trigger reprocessing. Even with exactly-once Kafka transactions on the producer side, the consumer must be idempotent because consumer-side restarts are independent of producer transactions. Idempotency is a consumer-side responsibility that no delivery guarantee can fully replace.
+
+**Misconception 2: A database UNIQUE constraint makes a consumer fully idempotent.**
+
+A unique constraint prevents duplicate INSERT for a specific key, but does not handle partial processing. If a consumer performed half its side effects (updated record A, failed before updating record B) and is then replayed, the unique constraint on record A prevents re-insertion, but the consumer still needs to detect that it already partially succeeded and complete the remaining work (update record B). Full idempotency requires: detect already-processed messages (via deduplication table keyed by message ID), AND if previously partially processed, complete the idempotent operation or skip it entirely.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Deduplication window expires before replay occurs, causing duplicate processing.**
+
+Symptom: business records appear twice even though deduplication logic is present; the duplication happens only for messages replayed after extended consumer downtime. Root cause: the deduplication store TTL (e.g., Redis key expiry of 1 hour) is shorter than the replay window (consumer was down for 6 hours, replays from 6 hours ago). Diagnosis: calculate the maximum realistic replay window: `max(retention_period, max_consumer_downtime)`; compare against deduplication TTL. Fix: set deduplication store TTL to exceed the maximum replay window by a safety margin of 2x.
+
+**Failure Mode 2: Deduplication store becomes a performance bottleneck at high throughput.**
+
+Symptom: consumer throughput is limited by deduplication check latency, not by processing logic; Redis or database deduplication store connection pool saturated. Diagnosis: profile consumer with deduplication check commented out vs enabled; measure dedup check p99 latency vs processing p99 latency; check connection pool saturation. Fix: use a Bloom filter as an O(1) pre-filter (false positive rate < 0.1%) to skip the database check for messages definitely not seen before; batch deduplication lookups (check 100 message IDs in one Redis MGET instead of 100 individual GETs).
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is an idempotent consumer and why do you need one?"

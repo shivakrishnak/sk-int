@@ -39,5 +39,29 @@ Misconceptions, Failure Modes, Interview Deep-Dive (7-12 full Q&A).
 | Microservices | docs/microservices/ | 16 | 30 | complete |
 | REST API | docs/rest-api/ | 12 | 25 | complete |
 | Spring | docs/spring/ | 17 | 32 | complete |
+| SRE | docs/sre/ | 17 | 35 | complete |
 | System Design | docs/system-design/ | 11 | 21 | complete |
+| AI Fundamentals | docs/ai-fundamentals/ | 11 | 23 | complete |
+| AI Agents | docs/ai-agents/ | 12 | 25 | complete |
+| RAG | docs/rag/ | 12 | 25 | complete |
+| MCP | docs/mcp/ | 9 | 20 | complete |
+| LLM APIs | docs/llm-apis/ | 10 | 22 | complete |
+| Software Architecture | docs/software-architecture/ | 18 | 35 | complete |
+| Java EE | docs/java-ee/ | 16 | 31 | incomplete |
+| Cloud Fundamentals | docs/cloud-fundamentals/ | 15 | 29 | incomplete |
+| AWS | docs/aws/ | 17 | 33 | complete |
+| Observability | docs/observability/ | 20 | 35 | complete |
+| Platform Engineering | docs/platform-engineering/ | 19 | 36 | complete |
+| CSS | docs/css/ | 15 | 27 | complete |
+| Frontend Build Tools | docs/frontend-build-tools/ | 14 | 27 | complete |
+| Frontend Testing | docs/frontend-testing/ | 13 | 25 | complete |
+| HTML | docs/html/ | 14 | 27 | complete |
+| JavaScript | docs/javascript/ | 18 | 35 | complete |
+| Node.js | docs/nodejs/ | 14 | 28 | complete |
+| React | docs/react/ | 16 | 30 | complete |
+| TypeScript | docs/typescript/ | 13 | 26 | complete |
+| Async Java | docs/async-java/ | 17 | 32 | complete |
+| GraalVM | docs/graalvm/ | 10 | 34 | incomplete |
+| Micronaut | docs/micronaut/ | 10 | 43 | incomplete |
+| Quarkus | docs/quarkus/ | 10 | 43 | incomplete |
 

@@ -406,6 +406,22 @@ workloads, Spinnaker or platform-native CD tools are more appropriate.
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: GitOps means storing Kubernetes YAML manifests in Git.**
+
+Storing manifests in Git is a prerequisite, not GitOps itself. GitOps is the operating model where Git is the ONLY source of truth, combined with automated reconciliation: a controller (Argo CD, Flux) continuously compares desired state (Git) with actual state (cluster) and corrects drift. Without the reconciliation loop, you have "configuration-as-code" but not GitOps - operators can still manually apply changes that create untracked drift.
+
+**Misconception 2: GitOps replaces CI pipelines.**
+
+GitOps handles the CD (delivery) half of CI/CD; CI pipelines remain essential for building, testing, and producing the artifact. The typical split: CI pipeline builds the image and pushes to registry, then updates the image tag in the Git config repo (the only Git commit CI makes). Argo CD or Flux detects this tag change and reconciles the cluster. CI and GitOps are complementary - not alternatives.
+
+**Misconception 3: GitOps is Kubernetes-only.**
+
+GitOps principles apply to any system with declarative configuration: Terraform (Atlantis implements GitOps for infrastructure), Ansible, cloud provider configurations, even database schema migrations. The two requirements are declarative state (desired state expressible as files) and automated reconciliation (a system that enforces that state). Kubernetes simply popularized the pattern because it was designed around declarative API objects.
+
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ArgoCD self-heal reverts emergency fixes**
@@ -1291,6 +1307,22 @@ for data privacy or cost: Unleash or Flagsmith. For AWS-native
 simple flag management without a dedicated service: AppConfig.
 Avoid building custom flag management unless your requirements
 are genuinely too simple for all available tools.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Feature flags are just if/else conditions in your code.**
+
+A plain `if(featureEnabled)` boolean in code is a feature toggle, not a feature flag system. Production feature flags require: a management service with UI (LaunchDarkly, Unleash, Flagsmith), targeting rules (enable for user ID X, organization Y, 10% of traffic), real-time updates without redeployment, audit trails showing who changed what flag and when, and SDK-level evaluation so flags resolve in microseconds locally. The operational surface area is the difference between a boolean and a platform.
+
+**Misconception 2: Feature flags can live in the codebase indefinitely.**
+
+Feature flags are technical debt with a time-to-expiry. Each active flag adds a branch to every code path it touches, multiplying test matrix complexity. Industry standard is a 3-month maximum flag lifetime before cleanup. Spotify, Netflix, and similar organizations run automated alerts when flags exceed their TTL. The team that added the flag owns the cleanup - this must be a first-class engineering task tracked in the sprint.
+
+**Misconception 3: Progressive delivery requires a service mesh or complex infrastructure.**
+
+A feature flag system with percentage-based rollout (10% → 25% → 50% → 100%) implements progressive delivery without a service mesh. Service meshes (Istio, Linkerd) add request-level traffic splitting but are not required for feature-level progressive rollout. Most teams start with flag-based rollout, which is sufficient for 90% of progressive delivery use cases.
 
 ---
 

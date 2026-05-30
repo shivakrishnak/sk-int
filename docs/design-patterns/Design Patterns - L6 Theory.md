@@ -263,7 +263,31 @@ products.sort(
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: The GoF book invented design patterns.**
+
+Christopher Alexander's "A Pattern Language" (1977) and "The Timeless Way of Building" (1979) established the concept of patterns in architecture and urban design - recurring solutions to design forces in a context. Kent Beck and Ward Cunningham applied Alexander's ideas to software at OOPSLA in 1987. The GoF book (1994) documented 23 patterns specific to object-oriented C++ and Smalltalk, popularizing the concept for software engineering. The GoF is a landmark catalog, not the origin of pattern thinking.
+
+**Misconception 2: Design patterns are objective, universally correct solutions.**
+
+Patterns are context-dependent solutions to forces in a specific domain, technology, and era. The GoF patterns were documented in the context of statically-typed OOP (C++, Smalltalk) in 1994. Many patterns (like Factory Method, Iterator) are less relevant in functional languages where higher-order functions achieve the same result with less ceremony. Some patterns (Flyweight, Memento) address problems that modern runtime environments (better memory management, serialization libraries) have significantly reduced. Pattern applicability must be evaluated against current context, not assumed to be timeless.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Applying OOP-centric patterns in functional codebases creates unnecessary complexity.**
+
+Symptom: functional codebase contains classes with single methods implementing strategy interfaces; Command pattern implemented with classes that wrap single functions; Observer implemented with class hierarchies instead of first-class function callbacks. Root cause: OOP pattern vocabulary applied in a context where language features make the patterns' class-based ceremony unnecessary. Diagnosis: check if a pattern's implementation could be replaced by a higher-order function. Fix: in functional languages, use the idiom native to the language: Strategy = function parameter, Command = function/closure, Observer = event subscription with callbacks.
+
+**Failure Mode 2: Pattern language mismatch across team causes communication breakdown.**
+
+Symptom: two engineers referring to the same pattern by different names, or using the same name for structurally different patterns; code reviews become debates about naming rather than substance. Root cause: team members learned patterns from different sources (GoF, Martin Fowler, Domain-Driven Design, microservices literature) with overlapping or conflicting terminology. Diagnosis: ask engineers to draw the structure they mean when they use a pattern name - compare diagrams. Fix: establish a shared glossary with agreed definitions and examples from the actual codebase; reference the agreed source when ambiguity arises.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "Who are the Gang of Four and why are their patterns important?"
@@ -608,7 +632,31 @@ public class Order {  // Aggregate Root (Entity)
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: DDD tactical patterns (Entity, Value Object, Aggregate) are always necessary for good domain modeling.**
+
+DDD tactical patterns add structure and discipline that pays off at scale (large, complex domains with 10+ developers). For simple CRUD applications, e-commerce sites with straightforward business logic, or small teams, the overhead of defining Aggregates, ensuring invariant enforcement, and implementing Repository abstractions may exceed the benefits. Eric Evans himself emphasizes that strategic DDD (bounded contexts, ubiquitous language) matters more than tactical patterns; use tactical patterns where domain complexity justifies them.
+
+**Misconception 2: An Aggregate Root is just a top-level entity with a many-to-one hierarchy.**
+
+Aggregate Root is not a structural concept (parent-child relationships) but a TRANSACTIONAL CONSISTENCY BOUNDARY. The root guarantees that all invariants WITHIN the aggregate are enforced on every transaction. This means: all modifications enter through the root (no external direct modification of inner entities), all inner entities are only accessed via the root, and the root's repository loads and saves the entire aggregate atomically. The boundary defines what must be consistent at the end of a single transaction - often a much smaller scope than the entire entity relationship graph.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Aggregate too large causes performance and concurrency problems.**
+
+Symptom: saving an Order aggregate takes 2 seconds and locks 200 rows; concurrent operations on the same order cause frequent optimistic locking conflicts. Root cause: the Aggregate boundary includes too many entities (Order with 50 OrderItems, associated Customer, shipping Address, payment Records). Diagnosis: measure average aggregate size (number of entities, bytes), lock contention rate, and save latency. Fix: split the aggregate: Order only contains OrderItems (small number), CustomerProfile is a separate aggregate loaded by ID reference, PaymentRecord is a separate aggregate - communicate between aggregates via domain events.
+
+**Failure Mode 2: Value Objects used as Entities (assigned IDs) violates invariants.**
+
+Symptom: two Money objects representing the same amount are not equal; identity-based comparison of conceptually equal values causes bugs in business logic. Root cause: value objects (defined by their attribute values) given identity (database ID, mutable state); business code now depends on identity comparison instead of structural equality. Diagnosis: check if the class has a database-generated ID and equals() based on ID rather than value fields. Fix: implement `equals()` and `hashCode()` based on value fields for Value Objects; if the object needs identity, it should be an Entity.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the difference between Entity and Value Object in DDD?"

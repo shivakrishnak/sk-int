@@ -330,7 +330,23 @@ throughput: gRPC.
 
 ---
 
-### 🔥 Field Q&A
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Connection pool exhaustion under sustained load.**
+
+Symptom: `UNAVAILABLE` or `RESOURCE_EXHAUSTED` status codes, increasing queue depth in the gRPC channel. Diagnosis: check `grpc_client_connections` gauge and `grpc_client_calls_started` vs `grpc_client_calls_finished` counters - a growing delta means calls are not completing. Fix: tune `MaxConcurrentStreams` on the server and connection pool size on the client; add circuit breakers (gRPC interceptor pattern) to fail fast when the downstream is saturated rather than queueing indefinitely.
+
+**Failure Mode 2: Deadline propagation not threaded through call chain.**
+
+Symptom: upstream callers timeout while downstream services continue processing (wasted work); downstream logs show requests completing after the upstream gave up. Diagnosis: correlate request IDs across service logs - upstream logs show `DEADLINE_EXCEEDED` while downstream logs show a completed response for the same request ID. Fix: always extract the deadline from the incoming context and pass it unchanged to all downstream gRPC calls; never reset or extend the deadline inside a handler.
+
+**Failure Mode 3: Streaming RPC half-close not handled correctly.**
+
+Symptom: client-streaming or bidirectional streaming calls leak resources - server-side handlers never complete, goroutine/thread count grows indefinitely. Diagnosis: profile goroutine count with `pprof` or JFR; look for stream handlers that are blocked waiting for more client messages after the client closed its send channel. Fix: handle the `io.EOF` (Go) or `onCompleted` (Java) event to properly terminate the server-side handler when the client signals no more messages.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -711,7 +727,23 @@ effect can happen asynchronously: messaging.
 
 ---
 
-### 🔥 Field Q&A
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer lag grows continuously - consumer cannot keep up with producer.**
+
+Symptom: queue depth or consumer lag metric shows steady increase over time; messages accumulate faster than they are processed. Diagnosis: compare producer throughput vs consumer processing rate - run `kafka-consumer-groups.sh --describe` or monitor the `consumer_lag` metric per partition; profile consumer processing time. Fix: scale consumer group instances (up to partition count), optimize the consumer's critical path (reduce synchronous I/O in the processing loop), or implement async processing with a bounded thread pool inside the consumer.
+
+**Failure Mode 2: Event ordering violated due to multi-partition or multi-consumer processing.**
+
+Symptom: downstream state machine receives events out of sequence (order placed AFTER order shipped), causing incorrect state transitions or data corruption. Diagnosis: correlate event timestamps with processing timestamps; check whether related events (same entity ID) are spread across multiple partitions. Fix: use consistent key-based routing to pin all events for the same entity to the same partition; use a single-threaded consumer per entity key if ordering matters within the entity lifecycle.
+
+**Failure Mode 3: Ghost consumer - consumer group connected but not processing.**
+
+Symptom: consumer group shows members connected but lag grows; active heartbeats sent but no offset progress. Diagnosis: check consumer `poll.interval.ms` vs actual processing time - if processing exceeds `max.poll.interval.ms`, the broker considers the consumer dead and triggers rebalance, re-assigning the partition; the consumer rebalances, gets the same partition, processes slowly again, and the cycle repeats. Fix: reduce `max.poll.records` to process fewer messages per poll cycle, or move heavy processing to a separate thread pool while the main thread continues polling.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

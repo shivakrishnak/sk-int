@@ -317,7 +317,31 @@ misused."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Using more design patterns in a codebase indicates better engineering.**
+
+Pattern count is inversely correlated with code quality when patterns are applied gratuitously. Each pattern adds indirection, cognitive load for readers unfamiliar with the pattern, and abstraction boundaries that make tracing behavior through the code harder. Patterns should emerge from refactoring when a design problem appears - not be imposed upfront. A 500-line class that solves the problem directly is often better than five pattern-laden classes that achieve the same result with three extra levels of indirection.
+
+**Misconception 2: Anti-patterns are patterns that should never be used.**
+
+Anti-patterns are recognized solutions that are COMMONLY used but usually harmful. "Singleton is an anti-pattern" does not mean Singleton is always wrong - it means it is frequently applied to cases where it causes harm (global state, untestable code). In appropriate contexts (a thread-safe registry initialized once per JVM with no mutable state), Singleton is fine. Anti-patterns are warning signs that demand justification, not absolute prohibitions.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Pattern overuse creates layers of abstraction with no value.**
+
+Symptom: adding a trivially simple feature requires modifying 10+ files across multiple abstraction layers; developers cannot trace how a request flows through the system; onboarding time exceeds weeks. Root cause: AbstractFactory creates objects via AbstractBuilder using StrategyFactory selected by a AbstractRegistry configured via AbstractConfiguration. Diagnosis: trace a simple change from input to output and count the abstraction boundaries crossed. Fix: flatten unnecessary layers; apply YAGNI - do not add abstraction for future flexibility that may never materialize.
+
+**Failure Mode 2: Premature abstraction hardcodes wrong assumptions.**
+
+Symptom: the interface designed for flexibility does not match actual usage; every concrete implementation wraps the interface awkwardly, passing dummy parameters or overriding methods to throw `UnsupportedOperationException`. Root cause: interface designed before requirements were clear; the abstraction assumes variability that does not exist or exists differently. Diagnosis: count `UnsupportedOperationException` implementations; count methods that ALL implementations override identically. Fix: refactor to the actual interface needed by real use cases; prefer concrete classes until the second or third implementation reveals the true abstraction.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What are the most common design pattern anti-patterns?"
@@ -772,7 +796,31 @@ convenience': use DI scope instead."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Singleton and Service Locator solve the same problem as Dependency Injection.**
+
+All three provide access to dependencies, but with radically different testability. Singleton: static access, global state, impossible to replace with a mock without modifying production code. Service Locator: lookup via a central registry, better than Singleton but still hides dependencies (not visible in constructors). Dependency Injection: dependencies are explicit in constructors, easily replaced with mocks in tests. DI is the pattern that solves the dependency access problem correctly; Singleton and Service Locator are anti-patterns that solve it incorrectly.
+
+**Misconception 2: Making a class Singleton via @Singleton annotation in DI frameworks is the same as the GoF Singleton pattern.**
+
+In a DI framework (Spring, Guice, Micronaut), `@Singleton` or `@Bean` means "create one instance per DI container." This is fundamentally different from GoF Singleton: the DI container creates and manages the single instance, injects it into constructor parameters (fully testable - inject a mock in tests), and the instance is not globally accessible via a static method. The DI container owns the lifecycle; the class has no `getInstance()` method. This is perfectly fine OOP; it is NOT the Singleton anti-pattern.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Singleton initialization order dependency causes NullPointerException.**
+
+Symptom: `NullPointerException` on application startup; one Singleton accesses another Singleton during initialization and the second is not yet initialized. Root cause: Singleton A's `getInstance()` initialization calls Singleton B's `getInstance()`, which is not yet complete (circular initialization or wrong initialization order). Diagnosis: trace static initialization blocks and `getInstance()` call chains; look for circular Singleton references. Fix: use lazy initialization to break circular dependencies; or eliminate Singletons and use DI where the container manages initialization order.
+
+**Failure Mode 2: Singleton class loaded by multiple class loaders creates multiple instances.**
+
+Symptom: two components that should share singleton state each see a different instance; state set in one component is not visible to the other. Root cause: in application servers and OSGi containers, different modules/bundles may have separate class loaders; each class loader creates a separate instance of the "singleton" class. Diagnosis: print `System.identityHashCode(singleton)` from both components; different hashes indicate different instances. Fix: ensure the singleton class is loaded by a shared parent class loader; or use JNDI / DI container to manage cross-module singletons.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "Why is Singleton considered an anti-pattern? When is it legitimate?"

@@ -313,7 +313,31 @@ must match, use Abstract Factory."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Abstract Factory is just a collection of Factory Methods.**
+
+Abstract Factory's defining characteristic is PRODUCT FAMILY CONSISTENCY - all products from one factory variant are guaranteed to be compatible with each other. A `WindowsUIFactory` creates `WindowsButton`, `WindowsCheckbox`, and `WindowsDialog` - which are all compatible with the Windows look-and-feel. Factory Method creates one type of product; Abstract Factory creates a consistent family of related products. The constraint is inter-product compatibility, not just flexible creation.
+
+**Misconception 2: Abstract Factory requires all products to be created in every factory.**
+
+Each concrete factory MUST provide implementations for all products in the family - otherwise the family consistency guarantee is broken. If `MacUIFactory` provides `MacButton` but not `MacCheckbox`, the client cannot build a consistent Mac UI. This is a design constraint. If your use case only needs some family members, consider whether Abstract Factory is the right choice, or whether separate Factory Methods per needed product are sufficient.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Factory variant not registered causes runtime failure instead of compile-time error.**
+
+Symptom: `IllegalArgumentException: Unknown factory type 'mobile'` at runtime when a new client type is added; the new factory type was not registered in the factory selector. Root cause: factory selection via string/enum lookup without a complete switch or registry; missing cases are not caught at compile time. Diagnosis: look for switch/if-else factory selectors without default case validation. Fix: use an enum-to-factory map initialized at startup; add a startup validation that all enum values have a registered factory; prefer dependency injection for factory registration.
+
+**Failure Mode 2: Abstract factory extended with a new product breaks all existing concrete factories.**
+
+Symptom: adding a new product type to the abstract factory interface causes compile errors in all existing concrete factory implementations. Root cause: interface change without backward compatibility consideration. Diagnosis: count concrete factory implementations - the higher the count, the higher the blast radius of adding a new method. Fix: add new products as separate factory interfaces (extend rather than modify); use default interface methods with a sensible no-op or error-throwing default.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is Abstract Factory? How is it different from Factory Method?"
@@ -744,7 +768,31 @@ cannot be mutated). The Prototype complexity exists only for mutable objects."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Prototype (clone) creates a deep copy by default.**
+
+Java's `Object.clone()` and most language clone mechanisms create a SHALLOW copy - new object, same field values, which means object references point to the SAME referenced objects. If `Person` has a mutable `List<Address>` field, a shallow clone gives you a new `Person` pointing to the same `List<Address>` - modifying the clone's addresses modifies the original's. Deep copy requires explicitly cloning each mutable referenced object recursively, implementing `Cloneable` correctly throughout the object graph, or using serialization.
+
+**Misconception 2: Prototype is a memory optimization for creating many objects.**
+
+Prototype's purpose is to avoid the cost of re-running complex initialization - configuring a database connection, running expensive setup computations, or populating a complex object graph. Cloning is not necessarily faster than `new` for simple objects; the JVM's object allocation is highly optimized. Prototype is appropriate when the INITIALIZATION cost (not just allocation) is high and you need multiple similar instances. For pure memory efficiency, object pooling is more appropriate.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Shallow clone causes aliased mutation bugs.**
+
+Symptom: modifying a cloned object unexpectedly changes the original object's state; two objects that should be independent share the same mutable reference. Root cause: clone() did not deep-copy mutable reference fields. Diagnosis: add mutation to a cloned object's collection/array fields; observe whether the original object's corresponding field also changes. Fix: override clone() to recursively deep-copy all mutable reference fields; or implement a `copy()` factory method that explicitly constructs a new object with cloned mutable fields.
+
+**Failure Mode 2: Clone breaks class invariants in subclasses.**
+
+Symptom: cloned objects of a subclass type are missing invariant-establishing initialization that the subclass constructor performed; cloned objects appear to be invalid states. Root cause: subclass does not override clone() and relies solely on the parent's clone() implementation, which does not call the subclass constructor. Diagnosis: add invariant assertions to the class and check cloned instances. Fix: override clone() in each concrete class to ensure all invariants are re-established; document that subclasses must override clone().
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Prototype pattern?"

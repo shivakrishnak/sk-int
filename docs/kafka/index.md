@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Kafka"
-parent: "SK Interview"
 nav_order: 1
 has_children: true
-permalink: /kafka/
 ---
 
 # Kafka

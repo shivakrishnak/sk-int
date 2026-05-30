@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "DevOps CI/CD"
-parent: "SK Interview"
 nav_order: 11
 has_children: true
-permalink: /devops-cicd/
 ---
 
 # DevOps CI/CD

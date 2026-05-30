@@ -449,6 +449,22 @@ hundreds of services and build hermacity requirements.
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Monorepos require rebuilding everything on every commit.**
+
+Affected-only builds are the entire point of monorepo tooling. Nx, Turborepo, and Bazel perform dependency graph analysis to determine which services, libraries, and applications are affected by each commit. A change to `libs/auth` triggers builds only for `apps/api`, `apps/admin`, and other apps that depend on `libs/auth` - not for `apps/payments` or `libs/reporting`. Without this, monorepos do become slow; with it, CI time is often LOWER than polyrepo because shared caches eliminate redundant work.
+
+**Misconception 2: Remote cache invalidates correctly without careful configuration.**
+
+Remote cache correctness depends on accurate cache key computation - which must include all inputs: source files, environment variables used during build, Node.js version, and tool versions. Under-specified cache keys cause false cache hits where stale artifacts are served instead of fresh builds. Over-specified cache keys cause cache misses where everything rebuilds unnecessarily. Both Turborepo and Nx require explicit `inputs` and `outputs` configuration per task to achieve correct remote caching.
+
+**Misconception 3: Monorepo means all services share the same deployment cycle.**
+
+A well-structured monorepo enables fully independent deployments per service - the same as polyrepo, but with the benefit of shared tooling and atomic cross-service changes. Deployment independence requires: per-service CI/CD pipelines triggered only by affected changes, independent versioning per package/service, and separate deployment environments per service. The monorepo only shares the repository; deployment pipelines remain service-specific.
+
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Incorrect affected detection misses a real failure**
@@ -1335,6 +1351,22 @@ catches structural changes but not behavioral ones (a field that
 changes semantics but not type). E2E tests provide the highest
 confidence but create coordination dependencies that negate
 microservices autonomy.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Independent pipelines per microservice means no coordination between services.**
+
+Independent deployment is the goal, but coordination is still required for: API contract verification (Pact contract tests must run against the consumer's expectations before a provider deploys), shared library version upgrades (bumping a shared client library version requires all consumers to be validated), and coordinated rollouts when multiple services change together. Independence means "can deploy separately when there are no breaking changes" - not "never need to coordinate."
+
+**Misconception 2: You can deploy microservices in any order during a multi-service release.**
+
+Deployment order matters when services share API contracts. The correct order for backward-compatible changes: deploy consumers first with fallback handling for the new provider API, then deploy the provider, then remove fallback code. For schema changes: add new fields first (backward-compatible), deploy all consumers to use new fields, then remove old fields. Violating this order causes runtime failures even with individually correct deployments.
+
+**Misconception 3: Polyrepo automatically solves the coordination problem.**
+
+Polyrepo makes coordination harder, not easier - there is no single place to view the dependency graph, no atomic cross-repo commits, and no shared CI configuration. Teams managing 50+ microservices in polyrepo often reintroduce coordination tools (dependency graph dashboards, internal release trains) that effectively recreate monorepo-level visibility. The choice between mono and polyrepo should be based on team topology, not an assumption that polyrepo is inherently simpler at scale.
 
 ---
 

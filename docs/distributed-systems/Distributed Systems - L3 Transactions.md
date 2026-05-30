@@ -336,7 +336,7 @@ the domain boundaries.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -716,7 +716,7 @@ orchestration for complex, changing workflows.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

@@ -418,6 +418,22 @@ credentials in any production system.
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Environment variables are the secure way to pass secrets in CI/CD.**
+
+Environment variables are accessible to all processes running in the same environment, appear in crash dumps, and can be leaked by subprocesses (build tools that log their environment on failure). CI platforms mask secrets in logs, but cannot prevent all leakage vectors. The secure pattern: inject secrets dynamically at runtime using a secret manager (Vault, AWS Secrets Manager, Azure Key Vault), retrieve them for the exact duration needed, and use short-lived dynamic credentials that expire after the pipeline run.
+
+**Misconception 2: Storing encrypted secrets in the repository (git-crypt, SOPS) is enterprise-ready.**
+
+Repository-level encryption shifts the problem to key management: who holds the decryption key, how is it rotated, who has access to the encrypted file. More critically, repository-stored secrets cannot be rotated without a new commit - leaking a secret requires an emergency rotation that leaves the old secret visible in Git history. Dedicated secret managers provide rotation without code changes, fine-grained access controls with audit logs, and automatic expiry.
+
+**Misconception 3: CI/CD platform built-in secret storage (GitHub Secrets, GitLab CI Variables) is sufficient for production.**
+
+CI platform secrets lack: rotation automation (secrets must be manually updated when rotated), audit logging of which pipeline runs accessed which secret, dynamic credentials that expire per-use, and cross-platform secret synchronization. They are appropriate for small teams and non-sensitive credentials. Organizations handling PII, financial data, or regulated workloads require a dedicated secret manager with these capabilities.
+
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Secret leaked in CI logs**
@@ -1251,6 +1267,22 @@ For JVM/Java projects: Flyway (simpler) or Liquibase (built-in rollback,
 more enterprise tooling). For Python: Alembic or framework-native.
 For Go: golang-migrate. For polyglot environments that want a
 language-agnostic schema management: Atlas.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Database migrations should run automatically as part of every deployment.**
+
+Automatic migration execution without human review is appropriate only for additive changes (new tables, new nullable columns with defaults) in non-production environments. Production migrations that modify existing columns, add NOT NULL constraints, or drop data require: a migration preview showing what SQL will execute, explicit approval in the deployment gate, a tested rollback plan, and sometimes a maintenance window. Running `flyway migrate` automatically on production without these controls has caused multi-hour outages at scale.
+
+**Misconception 2: Rolling back a database migration is the same as rolling back code.**
+
+Code rollback is straightforward: redeploy the previous artifact. Database rollback is fundamentally different: data written by the new version may be incompatible with the old schema. A column rename, even with a migration that creates a copy, cannot be reversed if the new application wrote to the renamed column. The correct pattern is expand-and-contract: add new column (expand), migrate data, update application to use new column, verify, then drop old column (contract). Each phase is independently deployable and rollback-safe.
+
+**Misconception 3: Database migrations are a separate concern from CI/CD and should be handled by the DBA team.**
+
+Separating migration management from application deployment creates version skew: the application code and database schema go out of sync between environments, and deploying a new application version without the required migration causes runtime failures. Migrations should be version-controlled alongside application code, tested in CI the same way application code is, and deployed as part of the application release - owned by the same team, reviewed in the same PR.
 
 ---
 

@@ -297,7 +297,7 @@ best-effort (cache warm-up, low-stakes coordination): Redis SETNX.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -653,7 +653,7 @@ If no: ZooKeeper/etcd. If tolerable with fencing: Redis.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

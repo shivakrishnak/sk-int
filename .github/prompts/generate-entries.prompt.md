@@ -25,6 +25,22 @@ They are permanently prohibited. Violation = file is REJECTED, not written.
 `spec/interview_content_generator.md` in full in the current session. Generating
 from memory or conversation summaries produces wrong headers. ALWAYS read the spec.
 
+**FAILURE 2 - Partial section generation (most common recurring failure):**
+Files written to disk with fewer than all mandatory sections. A production
+audit across 694 files found 35 files in 7 topics with missing sections.
+The 4 most frequently dropped sections (in order of recurrence):
+
+1. `### 📘 Concept Explanation` - 30 files missing (Quarkus all 10, GraalVM
+   all 10, Micronaut most) - generation started from wrong/truncated template
+2. `### 🚨 Failure Modes and Diagnosis` - 35 files missing (7 topics) -
+   silently omitted near end of long responses under length pressure
+3. `### ⚠️ Common Misconceptions` - 25+ files missing - same dropout pattern
+4. `### 🎯 Interview Deep-Dive` - Observability L6+META, Java EE L6+META -
+   response truncated before the CAPSTONE section
+
+Fix: GATE 3 mandatory post-write verification. NEVER mark a keyword `draft`
+without running Gate 3 on the actual written file (not from memory).
+
 ### GATE 1 - SPEC MUST BE READ BEFORE ANY GENERATION (Fixes Failure 1)
 
 **RULE:** Before generating ANY entry, read `spec/interview_content_generator.md` in full.
@@ -63,6 +79,12 @@ not applicable. Silent omissions are NEVER acceptable.
 | - | System Design | `### 🏛️ System Design` | ALWAYS - design OR explicit OMIT for non-★★★ |
 | - | Diagram | `### 📊 Diagram` | ALWAYS - diagram OR explicit OMIT for non-visual |
 
+**⚠️ Most frequently dropped sections - verify these FIRST before writing:**
+- `### 📘 Concept Explanation` - most commonly missing; never skip
+- `### 🚨 Failure Modes and Diagnosis` - frequently omitted near end of output
+- `### ⚠️ Common Misconceptions` - frequently omitted near end of output
+- `### 🎯 Interview Deep-Dive` - CAPSTONE; truncated in long responses
+
 **⛔ HARD STOP - Do NOT write the file if:**
 - Any section header (rows 2-10 above) is missing from the output
 - Section §2 does not contain a `**Blank Mind Recovery:**` block
@@ -73,6 +95,34 @@ not applicable. Silent omissions are NEVER acceptable.
 
 **Recovery:** Immediately append any missing section before updating index.md.
 Validator rule R21 catches all 10 sections at pre-commit and blocks the commit.
+
+### GATE 3 - POST-WRITE FILE VERIFICATION (Fixes Failure 2)
+
+**RULE:** After EVERY keyword write to disk, verify the actual written file
+contains all mandatory section headers before updating index.md status or
+continuing to the next keyword. Memory is not sufficient - check the file.
+
+**Run after every write (replace {topic}/{File} with actual path):**
+
+```pwsh
+$f = "docs/{topic}/{File}.md"
+@(
+  "### 🎯 Model Answer",
+  "### 📘 Concept Explanation",
+  "### 🎓 Answers by Seniority",
+  "### ⚠️ Common Misconceptions",
+  "### 🚨 Failure Modes and Diagnosis",
+  "### 🎯 Interview Deep-Dive"
+) | ForEach-Object {
+  if ((Get-Content $f -Raw) -notmatch [regex]::Escape($_)) {
+    Write-Host "MISSING: $_" -ForegroundColor Red
+  }
+}
+# No output = GATE 3 PASS. Any output = FAIL.
+```
+
+**Gate 3 FAIL:** Append every missing section immediately. Re-run the
+command. Do NOT update index.md status to `draft` until output is empty.
 
 ---
 
@@ -173,6 +223,29 @@ NEVER use PowerShell here-strings (`@'...'@`) or
 `[System.IO.File]::WriteAllText()` with inline content - both fail
 silently for content > 5KB.
 
+### 2d. Verify written file - Gate 3 (mandatory before proceeding)
+
+After every write, run this check. No output = PASS. Any output = FAIL.
+
+```pwsh
+$f = "docs/{topic}/{File}.md"
+@(
+  "### 🎯 Model Answer",
+  "### 📘 Concept Explanation",
+  "### 🎓 Answers by Seniority",
+  "### ⚠️ Common Misconceptions",
+  "### 🚨 Failure Modes and Diagnosis",
+  "### 🎯 Interview Deep-Dive"
+) | ForEach-Object {
+  if ((Get-Content $f -Raw) -notmatch [regex]::Escape($_)) {
+    Write-Host "MISSING: $_" -ForegroundColor Red
+  }
+}
+```
+
+**Gate 3 FAIL:** Append the missing sections immediately, re-run the
+verification, confirm empty output before marking keyword complete.
+
 ---
 
 ## Quality Standard
@@ -183,7 +256,7 @@ silently for content > 5KB.
 > Patterns, Final Gate, and Voice. Every keyword MUST pass all eight tests.
 > Full spec: `spec/interview_content_generator.md` Section 6.
 
-### 2d. Report and continue
+### 2e. Report and continue
 
 After each batch:
 

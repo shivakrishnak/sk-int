@@ -304,7 +304,7 @@ ecosystem? Eureka. Need advanced traffic policies? Service mesh.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -694,7 +694,7 @@ If not: start with a library approach.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

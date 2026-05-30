@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Kubernetes"
-parent: "SK Interview"
 nav_order: 13
 has_children: true
-permalink: /kubernetes/
 ---
 
 # Kubernetes

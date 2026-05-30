@@ -326,7 +326,31 @@ in a database: the transaction is a Macro Command; rollback calls
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Command is only useful for undo/redo functionality.**
+
+Undo/redo is one use case. Command also enables: queuing and scheduling operations for later execution, logging all executed commands for audit trails, supporting macro commands (composite commands), implementing transactional operations (execute all or none), and decoupling the invoker from the receiver completely. A task queue where workers execute work items from a queue is the Command pattern. CQRS command handlers are the Command pattern at architectural scale.
+
+**Misconception 2: Command must store complete state to support undo.**
+
+There are two undo approaches: store the full state snapshot before execution (simple but memory-intensive), or store the inverse operation (memory-efficient but requires truly invertible operations). A `MoveCommand` can store just the delta (how much to move) and implement undo as `move(-delta)`, rather than storing the entire object state. The tradeoff: inverse operations are more efficient but require careful design; state snapshots are simpler but can be expensive for large objects.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Command history grows unbounded causing memory exhaustion.**
+
+Symptom: memory grows monotonically in long-running sessions; heap dump shows a growing list of Command objects with state snapshots. Root cause: undo history stored without a cap, retaining all commands executed since application start. Diagnosis: inspect the undo stack size vs session duration. Fix: cap the undo history depth (configurable, typically 50-100 commands); use LRU eviction for the undo stack.
+
+**Failure Mode 2: Command not idempotent causes issues with retry or replay.**
+
+Symptom: replaying a command log to restore state results in incorrect state (e.g., database records incremented twice); retrying a failed command from a queue creates duplicates. Root cause: command execute() is not idempotent - repeated execution produces different results. Diagnosis: replay a command twice and observe state; check for non-idempotent operations (incrementing counters, appending to logs). Fix: implement command IDs with a deduplication check before execution; for CQRS command handlers, enforce idempotency via command ID deduplication.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Command pattern? What are its four main uses?"
@@ -750,7 +774,31 @@ or create a copy to iterate while removing from the original."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Iterator is only useful for custom collection traversal.**
+
+Iterator abstracts traversal logic for any sequential data source, not just in-memory collections. Database result sets, file line readers, paginated API responses, and event streams all implement Iterator-like patterns. Java's `ResultSet`, Python's generators, and Go's `bufio.Scanner` all use Iterator semantics. When you have a data source that produces elements one at a time with `hasNext()` and `next()` semantics - regardless of whether it's a collection - Iterator is the appropriate abstraction.
+
+**Misconception 2: External and internal iterators are equivalent choices.**
+
+External iterators (client calls `next()`) give the client control over traversal speed and can break early. Internal iterators (collection calls back with each element, like `forEach()`) give the collection control, enabling parallel processing and optimization. Internal iterators (stream operations) allow the collection to choose the traversal strategy - sequential or parallel - without the client needing to change. For simple sequential reads, both are equivalent. For parallel processing or early termination, the choice matters.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ConcurrentModificationException during iteration.**
+
+Symptom: `ConcurrentModificationException` thrown mid-iteration even in single-threaded code; occurs when a collection is modified while being iterated. Root cause: Java collections use a modification count (modCount) to detect structural modifications; adding or removing elements during iteration triggers the check. Diagnosis: look for collection modifications inside the `for` loop or `forEach()` call. Fix: use `Iterator.remove()` for safe removal during iteration; collect elements to remove into a separate list, then remove after iteration completes.
+
+**Failure Mode 2: Iterator of a lazy/remote data source not closed causes resource leak.**
+
+Symptom: database connections not returned to pool; file handles remain open; occurs when iteration is abandoned (exception thrown before `hasNext()` returns false). Root cause: Iterator wrapping a database `ResultSet`, file, or network connection is not closed when iteration ends prematurely. Diagnosis: check resource usage (connection pool exhaustion, too many open file handles). Fix: implement `Closeable` in the iterator and use try-with-resources: `try (MyIterator it = collection.iterator()) { ... }`.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Iterator pattern? How does Java implement it?"

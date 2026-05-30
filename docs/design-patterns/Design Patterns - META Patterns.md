@@ -251,7 +251,58 @@ public class ReportExporter {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: A class implementing an interface means a pattern is in use.**
+
+Interfaces are a language mechanism, not a pattern indicator. Most interfaces in production code exist for testability (inject mock in tests), not to implement a GoF pattern. Recognizing patterns requires identifying the STRUCTURAL RELATIONSHIP and INTENT: does one object hold a reference to another via an interface and call it to perform an operation? That's delegation - possibly Strategy, Command, Observer, or Template Method depending on who controls invocation and lifecycle. Look for the intent, not the interface.
+
+**Misconception 2: The original developer's intent determines what pattern is present.**
+
+Patterns are in the structure, not the developer's mind. Code that has the structure of Observer - a subject maintaining a list of observer interfaces and notifying them on state change - IS Observer, whether or not the developer called it that. Conversely, code named "OrderStrategyFactory" may not implement either Strategy or Factory Method correctly. Pattern recognition is structural analysis; naming is documentation. Read the structure, not the comments.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Name-driven recognition misses 90% of real
+pattern usage.**
+
+Symptom: engineer only flags a pattern in code review when the
+class names match textbook examples (ObserverInterface, Subject,
+ConcreteObserver). Misses the Spring ApplicationEventPublisher
++ ApplicationListener structure, the Guava EventBus subscribers,
+and the Reactor/RxJava Observable chain - all structural Observer
+implementations. Diagnosis: stop looking at class names; look at
+the dependency graph. A collection of callbacks, listeners, or
+subscribers that are notified on state change = Observer regardless
+of naming.
+
+**Failure Mode 2: False positive pattern recognition leads to
+wrong refactoring decisions.**
+
+Symptom: code is named "OrderFactory" but does not implement
+Factory Method (it just has a static create() method with no
+polymorphism). Treating it as Factory Method leads to refactoring
+that adds AbstractFactory, Creator, and Product hierarchies
+around a method that had no extension requirement. Diagnosis:
+verify BOTH structure AND intent. A method named "create" is not
+a pattern without the polymorphic extension point.
+
+**Failure Mode 3: Pattern blindness in architecture review
+misses structural problems.**
+
+Symptom: architecture review approves a design with a god
+object that has 20 listener types registered on it. The god
+object IS the Observer Subject - and it violates SRP because
+it has 20 responsibilities. Pattern recognition in architecture
+review means reading structural implications: who owns what,
+what are the dependency directions, what is the blast radius
+of a change.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 **Q: How do you identify which design pattern to use for a given problem?**
 
@@ -492,7 +543,59 @@ public class PushNotificationStrategy
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Refactoring to patterns always improves code quality.**
+
+Refactoring TO a pattern adds abstraction; the question is whether the abstraction buys more than it costs. Adding a Strategy pattern where there is exactly one strategy (and realistically will only ever be one) adds an interface, a concrete class, a context class, and four more files to understand for a feature that could be a simple method. Code quality means appropriate complexity for the problem. Over-abstracted code is just as harmful as under-abstracted code.
+
+**Misconception 2: Experienced engineers use more patterns than junior engineers.**
+
+Experienced engineers use patterns APPROPRIATELY - which often means using FEWER patterns, more deliberately. A senior engineer who writes a clean, direct 50-line implementation is demonstrating more skill than a junior engineer who wraps the same functionality in three layers of Pattern-named abstractions. The mark of experience is knowing when NOT to apply a pattern, not knowing more patterns.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Speculative generality - patterns applied for
+problems that never materialize.**
+
+Symptom: Abstract Factory hierarchy with 4 implementations
+"in case we need to support multiple databases" - but the
+product has one database and no roadmap item for a second.
+The codebase has 15 files (factories, products, builders)
+for a feature that needed 2. Diagnosis: count how many
+pattern-role classes exist with a single implementation.
+If a Strategy has 1 concrete class: the abstraction is not
+earning its cost. Fix: inline the single implementation,
+reintroduce abstraction when the second case arrives.
+
+**Failure Mode 2: Pattern avoidance causes the very problem
+patterns prevent.**
+
+Symptom: team avoids design patterns as "over-engineering".
+Result: business logic duplicated in 8 service classes, each
+with its own if/else chain for the same algorithm variants.
+The code that most benefits from Strategy or Template Method
+is written as procedural duplication. Diagnosis: search for
+duplicated switch/if-else blocks across multiple classes
+selecting behavior by type. That IS the pattern problem; the
+pattern is the solution.
+
+**Failure Mode 3: Pattern applied to wrong scope causes cascade
+rewrites.**
+
+Symptom: Decorator pattern applied at the wrong abstraction
+level - wrapping concrete classes instead of interfaces.
+When the concrete class changes: all decorators break. Diagnosis:
+check that the pattern's roles use the correct abstraction
+level. Decorator must wrap the component interface. Strategy
+must inject the strategy interface. Fix: introduce the
+correct interface first, then apply the pattern.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 **Q: How do you decide when a design pattern is appropriate vs overkill?**
 
@@ -885,7 +988,59 @@ EmailMessage msg = EmailMessage
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Refactoring to a pattern is only worth it if you have a failing test to protect the change.**
+
+Refactoring to a pattern SHOULD be protected by tests, but the absence of tests does not prevent the refactoring - it increases the risk. The correct response to missing tests is to write them FIRST (characterization tests), then refactor. "We can't refactor because we have no tests" is a catch-22 that keeps codebases stuck. Write tests for the current behavior, refactor to the pattern, run tests to verify behavior is preserved.
+
+**Misconception 2: Refactoring to a pattern is a large, risky change.**
+
+Martin Fowler's refactoring catalog (which includes several pattern-directed refactorings) shows that refactoring to patterns is a series of small, safe steps: Extract Interface, Extract Class, Move Method, Introduce Parameter Object. Each step is individually safe and verifiable by running tests. A refactoring that feels like a "big bang" rewrite is not a refactoring - it is rewriting. Any pattern introduction should be decomposable into atomic refactoring steps.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Big-bang refactoring without test coverage
+corrupts behavior silently.**
+
+Symptom: team refactors legacy OrderService to use Strategy
+for pricing in a single large commit. Three edge cases break
+in production: promotional pricing, B2B tier pricing, and
+zero-quantity guard. No tests existed for these paths before
+refactoring. Diagnosis: check coverage before refactoring. If
+branch coverage < 80%: stop, write characterization tests,
+then refactor. Fix: the correct sequence is tests FIRST,
+then refactoring steps, then verify tests pass.
+
+**Failure Mode 2: Partial refactoring leaves code in a worse
+state than the original.**
+
+Symptom: Extract Interface done but the concrete class still
+holds all logic - the interface is never injected, old code
+uses the concrete type directly. Result: two parallel
+representations of the same class with no benefit. Diagnosis:
+a refactoring is incomplete if callers still depend on the
+concrete type after the interface was extracted. Fix: complete
+the refactoring (update call sites) or revert and plan the
+full sequence before starting.
+
+**Failure Mode 3: Refactoring in a live feature branch diverges
+far from main.**
+
+Symptom: pattern refactoring started in a feature branch.
+Main continues to evolve. Two weeks later: 40 merge conflicts
+between the refactoring branch and main. The refactoring cannot
+be merged safely. Diagnosis: structural refactorings (introducing
+patterns) must be merged frequently - at minimum daily. Fix:
+use branch-by-abstraction (introduce interface on main, make
+concrete class implement it on main, then shift call sites one
+at a time) rather than a separate long-running branch.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 **Q: How do you introduce a design pattern into legacy code without
 breaking existing behavior?**

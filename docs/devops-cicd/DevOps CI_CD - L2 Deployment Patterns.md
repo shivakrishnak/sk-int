@@ -404,6 +404,22 @@ optimized images and runs without Docker.
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: CI image builds are identical to local Docker builds.**
+
+Local builds rely on your existing layer cache and local daemon state. CI runners start fresh every run - or share a cache that requires explicit configuration. Without `--cache-from` or BuildKit inline caching, CI builds pull every layer from scratch, making a 2-minute local build take 15 minutes in CI. BuildKit's registry-based cache export (`--cache-to type=registry`) is required to make CI builds comparable to local ones.
+
+**Misconception 2: Multi-stage builds are only about reducing image size.**
+
+Image size is one benefit, but the primary value is separation of concerns: build-time dependencies (compilers, test runners, source code) never reach the production image. A 500MB JDK in a build stage produces a 150MB runtime image containing only the JRE and the compiled artifact. This also prevents credential leaks - any `--secret` or `ARG` used during build cannot appear in the final production layer.
+
+**Misconception 3: Running containers as root is acceptable for internal services.**
+
+Over 60% of container privilege escalation attacks exploit root-running containers. The one-line fix (`USER appuser`) in your Dockerfile eliminates this class of risk. Cloud provider security scanners (Trivy, Snyk) flag root-running containers as HIGH severity by default, which blocks automated deployments in security-conscious organizations.
+
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Secrets baked into Docker image layers**
@@ -1228,6 +1244,22 @@ Choose blue-green for services where instant rollback (seconds)
 is non-negotiable. Choose canary for services with high traffic
 where production testing under real load matters. Use rolling update
 for internal tools or services tolerant of brief rollback latency.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Blue-green deployment requires permanently running double the infrastructure.**
+
+The idle (non-active) environment only needs to run during the deployment window. After traffic cutover is confirmed stable (typically 15-30 minutes), the old environment can be scaled to zero. Cost is only doubled during the deployment window itself. Modern cloud environments make this instant - scale the green environment up before deployment, scale the blue environment down after validation.
+
+**Misconception 2: Canary deployments are only valuable for high-traffic services.**
+
+Canary analysis is equally valuable for low-traffic services where a bug would affect 100% of a small user base. The key is using RELATIVE traffic split (e.g., 5% canary), not absolute request count. Even at 10 requests/minute total, routing 1 request/minute to canary catches most regression patterns within 30-60 minutes.
+
+**Misconception 3: Blue-green rollback is instant and without risk.**
+
+Switching the load balancer pointer back IS instant, but the risk lies in shared state. If the green deployment wrote to the database using a new schema, rolling back to blue may cause blue to encounter incompatible data. Any deployment touching the data layer requires backward-compatible migrations first, making the database the real gating concern - not the application deployment itself.
 
 ---
 

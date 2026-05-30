@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Design Patterns"
-parent: "SK Interview"
 nav_order: 4
 has_children: true
-permalink: /design-patterns/
 ---
 
 # Design Patterns
@@ -147,13 +144,13 @@ with META skills for recognizing and applying patterns in real codebases.
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| DP-030 | SOLID Principles | ★★★ | 4 | pending |
+| DP-030 | SOLID Principles | ★★★ | 4 | draft |
 
 ### Design Patterns - L5 Architectural.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| DP-031 | Architectural Patterns | ★★★ | 4 | pending |
+| DP-031 | Architectural Patterns | ★★★ | 4 | draft |
 
 ### Design Patterns - L6 Theory.md
 

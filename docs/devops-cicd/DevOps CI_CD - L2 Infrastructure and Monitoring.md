@@ -453,6 +453,22 @@ language: AWS CDK. For teams who want familiar language syntax
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: IaC in CI/CD means just running `terraform apply` in the pipeline.**
+
+A production-grade IaC pipeline requires: plan review gates (auto-apply only in non-production), state file locking to prevent concurrent runs, drift detection to catch manual changes, workspace-per-environment isolation, and cost estimation before apply (using Infracost). Running bare `terraform apply` in CI without these controls has caused multi-hour outages when two simultaneous pipeline runs corrupted state.
+
+**Misconception 2: IaC removes the need to test infrastructure changes.**
+
+IaC requires multiple test layers: unit tests validate module logic (terratest for Terraform, cdk-nag for CDK), policy tests enforce security rules (OPA/Conftest, tfsec), and integration tests verify that provisioned infrastructure accepts application traffic. The investment is lower than app testing, but skipping it means finding misconfigurations in production rather than in CI.
+
+**Misconception 3: The IaC state file is just an implementation detail.**
+
+The Terraform state file is the authoritative record of what infrastructure exists and is mapped to which resource IDs. It contains sensitive data (database passwords, API keys stored in resource attributes) and must be stored in a versioned, encrypted, access-controlled backend (S3 + DynamoDB for state locking, not local filesystem). Loss or corruption of the state file requires manual reconciliation of every managed resource.
+
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Terraform state file corruption from concurrent
@@ -1265,6 +1281,22 @@ the alert. Logs provide the diagnosis. Traces provide the causality.
 For pure CD purposes, metrics are the primary investment (you can
 automate rollback on metrics). Logs and traces support investigation
 after the automated gate fires.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Monitoring in CD means checking if the deployment pipeline succeeded.**
+
+Pipeline success only means the deployment completed - it says nothing about whether the deployed code functions correctly. Production monitoring requires tracking business-level signals: error rate increase after deployment, p99 latency regression, conversion rate drop, downstream service error spikes. A deployment that passes all pipeline checks but causes a 2% error rate increase is a failed deployment that pipeline success metrics will not catch.
+
+**Misconception 2: Auto-rollback on any alert threshold is always safer than manual rollback.**
+
+Auto-rollback requires extremely precise alert thresholds. Too sensitive: a transient spike triggers rollback of a healthy deployment, causing more disruption than the spike. Too lenient: the rollback never fires when it should. Production teams typically use auto-rollback only for critical error rate thresholds (e.g., error rate > 5x baseline for > 5 minutes), combined with manual override and a deployment freeze window.
+
+**Misconception 3: You need comprehensive observability in place before adding CD.**
+
+Observability is built incrementally alongside CD. Start with three signals: deployment event markers in your monitoring system, error rate per service version, and p99 latency. These three signals catch 80% of regressions. Add business metrics, distributed tracing, and structured logging in subsequent iterations. Waiting for perfect observability before adopting CD delays the primary benefit indefinitely.
 
 ---
 

@@ -351,6 +351,51 @@ exactly, which is why consensus works in practice.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Timeout tuned too tight - GC pauses trigger
+false leader elections.**
+
+Symptom: etcd or ZooKeeper cluster experiences repeated leader
+flapping under normal load. No actual node failure. Investigation
+shows Java GC stop-the-world pauses of 300ms exceeding the 200ms
+election timeout. The follower declares the leader dead and starts
+a new election - but the leader was alive, just paused.
+Diagnosis:
+```
+etcdctl endpoint status --cluster  # rapid leader changes
+zookeeper.log: looking for election storms
+jstack <pid>: GC pause duration > election_timeout
+```
+Fix: increase election timeout to > max observed GC pause.
+Or: tune GC to reduce stop-the-world pauses (G1GC, ZGC).
+
+**Failure Mode 2: Over-applying FLP - engineers refuse to build
+consensus because "it's impossible."**
+
+Engineers who misread FLP as "distributed consensus is impossible"
+refuse to use Raft/Paxos and instead build custom coordination
+primitive that lacks correctness guarantees. FLP impossibility
+applies to pure asynchrony with no timeouts - a model that does
+not describe any real network. Consensus with timeouts (partial
+synchrony) works. ZooKeeper, etcd, and Kafka all use it. The
+correct response to FLP is: use an existing production-grade
+consensus library, don't build your own.
+
+**Failure Mode 3: Liveness starvation under high conflict -
+Paxos/Raft log grows indefinitely without committing.**
+
+Symptom: Raft leader keeps appending entries but commit index
+does not advance. Follower is accepting entries but lagging.
+In Paxos: competing proposers keep pre-empting each other
+(the livelock scenario). Diagnosis: check `raftApplied` vs
+`raftIndex` metrics. Large gap = commit stall. Fix: ensure
+only ONE leader at a time (Raft linearizes leaders by term).
+For Paxos: use leader election to designate a single distinguished
+proposer and avoid livelock.
+
+---
+
 ### ⚖️ Comparison Table
 
 | Property | FLP model | Partial synchrony | Synchronous |
@@ -779,6 +824,46 @@ assume nodes either respond correctly or do not respond. They
 do not verify response correctness. One Byzantine node in a
 Raft cluster can corrupt the log of f honest followers
 regardless of cluster size.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: f+1 Byzantine nodes break consensus - and
+the threshold is lower than teams expect.**
+
+Symptom: Tendermint or PBFT cluster reaches invalid consensus
+or stops making progress. Investigation: one validator node was
+compromised and is sending conflicting votes to different peers.
+With 3f+1=10 validators: any 4 coordinated Byzantine nodes
+break safety. Many teams assume "we have 10 nodes, we're safe"
+without computing f. Diagnosis: `validator_set_size` and check
+`(n-1)/3` for max tolerable faults. Fix: increase validator set
+or add cryptographic signature verification on votes.
+
+**Failure Mode 2: Eclipse attack bypasses BFT guarantees by
+isolating a node from the honest majority.**
+
+Symptom: a BFT node appears to participate correctly but makes
+decisions based on messages only from Byzantine peers. The
+attacker does not need to control f+1 nodes - just needs to
+control all network connections to ONE victim node. BFT
+algorithms assume network connectivity to the honest majority;
+eclipse attacks violate this assumption. Diagnosis: monitor
+peer diversity per node. Fix: enforce minimum peer diversity;
+require connections from multiple independent network paths.
+
+**Failure Mode 3: PBFT becomes impractical as node count grows
+beyond ~100 nodes due to O(n^2) message complexity.**
+
+Symptom: PBFT-based system works correctly at 20 validators but
+becomes unresponsive at 100. Each consensus round requires each
+node to send a message to every other node: 100^2 = 10,000
+messages per round. At 500ms block time and 100 validators:
+message volume overwhelms network. Diagnosis: measure consensus
+round latency vs validator count. Scaling curve indicates O(n^2).
+Fix: migrate to HotStuff (linear message complexity) or
+Tendermint with BLS threshold signatures.
 
 ---
 

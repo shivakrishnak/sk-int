@@ -370,6 +370,51 @@ outage to last 10x longer than the original failure.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Circuit breaker opens on GC pauses, not
+real failures (false positive).**
+
+Symptom: Hystrix/Resilience4j circuit breaker opens against
+a healthy downstream service during peak traffic. Investigation
+shows the downstream latency spike was caused by a JVM GC
+stop-the-world pause on the calling service - not the downstream.
+The circuit breaker counted the GC-induced timeout as a
+downstream failure. Diagnosis:
+```
+resilience4j.circuitbreaker.slowCallDurationThreshold: 2s
+# GC pause was 400ms: below threshold?
+# Or: recordExceptions includes TimeoutException from own GC?
+```
+Fix: tune `slowCallDurationThreshold` to be greater than max
+observed GC pause. Log circuit breaker transitions with reason.
+
+**Failure Mode 2: Retry amplification during service overload
+takes a partial outage into a full outage.**
+
+Symptom: service A is degraded (returning 503s). All clients
+retry immediately 3 times. Load on service A triples. Service A
+is now fully down. The retry logic that was meant to improve
+resilience caused the outage to complete. Diagnosis: check
+service A's request rate metric during the incident. A sudden
+3x spike at the onset of degradation = retry amplification.
+Fix: exponential backoff + jitter + DO NOT retry 503s (the
+service is signaling overload; retrying ignores that signal).
+
+**Failure Mode 3: Missing bulkhead allows one slow downstream
+to exhaust the entire thread pool.**
+
+Symptom: service has one slow dependency (inventory check,
+5-second timeout). Under load, all threads are blocked waiting
+on inventory. All other endpoints (orders, user profile,
+checkout) are unresponsive despite the downstream services
+being healthy. Diagnosis: thread pool exhaustion visible as
+0 available threads in `ThreadPoolMetrics`. Fix: separate
+thread pool (bulkhead) for inventory calls, sized independently
+from the main pool.
+
+---
+
 ### ⚖️ Comparison Table
 
 | Pattern | Protects against | Cost | When to skip |
@@ -949,6 +994,47 @@ receiver processed. A request sent over TCP can be fully
 processed by the server (response sent) while the client times
 out never receiving the response. This is the Two Generals
 scenario: server knows it succeeded, client does not.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Non-idempotent operation retried causes
+duplicate side effects.**
+
+Symptom: payment charged twice. Subscription activated twice.
+Email sent twice. Root cause: POST /payments returns 500
+(network timeout on response). Client retries. Server processes
+the second request as a new payment. No idempotency key on
+the endpoint. Diagnosis: search logs for the same user_id with
+the same amount within 30 seconds. Two successful charge
+events = duplicate. Fix: add idempotency key header to all
+non-idempotent endpoints. Store key + result for 24 hours;
+return cached result on duplicate.
+
+**Failure Mode 2: Idempotency key not stored in the same
+transaction as the operation.**
+
+Symptom: idempotency key table exists but duplicates still
+occur. Investigation: application saves idempotency key to
+Redis AFTER committing the database transaction. Between
+commit and Redis write: crash. On retry: idempotency key
+not found, operation executes again. Diagnosis: check whether
+idempotency key store is updated atomically with the operation.
+Fix: store idempotency key in the same database transaction.
+Or use the outbox pattern: write operation + idempotency
+record in one DB transaction.
+
+**Failure Mode 3: Idempotency key TTL too short - legitimate
+long-running retries rejected.**
+
+Symptom: payment provider returns 504 (gateway timeout).
+Client system retries after 2 hours (scheduled retry job).
+Idempotency key expired after 1 hour. Server processes as a
+new payment. Duplicate charge. Diagnosis: compare retry
+schedule window vs idempotency key TTL. Fix: TTL must be
+greater than the longest retry window. For financial
+operations: 24-72 hours is standard.
 
 ---
 
@@ -1669,6 +1755,49 @@ scalability benefit of services is only realized when the service
 is actually scaled independently (different CPU/memory requirements)
 or deployed independently (different release cycles). If you
 scale all services together: you have a more expensive monolith.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Service boundary drawn wrong - distributed
+monolith with chatty synchronous calls.**
+
+Symptom: checkout flow makes 12 synchronous HTTP calls across
+7 services. P99 latency = sum of all service P99s + network
+overhead. Any one service slow = checkout slow. Any one service
+down = checkout down. This is a distributed monolith: all the
+complexity of microservices with none of the independence
+benefit. Diagnosis: trace a single user-visible operation.
+If it touches more than 3-4 services synchronously: boundary
+is wrong. Fix: merge services that are always deployed together,
+or move to async event-driven communication for non-critical
+path operations.
+
+**Failure Mode 2: Missing timeouts cause thread starvation and
+total service failure.**
+
+Symptom: one upstream dependency adds a slow query (500ms avg,
+5s P99). Within 30 minutes: all threads in the calling service
+are blocked waiting. New requests queue. Queue fills. Service
+returns 503 to all callers. The slow query caused a total
+outage of an unrelated service. Diagnosis: check thread pool
+utilization at incident start. Fix: every external call must
+have a timeout. Set it to < 500ms for user-facing operations.
+Timeout = the single highest-impact resilience configuration.
+
+**Failure Mode 3: No observability - incident is invisible
+until customers complain.**
+
+Symptom: 5% of checkout orders silently fail for 2 hours
+before a customer tweet surfaces the issue. No alert fired.
+No dashboard anomaly detected. Root cause: payment service
+returns 200 OK but payment_status = "failed" - not an HTTP
+error code. Metrics only tracked HTTP 5xx. The business
+failure was invisible to infrastructure observability. Diagnosis:
+check whether business-level metrics (orders completed,
+payments charged, emails sent) are monitored with alerts.
+Fix: SLO on business outcomes, not just infrastructure metrics.
 
 ---
 

@@ -234,7 +234,51 @@ pattern implementations is almost always better than hand-rolling them."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Design patterns are specific code implementations to copy.**
+
+Design patterns are problem-solution templates, not copy-paste code. The same Observer pattern looks very different in Java (interfaces + concrete classes), JavaScript (EventEmitter), and Python (property decorators + callbacks). What you copy is the STRUCTURE - the relationships between roles (Subject, Observer, update() contract) - not the specific class names or method signatures. A developer who can only recall the Java textbook version of Observer but not recognize the same pattern in Python event handling hasn't internalized the pattern, only the syntax.
+
+**Misconception 2: Knowing design pattern names makes you a better engineer.**
+
+Pattern names are a shared vocabulary for communicating design intent - they have no intrinsic value until applied to real problems. An engineer who applies the Strategy pattern to eliminate a chain of if/else statements without knowing its GoF name has demonstrated more design skill than one who uses the name correctly in conversation but writes the code with a 10-case switch statement. The goal is the problem-solving ability, not the terminology.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Forcing a pattern where none is needed.**
+
+Symptom: simple method or class wrapped in Strategy/Factory/Decorator
+with no additional implementations planned and none foreseeable. The
+indirection adds three files and a new abstraction layer without any
+concrete benefit. Diagnosis: ask "what is the second implementation
+of this strategy?" If there is no answer: the pattern is premature.
+Fix: delete the pattern, use the direct implementation.
+
+**Failure Mode 2: Implementing the wrong pattern for the problem.**
+
+Symptom: team uses Decorator where Composite fits (or Observer where
+Mediator fits). Code works initially but extension causes cascading
+rewrites. Root cause: pattern chosen by surface similarity ("it sort
+of looks like X") rather than by problem structure. Diagnosis: write
+out the problem forces explicitly (what varies, what is the
+relationship, what is the extension point) and compare to the pattern
+catalog. Fix: refactor to the correct structural pattern while
+behavior is still limited.
+
+**Failure Mode 3: Pattern applied to solo code read by no one else.**
+
+Symptom: developer invests time in clean pattern architecture for a
+script or one-off tool that is never read again. The pattern exists
+for communication and maintenance - solo throwaway code does not
+benefit from GoF structure. Reserve pattern investment for code that
+will be read, extended, and maintained by a team.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a design pattern?"
@@ -580,7 +624,52 @@ domain."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: The three GoF categories reflect the purpose of objects, not the nature of the problem.**
+
+The categories reflect the primary concern the pattern addresses: CREATIONAL patterns solve object creation complexity (decoupling instantiation from usage), STRUCTURAL patterns solve composition complexity (how objects and classes assemble into larger structures), BEHAVIORAL patterns solve communication complexity (how objects distribute responsibility and communicate). A Facade is structural because it simplifies a complex subsystem's interface; Composite is structural because it enables treating individual objects and compositions uniformly. Categorizing by "this is about how objects look" (structural) vs "this is about what objects do" (behavioral) often leads to confusion.
+
+**Misconception 2: 23 GoF patterns is a complete list of all design patterns.**
+
+The GoF book documents 23 patterns - specifically the ones the four authors found most relevant in 1994 object-oriented C++/Smalltalk codebases. The pattern literature has grown significantly since: POSA (Patterns of Software Architecture) documents architectural patterns, domain-driven design introduced tactical patterns (Repository, Aggregate, Domain Event), and enterprise patterns (Martin Fowler's "Patterns of Enterprise Application Architecture") cover persistence, session, and distribution patterns. GoF is the foundation, not the complete catalog.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Category confusion leads to wrong extension point.**
+
+Symptom: developer reaches for a Structural pattern (Decorator,
+Composite) to solve a communication problem (which is Behavioral
+territory). Result: the extension point is wrong - you add wrappers
+when you should add handlers. Diagnosis: ask "what is varying here -
+the object structure or the object communication?" Structure varies:
+Structural. Responsibility distribution varies: Behavioral. Object
+creation varies: Creational.
+
+**Failure Mode 2: Over-relying on 23 GoF patterns and ignoring
+post-GoF patterns.**
+
+Symptom: team tries to model a Repository, Domain Event, or
+Publish/Subscribe system using only GoF categories and struggles
+with the fit. Root cause: GoF does not cover domain, integration,
+or enterprise patterns. Diagnosis: determine whether the problem
+is infrastructure-level (GoF), domain-level (DDD tactical patterns),
+or integration-level (EIP patterns). Fix: consult the right catalog.
+
+**Failure Mode 3: Rigid category thinking blocks pattern hybrids.**
+
+Symptom: developer debates whether Builder is Creational or
+Behavioral rather than applying it to the problem. Pattern categories
+are organizational heuristics, not formal type systems. Some patterns
+sit at category boundaries (Abstract Factory is Creational but its
+factory methods are Behavioral). The categories guide discovery;
+they do not constrain application.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "Name the three GoF pattern categories."
@@ -930,7 +1019,59 @@ solution, consequences. But the solution is boxes and arrows
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: A pattern is only present if all its roles are named exactly as in the textbook.**
+
+Patterns are recognized by STRUCTURE and INTENT, not by naming. A Spring `@Component` class that registers event handlers on an `ApplicationEventPublisher` IS the Observer pattern, even though the classes are named Publisher/Listener rather than Subject/Observer. Recognition requires understanding the problem being solved and the structural relationships, not matching class names to a diagram. Engineers who only recognize patterns when they see the exact textbook names miss 90% of pattern usage in real codebases.
+
+**Misconception 2: Complex patterns are better designs than simple ones.**
+
+Pattern complexity should match problem complexity. Using a full Abstract Factory with multiple factories, products, and type hierarchies to create one class in a codebase that will never have a second implementation is over-engineering. The test: does this pattern make the code MORE understandable and flexible for the actual requirements? If the answer is "it would, if we had multiple implementations" but you don't - the pattern adds indirection without benefit. Simplicity is a valid design value.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Incomplete pattern implementation breaks the
+pattern's safety guarantees.**
+
+Symptom: Observer pattern implemented without exception handling
+in the notification loop - one bad listener throws an exception
+and all subsequent listeners are silently skipped. The pattern
+works 95% of the time but fails unpredictably under error
+conditions. Diagnosis: test with a listener that throws on
+notification. Fix: wrap each notification call in try/catch;
+log and continue. Pattern anatomy includes the failure behavior,
+not just the happy path.
+
+**Failure Mode 2: Pattern recognized by name, not structure -
+misses real instances in code review.**
+
+Symptom: code review passes a subtle design flaw because the
+reviewer did not recognize the structural fingerprint. An
+event listener that holds a reference to a view component
+and is never unregistered IS an Observer with a memory leak -
+but only visible to someone who reads structure, not names.
+Diagnosis: train yourself to read structural fingerprints:
+collection of interface references = Observer. Single interface
+called by context = Strategy. Wrapper that delegates to
+a component = Decorator.
+
+**Failure Mode 3: Pattern anatomy studied without the
+"Consequences" section - consequences are where the failures
+live.**
+
+Symptom: team applies Singleton without reading the consequences:
+tight coupling to global state, difficulty testing, hidden
+dependencies, multithreading hazards. Each GoF pattern's
+consequences section lists what you give up. Pattern anatomy
+study that skips consequences produces engineers who know how
+to build patterns but not when they will hurt them.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What are the four parts of a design pattern?"

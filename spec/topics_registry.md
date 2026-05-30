@@ -26,8 +26,27 @@ This file is the **single source of truth** for the keyword generation rubric an
 
 ## Active Topics
 
-
----
+| Topic | Folder | Status | Description |
+|---|---|---|---|
+| Software Architecture | docs/software-architecture/ | complete | Styles, patterns, principles, and production decisions - L0 through META (18 files, 35 keywords) |
+| SRE | docs/sre/ | complete | Site Reliability Engineering - SLIs/SLOs/SLAs, error budgets, on-call, chaos engineering, and staff-level governance - PRE + L0 through META (17 files, 35 keywords) |
+| Java EE | docs/java-ee/ | incomplete | Jakarta EE specification stack - Servlets, CDI, EJB, JAX-RS, JTA, security, app server tuning, and migration strategy (16 files, 31 keywords) |
+| Cloud Fundamentals | docs/cloud-fundamentals/ | incomplete | Cloud computing models, IaC, networking, security, HA/DR, cost optimization, multi-cloud, and migration strategy (15 files, 29 keywords) |
+| AWS | docs/aws/ | complete | Amazon Web Services - compute, storage, networking, databases, messaging, serverless, security, observability, and architecture (17 files, 33 keywords) |
+| Observability | docs/observability/ | complete | Logs, metrics, traces, OpenTelemetry, distributed tracing, cardinality, sampling, alerting, eBPF profiling, and staff-level platform design (20 files, 35 keywords) |
+| Platform Engineering | docs/platform-engineering/ | complete | Internal Developer Platforms, golden paths, DevEx, Backstage, GitOps, Kubernetes-based platforms, Team Topologies, platform SLOs, TCO/ROI, and staff-level strategy (19 files, 36 keywords) |
+| CSS | docs/css/ | complete | Cascade, box model, Flexbox, Grid, responsive design, animations, CSS architecture methodologies, preprocessors, performance, container queries, and design token systems (15 files, 27 keywords) |
+| Frontend Build Tools | docs/frontend-build-tools/ | complete | npm, Webpack, Vite, code splitting, tree shaking, bundle analysis, monorepos, supply chain security, esbuild/SWC build performance, and module federation (14 files, 27 keywords) |
+| Frontend Testing | docs/frontend-testing/ | complete | Jest, React Testing Library, Playwright, Cypress, Vitest, mocking with MSW, visual regression, accessibility testing, flaky test diagnosis, and quality architecture (13 files, 25 keywords) |
+| HTML | docs/html/ | complete | Document structure, semantic HTML, forms, accessibility/ARIA, web components, shadow DOM, resource hints, critical rendering path, SEO, and HTML standards governance (14 files, 27 keywords) |
+| JavaScript | docs/javascript/ | complete | Types, closures, prototypes, async/await, event loop, DOM, ES6+ features, design patterns, memory model, V8 internals, security, performance profiling, and JS architecture at scale (18 files, 35 keywords) |
+| Node.js | docs/nodejs/ | complete | Event-driven architecture, core modules, CommonJS/ESM, streams, buffers, Express, worker threads, libuv internals, security vulnerabilities, production deployment, and microservices (14 files, 28 keywords) |
+| React | docs/react/ | incomplete | JSX, hooks, component patterns, Context API, state management, routing, performance optimization, Fiber reconciler, server components, security, and React architecture at scale (16 files, 30 keywords) |
+| TypeScript | docs/typescript/ | complete | Type system, generics, conditional/mapped types, utility types, decorators, tsconfig, module resolution, type inference internals, build performance, migration strategy, and type theory (13 files, 26 keywords) |
+| Async Java | docs/async-java/ | complete | CompletableFuture, Project Reactor, Spring WebFlux, Virtual Threads, Structured Concurrency, reactive architecture, async patterns, and migration strategy (17 files, 32 keywords) |
+| GraalVM | docs/graalvm/ | incomplete | GraalVM ecosystem, native-image AOT, SubstrateVM, polyglot engine, Truffle framework, and Spring Boot/Quarkus/Micronaut native integration (10 files, 34 keywords) |
+| Micronaut | docs/micronaut/ | incomplete | Micronaut framework, AOT compilation, HTTP client/server, data access, cloud-native patterns, and production deployment (10 files, 43 keywords) |
+| Quarkus | docs/quarkus/ | incomplete | Quarkus framework, Panache, reactive extensions, cloud-native deployment, GraalVM native image, and production depth (10 files, 43 keywords) |
 
 ## Level Coverage Rubric (MANDATORY)
 

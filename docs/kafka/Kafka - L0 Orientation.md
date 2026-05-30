@@ -272,7 +272,39 @@ governance with a schema registry.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Kafka is a message queue like RabbitMQ or SQS.**
+
+Kafka is a distributed commit log, not a queue. Messages are retained on disk for a configurable period (default 7 days) regardless of whether they were consumed. Multiple consumer groups each maintain independent offset cursors and read the full log at their own pace - a new consumer group added 3 days later can replay all retained messages. RabbitMQ and SQS delete messages after delivery; Kafka keeps them, enabling replay, time-travel debugging, and new consumer onboarding at any point in the retention window.
+
+**Misconception 2: Higher partition count always improves throughput.**
+
+Partitions add parallelism but also overhead. Each partition requires: a file handle pair on each broker that holds it, 50 bytes of metadata on every client, and a separate thread in each consumer group member. Past 1,000-4,000 partitions per broker, leader election time increases, consumer group rebalance latency grows, and end-to-end latency increases measurably. Provision partitions based on target throughput (one partition per ~10 MB/s), not as an optimization afterthought.
+
+**Misconception 3: Kafka guarantees total message ordering across all partitions.**
+
+Kafka guarantees ordering WITHIN a single partition. Messages with the same key are deterministically routed to the same partition via key hash, ensuring per-key order. Messages with different keys are distributed across partitions with no inter-partition ordering guarantees. If your use case requires strict global ordering across all events, you must use a single partition - eliminating all parallelism and capping throughput at one partition's limit.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer group lag grows continuously.**
+
+Symptom: the `consumer_lag` metric per partition shows steady increase; message processing delay accumulates, causing pipeline SLA violations. Diagnosis: `kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group <group-id>` - compare LAG column across partitions to identify which partition(s) are falling behind; check consumer application logs for slow processing or GC pauses. Fix: scale consumer group instances (up to partition count), reduce `max.poll.records` if processing time per batch exceeds `max.poll.interval.ms`, or optimize the consumer's processing critical path.
+
+**Failure Mode 2: Unclean leader election causes silent message loss.**
+
+Symptom: messages that were acknowledged by the producer are missing from consumer reads after a broker failure + leader election. Diagnosis: check broker config `unclean.leader.election.enable` - if `true`, an out-of-sync replica can become leader, losing all messages it had not yet replicated. Check `under_replicated_partitions` metric; messages produced while replicas were lagging may be lost after election. Fix: set `unclean.leader.election.enable=false` and ensure `min.insync.replicas=2` with producer `acks=all` to prefer unavailability over data loss.
+
+**Failure Mode 3: Producer `buffer.memory` exhausted under traffic spike.**
+
+Symptom: `TimeoutException: Expiring N record(s) for topic-partition` in producer logs; producer application appears to hang during high-load events. Diagnosis: check `buffer-available-bytes` and `record-queue-time-avg` JMX metrics - if buffer is at zero, all sends are blocked waiting for the broker to accept batches. Fix: tune `buffer.memory` (default 32MB), `linger.ms` (batch accumulation time), and `max.block.ms` (how long send() blocks before throwing); add back-pressure signaling to the upstream producer source.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is Apache Kafka?"
@@ -699,7 +731,39 @@ task queues within a service.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Kafka replaces all use cases for RabbitMQ and SQS.**
+
+Kafka excels at high-throughput event streaming with replay. RabbitMQ and SQS excel at: task queues where each message is processed by exactly one worker, complex routing via exchanges with binding rules, per-message TTL and priority queues, and request-response correlation patterns. Using Kafka for task dispatch adds per-partition consumer management, manual offset tracking, and consumer group coordination that RabbitMQ handles natively. Choose the right tool: Kafka for event log / stream processing; RabbitMQ/SQS for task queue / work dispatch.
+
+**Misconception 2: Kafka guarantees exactly-once delivery by default.**
+
+Default Kafka producer semantics are at-least-once (retries with `acks=all` can produce duplicates on network timeouts). Exactly-once requires: `enable.idempotence=true` on the producer (deduplicates retries within a session via sequence numbers) plus the Kafka Transactions API for atomic cross-partition writes. Even with producer exactly-once, consumers must be idempotent because offset commit failures can cause reprocessing from the last committed offset after a restart.
+
+**Misconception 3: Dead letter queues work the same way in Kafka as in RabbitMQ.**
+
+RabbitMQ has built-in DLQ routing: messages that exceed retry count or TTL are automatically moved to a dead letter exchange. Kafka has no built-in DLQ. Teams implement DLQs by catching processing exceptions in the consumer and producing failed messages to a separate `<topic>-dlq` topic. Without explicit DLQ logic in the consumer code, a poison message causes an infinite retry loop that blocks the entire partition until the consumer is manually reset or the message expires.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Topic rebalance causes processing to stop for all partitions.**
+
+Symptom: consumer throughput drops to zero for 30-60 seconds; `CommitFailedException: Group rebalanced` in logs; all partitions revoked and reassigned simultaneously. Diagnosis: check `rebalance.protocol` in consumer config; default eager rebalance (EAGER) revokes ALL partitions from ALL consumers before reassigning. Fix: switch to cooperative rebalancing (`partition.assignment.strategy=org.apache.kafka.clients.consumer.CooperativeStickyAssignor`) which only revokes and reassigns the partitions that need to move, leaving others processing normally during rebalance.
+
+**Failure Mode 2: Large message causes broker rejection with `RecordTooLargeException`.**
+
+Symptom: producer receives `RecordTooLargeException`; Kafka broker rejects messages above the size limit. Diagnosis: check `message.max.bytes` (broker, default 1MB) vs actual message size; also check `max.request.size` on the producer and `replica.fetch.max.bytes` on the broker - all three must be increased together, otherwise replication fails for large messages. Fix: for genuinely large payloads (images, documents), store the payload in S3/blob storage and produce only the reference URL in the Kafka message.
+
+**Failure Mode 3: Offset commit after processing creates duplicate side effects on restart.**
+
+Symptom: database records appear twice after consumer restart; downstream services receive the same event twice. Diagnosis: review consumer code for commit placement - if the consumer auto-commits or commits BEFORE processing completes, a crash after commit but before persistence causes message loss; if it commits AFTER processing, a crash after processing but before commit causes duplicate processing on restart. Fix: commit offset ONLY after side effects are durably persisted, AND implement idempotent consumer logic (deduplicate by Kafka offset or business-level idempotency key).
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the difference between Kafka and RabbitMQ?"
@@ -1085,7 +1149,39 @@ most teams - it ensures old consumers can still read new messages.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Kafka Connect is just a data copy tool.**
+
+Kafka Connect is a distributed, fault-tolerant integration framework. It manages source/sink connector lifecycle, distributed offset tracking, error handling with dead letter queues, schema registry integration, and provides 200+ production-grade connectors (Debezium for CDC, JDBC, S3, Elasticsearch). Building a custom producer-consumer for the same integration job requires reimplementing all this infrastructure. Use custom code only when no connector exists or the transformation logic is too complex for Single Message Transforms.
+
+**Misconception 2: Kafka Streams competes with Apache Flink for all stream processing use cases.**
+
+Kafka Streams is a lightweight library embedded in your application JVM - there is no separate cluster to manage. Flink is a distributed stream processing system requiring a separate cluster. Kafka Streams excels at: per-record transformations, stateful aggregations per key, and stream-table joins in a microservice context with no operational overhead beyond the Kafka cluster. Flink excels at: complex CEP (complex event processing), large-scale windowed aggregations, ML feature pipelines, and workloads requiring dynamic scaling of the processing layer independently from the application.
+
+**Misconception 3: Schema Registry is optional when teams use Avro or Protobuf.**
+
+Avro serialization without Schema Registry provides format structure but no schema governance. Any producer can introduce an incompatible schema change (removing a required field, renaming a column) and consumers fail silently at deserialization - often hours later. Schema Registry enforces compatibility rules at registration time: the producer's schema change is REJECTED by the registry if it violates the configured compatibility level (BACKWARD, FORWARD, or FULL), preventing breakage before the bad schema reaches any consumer.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Schema incompatibility breaks consumer deserialization across all instances.**
+
+Symptom: consumers throw `SerializationException` or `SchemaRegistryException` after a producer deployment; all instances fail for messages produced by the new schema version. Diagnosis: `curl http://schema-registry:8081/subjects/<topic>-value/versions/latest` to see the latest registered schema; compare against what the consumer expects; check compatibility level: `curl http://schema-registry:8081/config/<topic>-value`. Fix: roll back the producer to the previous schema version; register a compatible schema evolution (add optional fields with defaults; do not remove or rename fields).
+
+**Failure Mode 2: Kafka Streams state store corruption after unclean shutdown.**
+
+Symptom: `ProcessorStateException: Failed to initialize task` or `RocksDBException` on Kafka Streams restart; the stream application cannot start because the local state store is corrupted. Diagnosis: check whether the state store is on ephemeral storage (e.g., `/tmp`) that was wiped during restart; look for `standby_replicas` count in stream metrics. Fix: configure `state.dir` to point to persistent storage; enable standby replicas (`num.standby.replicas=1`) so a healthy replica can restore state without a full changelog replay.
+
+**Failure Mode 3: Kafka Connect connector task permanently stuck in FAILED state.**
+
+Symptom: connector task shows `FAILED` in the Connect REST API (`GET /connectors/<name>/status`); no automatic recovery. Diagnosis: `GET /connectors/<name>/status` for detailed error; common causes: target system unavailable (database connection refused), schema incompatibility, or serialization error on a specific record. Fix for transient errors: `POST /connectors/<name>/tasks/<task-id>/restart`; for schema errors: configure `errors.tolerance=all`, enable DLQ (`errors.deadletterqueue.topic.name=<dlq-topic>`), and fix the schema issue; for permanent failures: review connector configuration and underlying data.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What components make up the Kafka ecosystem?"

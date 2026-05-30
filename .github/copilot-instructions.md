@@ -91,7 +91,10 @@ southstar/
 
 - **Navigation frontmatter is required** for just-the-docs sidebar rendering.
   Without it, pages render as plain Markdown with no sidebar entry.
-  Required fields: `layout`, `title`, `parent`, `grand_parent`, `nav_order`, `permalink`
+  Topic `index.md` required fields: `title`, `nav_order`, `has_children`
+  Content files required fields: `layout`, `title`, `parent`, `nav_order`, `permalink`
+- **Topic index files (`docs/{topic}/index.md`) MUST NOT have `parent`, `layout`,
+  or `permalink`** - adding `parent` nests them under another page instead of root level.
 - **Project metadata fields are optional** (`keywords`, `status`, `difficulty_range`,
   `version`, `topic`, `subtopic`). Add only when used by generation scripts.
 - File MUST start at byte 0 with `---` (no BOM, no whitespace)
@@ -145,6 +148,13 @@ not applicable. Silent omissions are NEVER acceptable.
 | - | System Design | `### 🏛️ System Design` | **ALWAYS** - design OR explicit OMIT for non-★★★ |
 | - | Diagram | `### 📊 Diagram` | **ALWAYS** - diagram OR explicit OMIT for non-visual |
 
+**⚠️ Most frequently dropped sections - audit findings across 694 files:**
+Verify these 4 sections are present BEFORE writing any keyword to disk:
+- `### 📘 Concept Explanation` - 30 files missing (most commonly dropped)
+- `### 🚨 Failure Modes and Diagnosis` - 35 files missing across 7 topics
+- `### ⚠️ Common Misconceptions` - 25+ files missing
+- `### 🎯 Interview Deep-Dive` - truncated in L6/META files for several topics
+
 **⛔ HARD STOP triggers:**
 - Any section header (rows 2-10 above) missing from the output
 - Section §2 missing `**Blank Mind Recovery:**` block
@@ -154,6 +164,29 @@ not applicable. Silent omissions are NEVER acceptable.
 
 Every keyword entry MUST pass the Quality Constitution.
 Full details in `spec/interview_content_generator.md` Section 6.
+
+### GATE 3 - POST-WRITE FILE VERIFICATION (Non-Negotiable)
+
+After EVERY keyword write to disk, grep the actual written file for all
+mandatory section headers before updating index.md or continuing.
+Memory confirmation is insufficient - the file must be checked directly.
+
+```pwsh
+$f = "docs/{topic}/{File}.md"
+@(
+  "### 🎯 Model Answer",
+  "### 📘 Concept Explanation",
+  "### 🎓 Answers by Seniority",
+  "### ⚠️ Common Misconceptions",
+  "### 🚨 Failure Modes and Diagnosis",
+  "### 🎯 Interview Deep-Dive"
+) | ForEach-Object {
+  if ((Get-Content $f -Raw) -notmatch [regex]::Escape($_)) {
+    Write-Host "MISSING: $_" -ForegroundColor Red
+  }
+}
+# No output = GATE 3 PASS. Any output = FAIL - fix before proceeding.
+```
 
 ### Eight Quality Tests (ALL must pass)
 

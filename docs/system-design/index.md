@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "System Design"
-parent: "SK Interview"
 nav_order: 3
 has_children: true
-permalink: /system-design/
 ---
 
 # System Design
@@ -41,74 +38,74 @@ META thinking skills for design interviews.
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-001 | What is System Design | ★☆☆ | 1 | draft |
-| SSD-002 | System Design Interview Framework | ★☆☆ | 1 | draft |
-| SSD-003 | Scale Mental Models | ★☆☆ | 1 | draft |
+| SSD-001 | What is System Design | ★☆☆ | 1 | complete |
+| SSD-002 | System Design Interview Framework | ★☆☆ | 1 | complete |
+| SSD-003 | Scale Mental Models | ★☆☆ | 1 | complete |
 
 ### System Design - L1 Fundamentals.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-004 | Scalability Fundamentals | ★☆☆ | 2 | draft |
-| SSD-005 | Reliability and Availability | ★☆☆ | 2 | draft |
-| SSD-006 | Latency vs Throughput | ★☆☆ | 2 | draft |
+| SSD-004 | Scalability Fundamentals | ★☆☆ | 2 | complete |
+| SSD-005 | Reliability and Availability | ★☆☆ | 2 | complete |
+| SSD-006 | Latency vs Throughput | ★☆☆ | 2 | complete |
 
 ### System Design - L2 Core Patterns.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-007 | Load Balancing | ★★☆ | 3 | draft |
-| SSD-008 | Caching Strategies | ★★☆ | 3 | draft |
+| SSD-007 | Load Balancing | ★★☆ | 3 | complete |
+| SSD-008 | Caching Strategies | ★★☆ | 3 | complete |
 
 ### System Design - L2 Data Patterns.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-009 | Database Sharding and Partitioning | ★★☆ | 3 | draft |
-| SSD-010 | Replication Strategies | ★★☆ | 3 | draft |
+| SSD-009 | Database Sharding and Partitioning | ★★☆ | 3 | complete |
+| SSD-010 | Replication Strategies | ★★☆ | 3 | complete |
 
 ### System Design - L3 Distributed Concepts.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-011 | CAP Theorem | ★★☆ | 3 | draft |
-| SSD-012 | Eventual Consistency | ★★☆ | 3 | draft |
+| SSD-011 | CAP Theorem | ★★☆ | 3 | complete |
+| SSD-012 | Eventual Consistency | ★★☆ | 3 | complete |
 
 ### System Design - L3 API and Traffic.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-013 | API Gateway Pattern | ★★☆ | 3 | draft |
-| SSD-014 | Rate Limiting | ★★☆ | 3 | draft |
+| SSD-013 | API Gateway Pattern | ★★☆ | 3 | complete |
+| SSD-014 | Rate Limiting | ★★☆ | 3 | complete |
 
 ### System Design - L4 Distributed Consensus.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-015 | Distributed Consensus and Leader Election | ★★★ | 4 | draft |
+| SSD-015 | Distributed Consensus and Leader Election | ★★★ | 4 | complete |
 
 ### System Design - L4 Event-Driven.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-016 | Event Sourcing and CQRS | ★★★ | 4 | draft |
+| SSD-016 | Event Sourcing and CQRS | ★★★ | 4 | complete |
 
 ### System Design - L4 Service Infrastructure.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-017 | Service Mesh | ★★★ | 4 | draft |
+| SSD-017 | Service Mesh | ★★★ | 4 | complete |
 
 ### System Design - L5 Architecture.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-018 | Multi-Region Active-Active Architecture | ★★★ | 4 | draft |
+| SSD-018 | Multi-Region Active-Active Architecture | ★★★ | 4 | complete |
 
 ### System Design - META Thinking Patterns.md
 
 | ID | Keyword | Difficulty | Weight | Status |
 |----|---------|------------|--------|--------|
-| SSD-019 | Back-of-Envelope Estimation | ★☆☆ | 3 | draft |
-| SSD-020 | Trade-off Navigation Framework | ★☆☆ | 3 | draft |
-| SSD-021 | Failure Mode Thinking | ★☆☆ | 3 | draft |
+| SSD-019 | Back-of-Envelope Estimation | ★☆☆ | 3 | complete |
+| SSD-020 | Trade-off Navigation Framework | ★☆☆ | 3 | complete |
+| SSD-021 | Failure Mode Thinking | ★☆☆ | 3 | complete |

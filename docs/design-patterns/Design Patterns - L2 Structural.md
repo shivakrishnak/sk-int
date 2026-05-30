@@ -313,7 +313,31 @@ AOP limitation, not an AOP limitation."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Proxy and Decorator are the same pattern.**
+
+Both wrap an object with the same interface, but their intent differs. Proxy CONTROLS access to an object (lazy initialization, access control, remote access, caching) - the proxy may even prevent the wrapped object from being created (virtual proxy) or enforce authorization before delegation. Decorator ADDS behavior to an object without changing its core responsibility. Proxies can replace the real object for the client; Decorators always delegate to the real object for core behavior. Spring AOP proxies control cross-cutting concerns; I/O stream decorators add format-specific capabilities.
+
+**Misconception 2: Dynamic proxies (JDK Proxy, CGLIB) are only for frameworks.**
+
+Dynamic proxies generate proxy classes at runtime from an interface or class - they are useful for application code too. An audit proxy that logs all method calls with arguments, a retry proxy that automatically retries failed method calls, or a caching proxy that memoizes expensive method results are all legitimate application-level uses. Spring AOP, Hibernate lazy loading, and Mockito mocks all use dynamic proxies, demonstrating their utility outside framework internals.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: JDK dynamic proxy fails for class-based injection (only interfaces work).**
+
+Symptom: `ClassCastException` or `BeanNotOfRequiredTypeException` when injecting a Spring bean that is proxied; occurs when the target class does not implement an interface and JDK proxy is configured. Root cause: JDK `java.lang.reflect.Proxy` can only proxy Java interfaces, not classes. Spring falls back to CGLIB for class-based proxying but requires CGLIB on the classpath. Diagnosis: check whether `proxyTargetClass=true` is configured; verify CGLIB is on the classpath (`spring-aop` includes it since Spring 3.2). Fix: ensure target classes implement interfaces for JDK proxy, or configure `proxyTargetClass=true` to use CGLIB.
+
+**Failure Mode 2: Proxy does not intercept internal method calls (self-invocation).**
+
+Symptom: `@Transactional` or `@Cacheable` annotation has no effect when the annotated method is called from another method within the same class. Root cause: proxy intercepts only external calls; when `methodA()` calls `this.methodB()`, the call bypasses the proxy entirely - `this` refers to the real object, not the proxy. Diagnosis: verify the method is called from a different bean/class, not from the same instance. Fix: refactor to call the method via the Spring context (`applicationContext.getBean()`) or inject the bean into itself (`@Autowired MyBean self`).
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Proxy pattern? Name the four types."
@@ -768,7 +792,31 @@ their hierarchies."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Composite requires all nodes to be the same type.**
+
+Composite's key characteristic is that both leaf nodes AND composite nodes implement the same Component interface. Clients treat a single file the same as a folder containing files - both respond to `getSize()` and `display()`. The pattern does NOT require all leaf types to be identical. A file system tree can have `TextFile`, `ImageFile`, and `BinaryFile` leaf types alongside `Directory` composite nodes - all implementing `FileSystemComponent`. The uniformity is at the INTERFACE level, not the implementation level.
+
+**Misconception 2: Composite is only for tree structures.**
+
+Composite is for any part-whole hierarchy - any situation where individual objects and compositions of those objects should be treated uniformly. Examples beyond file trees: UI component hierarchies (Button is leaf, Panel contains components), expression trees (Literal is leaf, BinaryOperation contains two Expressions), organization charts (Employee is leaf, Department contains Employees), and menu structures. The pattern applies whenever you recursively compose objects and want clients to ignore the difference between compositions and primitives.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Composite tree allows circular references causing infinite recursion.**
+
+Symptom: StackOverflowError during tree traversal (display(), getSize()); occurs only with specific trees, not all. Root cause: composite node added as a child of one of its own descendants, creating a cycle. Diagnosis: add a cycle-detection algorithm to `add()` that walks the ancestor chain before adding a child. Fix: validate that adding a node would not create a cycle (traverse from the prospective parent upward; if the prospective child is found, reject the add).
+
+**Failure Mode 2: Leaf-specific operations exposed in Component interface break transparency.**
+
+Symptom: leaf objects must implement `addChild()`/`removeChild()` methods that make no semantic sense for them, typically throwing `UnsupportedOperationException`. Root cause: Component interface includes composite management methods to maintain a uniform interface, forcing leaves to handle operations they cannot support meaningfully. Diagnosis: count `UnsupportedOperationException` throws in leaf classes. Fix: use a type-safe Composite where `add()`/`remove()` are only in the Composite class (not in Component); clients must check `instanceof Composite` before adding children - trading some transparency for type safety.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Composite pattern? What does 'uniform treatment' mean?"

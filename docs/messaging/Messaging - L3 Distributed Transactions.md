@@ -250,7 +250,35 @@ public class OrderFulfillmentSaga {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Sagas provide ACID guarantees across distributed services.**
+
+Sagas provide EVENTUAL CONSISTENCY with compensating transactions, not ACID. The key difference: during saga execution, intermediate states ARE visible to other operations (no isolation). If a saga is in the middle of booking a flight and hotel simultaneously, another process can observe "flight booked, hotel not yet booked" - a transient inconsistent state. Sagas are the correct pattern for long-lived business processes where cross-service locking is impractical; they are not a replacement for database transactions requiring strict isolation.
+
+**Misconception 2: Compensating transactions are simple rollbacks that always succeed.**
+
+A compensating transaction is a semantic undo at the business level, not a technical rollback. "Cancel order" compensates for "place order" but requires: the original order ID, idempotency check (don't cancel an already-cancelled order), handling of partial completion (only some line items were shipped), and audit trail compliance. Compensation can FAIL (refund rejected, external system unavailable), requiring a separate compensation failure recovery workflow. The compensation logic is often as complex as the original forward transaction.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Missing compensating transaction leaves data permanently inconsistent.**
+
+Symptom: an order saga fails halfway through; inventory was reserved but payment was declined; the saga orchestrator marks the saga FAILED, but the inventory reservation is never released; inventory count shows items reserved that will never be shipped. Diagnosis: query the saga state store for sagas in FAILED status; for each FAILED saga, compare which forward steps completed vs which compensating transactions were recorded as executed; join saga state with inventory reservation table to find reservations with no corresponding order. Fix: define compensating transactions for every forward step before implementing the saga; use a saga state machine that explicitly lists which steps need compensation on failure; test failure scenarios in integration tests by injecting failures at each step and verifying compensation runs correctly.
+
+**Failure Mode 2: Non-idempotent saga step double-processes on retry after orchestrator crash.**
+
+Symptom: a payment is charged twice after the orchestrator crashed mid-saga and restarted; the payment step appeared to succeed before the crash but was not persisted to saga state; on restart the orchestrator re-sent the payment command. Diagnosis: check payment service logs for two charge attempts with the same order ID and saga ID; check the idempotency store in the payment service for whether it correctly deduplicated the second request. Fix: every saga step participant must be idempotent using the saga ID plus step name as the idempotency key; the payment service should check whether a charge for `saga:<id>:payment` already exists before processing; add integration tests that send the same saga command twice and verify the result is identical to sending it once.
+
+**Failure Mode 3: Compensating transaction fails, leaving saga in permanent COMPENSATING state.**
+
+Symptom: a saga is stuck in COMPENSATING status for hours; operational dashboards show the saga never reaches a terminal state (COMPENSATED or FAILED); the saga orchestrator keeps retrying the same compensation step. Diagnosis: check orchestrator logs for the stuck saga ID; identify which compensation step is failing and why (external service unavailable, compensation not implemented, business rule violation like "cannot refund after 30 days"); check retry count on the stuck step. Fix: implement a compensation failure handler that escalates to a human workflow when automatic compensation fails after N retries; create an operations runbook for each saga that documents manual compensation steps; set a maximum retry count on compensation and transition to a COMPENSATION_FAILED terminal state that pages the on-call engineer.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Saga pattern and why is it used instead of two-phase commit?"
@@ -523,7 +551,35 @@ public class SecureMessagePublisher {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: TLS encryption is sufficient security for a messaging system.**
+
+TLS encrypts data in transit between client and broker, preventing eavesdropping on the network. It does NOT control who can access which topics. Without topic-level authorization (Kafka ACLs, RabbitMQ vhost permissions), any authenticated service can produce to the `payments` topic, consume confidential `user-data` events, or poison a `system-commands` queue. Authorization is the primary security control for data isolation; TLS is a transport control. Both are required; they address different threats.
+
+**Misconception 2: Message content is always visible to the message broker operators.**
+
+Standard TLS only encrypts the wire channel between client and broker - the broker decrypts and re-encrypts for each connection, so broker operators can read message payloads. For end-to-end confidentiality (where even the broker cannot read payloads), the producer must encrypt the message body before sending, and the consumer must decrypt after receiving, using keys exchanged out-of-band. This is required for PII, financial data, or regulated health information that must be protected from infrastructure operators.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Missing topic ACLs allow any authenticated service to read any topic.**
+
+Symptom: a security audit reveals that the analytics service can read the `payments.completed` Kafka topic containing PAN data; there is no ACL preventing it; the analytics service was granted broad cluster-level permissions during initial setup. Diagnosis: list all ACLs: `kafka-acls --bootstrap-server localhost:9092 --list`; check for wildcard resource patterns (`*`) that grant access to all topics; check cluster-level permissions that implicitly grant topic access. Fix: revoke wildcard and cluster-level permissions; create explicit ACLs per topic per service principal: `kafka-acls --add --allow-principal User:order-service --operation WRITE --topic order-events`; adopt least-privilege by default - no ACL means no access; manage ACLs via Terraform or Helm so changes are code-reviewed.
+
+**Failure Mode 2: Client certificate expiry causes service communication failure with no warning.**
+
+Symptom: all Kafka consumers for a service fail simultaneously at 02:00 with `SSLHandshakeException: Certificate expired`; the service certificate had a 1-year TTL and expired overnight with no alert. Diagnosis: check certificate validity: `openssl s_client -connect kafka:9093 </dev/null 2>&1 | grep -A 2 Validity`; check whether cert-manager or manual certificate management is in use; look for certificate expiry monitoring in alerting configuration. Fix: automate certificate rotation using cert-manager with a `Certificate` resource and `renewBefore` set to 30 days; add a Prometheus alert on `certmanager_certificate_expiration_timestamp_seconds` with a 30-day warning threshold; test certificate rotation in staging before production to verify zero-downtime renewal.
+
+**Failure Mode 3: Payload transmitted as plaintext despite TLS because broker decrypts in transit.**
+
+Symptom: a compliance audit finds that PII in Kafka message payloads is visible to Kafka broker operators; TLS was assumed to provide end-to-end encryption but the broker decrypts and re-encrypts for each connection hop. Diagnosis: check whether application-level payload encryption is implemented in the producer; try reading a raw message as a broker admin - if the payload is readable, there is no application-level encryption; review data classification for message topics containing PII or regulated data. Fix: implement envelope encryption in the producer: generate a DEK per message (or per batch), encrypt the payload with AES-256, encrypt the DEK with a KMS CMK, store both in the message; only consumers with KMS CMK decrypt permission can read payloads; the broker holds ciphertext only.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What are the security layers in a Kafka deployment and what does each protect against?"

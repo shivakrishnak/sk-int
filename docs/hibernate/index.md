@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Hibernate"
-parent: "SK Interview"
 nav_order: 20
 has_children: true
-permalink: /hibernate/
 ---
 
 # Hibernate

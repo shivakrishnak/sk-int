@@ -280,7 +280,31 @@ it breaks silently. Solution: use interface checks only."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Decorator and Inheritance solve the same problem.**
+
+Inheritance adds behavior at compile time by extending a class - every instance of the subclass has the same additional behavior. Decorator adds behavior at RUNTIME by wrapping objects - different instances can have different wrapper combinations. If you need logging for only SOME database connections, not all, Decorator lets you wrap only those connections. With inheritance, all subclass instances always have logging. Decorator enables combinatorial behavior composition; inheritance creates rigid behavior hierarchies.
+
+**Misconception 2: Java I/O streams use Decorator in an overly complex way.**
+
+Java I/O streams (InputStream -> BufferedInputStream -> GzipInputStream -> FileInputStream) demonstrate Decorator's power. Each wrapper adds one concern: buffering, compression, encryption, counting bytes. You compose exactly the combination you need: `new CipherInputStream(new BufferedInputStream(new FileInputStream(path)))`. The alternative (a separate class for every combination: BufferedGzipEncryptedFileInputStream, etc.) would require exponential class combinations. The "complexity" is the price of the runtime composability Decorator provides.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Decorator breaks object identity checks.**
+
+Symptom: code that checks `if (obj instanceof ConcreteComponent)` or compares references (`obj == expectedComponent`) fails after decoration; objects that should match are not recognized. Root cause: a Decorator IS-A Component (via interface), but is NOT the ConcreteComponent. `instanceof ConcreteComponent` returns false for a wrapped instance. Diagnosis: search for `instanceof` checks against concrete decorated types; check for reference equality on decorated objects. Fix: add an `unwrap()` method to the Component interface that returns the innermost wrapped object; use interface-based identity instead of concrete class checks.
+
+**Failure Mode 2: Deep decorator chains cause stack overflow on recursive operations.**
+
+Symptom: StackOverflowError in decorator chains that delegate method calls recursively; typically occurs when a decorator accidentally calls itself or creates a circular delegation chain. Root cause: circular reference in wrapper chain (`A wraps B wraps A`) or excessive chain depth on recursive operations. Diagnosis: add logging to each decorator's delegation to trace the chain; check for reference cycles. Fix: validate chain construction to prevent circular wrapping; use iterative delegation rather than recursive for performance-critical paths.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Decorator pattern?"
@@ -631,7 +655,31 @@ different services to fulfill one request, it is actually a Facade."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Adapter changes the behavior of the adaptee.**
+
+Adapter is a structural pattern that translates interfaces without changing behavior. The adaptee does the same work; Adapter just makes it accessible through the expected interface. If you find yourself adding business logic inside an Adapter, you are mixing Adapter with Facade or Decorator - the Adapter should contain only interface translation code (method delegation, parameter conversion, return type mapping). Business logic in Adapters creates untestable, hidden behavior.
+
+**Misconception 2: Adapter and Bridge are the same pattern.**
+
+Adapter FIXES interface incompatibility between existing classes. Bridge PREVENTS interface and implementation binding at design time. Adapter is applied AFTER the fact to make two independently designed classes work together. Bridge is designed upfront so abstraction and implementation can vary independently. The key temporal distinction: Adapter is a retrofit; Bridge is a forward-looking design decision.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Adapter leaks the adaptee's exception types to the client.**
+
+Symptom: clients that use the target interface start catching exceptions specific to the adaptee's implementation (e.g., `SQLExceptions` in a database adapter, `FileNotFoundException` in a file adapter); client code becomes coupled to the implementation detail it should be shielded from. Root cause: Adapter methods declare or propagate the adaptee's checked exceptions instead of translating them to target interface exceptions. Fix: translate adaptee exceptions to target interface exceptions in the adapter; wrap in a generic `AdapterException` or the appropriate domain exception.
+
+**Failure Mode 2: Object adapter holding stale adaptee reference after adaptee lifecycle ends.**
+
+Symptom: NullPointerException or IllegalStateException when adapter methods are called after the underlying adaptee is closed/disposed; adapter does not detect adaptee lifecycle transitions. Root cause: object adapter holds a direct reference to the adaptee with no lifecycle coordination. Diagnosis: check whether the adaptee is closeable and whether the adapter implements the same lifecycle contract. Fix: implement the same lifecycle interface (Closeable, AutoCloseable) in the adapter and delegate lifecycle calls to the adaptee.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Adapter pattern?"
@@ -987,7 +1035,31 @@ layer that coordinates them is Facade."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Facade completely hides the subsystem - clients should never access subsystem classes directly.**
+
+Facade provides a SIMPLIFIED interface to a complex subsystem for common use cases. It does NOT prevent direct subsystem access for advanced use cases. A well-designed Facade is a convenience layer, not an enforcement boundary. If a client needs fine-grained control that the Facade does not expose, accessing the subsystem directly is acceptable. Enforcing Facade as the only access point turns it into a bottleneck that defeats its simplicity goal.
+
+**Misconception 2: Facade and Mediator are the same pattern.**
+
+Facade simplifies client access to a complex SUBSYSTEM - it coordinates multiple subsystem classes to perform high-level operations. Mediator simplifies communication between PEER objects by centralizing coordination between them. The directionality differs: Facade clients call the facade (one-way, client → facade → subsystem); Mediator peers communicate through the mediator (bidirectional, peers ↔ mediator ↔ peers). Facade is about simplifying a subsystem API; Mediator is about decoupling peers that would otherwise reference each other.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Facade becomes a God Class as more subsystem operations are added.**
+
+Symptom: Facade class exceeds 500-1000 lines, contains methods for dozens of unrelated subsystem concerns, and is modified for every new feature. Root cause: Facade pattern used as a single entry point for ALL subsystem operations rather than for a coherent set of client-facing operations. Diagnosis: measure Facade cohesion - do all its methods serve the same high-level client purpose? Fix: split the Facade by client perspective (OrderFacade for order operations, PaymentFacade for payment operations) rather than one Facade per subsystem.
+
+**Failure Mode 2: Facade creates a false sense of subsystem encapsulation.**
+
+Symptom: developers add business logic to the Facade that belongs in the subsystem; the subsystem is bypassed by code that needs the logic without the simplified interface; business rules are duplicated between Facade and subsystem. Root cause: Facade treated as the business logic layer rather than an interface simplification layer. Fix: Facade should delegate, not decide. Business logic belongs in domain/service objects, not in the Facade. If the Facade contains conditionals or calculations, those likely belong in the subsystem.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Facade pattern?"

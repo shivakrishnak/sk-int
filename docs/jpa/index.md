@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "JPA"
-parent: "SK Interview"
 nav_order: 12
 has_children: true
-permalink: /jpa/
 ---
 
 # JPA

@@ -300,7 +300,31 @@ one-to-many) is a clean CQRS design."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Mediator is only useful for GUI component coordination.**
+
+The GoF example uses GUI form components, but Mediator solves N-to-N coupling between any set of objects that would otherwise reference each other directly. Air traffic control (planes communicate through the tower, not directly), microservice event buses (services emit events to a central broker instead of calling each other's APIs), and chat room systems all use Mediator at different scales. Anywhere you have many objects that need to coordinate and direct references would create a tangled dependency graph, Mediator is applicable.
+
+**Misconception 2: Mediator eliminates all coupling between colleagues.**
+
+Mediator eliminates DIRECT references between colleagues but creates a new coupling: all colleagues depend on the Mediator interface. The Mediator itself knows about all colleagues and contains all coordination logic. This is acceptable when the Mediator encapsulates complex coordination that would otherwise be spread across many colleagues, but if the Mediator knows too much about colleagues' internals, it becomes a God Class. The tradeoff: many small couplings between colleagues vs one centralized coupling hub.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Mediator becomes a God Object as system grows.**
+
+Symptom: Mediator class exceeds 500+ lines, handles dozens of distinct notification types, and is modified for every new feature; unit testing the mediator requires extensive mocking. Root cause: all coordination logic centralized in one class without sub-delegation; Mediator's responsibility grew as more colleagues were added. Diagnosis: count the distinct notification cases the mediator handles; measure test setup complexity. Fix: split the mediator by bounded context (FormValidationMediator, FormSubmissionMediator); or delegate to separate handler classes for each notification type.
+
+**Failure Mode 2: Circular notification cascade causes infinite loop.**
+
+Symptom: stack overflow or infinite loop during Mediator notification; colleague A notifies mediator, which notifies colleague B, which notifies mediator, which notifies colleague A. Root cause: colleague update() method triggers another notification while the first notification is being processed. Diagnosis: add notification depth logging; look for mutual notification triggers. Fix: track whether a notification is in progress (re-entrancy guard); batch notifications and process after all immediate updates complete.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Mediator pattern? How does it reduce coupling?"
@@ -740,7 +764,31 @@ stable element types, growing operations."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Visitor requires modifying element classes whenever a new visitor is added.**
+
+Visitor's key property is the OPPOSITE: new VISITORS (operations) can be added WITHOUT modifying elements. The tradeoff is that adding a new ELEMENT type requires modifying all existing visitors. This is the expression problem: Visitor optimizes for adding new operations over a fixed set of types. If your set of types is stable but you frequently add new operations (reports, formatters, validators), Visitor is ideal. If your set of operations is stable but you frequently add new types, Visitor creates high maintenance cost.
+
+**Misconception 2: Visitor requires double dispatch in all languages.**
+
+Double dispatch (element calls `visitor.visit(this)` so the visitor method resolves to the correct overload for the concrete element type) is the standard implementation in languages without multiple dispatch (Java, C++). In languages with multiple dispatch (Common Lisp, Clojure multimethods, Julia) or pattern matching (Haskell, Scala), Visitor-like behavior is built into the type system without the double-dispatch ceremony. Languages with pattern matching can express Visitor as a `match (element)` expression without any visitor interface.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Visitor breaks when new element types are added without updating all visitors.**
+
+Symptom: `UnsupportedOperationException` at runtime when a visitor encounters a new element type; or silent incorrect behavior if the visitor falls back to a parent class `visit()` method. Root cause: element hierarchy extended with a new concrete type but not all visitor implementations were updated. Diagnosis: check if the element hierarchy has a new concrete type added recently; search for visitor implementations missing the corresponding `visit(NewElement)` overload. Fix: make the Visitor interface's `visit(NewElement)` method abstract (not default), ensuring compile-time failure when a new element type is added without updating visitors.
+
+**Failure Mode 2: Visitor accessing internal state breaks encapsulation.**
+
+Symptom: visitor operations require access to private element fields not exposed via public API; developers add getters just for visitors, polluting the element's public API. Root cause: visitor operations need data that the element correctly keeps private. Diagnosis: count getters added specifically for visitor use. Fix: pass visitor context objects rather than returning raw internal state; use a "report" or "accept visitor context" approach where the element populates a context object with the data the visitor needs without exposing raw fields.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Visitor pattern? What problem does it solve?"

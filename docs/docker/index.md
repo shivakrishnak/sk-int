@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Docker"
-parent: "SK Interview"
 nav_order: 12
 has_children: true
-permalink: /docker/
 ---
 
 # Docker

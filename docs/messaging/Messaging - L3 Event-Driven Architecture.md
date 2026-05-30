@@ -204,7 +204,31 @@ public class OrderAggregate {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Event-driven architecture means fire-and-forget asynchronous communication.**
+
+Fire-and-forget (emit event, no delivery guarantee) is NOT EDA - it is unreliable async notification. Production EDA requires: durable message brokers with at-least-once delivery guarantees, consumer acknowledgment with retry logic, dead letter queues for unprocessable messages, and replay capability for recovery and new consumer onboarding. The "event-driven" refers to the system being driven by events as first-class business signals, not to abandoning delivery reliability.
+
+**Misconception 2: CQRS requires an event-driven architecture.**
+
+CQRS (Command Query Responsibility Segregation) separates read and write models. It can be implemented synchronously: the command handler writes to the write database and synchronously projects to the read model within the same transaction. Event-driven CQRS (write commands emit events, events asynchronously update read projections) is one common implementation pattern, but it adds eventual consistency latency that synchronous projection avoids. Choose async EDA CQRS only when read projection latency is acceptable and read model scale requirements justify the complexity.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer misses events produced while the subscription was inactive.**
+
+Symptom: after a consumer restarts or is deployed fresh, it misses events that occurred during downtime; downstream state is behind the expected state. Root cause: consumer started from the current offset (latest position) rather than the last committed offset from before downtime. Diagnosis: check consumer group offset at startup vs the earliest available offset for the retention window; verify that the broker's retention period is longer than the maximum expected consumer downtime. Fix: configure consumers to resume from the last committed offset on restart; set broker retention to exceed the maximum realistic consumer downtime window plus a safety margin.
+
+**Failure Mode 2: Cascading failure propagated through event chains.**
+
+Symptom: one service's failure causes processing to stop across multiple downstream services that depend on its events; system-wide outage from a single component failure. Root cause: event consumers have no circuit breaker or retry limit; a slow or failing upstream service causes downstream consumers to block, exhaust connection pools, and fail in turn. Diagnosis: trace the event dependency graph; identify the originating failure and follow the cascade path. Fix: add circuit breakers at each event consumer (fail fast when upstream events are delayed), implement exponential backoff retry with maximum retry limits, and route persistently failing events to a DLQ to prevent blocking the healthy majority.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is event-driven architecture and how is it different from request-response?"
@@ -461,7 +485,31 @@ public void publishOrderCreated(Order order) {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Schema versioning via a version field in the message payload is sufficient governance.**
+
+A version field in the payload is a manual convention with no enforcement: two producers can both produce "version 2" messages with incompatible field sets. Schema Registry provides machine-enforceable contracts: schemas are registered with a globally unique schema ID embedded in each message; every producer schema change is compatibility-checked at registration time and rejected if it violates the configured compatibility rule. The consumer always retrieves the correct deserialization logic by schema ID, never by version string convention.
+
+**Misconception 2: Backward compatibility means you can add and remove fields freely.**
+
+BACKWARD compatibility (new schema can read old data) allows ONLY adding new OPTIONAL fields with default values. Removing any field, renaming a field, or changing a field type are all backward-incompatible changes that break consumers still deserializing old messages. FORWARD compatibility (old schema can read new data) is the inverse - new fields in producers are ignored by old consumers, but old required fields must remain. FULL compatibility (both backward and forward) is the safest setting for production event schemas shared across teams.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Incompatible schema change breaks all consumers simultaneously.**
+
+Symptom: mass consumer failures after a producer deployment; `SerializationException` or `UnrecognizedPropertyException` across all consumer instances for the affected topic. Root cause: producer deployed a breaking schema change (field removed, field renamed, required field added without default) without enforcing Schema Registry compatibility. Diagnosis: check Schema Registry for the latest registered schema version; compare against the previous version and identify the breaking change; verify compatibility configuration: `GET /config/<subject>`. Fix: roll back the producer to the previous schema version immediately; register a compatible evolution; re-deploy producers.
+
+**Failure Mode 2: Schema Registry becomes a single point of failure for all message production and consumption.**
+
+Symptom: all Kafka producers and consumers fail to start or throw connection errors when Schema Registry is unreachable; message processing stops cluster-wide. Root cause: Schema Registry is deployed as a single instance with no redundancy or no client-side caching. Diagnosis: check Schema Registry cluster health endpoint; verify client SDK cache configuration (`schema.registry.url` with multiple hosts for failover). Fix: deploy Schema Registry as a multi-instance cluster behind a load balancer; configure Confluent clients with schema caching enabled (default: caches last 1,000 schemas in memory, reducing registry calls to schema registration only).
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is schema evolution and why is it a challenge in event-driven systems?"

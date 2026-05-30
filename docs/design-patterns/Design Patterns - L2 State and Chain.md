@@ -354,7 +354,31 @@ without allocation."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: State pattern requires a large number of classes and is over-engineered for simple workflows.**
+
+State pattern eliminates a large number of conditional checks across the context class. The tradeoff is explicit: N state classes vs N * M conditional blocks (N states × M operations). For a 3-state, 2-operation workflow: 3 State classes vs 6 if/else blocks. For a 10-state, 8-operation workflow: 10 State classes vs 80 if/else blocks. The class-per-state approach scales; the conditional approach becomes unmaintainable. If you have fewer than 3 states and 2 operations, the conditional approach may genuinely be simpler.
+
+**Misconception 2: State and Strategy are interchangeable for stateful behavior.**
+
+Strategy is about the CLIENT choosing an algorithm from outside. State is about the OBJECT itself transitioning based on internal conditions. A traffic light transitions from Red to Green to Yellow based on a timer - it does not expose "setColorStrategy()" to external clients. The state transition logic is encapsulated within the State objects themselves. If external clients need to control the behavior variant, use Strategy. If the object itself determines when to change behavior, use State.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Illegal state transition causes invalid business state.**
+
+Symptom: an order transitions from CANCELLED directly to SHIPPED bypassing CONFIRMED; database contains records with impossible state combinations. Root cause: state transitions are not validated - the `transition()` method allows any target state regardless of current state. Diagnosis: create a state transition matrix and verify each transition path. Fix: implement explicit transition guards in each State: `if (currentState != CONFIRMED) throw new InvalidTransitionException("Cannot ship from state: " + currentState)`; encode valid transitions as a graph.
+
+**Failure Mode 2: Context object's state becomes inconsistent when exceptions occur mid-transition.**
+
+Symptom: a failed state transition leaves the context in an intermediate state that is neither the old state nor the new state; subsequent operations behave inconsistently. Root cause: state transition involves multiple operations (update state, persist to database, send event); if any step fails mid-transition, the state is partially updated. Diagnosis: add invariant assertions that check state consistency after each operation. Fix: wrap state transition in a transaction; perform all state change steps atomically or roll back to the previous valid state on failure.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the State pattern? When would you choose it over a switch?"
@@ -807,7 +831,31 @@ Chain. For component communication with complex routing: Mediator."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Chain of Responsibility guarantees the request will be handled.**
+
+By default, a request that passes all handlers without any handling is simply dropped silently. This is intentional in some use cases (middleware pipelines where unmatched requests fall through) but a bug in others (authorization chains where unhandled means "allow" is a security vulnerability). Decide explicitly: should an unhandled request be a default-allow, default-deny, or an exception? Implement a terminal handler that enforces the correct default behavior.
+
+**Misconception 2: Each handler in the chain always processes the request independently.**
+
+Handlers in a chain can: (1) STOP the chain by handling the request and not calling the next handler, (2) PASS the request to the next handler without modifying it, or (3) PARTIALLY process the request and then pass to the next handler (typical in middleware pipelines). The chain is not a broadcast - it is a sequential pipeline with short-circuit capability. Logging middleware that records the request and then calls next() is different from authorization middleware that stops the chain on rejection.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Infinite loop from circular chain reference.**
+
+Symptom: StackOverflowError or program hangs during request processing; stack trace shows the same handler methods repeated. Root cause: handler A sets handler B as its next handler, and handler B sets handler A as its next handler, creating a cycle. Diagnosis: print the chain structure at startup; trace `setNext()` calls. Fix: validate chain construction at startup to ensure no cycles; use a chain-building utility that detects circular references.
+
+**Failure Mode 2: Security vulnerability from fallthrough in authorization chain.**
+
+Symptom: requests that should be denied are allowed because no handler explicitly denied them; default behavior is allow. Root cause: authorization chain has no terminal deny handler; if a request matches no allow condition, it passes through all handlers and is implicitly allowed. Diagnosis: test with a request that matches no handler's allow condition; verify it is denied. Fix: add a terminal `DenyAllHandler` as the last handler in authorization chains that explicitly denies any unmatched request - default DENY, explicit ALLOW.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is Chain of Responsibility? Name a production example."

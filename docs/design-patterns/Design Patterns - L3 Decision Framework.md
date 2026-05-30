@@ -299,7 +299,31 @@ public class PaymentService {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Design patterns should be applied at the start of a project for good architecture.**
+
+Patterns should EMERGE from refactoring when a problem appears, not be imposed upfront. Starting with "we'll use an Abstract Factory, Strategy, and Command for flexibility" before knowing the actual requirements creates speculative abstractions that may not match real needs. Martin Fowler's principle: "You Aren't Gonna Need It." Write the simplest code that works; refactor to a pattern when you have duplication, unclear code, or real variability that the pattern addresses. Patterns are refactoring targets, not starting points.
+
+**Misconception 2: Well-known patterns are always superior to custom solutions.**
+
+A pattern's value comes from solving the right problem. A custom solution perfectly fit to the specific context may be simpler and more maintainable than a well-known pattern that almost fits. The Observer pattern with a custom `EventBus` implementation that matches the team's event handling requirements may be better than adopting a heavyweight event framework. Use patterns as vocabulary and inspiration, not as requirements.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Pattern applied to wrong problem creates complexity without benefit.**
+
+Symptom: developers struggle to understand why the pattern is there; the problem the pattern solves doesn't exist in this codebase; removing the pattern simplifies the code without losing any functionality. Root cause: pattern selected from a catalog rather than derived from the actual problem. Diagnosis: ask "what problem does this pattern solve here?" - if the answer is vague or refers to a problem that doesn't exist yet, the pattern may be premature. Fix: if the pattern provides no benefit for current requirements, remove it (refactor to simpler code); if it anticipates real future requirements, document the rationale explicitly.
+
+**Failure Mode 2: Pattern proliferation across the team without shared understanding.**
+
+Symptom: different developers implement the same concept using different patterns (one uses Observer, another uses callbacks, another uses polling); inconsistent patterns for similar problems across the codebase; high mental overhead when reading code. Root cause: no agreed pattern language for the team. Diagnosis: audit how similar problems are solved across the codebase. Fix: establish team coding standards that specify which patterns to use for which problem categories; document pattern choices in architecture decision records.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "How do you decide when to apply a design pattern?"
@@ -747,7 +771,31 @@ Notification n = new Notification.Builder(userId, msg)
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: The GoF book's pattern-by-intent table is sufficient for pattern selection.**
+
+The GoF intent table helps narrow candidates but the final selection requires understanding the specific forces in your problem: How often will the type hierarchy change vs how often will operations change? (Visitor vs Polymorphism). How many implementations will you realistically have? (Strategy vs single implementation). How important is runtime composability? (Decorator vs inheritance). Pattern selection is a judgment call based on forces, not a lookup table exercise. The table narrows to 3-5 candidates; context determines the winner.
+
+**Misconception 2: Following SOLID principles automatically leads to correct pattern selection.**
+
+SOLID principles guide OOP design quality but do not prescribe specific patterns. Multiple design patterns can satisfy all SOLID principles for the same problem. Open/Closed Principle can be satisfied by Strategy, Decorator, or Template Method depending on whether you want algorithm replacement, behavioral extension, or skeletal implementation. SOLID tells you WHAT properties good designs should have; patterns tell you HOW to achieve those properties for specific recurring problem types.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Wrong pattern selected due to structural similarity rather than intent match.**
+
+Symptom: the code structure appears pattern-like but the pattern fights the requirements; workarounds accumulate to make the chosen pattern fit; code becomes more complex than necessary. Root cause: pattern selected based on structural template ("it has an interface and implementations - that's Strategy") rather than intent match ("is the algorithm being swapped by the client at runtime?"). Diagnosis: articulate the problem the pattern is supposed to solve; verify the problem actually exists. Fix: don't be afraid to replace one pattern with another - extract the core logic, then apply the correct pattern.
+
+**Failure Mode 2: Correct pattern identified but wrong scope of application.**
+
+Symptom: Observer used for events that only have one subscriber (no benefit); Strategy used where there is only one algorithm (adds indirection with no flexibility). Root cause: pattern applied at too small or too large a scope for the actual variability in the system. Diagnosis: identify how many concrete implementations actually exist vs how many are speculative. Fix: validate that the pattern matches real, existing variability; remove abstraction layers that protect against variability that hasn't materialized.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "Walk me through how you would select a design pattern for a new requirement."

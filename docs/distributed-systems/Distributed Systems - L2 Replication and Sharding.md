@@ -301,7 +301,23 @@ synchronous replication. RPO of seconds to minutes allows async.
 
 ---
 
-### 🔥 Field Q&A
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Replication lag causes stale reads after write.**
+
+Symptom: a user writes a record and immediately reads it back, receiving the old value. Diagnosis: check `replication_lag_seconds` metric on the replica; if lag exceeds the read latency, stale reads are expected. In PostgreSQL, query `SELECT now() - pg_last_xact_replay_timestamp()` on the replica. Fix: for consistency-critical reads, route to the primary; alternatively, implement read-your-writes consistency by routing the reader to the replica only after waiting for the replica to catch up to the write LSN.
+
+**Failure Mode 2: Split-brain - two nodes simultaneously accept writes during network partition.**
+
+Symptom: conflicting records appear in both nodes after network partition heals; automated conflict resolution may silently discard data. Diagnosis: monitor `write_quorum_failures` or examine diverged LSN positions; look for `conflict_detected` log entries during partition healing. Fix: configure write quorum (majority of replicas must acknowledge writes) to prevent isolated nodes from accepting writes; prefer `pause_on_recovery` mode for critical data over automatic conflict resolution that may discard writes.
+
+**Failure Mode 3: PostgreSQL replication slot not cleaned up after subscriber disconnect.**
+
+Symptom: WAL (Write-Ahead Log) disk fills up, database performance degrades, eventually out-of-disk error. Diagnosis: `SELECT slot_name, active, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained_wal FROM pg_replication_slots WHERE active = false;` - inactive slots hold WAL segments indefinitely. Fix: drop the inactive slot: `SELECT pg_drop_replication_slot('slot_name');` - then fix the disconnected subscriber or recreate the subscription.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -691,7 +707,23 @@ shard. If it is read throughput only, use read replicas.
 
 ---
 
-### 🔥 Field Q&A
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Hot shard - one shard receives disproportionate traffic.**
+
+Symptom: one shard's CPU/IOPS at 90%+ while other shards sit at 10%; query latency spikes only for keys that map to the hot shard; write throughput ceiling hit despite other shards having capacity. Diagnosis: plot query count and byte throughput per shard over time; the hot shard pattern is unmistakable. Common cause: shard key with low cardinality (e.g., country code where 80% of users are in one country) or monotonically increasing keys (new records cluster in the last shard). Fix: change the shard key to include a higher-cardinality field (user ID prefix + timestamp hash), or use virtual shards with consistent hashing.
+
+**Failure Mode 2: Cross-shard queries become application bottleneck.**
+
+Symptom: certain reports or search queries take 10-100x longer than single-shard queries; database CPU spikes proportional to the number of shards. Diagnosis: EXPLAIN shows scatter-gather fan-out - the query planner sends the query to all N shards and aggregates results; total execution time = max(per-shard time) + aggregation overhead + N * network round trips. Fix: for analytical queries, replicate data to a separate non-sharded analytics store (OLAP database, Elasticsearch); for application queries, denormalize the required join data into the same shard via event-driven projections.
+
+**Failure Mode 3: Application assumes shard key is mutable.**
+
+Symptom: application error when attempting to update a sharding key field (user email, tenant ID); or silent data inconsistency when the update changes which shard the record belongs to. Diagnosis: look for UPDATE statements touching the shard key column in application code or ORM entity definitions. Fix: design the shard key to be immutable business identifiers (UUIDs, surrogate IDs). If a shard key must change, implement delete-and-reinsert with the new shard key value, treating it as a new record.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Java JVM"
-parent: "SK Interview"
 nav_order: 9
 has_children: true
-permalink: /java-jvm/
 ---
 
 # Java JVM

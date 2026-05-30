@@ -313,7 +313,31 @@ description, understanding Observer is the prerequisite."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Observer and Pub/Sub are the same pattern.**
+
+Observer has a direct reference between Subject and Observer - subjects know their observers. When the subject calls `notifyObservers()`, it directly invokes each observer's `update()` method. Pub/Sub introduces a broker (message channel) between publisher and subscriber - publishers and subscribers don't know about each other and communicate via topic/event type. Observer is tightly coupled (subject and observer must be in the same process); Pub/Sub is loosely coupled (publisher and subscriber can be in different processes or systems).
+
+**Misconception 2: Observers always need to be deregistered manually.**
+
+Failing to deregister observers causes memory leaks in languages without garbage collection finalization OR in languages where the observed subject holds a strong reference to the observer. In Java, if `Subject` holds `List<Observer>` with strong references, registered observers are never garbage collected even when no other code references them. Solutions: use `WeakReference<Observer>` in the subject's list (Java), use a lifecycle-aware observer that deregisters on component destruction, or use event buses that manage weak references automatically.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Memory leak from underegistered observers.**
+
+Symptom: heap memory grows monotonically over time; heap dump shows growing list of Observer objects that should have been garbage collected. Root cause: Observers registered with a long-lived Subject are never deregistered; the Subject's strong reference list prevents GC. Diagnosis: take heap dump, search for Observer lists; check if Observer objects exist longer than their logical lifetime (e.g., UI components persisting after screen close). Fix: add deregistration in observer lifecycle cleanup (close(), dispose(), onDestroy()); use WeakReference in the observer list for non-critical notifications.
+
+**Failure Mode 2: Observer notification ordering causes cascading mutations.**
+
+Symptom: observer A's update() modifies the subject's state, triggering a second notification cycle; observers see inconsistent intermediate state; StackOverflowError from infinite notification loop. Root cause: observer mutates the subject during `update()`, triggering re-notification. Diagnosis: add logging to `update()` and `notifyObservers()` to detect recursive calls; check for observer-to-subject mutations. Fix: complete all state changes before calling `notifyObservers()`; use a change-batching mechanism that coalesces multiple state changes into one notification; prevent re-entrancy with a `notifying` flag.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Observer pattern?"
@@ -693,7 +717,31 @@ an inheritance hierarchy."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Strategy requires defining a separate class for every algorithm variant.**
+
+In languages with first-class functions (Java 8+, Python, JavaScript), a Strategy is just a functional interface or lambda - no separate class required. `sorter.setStrategy(list -> Collections.sort(list))` uses a lambda as the strategy. The class-per-strategy approach is the pre-lambda Java convention. Modern Strategy implementations often use method references (`String::compareTo`) or lambdas directly, dramatically reducing the ceremony while preserving the pattern's structural benefits.
+
+**Misconception 2: Strategy and State patterns are structurally identical and interchangeable.**
+
+Both patterns use an interface with swappable implementations held by a context. The difference is INTENT and WHO changes the strategy: in Strategy, the CLIENT chooses and sets the algorithm (sort by name? sort by date?); in State, the OBJECT itself transitions between states based on internal events. An object that switches from PendingState to ProcessingState to CompletedState based on business events is using State (autonomous transitions). An object whose sorting algorithm is set externally by the caller is using Strategy (externally controlled behavior).
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Strategy not set before use causes NullPointerException.**
+
+Symptom: `NullPointerException` when context tries to invoke the strategy; occurs when context has no default strategy and the strategy was never set by the caller. Diagnosis: check for null before calling strategy methods; trace back to where strategy assignment is expected. Fix: provide a sensible default strategy (NullObject pattern for no-op default, or a reasonable default algorithm); validate that a strategy is set in the context constructor or provide a factory method that requires it.
+
+**Failure Mode 2: Strategy carries shared mutable state causing race conditions.**
+
+Symptom: intermittent incorrect results when the same strategy instance is used by multiple threads or multiple context objects simultaneously. Root cause: strategy implementation stores mutable state (counters, buffers, intermediate results) in instance fields that are modified during `execute()`. Diagnosis: check strategy implementations for instance fields that change during execution; look for non-final fields in strategy classes. Fix: strategies should be stateless - pure functions of their input; move any necessary state to parameters or return values, or create a new strategy instance per context.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Strategy pattern?"
@@ -1075,7 +1123,31 @@ flexibility."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Template Method requires abstract classes and inheritance.**
+
+Template Method's core insight is "define the skeleton of an algorithm with steps that subclasses fill in." While the canonical implementation uses an abstract class with abstract methods, the same pattern appears via functional interfaces: a method that accepts lambda callbacks for each customizable step implements Template Method without inheritance. Spring's `JdbcTemplate.query()` is Template Method - it defines the connection acquisition, query execution, result iteration, and resource cleanup steps, with a `ResultSetExtractor` callback for the extraction step.
+
+**Misconception 2: Template Method hooks are always optional.**
+
+Template Method has two types of steps: abstract steps (subclass MUST override) and hook steps (subclass MAY override with default behavior). Forgetting to declare mandatory steps as `abstract` means the base class compiles with an empty implementation, and a subclass that doesn't override it silently gets no-op behavior. The distinction between mandatory steps (abstract) and optional hooks (concrete with default) must be deliberate and documented.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Base class changes break all subclasses (fragile base class).**
+
+Symptom: adding or reordering steps in the template method breaks multiple subclass implementations; subclasses rely on the specific order of base class step calls. Root cause: template method algorithm changed without coordinating with all subclasses; base class evolution is tightly coupled to subclass behavior. Diagnosis: count how many subclasses override each step; the more overrides, the more brittle the base class change. Fix: treat the template method signature as a public API - add new steps with default no-op implementations (hooks), never remove or reorder steps.
+
+**Failure Mode 2: Template method calls overridable methods in constructor (incomplete initialization).**
+
+Symptom: `NullPointerException` or incorrect behavior when overriding methods access fields initialized in subclass constructors but called during base class `initialize()`. Root cause: base class constructor calls the template method, which calls overridden steps that access subclass-specific resources not yet initialized. Diagnosis: trace the constructor call chain; check if the template method is called from a constructor. Fix: do not call overridable methods from constructors; use lazy initialization, a separate `initialize()` method called by client code, or a factory method.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Template Method pattern?"

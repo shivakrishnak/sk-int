@@ -180,7 +180,31 @@ channel.basicConsume("orders", false, (tag, delivery) -> {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Adding more consumers to a group always increases throughput linearly.**
+
+Throughput scales only up to the number of partitions (Kafka) or the number of queue consumers the broker supports concurrently (RabbitMQ/SQS). In Kafka, with 6 partitions and 8 consumer instances, 2 consumers sit idle with no partitions assigned - they contribute zero throughput. Scale partitions first (one partition per target consumer instance), then scale consumer instances to match. Adding consumers beyond the partition count is wasted compute.
+
+**Misconception 2: All consumers in a consumer group receive all messages (broadcast).**
+
+Consumer groups implement competing consumers (load balancing), not broadcast. Each message goes to exactly ONE consumer in the group. For broadcast (every consumer receives every message), use SEPARATE consumer groups - each group gets its own offset cursor and independently processes the full topic. This is the fundamental split between a queue (load balance within a group) and a topic subscription (each subscriber group gets all messages).
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer group rebalance causes duplicate processing.**
+
+Symptom: records appear twice in the database after a consumer deployment or crash; logs show `CommitFailedException` during rebalance. Root cause: a consumer completed processing and was about to commit its offset when a rebalance revoked the partition; the rebalancing consumer re-reads from the last committed offset and reprocesses the same messages. Diagnosis: check `rebalance_rate` metric; look for `CommitFailedException` in consumer logs correlated with deployment events. Fix: implement idempotent consumers (deduplicate by message ID or business key) + use cooperative-sticky rebalance to minimize partition revocations.
+
+**Failure Mode 2: Slow consumer blocks the entire partition for the consumer group.**
+
+Symptom: consumer lag grows for specific partitions while others are at zero; the consumer assigned to the lagging partition is not keeping up. Diagnosis: `kafka-consumer-groups.sh --describe` - identify which consumer instance holds the lagging partition; check that instance's JVM metrics for GC pauses, thread contention, or slow downstream I/O. Fix: move CPU-intensive or I/O-bound processing off the poll loop into a bounded thread pool; reduce `max.poll.records` so each poll batch completes within `max.poll.interval.ms`.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a consumer group in Kafka and how is it different from competing consumers in RabbitMQ?"
@@ -415,7 +439,31 @@ KafkaProducer<String, String> producer =
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Kafka guarantees global message ordering across all partitions.**
+
+Kafka guarantees ordering ONLY within a single partition. Messages with the same key are routed to the same partition via key hash, ensuring per-key ordering. Messages with different keys are distributed across partitions with no ordering guarantee between them - they may be produced and consumed in any interleaved order. If your use case requires strict global ordering (every event in the system ordered against every other event), you must use a single partition, which eliminates all parallelism and caps throughput at a single partition's limit.
+
+**Misconception 2: FIFO delivery guarantee means messages will be processed in order.**
+
+FIFO means messages are DELIVERED in order; processing order depends on the consumer. A consumer that spawns a new goroutine or thread per message can complete processing in any order despite FIFO delivery. For guaranteed PROCESSING order: single-threaded consumer (one goroutine/thread handles all messages sequentially), or a per-key execution channel that serializes messages with the same key while parallelizing messages with different keys.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Ordering violation after partition count increase.**
+
+Symptom: after increasing the partition count of a live topic, events for the same entity (same key) appear to arrive out of order - new events route to the new partition while old events still reside in the old partition. Diagnosis: compare key-to-partition mapping before and after the partition count change using the Kafka partitioner with the new count; check if any consumer processes old and new partitions simultaneously without per-key sequencing. Fix: increase partition counts only during planned maintenance windows; implement consumer-side per-key sequencing that buffers and reorders by event timestamp or sequence number.
+
+**Failure Mode 2: Multi-threaded consumer creates ordering violation despite single-partition assignment.**
+
+Symptom: downstream state transitions appear out of order even though the source topic is single-partition; events processed correctly when load is low, out of order under high load. Root cause: consumer dispatches messages to a thread pool; different threads complete at different rates. Diagnosis: add processing-order logging (log message offset and completion timestamp); verify whether thread pool processing time varies. Fix: serialize processing per entity key using a keyed executor service - route messages with the same business key to the same single-threaded channel while allowing parallelism across different keys.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What ordering guarantees does Kafka provide?"

@@ -202,7 +202,35 @@ consumer.subscribe(List.of("orders"));
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Kafka is always the better choice for any high-volume workload.**
+
+Kafka excels at: high-throughput event streaming (millions of events/second), replay and time-travel (multiple consumers reading the same events independently), and event sourcing. RabbitMQ excels at: complex routing via exchange types (topic, fanout, headers, direct), per-message TTL and priority queues, acknowledgment-based task dispatch where processing is not idempotent, and request-reply correlation. Choosing Kafka for a task queue workload (e.g., background email sending) adds partition management, consumer group coordination, and manual offset tracking that RabbitMQ handles natively with less operational overhead.
+
+**Misconception 2: Cloud-managed services (SQS, SNS) are interchangeable with Kafka for event streaming.**
+
+Amazon SQS is a fully managed queue for decoupled task processing: no replay, 14-day retention maximum, limited ordering (FIFO only with message groups), and no consumer group semantics. Amazon MSK (Managed Kafka) or Confluent Cloud are the streaming equivalents. SQS and Kafka are not alternatives - they serve different use cases. Many architectures intentionally use both: SQS for task dispatch to workers, Kafka for event streaming and audit log.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Wrong broker chosen for the workload causes permanent operational debt.**
+
+Symptom: after migrating task processing (email sending, video transcoding) to Kafka, teams discover partition rebalancing storms during consumer restarts; messages processed out of order break business logic; consumer group lag monitoring is complex compared to simple queue depth. Diagnosis: review whether the workload needs replay, multiple independent consumers, or ordering guarantees - the three Kafka value propositions. If the workload is task dispatch (each message processed by exactly one consumer, no replay needed), a queue (RabbitMQ, SQS) is the right fit. Fix: brokers are not easily interchangeable once producers and consumers are deployed; plan migration carefully with a parallel-write period; use an abstraction layer in the consumer code to ease future migration.
+
+**Failure Mode 2: Kafka consumer group rebalancing storm disrupts task processing.**
+
+Symptom: a consumer fleet used as a task queue experiences frequent rebalances when consumers restart; during each rebalance, all partitions are reassigned and processing stops for all consumers for 10-30 seconds; throughput drops to zero periodically. Diagnosis: check `kafka-consumer-groups --describe --group <group>` during a rebalance; `REBALANCING` state indicates all consumers paused; check `max.poll.interval.ms` - if any consumer exceeds this between polls (due to slow processing), it is evicted causing a rebalance. Fix: use static group membership (`group.instance.id`) to give each consumer a persistent identity; use incremental cooperative rebalancing (`partition.assignment.strategy=CooperativeStickyAssignor`) so only affected partitions are reassigned; size `max.poll.interval.ms` to 2x the maximum expected processing time.
+
+**Failure Mode 3: RabbitMQ used as event log breaks consumer independence and replay.**
+
+Symptom: a second consumer team needs to process the same historical events; they discover that RabbitMQ already deleted acknowledged messages; they cannot replay events from three months ago that are needed for a new analytics pipeline. Diagnosis: review whether the use case requires any of: multiple independent consumers on the same events, replay of historical events, long retention periods, or stream processing. If yes, RabbitMQ is the wrong choice. Fix: migrate to Kafka or add a parallel Kafka topic for the event log; use the Kafka topic for replay-dependent consumers while keeping RabbitMQ for task dispatch consumers; never use RabbitMQ as a system-of-record for events.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the fundamental difference between Kafka and RabbitMQ?"
@@ -465,7 +493,35 @@ public PricingResponse handlePricingRequest(
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Request-reply over messaging has equivalent latency to synchronous HTTP.**
+
+Messaging adds round-trip overhead: message serialization, broker routing, consumer poll interval (1-500ms by default), reply routing, and response deserialization typically add 5-50ms vs HTTP's 1-5ms for the same operation. Request-reply over messaging is appropriate when the trade-offs justify it: caller-handler decoupling, handler horizontal scaling without DNS changes, resilience (request queued while handler restarts), or fan-out (multiple handlers respond). Use direct HTTP when latency is the dominant requirement.
+
+**Misconception 2: Correlation IDs in request-reply messaging are a nice-to-have observability feature.**
+
+Correlation IDs are mandatory for correctness in concurrent request-reply messaging. Without a correlation ID, a service handling 100 concurrent requests cannot match incoming responses to the correct waiting caller. Additionally: correlation IDs enable detection of orphaned requests (reply never arrived - alert after N seconds), distributed tracing from producer through broker to consumer and back, replay of a specific failed request, and audit of which requests received which responses. Omitting them makes debugging dropped or misrouted replies nearly impossible in production.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Missing or duplicate correlation ID causes responses delivered to the wrong requester.**
+
+Symptom: under concurrent load, service A receives responses intended for service B; callers experience incorrect data or timeout waiting for a response that was delivered elsewhere. Diagnosis: add logging at the response-receiver that logs correlation ID, caller ID, and whether a matching pending request was found; a high rate of "no matching request found" log lines indicates correlation ID misuse; check whether the same correlation ID is being reused across requests. Fix: generate correlation IDs as cryptographically random UUIDs, never as sequential integers or timestamps; store pending requests in a concurrent map keyed by correlation ID; remove entries on response receipt or timeout; log and alert on orphaned responses.
+
+**Failure Mode 2: Reply queue not cleaned up accumulates thousands of temporary queues.**
+
+Symptom: RabbitMQ management UI shows thousands of auto-generated reply queues (`amq.rabbitmq.reply-to.*`); broker memory grows; monitoring dashboards show unbounded queue count increase over time. Diagnosis: check queue count trend in RabbitMQ management: `rabbitmqctl list_queues | wc -l`; look for queues with zero consumers that were created by temporary reply subscriptions; check whether reply queues are exclusive (auto-deleted on disconnect) or durable. Fix: use exclusive, auto-delete reply queues (RabbitMQ direct reply-to feature handles this automatically); for RPC patterns, use `rabbitmq-client` `RpcClient` which manages the reply queue lifecycle; add a queue count alert and TTL policy on any auto-generated queues.
+
+**Failure Mode 3: No reply timeout causes requester threads to block indefinitely under handler failure.**
+
+Symptom: the requester's thread pool fills with blocked threads waiting for replies; the service becomes unresponsive; increasing handler failures cause cascading requester failures via thread exhaustion. Diagnosis: check active thread count in the requester: `jstack <pid> | grep -c WAITING`; look for threads blocked on a Future.get() or blocking receive call with no timeout; correlate with handler deployment or health events. Fix: always set an explicit reply timeout (typically 3-10x the expected processing time); use `Future.get(timeout, TimeUnit.MILLISECONDS)` and handle `TimeoutException` by failing the request with an appropriate error; implement a circuit breaker on the handler - after N consecutive timeouts, stop sending requests and return an error immediately.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the request-reply pattern in messaging?"

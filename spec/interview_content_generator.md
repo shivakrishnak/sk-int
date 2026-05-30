@@ -590,7 +590,7 @@ MANDATORY (all entries):
   4.3  Concept Explanation
   4.4  Code Example (include unless concept has no non-trivial usage)
   4.5  Answers by Seniority
-  4.6  Questions & Spoken Answers
+  4.6  Interview Deep-Dive
 
 CONDITIONAL:
   4.7  Comparison       — ★★☆ or above
@@ -804,49 +804,67 @@ RULES:
   - First person ("I have seen...", "When I designed...")
 
 ─────────────────────────────────────────────────────────────────────────
-4.6  QUESTIONS & SPOKEN ANSWERS  [REQUIRED]
+4.6  INTERVIEW DEEP-DIVE  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### ❓ Questions You Will Be Asked
+  ### 🎯 Interview Deep-Dive
 
 PURPOSE:
-  Exhaustive list of every interview question
-  this keyword generates. Candidate reads this
-  list and prepares for each one.
+  The capstone section. Exhaustive Q&A that simulates the
+  real interview: full questions, full answers (200-500 words),
+  and the insight that separates good from great responses.
 
 FORMAT:
-  #### [Q-Type]
-  - "[Question 1]"
-  - "[Question 2]"
-  🗣️ "[Spoken answer template — first person, natural English.
-       Covers the key points for this Q-type.]"
+  Start with a timing table:
+  | Category | Count | Coverage |
+  |---|---|---|
+  | Conceptual | N | brief description |
+  | Debugging  | N | brief description |
+  | Trade-off  | N | brief description |
+  | Behavioral | N | brief description |
 
-  Repeat for all eight Q-types.
+  Then numbered questions:
 
-EIGHT Q-TYPES (from Section 2):
-  #### Definition
-  #### Mechanism
-  #### Comparison
-  #### Scenario
-  #### Debugging
-  #### Deep Dive
-  #### Misconception / Trap  [★★☆ and above only]
-  #### Performance & Scalability  [★★☆ and above only]
+  **Q1. [Full interview question — conversational phrasing]**
 
-  Interviewer type adaptation table at end:
-  | Interviewer Type | Emphasis |
-  |---|---|
-  | Technical Panel  | Lead with mechanism. Use precise terminology. |
-  | Hiring Manager   | Lead with business impact. Outcome language. |
-  | Bar Raiser       | Lead with trade-offs. What you would NOT use it for. |
-  | Peer Engineer    | Collaborative. "The thing I keep finding is..." |
+  [200-500 word answer. First person where natural. Covers:
+   mechanism, trade-offs, production context, concrete example.
+   Structured but not bullet-only — readable paragraphs.]
+
+  *What separates good from great:*
+  [The one non-obvious insight that distinguishes a strong hire
+   from an average candidate.]
+
+  ---
+
+  **Q2. [Question]**
+
+  ...
+
+QUESTION MINIMUMS (per difficulty):
+  ★☆☆  Foundational: 7 questions minimum
+  ★★☆  Intermediate: 9 questions minimum
+  ★★★  Deep-dive:    12 questions minimum
+
+MANDATORY QUESTION TYPES (ALL keywords must include):
+  - At least 1 DEBUGGING question (symptom → diagnosis → fix)
+  - At least 1 TRADE-OFF question (when to use / when not to use)
+  - At least 1 BEHAVIORAL question for ★★☆ and above
+
+QUESTION COVERAGE CATEGORIES:
+  - Conceptual (what, why, how it works)
+  - Debugging (failure mode diagnosis, production commands)
+  - Trade-off (alternatives, when to choose)
+  - Behavioral (past experience, design decision, what would you do)
+  - Production (real-world usage, failure modes under load)
 
 RULES:
-  - Minimum 2 questions per type
-  - 🗣️ template immediately follows each Q-type group (no separate section)
-  - Templates written in first person, speakable English
-  - Interviewer type adaptation table always at end of this section
+  - Every answer ends with: *What separates good from great:*
+  - All answers written in first person where natural
+  - No short answers — minimum 200 words per answer
+  - Separate each Q&A block with ---
+  - No Q-type sub-headings (#### Definition etc.) — use numbered Qs only
 
 ─────────────────────────────────────────────────────────────────────────
 4.7  COMPARISON  [CONDITIONAL — ★★☆ or above]
@@ -1157,7 +1175,7 @@ DEPTH CALIBRATION:
   ★☆☆ Foundational:
     Model Answer (4.2): 30-second + 3-minute versions + Blank Mind Recovery
     Answers by Seniority (4.5): two combined levels, brief
-    Questions & Spoken Answers (4.6): Types 1–3 focus; 2 per type
+    Interview Deep-Dive (4.6): minimum 7 questions for ★☆☆
     Conditional sections (4.7-4.10): OMIT
 
   ★★☆ Intermediate:
@@ -1397,7 +1415,7 @@ works similarly/differently because..."
 
 ---
 
-### ❓ Questions & Spoken Answers
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "[Question 1]"
@@ -1691,14 +1709,14 @@ SELF-VALIDATION CHECKLIST:
   ☐ 30-second version present at each level, in first person
   ☐ Push deeper guidance present at each level
 
-  QUESTIONS & SPOKEN ANSWERS (4.6):
-  ☐ All 8 Q-types present: Definition, Mechanism, Comparison,
-    Scenario, Debugging, Deep Dive, Misconception/Trap,
-    Performance & Scalability
-  ☐ Minimums met: ★☆☆ → 2 per type; ★★☆ → 3 per type; ★★★ → 4 per type
-  ☐ Each Q-type has a 🗣️ spoken template immediately below it
-  ☐ Interviewer type adaptation table present at end of section
-  ☐ All 🗣️ templates are in first person and speakable aloud
+  INTERVIEW DEEP-DIVE (4.6):
+  ☐ Timing table present at section start
+  ☐ Minimums met: ★☆☆ → 7 questions; ★★☆ → 9 questions; ★★★ → 12 questions
+  ☐ At least 1 DEBUGGING question present
+  ☐ At least 1 TRADE-OFF question present
+  ☐ At least 1 BEHAVIORAL question present (★★☆ and above)
+  ☐ Every answer ends with *What separates good from great:*
+  ☐ All answers are 200-500 words (no short answers)
 
   CODE EXAMPLE (4.4):
   ☐ 2-3 examples; code compiles mentally (no invented APIs)

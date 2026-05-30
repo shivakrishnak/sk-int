@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Distributed Systems"
-parent: "SK Interview"
 nav_order: 10
 has_children: true
-permalink: /distributed-systems/
 ---
 
 # Distributed Systems

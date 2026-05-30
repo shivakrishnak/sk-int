@@ -302,7 +302,31 @@ with mutable state or lifecycle: use DI."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Singleton guarantees thread-safe single-instance creation automatically.**
+
+The naive `if (instance == null) instance = new Singleton()` check has a race condition in multi-threaded environments: two threads can both pass the null check and create two instances. Thread-safe options: double-checked locking with a `volatile` field (Java), class-level initialization (Java's class loader guarantees single init), or the Initialization-on-demand holder idiom. In Java, the enum Singleton pattern is the safest - the JVM guarantees single initialization and prevents serialization attacks.
+
+**Misconception 2: Singleton is appropriate whenever you need a single instance.**
+
+Singleton makes testing nearly impossible: you cannot inject a mock implementation without modifying production code. It introduces global mutable state - any code anywhere can modify the singleton's state and affect every other user. "Single instance at runtime" is often better achieved through dependency injection (configure one instance in the DI container, inject it everywhere it's needed) which gives you the same runtime behavior with full testability and zero global state.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Singleton causes test pollution - test A's state affects test B.**
+
+Symptom: tests pass in isolation but fail when run together; test execution order matters; debug reveals shared state in a static Singleton field. Root cause: Singleton persists state across tests because its lifecycle is tied to the JVM, not the test framework. Diagnosis: search for `static` fields holding mutable state; run tests in different orders and compare results. Fix: use dependency injection to inject a fresh instance per test; or add a `reset()` method to reinitialize state (common in legacy code migration).
+
+**Failure Mode 2: Singleton prevents horizontal scaling in distributed systems.**
+
+Symptom: singleton-stored state (cache, counter, session data) is inconsistent across application server instances; users see different data depending on which instance handles their request. Root cause: Singleton state is per-JVM; in a cluster of 5 servers, there are 5 independent singleton instances with divergent state. Diagnosis: identify any singleton that stores mutable data used across requests. Fix: move shared state to an external store (Redis, distributed cache); the singleton pattern itself is fine for stateless utilities (logger, config reader) but not for shared mutable state.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Singleton pattern?"
@@ -678,7 +702,31 @@ factory method is the classloader mechanism itself."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Factory Method requires a separate Factory class.**
+
+Factory Method is a method in the creator class that subclasses override to create different product types - the factory logic IS the method, not a separate class. A `Document.createPage()` method that `Resume` overrides to return `ResumePage` and `Report` overrides to return `ReportPage` IS Factory Method. A standalone `PaymentFactory` class with a `createPayment(type)` method is actually Simple Factory or Static Factory - a different (simpler, non-GoF) pattern.
+
+**Misconception 2: Factory Method and Abstract Factory are the same pattern with different names.**
+
+Factory Method creates ONE product through method overriding in subclasses. Abstract Factory creates FAMILIES of related products through a factory interface. If you need to create just `Button`, use Factory Method. If you need to create `Button + Checkbox + TextField` that must all be from the same UI theme (Windows vs Mac), use Abstract Factory. The key distinction: Abstract Factory coordinates the creation of multiple related objects; Factory Method defers creation of a single product type to a subclass.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Factory method bypassed by direct instantiation in client code.**
+
+Symptom: new product types added to the factory are not used by all clients; some code still uses `new ConcreteProduct()` directly; switch to a new product type requires finding and changing all direct instantiation sites. Root cause: the factory method contract is not enforced - client code depends directly on concrete classes rather than the creator hierarchy. Diagnosis: grep for `new ConcreteProduct` in client code; verify that the creator and product hierarchies are used consistently. Fix: make `ConcreteProduct` package-private or use a module system to prevent direct instantiation outside the factory; enforce via code review.
+
+**Failure Mode 2: Creator class becomes overloaded with unrelated factory methods.**
+
+Symptom: the "creator" class has dozens of factory methods for unrelated product types; the class violates Single Responsibility Principle and becomes a God Object. Root cause: Factory Method pattern extended beyond its intended scope - each product family should have its own creator hierarchy. Diagnosis: count distinct product families in the creator; if there are more than 2-3, the pattern is being misapplied. Fix: extract separate creator hierarchies per product family or switch to Abstract Factory.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Factory Method pattern?"
@@ -1055,7 +1103,31 @@ interviews even if the simpler fluent form is what you use day-to-day."
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Builder is only needed for objects with many optional parameters.**
+
+Builder's primary purpose is to separate complex object CONSTRUCTION from REPRESENTATION - enabling the same construction process to produce different representations. The "many optional parameters" use case (Effective Java Item 2) is one application, but Builder also handles: multi-step object construction with validation at each step, building immutable objects with complex initialization, and creating objects where construction steps must occur in a specific order. Conflating Builder with "constructor with many arguments" misses the pattern's broader applicability.
+
+**Misconception 2: Using a Builder always produces an immutable object.**
+
+Builder is a construction mechanism, not an immutability guarantee. The built object can be mutable or immutable depending on whether you provide setters. Lombok's `@Builder` generates a builder for classes that may still have setters. The decision to make the built object immutable is separate from the decision to use Builder for construction. When you do want immutability, Builder + final fields + no setters is a common and effective combination.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Builder allows building invalid objects by not validating at build() time.**
+
+Symptom: objects created with the builder have null required fields or invalid state combinations; NullPointerExceptions occur at usage time, far from the construction site. Root cause: the `build()` method does not validate that required fields were set and that field combinations are consistent. Diagnosis: trace back NullPointerException stack traces to builder-created objects; check which fields have no explicit null check in `build()`. Fix: add precondition checks in `build()`: `Objects.requireNonNull(requiredField, "requiredField must not be null")`; throw `IllegalStateException` for invalid combinations.
+
+**Failure Mode 2: Builder is not thread-safe when shared across threads.**
+
+Symptom: intermittent null fields or data from different builder calls mixed together; occurs only under concurrent load. Root cause: a single Builder instance is shared across multiple threads - each thread calls setter methods concurrently, mixing each other's values. Diagnosis: check for static Builder instances or Builder objects stored in shared state; add thread-safety analysis. Fix: Builders are inherently not thread-safe and should not be shared. Create a new Builder instance per object construction call.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the Builder pattern?"

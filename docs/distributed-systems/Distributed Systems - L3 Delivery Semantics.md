@@ -313,7 +313,7 @@ queue's native deduplication (SQS FIFO, Kafka exactly-once).
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -699,7 +699,7 @@ aggregation pipeline.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

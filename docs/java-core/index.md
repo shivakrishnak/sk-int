@@ -1,10 +1,7 @@
 ---
-layout: default
 title: "Java Core"
-parent: "SK Interview"
 nav_order: 8
 has_children: true
-permalink: /java-core/
 ---
 
 # Java Core

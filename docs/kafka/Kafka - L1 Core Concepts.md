@@ -218,7 +218,39 @@ approach for ordering-sensitive cases is to blue-green deploy to a new topic.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: A Kafka topic is equivalent to a database table.**
+
+A database table persists records indefinitely and supports random access by primary key, updates, and deletes. A Kafka topic is an append-only ordered log with time-based or size-based retention (default 7 days). Topics support sequential reads by offset only - there is no equivalent of `SELECT * WHERE id = 123`. The correct mental model: a topic is a durable event log, not a queryable store. For query-friendly access to topic data, project it into a database (via Kafka Streams or Kafka Connect) rather than reading the topic directly.
+
+**Misconception 2: Topic retention is linked to consumer acknowledgment.**
+
+Topic retention is completely independent of consumer state. Retention governs how long Kafka keeps messages based on time (`retention.ms`) or size (`retention.bytes`) - not whether messages were consumed. A consumer group that commits all offsets does NOT cause message deletion; the messages stay until retention expires. Conversely, an offline consumer that reconnects after its retention window has elapsed will have missed messages permanently - there is no "hold until consumed" semantics without a dedicated queue system.
+
+**Misconception 3: You can rename a Kafka topic.**
+
+Kafka has no `RENAME TOPIC` operation. The only path is: create a new topic with the desired name, mirror messages from old to new (using MirrorMaker 2 or a custom consumer-producer bridge), migrate all consumers and producers to the new topic, then delete the old topic after verifying all consumers have caught up to the end of the new topic. This is a multi-day migration for active, high-volume topics.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Topic retention too short causes consumer to miss messages after slow processing.**
+
+Symptom: consumer lag grows during a processing spike; when the consumer catches up, it discovers that the earliest available offset on some partitions is ahead of its last committed offset; messages in the gap are permanently lost. Diagnosis: `kafka-consumer-groups --describe --group <group>` shows LAG and CURRENT-OFFSET; compare against `kafka-log-dirs --describe` to find the earliest available offset per partition; if current-offset < earliest-offset, data was lost. Fix: increase `retention.ms` on affected topics to provide enough buffer for the consumer's worst-case processing lag; set retention to at least 3x the consumer's SLA (if the consumer must process within 6 hours, set retention to 18+ hours); add an alert when consumer lag exceeds 50% of retention time.
+
+**Failure Mode 2: Topic partition count increase breaks per-key ordering guarantees.**
+
+Symptom: after a partition count increase, a consumer sees events for the same key arriving out of order across partitions; an event for key `user-123` at T=10 is in partition 3, but a later event at T=20 is in partition 7 (new partition), processed by a different consumer. Diagnosis: compare partition count history using `kafka-topics --describe`; identify whether key-based ordering is a requirement for the affected topic; check whether the partition count was increased after initial messages were written. Fix: design partition count at topic creation to avoid increases; if increase is required, implement a consumer-side reordering buffer keyed by the business entity ID; use a timestamp or sequence number in the message payload to detect and reorder out-of-sequence deliveries.
+
+**Failure Mode 3: Under-replicated partitions block producer writes when `min.insync.replicas` is set.**
+
+Symptom: producers receive `NotEnoughReplicasException`; topic write throughput drops to zero; the cluster health shows under-replicated partitions in the management UI. Diagnosis: `kafka-topics --describe --topic <topic> --under-replicated-partitions`; check which brokers are down or lagging; compare ISR size against `min.insync.replicas` (default 1, recommended 2 for `acks=all`). Fix: ensure the cluster has at least `replication.factor` brokers online and in-sync; for `replication.factor=3` and `min.insync.replicas=2`, the cluster can tolerate 1 broker down; losing 2 brokers blocks all writes; restore the failed broker or reduce `min.insync.replicas` temporarily (accepting durability risk).
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a Kafka topic?"
@@ -509,7 +541,39 @@ implications for consumer visibility under heavy write load.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: More partitions always means better throughput.**
+
+Partitions improve throughput by enabling parallel consumption - but only up to the consumer group size and broker capacity. Each partition adds overhead: a file descriptor pair on each broker replica, 50 bytes of metadata on every client connected to the cluster, and one goroutine/thread per consumer assigned to the partition. Beyond 1,000-4,000 partitions per broker, Kafka's own metadata management becomes the bottleneck: leader election after a broker failure can take tens of seconds when thousands of partitions need new leaders. Target 1 partition per 10 MB/s of required throughput, not more.
+
+**Misconception 2: Increasing partition count redistributes existing messages to the new partitions.**
+
+Adding partitions to an existing topic affects ONLY new messages. Existing messages remain in their original partitions and are never moved. For producers using key-based partitioning: after increasing partition count, the same key will be routed to a DIFFERENT partition (because the hash modulo changes), breaking the ordering guarantee for that key - new messages and old messages for the same key are now in different partitions. Plan partition count at topic creation time; consider increasing it only during low-traffic windows with consumer-side idempotency.
+
+**Misconception 3: Consumers can read from any replica, not just the leader.**
+
+Before Kafka 2.4, ALL reads went to the partition leader, even if a follower replica was on the same rack or AZ. Followers only replicated - they never served reads. Kafka 2.4+ added follower reads via the `RackAwareReplicaSelector` - a client can read from the nearest replica in the same AZ, reducing cross-AZ data transfer costs. This must be explicitly enabled: `client.rack` must be set on each consumer and `replica.selector.class=org.apache.kafka.common.replica.RackAwareReplicaSelector` on brokers.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Too many partitions causes slow leader election after broker failure.**
+
+Symptom: after a broker fails, recovery takes minutes rather than seconds; all partitions with their leader on the failed broker are unavailable during that window; producer errors spike and consumer lag grows. Diagnosis: check total partition count: `kafka-topics --list | wc -l` combined with `kafka-topics --describe`; if the cluster has >4,000 partitions per broker, leader election after failure becomes slow; check the controller election duration metric `kafka.controller:type=KafkaController,name=ActiveControllerCount`. Fix: keep partition count at or below 1,000-4,000 per broker; use KRaft mode which improves metadata management at scale; if many partitions are from old/unused topics, delete them; reduce replication factor for low-priority topics to decrease leader election work.
+
+**Failure Mode 2: Key-based partitioning with a skewed key space overloads one partition.**
+
+Symptom: one partition accumulates far more messages than others - a "hot partition"; the consumer instance assigned to that partition is the throughput bottleneck; other consumers in the group are idle. Diagnosis: check per-partition message rate: `kafka-log-dirs --describe --topic <topic>`; compare partition sizes; identify whether a high-volume key dominates the key space (e.g., messages keyed by country and 80% are from one country). Fix: add a random suffix or salt to the partition key for hot keys; use a custom partitioner that explicitly routes hot keys across multiple target partitions; split the topic by region with a separate topic per high-volume key value.
+
+**Failure Mode 3: Consumer group with more instances than partitions wastes resources.**
+
+Symptom: a consumer fleet has 20 instances but the topic has 10 partitions; 10 consumers are permanently idle and assigned no partitions; resource cost doubles with no throughput benefit. Diagnosis: `kafka-consumer-groups --describe --group <group>` shows some consumer instances with no PARTITION assignments; the CONSUMER-ID column shows idle instances. Fix: scale consumer instances to match partition count or a multiple thereof; to increase throughput beyond partition count, increase the partition count itself; add automation that sets consumer replica count to `min(desired_consumers, partition_count)`.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a Kafka partition?"
@@ -800,7 +864,39 @@ failure does not take out all replicas of any partition.
 
 ---
 
-### ❓ Questions & Spoken Answers
+### ⚠️ Common Misconceptions
+
+**Misconception 1: A Kafka broker is just a message server that stores messages.**
+
+A Kafka broker serves multiple simultaneous roles: partition leader (serving all reads and writes for its leader partitions), follower replica coordinator (replicating data from other brokers), group coordinator (managing consumer group membership and offset commits for groups assigned to it), and transaction coordinator (for exactly-once semantics). One broker in the cluster holds the controller role (elected via ZooKeeper or KRaft), managing cluster metadata: broker registration, topic/partition state, and leader election. Broker failure thus impacts multiple system functions simultaneously.
+
+**Misconception 2: ZooKeeper is required to run a Kafka cluster.**
+
+ZooKeeper was Kafka's external dependency for metadata management until Kafka 2.8 (preview) and 3.3 (production-ready KRaft). KRaft mode moves leader election and metadata management into Kafka itself via a Raft consensus protocol among a dedicated set of controller brokers. New Kafka deployments should use KRaft mode; ZooKeeper mode is deprecated and will be removed in Kafka 4.0. Existing ZooKeeper-based clusters should plan migration using the KIP-833 rolling upgrade process.
+
+**Misconception 3: Kafka replication is equivalent to a backup.**
+
+Replication provides HIGH AVAILABILITY: if a broker fails, another broker with a replica copy takes over as leader. It does NOT provide data protection against application-level errors: if a producer accidentally deletes a topic, corrupts messages with wrong serialization, or produces malformed data, replication propagates the error to all replicas immediately. True backup requires: Kafka log segment archival to cold storage (Confluent Tiered Storage, Kafka Connect S3 Sink with segment-level export) for recovery beyond the retention window and for disaster recovery after data corruption events.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Broker disk full halts all partition writes on that broker.**
+
+Symptom: producers receive `KafkaStorageException` for partitions on the full broker; consumer lag grows for those partitions; `df -h` on the broker shows 100% disk utilization. Diagnosis: check disk usage per broker: `df -h /var/lib/kafka`; check which topics are consuming the most space: `kafka-log-dirs --describe --bootstrap-server localhost:9092 | grep -E 'size|topic'`; identify topics with large retention settings or high write rates. Fix: immediately clean up old segments by reducing `retention.bytes` temporarily; delete unused topics; expand disk capacity (add volumes, migrate to larger instance type); set disk usage alerts at 70% and 85% to prevent recurrence; consider Tiered Storage for large topics.
+
+**Failure Mode 2: Controller failover causes a brief window of unavailability during which producers block.**
+
+Symptom: during a rolling broker upgrade, producer latency spikes to 30-90 seconds when the controller broker is restarted; clients cannot get updated metadata during controller election. Diagnosis: check controller broker identity: `kafka-topics --describe` will show `Leader: none` for partitions during election; check Kafka logs for `[Controller id=N] Resigned` and `[Controller id=M] Elected` messages; monitor `kafka.controller:type=KafkaController,name=ActiveControllerCount`. Fix: use KRaft mode with dedicated controller nodes to reduce controller failover impact; ensure controller broker restarts happen last in rolling upgrades; pre-warm client metadata by increasing `metadata.max.age.ms` so clients do not request metadata during the brief controller election window.
+
+**Failure Mode 3: Unclean leader election causes data loss when `min.insync.replicas` is too low.**
+
+Symptom: after a two-broker failure in a three-broker cluster, Kafka elects an out-of-sync replica as leader; producers had been using `acks=all` but data written after the ISR shrank to 1 is now present on the remaining broker only; after the failed broker elected as leader, those writes are missing. Diagnosis: check `unclean.leader.election.enable` setting (default false in Kafka 3.0+); check ISR history in Kafka controller logs; review `LogStartOffset` vs expected offset to quantify data loss. Fix: set `unclean.leader.election.enable=false` on critical topics to prevent data loss at the cost of availability; use `replication.factor=3` with `min.insync.replicas=2` to tolerate one broker failure safely; alert when ISR < replication factor for any partition as an early warning.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a Kafka broker?"

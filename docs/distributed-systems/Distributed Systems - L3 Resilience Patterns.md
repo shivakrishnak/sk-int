@@ -327,7 +327,7 @@ applied together (defense in depth).
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -699,7 +699,7 @@ trap and the operational overhead of microservices.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

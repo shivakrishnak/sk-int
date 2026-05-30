@@ -333,7 +333,7 @@ If no: monotonic reads. Need global order? Sequential/linearizable.
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
@@ -712,7 +712,7 @@ no conflicts possible).
 
 ---
 
-### 🔥 Field Q&A
+### 🎯 Interview Deep-Dive
 
 #### Production Failures
 

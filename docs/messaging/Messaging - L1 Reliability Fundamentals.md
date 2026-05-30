@@ -170,7 +170,35 @@ producer.send(
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: JSON is a safe default for production message serialization.**
+
+JSON is schema-free: any producer can silently add, remove, or rename fields without consumers failing - until they do, without warning. A field rename in a widely-consumed topic can break dozens of consumers simultaneously, discovered only at runtime. Avro or Protobuf with Schema Registry catch incompatible changes at PUBLISH time, not at consumer deserialization time. Beyond safety, Avro messages are 40-60% smaller than equivalent JSON and deserialize faster due to binary encoding.
+
+**Misconception 2: Schema evolution can be addressed later when the need arises.**
+
+Schema evolution must be designed from the first message. The core rule - add optional fields with defaults; never remove or rename existing fields - sounds simple but requires consumer code to be written defensively from day one (ignore unknown fields, use defaults for missing fields). Retrofitting schema evolution compatibility after multiple incompatible consumers are in production requires a coordinated migration window across all teams. The cost of doing it wrong scales with adoption, not with time.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer crashes on schema change - deserialization exception.**
+
+Symptom: consumers log `SerializationException` or `SchemaNotFoundException` after a producer deploys a new schema; consumer lag spikes; dead letter queue fills rapidly. Diagnosis: check recently registered schemas: `curl http://schema-registry:8081/subjects/<topic>-value/versions`; compare the schema ID in the failed message header against registered IDs; run `kafka-consumer-groups --describe --group <group>` to confirm which consumers are stuck. Fix: enforce compatibility mode in the schema registry (`BACKWARD` or `FULL`); roll back the producer schema until compatibility is verified; update consumers to handle the new schema before re-deploying the producer.
+
+**Failure Mode 2: Silent data corruption from JSON field type mismatch.**
+
+Symptom: downstream systems process incorrect values - a field that was an integer now contains a string, or numeric aggregates produce wrong results with no exception thrown. Diagnosis: inspect raw message payloads with `kafka-console-consumer --topic <topic> --from-beginning --max-messages 20`; compare field types against the expected contract; grep consumer logs for swallowed `ClassCastException` or `NumberFormatException`. Fix: add schema validation at the producer before publishing; introduce JSON Schema validation via a schema registry even for JSON topics; add explicit type assertions in consumers and route deserialization failures to a dead letter queue.
+
+**Failure Mode 3: Schema registry unavailability blocks all producers.**
+
+Symptom: all producers on schema-registry-dependent topics fail simultaneously; new messages stop flowing while existing consumers drain the backlog. Diagnosis: check registry health: `curl -s http://schema-registry:8081/subjects | head`; verify pod status: `kubectl get pods -n messaging -l app=schema-registry`; check producer logs for `LEADER_NOT_AVAILABLE` vs `CONNECTION_REFUSED` to distinguish registry failure from network failure. Fix: enable local schema caching in producers with TTL; set `auto.register.schemas=false` in production so producers only look up existing schemas; deploy registry with at least 2 replicas and configure `max.retries` and `retry.backoff.ms` in the Kafka client.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is message serialization and why does it matter in a messaging system?"
@@ -370,7 +398,39 @@ channel.addConfirmListener((tag, multiple) -> {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: A growing queue depth means the system is absorbing load gracefully.**
+
+Queue depth growth indicates a deficit: consumers cannot process messages as fast as producers produce them. In a healthy system operating within capacity, queue depth stays near zero with transient spikes during traffic bursts. Sustained queue depth growth is a pre-failure state - the queue will eventually exhaust broker memory or disk, triggering cascading failures. A queue acts as a buffer for transient bursts, not a reservoir for permanent overload.
+
+**Misconception 2: Adding broker disk capacity fixes a backpressure problem.**
+
+Disk capacity extends the time before failure; it does not fix the throughput deficit. The correct response to sustained queue growth is: first, identify whether the bottleneck is consumer processing speed, downstream dependency latency, or consumer provisioning; then fix the bottleneck (optimize consumer, scale consumer group, or fix the slow downstream dependency). Adding disk buys time for the fix but is not a fix itself.
+
+**Misconception 3: Backpressure only needs to be handled at the broker level.**
+
+Backpressure must propagate end-to-end: from the overloaded consumer upstream to the producer. If the broker absorbs all pressure without signaling producers, producers continue at full speed, accumulating an ever-growing backlog. Effective backpressure: broker signals consumers via flow control, consumers signal their upstream processors (bounded queue with blocking put), processors signal HTTP callers via 429 Too Many Requests, or producers implement circuit breakers when broker send() blocks for too long.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Queue depth reaches max-length and drops or blocks messages.**
+
+Symptom: in RabbitMQ with `x-max-length` and `overflow: drop-head`, oldest messages silently disappear; with `reject-publish`, producer `basicPublish` calls are rejected. Diagnosis: monitor queue depth: `rabbitmqctl list_queues name messages`; check `rejected_publish` counter growth; review producer logs for publish confirm failures. Fix: scale consumers to reduce queue depth before it reaches the limit; add a producer-side circuit breaker that backs off when queue depth exceeds 80% of max-length; set `x-message-ttl` to expire stale messages rather than silently dropping them.
+
+**Failure Mode 2: Consumer lag grows until messages fall off the retention window.**
+
+Symptom: in Kafka, `consumer_lag` increases monotonically; eventually messages fall off the retention window and are permanently lost; downstream systems show data gaps. Diagnosis: `kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group <group>` - check the LAG column; compare current offset vs log-end-offset per partition; check `retention.ms` on the topic to understand expiration timeline. Fix: scale consumer group instances (up to partition count); reduce `max.poll.records` if individual batch processing time exceeds `max.poll.interval.ms`; extend `retention.ms` as a temporary measure while fixing the root cause.
+
+**Failure Mode 3: Broker OOM caused by unbounded in-memory queue accumulation.**
+
+Symptom: RabbitMQ broker process killed by OOM; restart drops all non-durable messages; persistent queues recover but cause a redelivery surge. Diagnosis: check `vm_memory_used` vs `vm_memory_high_watermark` in the management UI; review queue types - non-durable queues with high message rates accumulate in memory; check for `memory_alarm` in broker logs. Fix: enable lazy queues (`x-queue-mode: lazy`) to page messages to disk; set `vm_memory_high_watermark` to 0.4 (40% of RAM) to trigger flow control before OOM; monitor `disk_free` alongside `memory_used` as lazy queues can exhaust disk space.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What does queue depth tell you about a messaging system?"
@@ -578,7 +638,35 @@ while (true) {
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Acknowledging a message means it was successfully processed.**
+
+ACK means the BROKER considers the message delivered and removes it from the queue for redelivery. It says nothing about whether the consumer's business logic succeeded. The consumer must choose when to ACK: before processing (at-most-once - lose messages on crash), after processing but before persisting (duplicates possible if crash between process and persist), or after durably persisting the result (at-least-once, safest). The ACK placement is a correctness decision, not an implementation detail.
+
+**Misconception 2: At-least-once delivery causes frequent duplicate processing.**
+
+"At-least-once" means duplicates are POSSIBLE, not routine. Duplicates occur only during failure scenarios: consumer crash between processing and ACK, network timeout during ACK delivery, or broker crash before persisting the ACK. In healthy systems running normally, duplicates are rare - perhaps one per million messages. However, the system must be architected to handle them, because they WILL occur under failure conditions, and unhandled duplicates cause data corruption or incorrect financial calculations.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Duplicate processing causes double-charges or duplicate inserts.**
+
+Symptom: identical orders are fulfilled twice; financial transactions are charged multiple times; database shows duplicate rows for the same business event. Diagnosis: query for duplicate records by message ID or correlation ID; check the `redelivered` flag in RabbitMQ or offset gaps in Kafka indicating re-processing; review consumer logs for error-followed-by-success on the same message ID. Fix: implement idempotency using a deduplication key stored in the processing database with a unique constraint; use the message ID or a natural business key as the idempotency key; in Kafka, consider transactional producers with exactly-once semantics when idempotency cannot be cheaply achieved.
+
+**Failure Mode 2: Message silently lost due to pre-processing auto-ACK.**
+
+Symptom: messages disappear from the queue and are never processed; consumers appear healthy but downstream state changes are missing; queue depth stays low but work is not done. Diagnosis: review consumer configuration for `autoAck=true` in RabbitMQ or `enable.auto.commit=true` with a short `auto.commit.interval.ms` in Kafka; add logging at the start and end of each message processing cycle and compare message IDs to identify gaps. Fix: switch to manual ACK after processing completes (`channel.basicAck(deliveryTag, false)` in RabbitMQ; `consumer.commitSync()` after business logic succeeds in Kafka); never ACK before the result is durably persisted.
+
+**Failure Mode 3: ACK timeout causes redelivery storm during slow processing.**
+
+Symptom: the same messages are delivered repeatedly to multiple consumers simultaneously; database shows write conflicts on the same record; consumers log that a message is already being processed. Diagnosis: in RabbitMQ, check the `consumer_timeout` policy - processing that exceeds the timeout causes channel closure and redelivery; in Kafka, check `max.poll.interval.ms` - if processing between polls exceeds this, the consumer is evicted and partitions reassigned. Fix: increase the ACK timeout to match worst-case processing time; break long-running processing into smaller steps with intermediate checkpoints; for inherently long jobs, use an external work-item store (database row with status column) rather than relying on message redelivery as the retry mechanism.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the difference between at-most-once, at-least-once, and exactly-once delivery?"

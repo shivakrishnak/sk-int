@@ -211,7 +211,35 @@ public void processOrder(ConsumerRecord<String, String> record,
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: DLQ messages can be safely re-queued at any time for automatic reprocessing.**
+
+DLQ messages require forensic analysis before reprocessing. Blindly re-queueing DLQ contents re-triggers the same failures that populated the DLQ in the first place - whether the cause is a schema mismatch, a downstream service bug, or a business rule violation. The correct procedure: identify the failure category (transient vs permanent), fix the root cause (deploy a consumer fix, restore the dependency), then selectively replay only the messages that can now be processed successfully. Automated DLQ retry without root-cause analysis multiplies the failure.
+
+**Misconception 2: A DLQ with messages in it means the messaging system is healthy.**
+
+A populated DLQ means business-critical messages failed processing and require human attention. DLQ depth should always alert the on-call engineer - it is not a normal steady state. A message in the DLQ represents lost business value (an order not processed, a payment not recorded, an event not handled) until it is replayed. Treating DLQ growth as "messages being handled safely" is a false comfort that allows business-impacting defects to accumulate silently.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: DLQ re-queued without root-cause fix re-triggers the same failure.**
+
+Symptom: DLQ depth drops to zero after a re-queue operation, then rapidly fills back up; the consumer error rate spikes again; the same messages cycle between main queue and DLQ indefinitely. Diagnosis: check consumer error logs before re-queueing; identify whether the failure is transient (downstream unavailable) or permanent (malformed message, schema mismatch, business rule violation); categorize DLQ messages by error type before taking action. Fix: implement DLQ message tagging with the error type on first delivery; only re-queue messages in the "transient" category after confirming the dependency is restored; permanently discard or archive "permanent failure" messages after human review and root-cause resolution.
+
+**Failure Mode 2: No DLQ alerting allows silent business-critical message loss to accumulate.**
+
+Symptom: the DLQ depth has been growing for days; orders are missing, payments not recorded, notifications not sent - but no alert fired because the consumer error rate metric was reset after each retry cycle. Diagnosis: check DLQ depth directly: `rabbitmqctl list_queues name messages | grep dlq`; compare event counts in the source system vs counts in the downstream system to find the gap; check consumer logs for the earliest DLQ delivery. Fix: add a DLQ depth alert that fires when depth exceeds zero for more than 5 minutes; use `>0` as the threshold - any DLQ message is a business defect; include the DLQ depth in the service's health check so it surfaces in dashboards immediately.
+
+**Failure Mode 3: Poison message blocks queue and accumulates backlog of healthy messages.**
+
+Symptom: consumer lag grows rapidly on one partition or queue; all consumers are processing the same message repeatedly and failing; healthy messages behind the poison message are delayed indefinitely. Diagnosis: inspect the first message in the queue: `rabbitmqctl get_messages <queue> --count 1` or use `kafka-console-consumer --max-messages 1`; check if `redelivered=true` and delivery count is high (indicates poison message); look for repeated identical error in consumer logs with the same message ID. Fix: in RabbitMQ, set `x-delivery-limit` on the queue - messages that exceed the delivery limit are automatically moved to the DLQ without consumer intervention; in Kafka, implement a dead-letter topic writer in the consumer exception handler so a failing message is written to the DLT and offset committed, allowing the consumer to proceed.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is a dead letter queue and what problem does it solve?"
@@ -453,7 +481,35 @@ kafkaProducer.send(record);
 
 ---
 
-### ❓ Questions You Will Be Asked
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Message routing and message filtering are the same operation.**
+
+Routing determines WHERE a message goes (which queue, topic, or exchange) and is performed by the broker based on producer headers or topic metadata. Filtering determines WHICH messages a consumer receives from a subscribed queue/topic and is performed by the broker or consumer based on subscription selectors. A single message may be routed to three queues and then filtered differently by consumers on each queue. They are complementary layers, not alternatives.
+
+**Misconception 2: Content-based routing is superior to topic-per-message-type routing.**
+
+Content-based routing (route all messages to one topic, dispatch based on message type header) creates invisible dependencies: every new message type requires updating central routing rules, and a missing routing rule silently drops messages. Topic-per-type routing gives explicit, auditable contracts: each consumer subscribes to exactly the topics it needs, schema and retention are configured per topic, and adding a new message type requires no changes to existing consumers. Prefer topic-per-type for maintainability; use content routing only for dynamic message type sets or legacy system integration.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Routing key mismatch silently drops messages with no error.**
+
+Symptom: a new message type is published but the intended consumer never receives it; no errors are logged on the producer or consumer side; the message simply disappears from the exchange. Diagnosis: check binding configuration: `rabbitmqctl list_bindings | grep <exchange-name>`; verify the routing key used by the producer matches the binding pattern exactly (case-sensitive, `.` is a literal separator); use the RabbitMQ management UI to trace a message and see which bindings it matched. Fix: implement a routing key registry (documentation or contract tests) that validates producer routing keys against known binding patterns before deployment; add a mandatory flag on publishes so unroutable messages are returned to the producer as errors rather than silently dropped; use integration tests that verify message delivery end-to-end for each routing key.
+
+**Failure Mode 2: Wildcard binding too broad routes confidential messages to unintended consumers.**
+
+Symptom: a consumer subscribed to `audit.#` is receiving `audit.payments.pci` messages containing credit card data; the consumer was intended to receive only operational audit events, not PCI-scoped payment audit events. Diagnosis: list all bindings on the exchange; identify which bindings match the problematic routing key; check whether the consumer processes the message, ignores it, or logs it - in all cases the data was transmitted. Fix: replace `#` wildcard bindings with explicit `*` or exact-key bindings where routing scope must be limited; add topic-level ACLs in RabbitMQ (vhost permissions or Shovel with filtering) or Kafka (topic-level ACLs) to prevent unauthorized consumers from binding to sensitive routing keys.
+
+**Failure Mode 3: Fan-out to slow consumer creates backlog that delays all consumers.**
+
+Symptom: a fanout exchange delivers to three queues; one slow consumer on queue C falls behind, accumulating 500k messages; this causes broker memory pressure that slows message delivery to the fast consumers on queues A and B as well. Diagnosis: check per-queue depth: `rabbitmqctl list_queues name messages`; identify which queue is accumulating; check consumer processing time on the slow consumer group. Fix: configure separate flow control per queue using `x-max-length` and overflow policy on the slow queue; use lazy queue mode for the slow consumer to reduce memory pressure; consider whether the slow consumer should receive all messages or a filtered subset; scale up consumers for the slow queue independently of the fast ones.
+
+---
+
+### 🎯 Interview Deep-Dive
 
 #### Definition
 - "What is the difference between message routing and message filtering?"

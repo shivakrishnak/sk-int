@@ -14,6 +14,22 @@ They are permanently prohibited. Violation = file is REJECTED, not written.
 `spec/interview_content_generator.md` in full in the current session. Generating
 from memory or conversation summaries produces wrong headers. ALWAYS read the spec.
 
+**FAILURE 2 - Partial section generation (most common recurring failure):**
+Files written to disk with fewer than all mandatory sections. A production
+audit across 694 files found 35 files in 7 topics with missing sections.
+The 4 most frequently dropped sections (in order of recurrence):
+
+1. `### 📘 Concept Explanation` - 30 files missing (Quarkus all 10, GraalVM
+   all 10, Micronaut most) - generation started from wrong/truncated template
+2. `### 🚨 Failure Modes and Diagnosis` - 35 files missing (7 topics) -
+   silently omitted near end of long responses under length pressure
+3. `### ⚠️ Common Misconceptions` - 25+ files missing - same dropout pattern
+4. `### 🎯 Interview Deep-Dive` - Observability L6+META, Java EE L6+META -
+   response truncated before the CAPSTONE section
+
+Fix: GATE 3 mandatory post-write verification. NEVER mark a keyword `draft`
+without running Gate 3 on the actual written file (not from memory).
+
 ### GATE 1 - SPEC MUST BE READ BEFORE ANY GENERATION (Fixes Failure 1)
 
 **RULE:** Before generating ANY entry, read `spec/interview_content_generator.md` in full.
@@ -51,6 +67,12 @@ Silent omissions are NEVER acceptable - the section header MUST always be presen
 | 9 | Comparison Table | `### ⚖️ Comparison Table` | ALWAYS - table OR explicit OMIT for ★☆☆ |
 | - | System Design | `### 🏛️ System Design` | ALWAYS - design OR explicit OMIT for non-★★★ |
 | - | Diagram | `### 📊 Diagram` | ALWAYS - diagram OR explicit OMIT for non-visual |
+
+**⚠️ Most frequently dropped sections - verify these FIRST before writing:**
+- `### 📘 Concept Explanation` - most commonly missing; never skip
+- `### 🚨 Failure Modes and Diagnosis` - frequently omitted near end of output
+- `### ⚠️ Common Misconceptions` - frequently omitted near end of output
+- `### 🎯 Interview Deep-Dive` - CAPSTONE; truncated in long responses
 
 **⛔ HARD STOP - Do NOT write the file if:**
 - Any section header (rows 2-10 above) is missing from the output
@@ -117,9 +139,10 @@ sequence numbers like "Part 1").
      headings, rules, and CGR section references.
 5. **Write**: create the target file if missing, then append generated
    content. Use double horizontal rules (`---` then `---`) between keywords.
-6. **Update index.md**: change completed keyword statuses from `pending`
-   to `draft`; update the Files table Status column to `in-progress` or
-   `complete` as appropriate.
+   Then run Gate 3 post-write verification immediately (see GATE 3 above).
+6. **Update index.md**: ONLY after Gate 3 passes - change completed keyword
+   statuses from `pending` to `draft`; update the Files table Status column
+   to `in-progress` or `complete` as appropriate.
 7. **Report**: `Completed keyword N of M: [name]` - then auto-continue
 8. **Repeat** steps 3-7 until all keywords in the file are complete
 
@@ -330,16 +353,14 @@ in `docs/`
 6. **Run Keyword Cross-Verification** (see section below)
 7. Create the topic folder: `docs/{topic-name}/` (lowercase, hyphens)
 8. Create `index.md` for the topic folder with required navigation
-   frontmatter (drives just-the-docs sidebar; MUST be present):
+   frontmatter. Topic folders MUST appear at root level - do NOT add
+   `parent`, `layout`, or `permalink`:
 
    ```yaml
    ---
-   layout: default
    title: "{Topic Name}"
-   parent: "{Topic}"
    nav_order: N # next available nav_order in docs/index.md
    has_children: true
-   permalink: /{topic-slug}/
    ---
    ```
 
@@ -432,12 +453,14 @@ without it, pages render as plain Markdown with no sidebar entry.
 
 ### Required Frontmatter - Content Files
 
+Content files need `layout`, `parent`, `nav_order`, and `permalink`.
+Do NOT add `grand_parent` - topics are at root level.
+
 ```yaml
 ---
 layout: default
 title: "{Topic} - {Subtopic}" # quoted when title contains ': '
 parent: "{Topic Name}"        # must match topic index title exactly
-grand_parent: "SK Interview"  # must match root title exactly
 nav_order: N                  # position within topic folder (1-based)
 permalink: /{topic-slug}/{file-slug}/  # kebab-case
 ---
@@ -445,14 +468,14 @@ permalink: /{topic-slug}/{file-slug}/  # kebab-case
 
 ### Required Frontmatter - Topic Index Files
 
+Topic folders appear at root level in navigation. Do NOT add `parent`,
+`layout`, or `permalink` - adding `parent` nests them under another page.
+
 ```yaml
 ---
-layout: default
 title: "{Topic Name}"
-parent: "SK Interview"
 nav_order: N         # see nav_order table in interview.instructions.md
 has_children: true
-permalink: /{topic-slug}/
 ---
 ```
 
@@ -471,9 +494,9 @@ Get-ChildItem -Path docs -Recurse -Filter *.md |
     $fm = ($lines | Select-String -Pattern '^[a-z_]+:' |
       ForEach-Object { ($_ -split ':')[0].Trim() })
     $required = if ($isIndex) {
-      @('layout','title','parent','nav_order','has_children','permalink')
+      @('title','nav_order','has_children')
     } else {
-      @('layout','title','parent','grand_parent','nav_order','permalink')
+      @('layout','title','parent','nav_order','permalink')
     }
     $missing = $required | Where-Object { $_ -notin $fm }
     if ($missing) {
@@ -489,8 +512,8 @@ Get-ChildItem -Path docs -Recurse -Filter *.md |
    scope (not just new files - edits can break frontmatter)
 2. **Any FAIL = block commit.** Fix the file first, then re-verify.
 3. **Title must be quoted** if it contains `: ` (colon + space)
-4. **`parent`** must match the `title` of the parent page exactly
-5. **`grand_parent`** must match the `title` of the grandparent page exactly
+4. **`parent`** must match the `title` of the topic index exactly
+5. **Topic `index.md`** must NOT have `parent` - topics are root-level
 6. **File must start at byte 0** with `---` (no BOM, no whitespace)
 7. **`permalink`** uses kebab-case: `L0 Orientation` -> `l0-orientation`
 
