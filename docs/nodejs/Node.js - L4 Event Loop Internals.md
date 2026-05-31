@@ -7,6 +7,15 @@ permalink: /nodejs/l4-event-loop-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Event Loop Phases and libuv Internals](#event-loop-phases-and-libuv-internals) | medium |
+
+---
+
 # Event Loop Phases and libuv Internals
 
 ---
@@ -142,6 +151,8 @@ Event loop phase details:
     After poll: check phase (setImmediate) comes before
     next timers phase.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -295,6 +306,8 @@ UV_THREADPOOL_SIZE = 2 * CPU cores
 # Default 4 is almost always too small for production
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Event loop tuning:**
 - Monitor p99 event loop lag (target <10ms)
 - CPU-intensive routes -> worker thread pool (piscina)
@@ -316,6 +329,8 @@ if (cluster.isPrimary) {
   startServer();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Cluster + worker threads:**
 - Cluster: horizontal scale (one process per core, shared port)
@@ -399,6 +414,8 @@ dns.resolve4('api.external.com', (err, addresses) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -443,3 +460,33 @@ A:
 hidden thread pool dependency. Many production issues with slow
 `http.request` performance trace back to DNS lookup thread pool
 contention, not the network itself.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

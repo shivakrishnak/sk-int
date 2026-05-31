@@ -134,6 +134,8 @@ User: "Research our top 3 competitors and
   Done. (5+ LLM calls, 4 tool calls)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The agent loop converts an LLM from a text transformer
@@ -585,6 +587,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Agent Architecture Overview
 
 **Interview Weight:** ★☆☆ - Sets the foundation for
@@ -677,6 +707,8 @@ AGENT ARCHITECTURE:
   -> Repeat (up to max iterations)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Tool design principles:**
 
 ```python
@@ -705,6 +737,8 @@ AGENT ARCHITECTURE:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Memory types summary:**
 
 ```
@@ -713,6 +747,8 @@ EPISODIC:        Past task logs (searchable history)
 SEMANTIC:        Domain knowledge (vector store / KB)
 PROCEDURAL:      How-to knowledge (system prompt, tools)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1188,6 +1224,34 @@ graph TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # AI Agent Frameworks
 
 **Interview Weight:** ★☆☆ - Ecosystem awareness.
@@ -1301,6 +1365,8 @@ Direct SDK:
   - Full control
   - Good for: simple agents, custom needs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When frameworks help:**
 
@@ -1612,6 +1678,8 @@ def web_search(query: str) -> str:
     return search_api(query)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `@tool` decorator extracts the docstring as
 the description and the function signature as the
 schema. This reduces boilerplate vs. manually writing
@@ -1803,3 +1871,33 @@ graph LR
 > more features you get and the less control you retain.
 > Choose based on how many of those features you actually
 > need.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

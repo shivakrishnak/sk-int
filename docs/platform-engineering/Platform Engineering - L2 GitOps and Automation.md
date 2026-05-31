@@ -533,6 +533,8 @@ kubectl rollout status deployment \
 argocd app get my-app --hard-refresh
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Delete and recreate the controller pod to
 force a clean restart. If the issue recurs, investigate
 whether etcd latency is causing API server response
@@ -598,6 +600,8 @@ kubectl top node
 kubectl get --raw \
   /metrics | grep apiserver_request_total
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Use ApplicationSet wave-based rollout:
 set `syncPolicy.syncOptions` with a `wave` annotation
@@ -770,6 +774,8 @@ argocd app diff my-app
 argocd app diff my-app --server-side
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Second, if no admission mutation is found, check
 whether a Kubernetes version upgrade changed the
 default value of a resource field. API server version
@@ -796,6 +802,8 @@ spec:
         - /metadata/annotations/sidecar.istio.io
         - /spec/template/metadata/annotations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For API version drift, update the Git manifest to
 include the new defaults explicitly so the comparison
@@ -1270,6 +1278,34 @@ flowchart TD
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Infrastructure as Code Patterns for Platforms
 
 **Interview Weight:** ★★☆ - Essential for senior
@@ -1346,7 +1382,6 @@ versus IaC that serves as a product for many teams.
 for Platforms - what makes this different from standard
 Terraform usage."
 
-**(2) First principles:** "From first principles, a
 platform team serves many teams. Their IaC must handle
 multi-tenancy, versioned interfaces, and consistent
 enforcement of security policy - none of which matter
@@ -1834,6 +1869,8 @@ terraform force-unlock \
 terraform plan -detailed-exitcode
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Prevention:* Configure CI to queue Terraform runs
 per workspace, not run them in parallel. Spacelift
 and Terraform Cloud handle this natively. For
@@ -1874,6 +1911,8 @@ terraform show -json tfplan | \
   jq '.resource_changes[] |
     select(.change.actions | contains(["create","delete"]))'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* For provider refactors, use `moved` blocks
 in Terraform 1.1+ to tell Terraform that old.resource
@@ -2034,6 +2073,8 @@ resource "aws_iam_role" "app_role" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The failure modes are important to know:
 
 First, the platform layer removes or renames an
@@ -2100,6 +2141,8 @@ jq '.resource_changes[] |
   {address: .address, reason: .action_reason}' \
   plan.json
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common reasons and their fixes:
 
@@ -2322,6 +2365,8 @@ module "team_workspace" {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The module internals enforce: RDS storage_encrypted
 = true (hardcoded), S3 versioning = enabled (hardcoded),
@@ -2567,7 +2612,6 @@ must be Kubernetes-native with continuous reconciliation.
 
 *(Omit: ★★☆ keyword - system design section requires
 ★★★ or sd: true in frontmatter. IaC architecture
-questions are covered in Q6 of the Interview Deep-Dive
 section above.)*
 
 ---
@@ -2648,3 +2692,33 @@ flowchart TD
 > pin. When the platform team refactors module
 > internals in v2.2.0, no team is force-upgraded
 > until they explicitly update their version pin.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

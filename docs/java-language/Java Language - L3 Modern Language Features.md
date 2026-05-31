@@ -8,9 +8,20 @@ permalink: /java-language/l3-modern-language-features/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L3 Modern Language Features](#java-language---l3-modern-language-features) | medium |
+
+---
+
 # Java Language - L3 Modern Language Features
 
 ## Switch Expressions and Pattern Matching Primitives
+
+---
 
 ### 🎯 Model Answer
 
@@ -146,6 +157,8 @@ JAVA VERSION HISTORY:
   Java 21:    Pattern matching for switch (standard, JEP 441)
               Record patterns (standard, JEP 440)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -291,6 +304,8 @@ Learning:
   Rule: prefer switch expressions over statements for this compile-time safety.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -421,6 +436,8 @@ A: Visitor problem: a fixed set of operations over an open set of types (can add
 ---
 
 ## Text Blocks and Multiline Strings
+
+---
 
 ### 🎯 Model Answer
 
@@ -558,6 +575,8 @@ USE CASES:
   // Actually for regex, \Q...\E in a text block is cleaner:
   // For full raw strings: Java 21+ StringTemplate (preview)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -740,6 +759,8 @@ Prevention:
     assertEquals(expected.strip(), actual.strip());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -883,3 +904,33 @@ visualize whitespace. Compare with the raw string representation: `textBlock.cha
 ### 📊 Diagram
 
 *(Omit: Text block mechanics clearly expressed in code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

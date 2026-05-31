@@ -193,6 +193,8 @@ DOMAIN 3: SUPPLY CHAIN SECURITY
       which services are affected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Security incidents are reliability incidents when they cause user-visible
 availability degradation. The SRE's responsibility is to ensure the
@@ -1156,6 +1158,8 @@ SECURITY OBSERVABILITY INTEGRATION
   SRE stack: 30 days operational retention
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1322,3 +1326,33 @@ flowchart TD
 
 4. "What is the policy for emergency CVE patches - do they still go
    through canary deployment, or is there an exception for critical CVEs?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

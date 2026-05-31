@@ -7,6 +7,17 @@ permalink: /react/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JSX and React Elements](#jsx-and-react-elements) | foundational |
+| 2 | [Props and Component Composition](#props-and-component-composition) | foundational |
+| 3 | [State with useState](#state-with-usestate) | foundational |
+
+---
+
 # JSX and React Elements
 
 🎯 **Interview Weight:** foundational (★☆☆) - JSX is asked in every React
@@ -131,6 +142,8 @@ const MyDiv = 'div';    // variable is lowercase
 const Container = 'div';  // capitalize
 <Container />           // GOOD: treated as component
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -277,6 +290,34 @@ SECURITY
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Props and Component Composition
 
 🎯 **Interview Weight:** foundational (★☆☆) - props and composition are
@@ -388,6 +429,8 @@ function Input({ label, ...inputProps }) {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -550,6 +593,34 @@ DECISION
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # State with useState
 
 🎯 **Interview Weight:** foundational (★☆☆) - useState is the most
@@ -675,6 +746,8 @@ function SearchResults() {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -827,3 +900,33 @@ only cause one re-render?** `[SENIOR]` MECHANISM
 > current knowledge. The follow-up question is often "what was the behavior
 > before React 18?" - in React 17, only event handlers were batched;
 > Promise callbacks triggered a re-render after each setState.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

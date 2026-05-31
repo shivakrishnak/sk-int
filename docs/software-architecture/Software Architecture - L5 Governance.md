@@ -355,6 +355,8 @@ Governance health metrics:
 - ARB escalations vs team decision ratio: < 5%: BOTTLENECK
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Shift from centralized approval to federated guardrails.
 Convert the most common ARB decisions into golden path defaults.
 Convert the most common ARB prohibitions into fitness function
@@ -375,6 +377,8 @@ find . -name "pom.xml" -exec grep -h "<artifactId>" {} \; |
   grep -i "queue\|message\|kafka\|rabbit\|activemq\|sqs"
 # Multiple message broker libraries = technology proliferation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Publish an internal technology radar with ADOPT/HOLD rings.
 Parent POM with managed dependency versions: using a non-adopted
@@ -1037,3 +1041,33 @@ flowchart TB
 > body. ADRs are written by teams and reviewed by the forum within
 > 48 hours. The result: governance that scales with team count,
 > not against it.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

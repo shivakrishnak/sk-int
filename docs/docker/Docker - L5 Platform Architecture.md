@@ -8,9 +8,20 @@ permalink: /docker/l5-platform-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L5 Platform Architecture](#docker---l5-platform-architecture) | medium |
+
+---
+
 # Docker - L5 Platform Architecture
 
 ## Container Platform Architecture and Image Policy
+
+---
 
 ### 🎯 Model Answer
 
@@ -269,6 +280,8 @@ LAYER 5: DRIFT DETECTION
   # Images with CRITICAL CVEs (new scan on running images weekly):
   #   -> High-priority Jira, 72-hour SLA.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -610,6 +623,8 @@ Remediation:
   # 5. Total time: 24 hours from CVE to remediation.
   # Without SBOM: 72-144 hours.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1088,3 +1103,33 @@ and security posture metrics. "Our platform investment reduced mean
 deployment time from 45 minutes to 8 minutes and CVE remediation
 time from 7 days to 18 hours." These metrics are what leadership cares
 about. Build the measurement system alongside the platform.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

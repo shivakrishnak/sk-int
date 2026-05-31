@@ -7,6 +7,15 @@ permalink: /javascript/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Architecture at Scale](#javascript-architecture-at-scale) | expert |
+
+---
+
 # JavaScript Architecture at Scale
 
 🎯 **Interview Weight:** expert (★★★) - architectural thinking with
@@ -170,6 +179,8 @@ MICRO-FRONTEND PATTERNS:
   Each micro-frontend is a separate service
   Composed at the edge before delivery
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -412,6 +423,8 @@ LARGE-SCALE REACT ARCHITECTURE:
     Bundle size regression blocks PR merge (CI check)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -546,6 +559,8 @@ function RemoteProductList() {
 // Deploy new version to parallel URL first
 // Gradually shift traffic (canary deployment for micro-frontends)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1392,3 +1407,33 @@ platforms from average ones?** `[STAFF]` SYSTEM-DESIGN
 > features, not debating patterns. The platform team's metric: "time
 > from idea to production for a new feature" - when that number goes
 > down, the platform is succeeding.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

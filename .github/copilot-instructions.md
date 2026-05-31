@@ -84,10 +84,20 @@ southstar/
   `erDiagram`, `C4Context`, `gantt`, `timeline`, `requirementDiagram`,
   `journey`, `mindmap`, `block`, `pie`, `xychart-beta`, `sankey-beta`,
   `quadrantChart`, `gitGraph`
-- Every code block MUST be followed by `> **Code walkthrough:**` (3-6 sentences:
-  what it shows, key mechanism, why it matters, what breaks, takeaway)
-- Every diagram MUST be followed by `> **Diagram walkthrough:**` (3-5 sentences).
-  For DUAL blocks one shared walkthrough after the Mermaid block is sufficient
+- Every code block MUST be followed by `> **Code walkthrough:**` (3-6 sentences
+  covering ALL five dimensions: (1) WHAT IT SHOWS: concept or behaviour
+  illustrated. (2) KEY MECHANISM: what the runtime/compiler/library does
+  step-by-step internally. (3) WHY IT MATTERS: real-world production consequence.
+  (4) WHAT BREAKS: exact symptom when misapplied - error message, silent failure,
+  or performance cliff. (5) TAKEAWAY: one transferable rule to internalise.
+  A bare code block without this walkthrough is a spec violation.)
+- Every code block MUST specify language after opening triple backtick.
+- Every ASCII diagram MUST be followed by `> **Diagram walkthrough:**`
+  (3-5 sentences: (1) WHAT IT DEPICTS, (2) HOW TO READ IT naming each node,
+  (3) KEY RELATIONSHIP, (4) EDGE CASE on failure path, (5) INSIGHT senior notices).
+- Every Mermaid block MUST be preceded by a 1-2 sentence prose description AND
+  followed by `> **Diagram walkthrough:**` using the same five-dimension structure.
+  For DUAL blocks one shared walkthrough after the Mermaid block is sufficient.
 - Use `# Keyword Name` as keyword separators within a content file
   (Jekyll renders the first H1 as the page title; subsequent H1s act
   as in-page section anchors)

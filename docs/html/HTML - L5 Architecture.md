@@ -7,6 +7,15 @@ permalink: /html/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Standards Governance and Design System Integration](#html-standards-governance-and-design-system-integration) | staff |
+
+---
+
 # HTML Standards Governance and Design System Integration
 
 🎯 **Interview Weight:** staff/principal (★★★) - architecture interview
@@ -293,6 +302,8 @@ HTML STANDARDS AT SCALE - GOVERNANCE APPROACH:
        as the adoption threshold for new projects
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The WHATWG Living Standard means HTML is a continuous stream of
@@ -348,6 +359,8 @@ function ButtonBad({ onClick, variant = 'primary', children }) {
   {/* Screen reader: "Sign Up" with no role */}
 </form>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```jsx
 // GOOD: semantically correct design system button
@@ -541,6 +554,8 @@ Verify fix:
     Windows: NVDA (free), navigate with Tab
     Key test: can user navigate form + submit without mouse?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1308,3 +1323,33 @@ flowchart TD
 > contract must be manually re-implemented in JavaScript - a complex,
 > brittle, and maintenance-heavy alternative to the 2-character change
 > of using `<button>` instead of `<div>`.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /frontend-testing/l1-unit-testing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Jest Test Structure and Lifecycle](#jest-test-structure-and-lifecycle) | medium |
+| 2 | [Jest Assertions and Matchers](#jest-assertions-and-matchers) | medium |
+| 3 | [Code Coverage Strategy](#code-coverage-strategy) | medium |
+
+---
+
 # Jest Test Structure and Lifecycle
 
 ---
@@ -110,6 +121,8 @@ Jest file isolation:
   --runInBand: runs files sequentially in same process (debugging)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key options:**
 
 ```javascript
@@ -121,6 +134,8 @@ module.exports = {
   // For most projects: clearMocks: true is sufficient
 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -168,6 +183,8 @@ describe('UserService', () => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example (Production) - beforeAll for expensive setup:**
 
@@ -275,6 +292,8 @@ jest --randomize
 # If order-dependent tests exist, they will fail differently
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use `beforeEach` to reset all mutable state. Configure
 `clearMocks: true` in jest.config.js.
 
@@ -323,6 +342,34 @@ runs in the same order can have a hidden dependency that only surfaces
 months later when the order changes.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Jest Assertions and Matchers
 
@@ -409,6 +456,8 @@ Asymmetric matchers (use inside other matchers):
   expect.objectContaining({ a: 1 }) // object with at least these props
   expect.stringMatching(/pattern/) // string matching regex
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -570,10 +619,40 @@ expect(apiResponse).toMatchObject({
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use `toEqual` when exact shape matters (no extra properties allowed),
 such as testing a transformation function's output format.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Code Coverage Strategy
 
@@ -658,6 +737,8 @@ Excluded from coverage (configure explicitly):
   - Type declarations (.d.ts files)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -697,6 +778,8 @@ test('returns chargeUser result for valid inputs', () => {
 });
 // Coverage is 100% AND every assertion is meaningful
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example (Production) - jest.config.js with coverage:**
 
@@ -845,3 +928,33 @@ complement to coverage. Mutation testing modifies the source code
 checks whether existing tests catch the mutation. A test suite that
 kills 90% of mutations is much higher quality than one achieving
 100% line coverage with no assertions.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

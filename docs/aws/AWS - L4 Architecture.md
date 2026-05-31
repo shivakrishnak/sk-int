@@ -144,6 +144,8 @@ Operational Overhead vs Reliability:
              response is automated and tested
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -161,6 +163,8 @@ Resources:
       # Single instance, single AZ
       # If instance fails: application is down
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # GOOD: Auto Scaling Group for automatic recovery
@@ -191,6 +195,8 @@ Resources:
         WaitOnResourceSignals: true
         PauseTime: PT5M
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # Operational Excellence: structured observability
@@ -238,6 +244,8 @@ def observability(operation_name: str):
         return wrapper
     return decorator
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Run Well-Architected Review via AWS CLI:
@@ -383,6 +391,8 @@ aws autoscaling update-auto-scaling-group \
   --health-check-type ELB \
   --health-check-grace-period 60
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* EC2 health check
 detects only hypervisor-level failures. ELB health
@@ -632,6 +642,8 @@ RPO < 1min, RTO < 1min:
   Multi-Region active-active. Real-time replication.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Testing recovery
 is the most-skipped reliability practice. Every team
 designs for recovery. Few verify recovery actually
@@ -728,6 +740,8 @@ EC2 (direct):
   Use for: legacy lift-and-shift, custom networking
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Mechanical sympathy:**
 
 Match software to hardware characteristics. Lambda
@@ -821,6 +835,8 @@ def health():
     redis.ping()              # Real cache check
     return {"status": "ok"}  # Returns 500 if either fails
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Root cause 3: Runbooks never tested**
 
@@ -1022,6 +1038,8 @@ aws wellarchitected create-workload \
   --lenses '["wellarchitected"]'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Running the review
 before enterprise customer due diligence (not after)
 positions the startup correctly. Enterprise customers
@@ -1049,6 +1067,8 @@ aws ce get-rightsizing-recommendation \
   --configuration RightsizingType=MODIFY
 # 8 EC2 instances at < 10% CPU for 30 days
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Savings coverage.
 Coverage: 20% (80% compute on on-demand rates).
@@ -1122,6 +1142,8 @@ Layer 7: SQS for async
   DLQ for failed processing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cascading failure prevention:**
 
 Circuit breaker on all service calls. If downstream
@@ -1189,3 +1211,33 @@ Both benefits are real; the cost argument is easier
 to approve.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

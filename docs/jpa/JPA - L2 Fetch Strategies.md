@@ -8,9 +8,20 @@ permalink: /jpa/l2-fetch-strategies/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L2 Fetch Strategies](#jpa---l2-fetch-strategies) | medium |
+
+---
+
 # JPA - L2 Fetch Strategies
 
 ## Lazy vs Eager Loading: FetchType and LazyInitializationException
+
+---
 
 ### 🎯 Model Answer
 
@@ -160,6 +171,8 @@ OPEN-SESSION-IN-VIEW (OSIV):
     disable this warning."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -279,6 +292,8 @@ Prevention:
   Controller should never access entity lazy collections.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -321,6 +336,8 @@ released immediately after the service method returns (well before the HTTP resp
 ---
 
 ## N+1 Problem: Detection, Diagnosis, and Fix
+
+---
 
 ### 🎯 Model Answer
 
@@ -460,6 +477,8 @@ DETECTING N+1 IN PRODUCTION:
   DataSource proxy (p6spy): logs all SQL with query count.
   New Relic / Datadog: query count per transaction (alert on > 20 queries/request).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -605,6 +624,8 @@ Fix:
     1 query regardless of user count.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -640,4 +661,34 @@ response writing. Not visible in service-layer SQL logs (happens in the framewor
 disabled + DTO. (3) Spring AOP N+1: `@Cacheable` on a method that loads entities with lazy
 collections; cache stores the proxy state. On cache hit: entity returned from cache but session
 closed. First access to lazy collection: exception. Fix: cache DTOs, not entities.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

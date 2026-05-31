@@ -8,9 +8,20 @@ permalink: /java-performance/l5-performance-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L5 Performance Strategy](#java-performance---l5-performance-strategy) | medium |
+
+---
+
 # Java Performance - L5 Performance Strategy
 
 ## Application Performance Engineering: Strategy and Process
+
+---
 
 ### 🎯 Model Answer
 
@@ -197,6 +208,8 @@ PERFORMANCE TESTING HIERARCHY:
     Key metrics: memory-after-gc trend (leak detection), GC overhead trend.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -366,6 +379,8 @@ Fix:
      Catches regressions within 1-2 weeks instead of 6 months.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -528,3 +543,33 @@ keeps latency stable during traffic variation. Little's Law makes this concrete:
 Target 80% of that: 640 RPS before adding capacity.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

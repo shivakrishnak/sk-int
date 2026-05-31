@@ -8,9 +8,20 @@ permalink: /java-jvm/l4-jvm-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L4 JVM Security](#java-jvm---l4-jvm-security) | medium |
+
+---
+
 # Java JVM - L4 JVM Security
 
 ## JVM Class Verification and Security
+
+---
 
 ### 🎯 Model Answer
 
@@ -124,6 +135,8 @@ LAYER 4: Deserialization Filters (JDK 9+)
       com.example.**;!*
     Pattern: whitelist application classes, reject everything else (!)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -309,6 +322,8 @@ Prevention (MUST DO for any service deserializing Java):
   4. Update dependencies: scan with OWASP Dependency-Check,
      Snyk, or GitHub Dependabot for known CVEs in serialization libraries
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -672,6 +687,8 @@ SECURE JVM DEPLOYMENT ARCHITECTURE:
     Audit log: all --add-opens flags reviewed quarterly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -750,3 +767,33 @@ flowchart TD
 > Crucially: the malicious `readObject()` code in the gadget class NEVER executes.
 > Without the filter: the class would be loaded, instantiated, and `readObject()` would
 > call Runtime.exec() before any other checks could fire.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

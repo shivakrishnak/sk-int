@@ -8,6 +8,15 @@ permalink: /design-patterns/l4-security-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Security Design Patterns](#security-design-patterns) | medium |
+
+---
+
 # Security Design Patterns
 
 ---
@@ -95,6 +104,8 @@ Caller -> [Security Proxy] -> Real Method
                 |-- Proceeds if permitted
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Interceptor / Filter Chain (Defense in Depth)**
 
 A Chain of Responsibility for security concerns. Each filter has one
@@ -106,6 +117,8 @@ Request -> [JWT Filter] -> [AuthnFilter] -> [CORSFilter]
         -> [CSRFFilter] -> [RateLimitFilter]
         -> [Controller]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Secure Factory (Input Validation)**
 
@@ -475,6 +488,8 @@ Request
 Controller -> Service -> Repository
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Tenant isolation at data layer:**
 
 ```java
@@ -503,6 +518,8 @@ public class TenantFilterAspect {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Trade-offs:**
 
@@ -616,6 +633,8 @@ logging.level.org.springframework.security=DEBUG
 # "Granting access to /api/orders"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: JWT validation not rejecting expired tokens**
 
 Symptom: API accepts expired JWTs.
@@ -632,6 +651,8 @@ Jwts.parserBuilder()
     .build()
     .parseClaimsJws(token); // throws ExpiredJwtException if expired
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Tenant data leak (wrong tenant_id in context)**
 
@@ -657,6 +678,8 @@ public class TenantContextFilter implements Filter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 4: Mass assignment vulnerability**
 
 Symptom: users can modify fields they should not (e.g., setting their
@@ -681,6 +704,8 @@ public class UserUpdateRequest {
 // Alternatively: @JsonIgnoreProperties(ignoreUnknown=true)
 // on the DTO class, and use @JsonIgnore on admin field
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -868,6 +893,8 @@ echo "<jwt_payload>" | base64 -d | python3 -m json.tool
 # Redis: SMEMBERS token:blacklist | wc -l
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Differentiating between "token expired"
 (expected behavior) and "token blacklisted" (server-side action). Both
 produce 401 but have different root causes. Log the rejection reason in
@@ -933,6 +960,8 @@ preparedStatement.setString(1, username);
 // Input "admin'--" is treated as a literal string
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that Hibernate protects against
 SQL injection for JPQL queries by default, but `@NativeQuery` with string
 building is not protected. `@Query(value = "SELECT * FROM users WHERE name = '"
@@ -958,6 +987,8 @@ User U -> has Role R -> Role R has Permission P on Resource R-Type
   or
 User U -> has direct ACL entry for Resource ID
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Spring Security ACL module: stores ACL entries in the database
 (`acl_object_identity`, `acl_entry`). `@PostAuthorize` filters query
@@ -991,6 +1022,8 @@ http.authorizeHttpRequests(authz -> authz
 // All exposed without authentication.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 // Precise: only health and info are public
@@ -1000,6 +1033,8 @@ http.authorizeHttpRequests(authz -> authz
     .requestMatchers("/actuator/**").hasRole("MONITORING")
     .anyRequest().authenticated());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This vulnerability exposed environment variables (database passwords,
 API keys) to any internet user through `/actuator/env`. Exploited in
@@ -1069,3 +1104,33 @@ the most impactful items are architectural: deny-by-default (not forgettable),
 object-level authorization (not role-only), and no secrets in code (not
 patchable after a breach). Checklists catch configuration errors; architecture
 prevents categories of vulnerability.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

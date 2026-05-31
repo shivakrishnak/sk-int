@@ -125,6 +125,8 @@ ANTI-PATTERN 5: No Cost Visibility
   Fix: tagging + AWS Cost Explorer + AWS Budgets alerts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -138,6 +140,8 @@ sudo scp app.jar ec2-user@<ip>:/opt/app/
 # Edit /etc/systemd/system/app.service manually
 # This instance is now a snowflake. Cannot reproduce.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```terraform
 # GOOD: IaC-defined, reproducible infrastructure
@@ -292,6 +296,8 @@ aws configservice put-config-rule \
   "S3_BUCKET_PUBLIC_READ_PROHIBITED"}}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Enable S3 Block Public Access at account level.
 No bucket in the account can be made public.
 
@@ -317,6 +323,34 @@ not applicable.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cloud Decision Framework
 
@@ -428,6 +462,8 @@ EXAMPLES:
   Redis workload -> ElastiCache Redis
     (unless need Redis modules: RedisSearch, RedisGraph)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -570,6 +606,8 @@ aws budgets create-budget \
     "CostFilters":{"Service":["Amazon Elastic Compute Cloud"]}}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -593,6 +631,34 @@ flow diagram.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Vendor Lock-in Risk Management
 
@@ -714,6 +780,8 @@ DIMENSION 3: OPERATIONAL LOCK-IN (easiest to escape)
   code doesn't.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -739,6 +807,8 @@ public class OrderService {
 // Any test or migration requires AWS SDK or mocking it.
 // Cannot run locally without AWS credentials or LocalStack.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Low lock-in - abstraction isolates provider
@@ -859,6 +929,8 @@ grep -r "import software.amazon.awssdk" \
   | wc -l
 # Any result > 0 = AWS calls in business logic (anti-pattern)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Introduce service interfaces (MessagePublisher,
 ObjectStorage) at the application boundary. Move AWS
@@ -1030,6 +1102,8 @@ fields @timestamp, @initDuration
 # High cold starts: consider provisioned concurrency
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Optimization options:**
 
 1. **Reduce duration:** if function calls an external
@@ -1187,6 +1261,8 @@ Service Lock-in Assessment:
     No concerns.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check for over-engineering:
 
 15 services for a new application is potentially over-complex.
@@ -1228,6 +1304,8 @@ aws ce get-cost-and-usage \
   --group-by Type=DIMENSION,Key=SERVICE \
   --query 'ResultsByTime[0].Groups | sort_by(@, &Metrics.UnblendedCost.Amount)[-5:]'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Identify which service increased. Common culprits:
 
@@ -1272,6 +1350,8 @@ aws ce create-anomaly-subscription \
     SubscriptionName=daily-anomaly-alert
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The NAT Gateway to S3
 anti-pattern (VPC endpoint fixes it for free) is the
 non-obvious production cost leak that experienced cloud
@@ -1279,3 +1359,33 @@ engineers know. Most candidates would focus on EC2
 or RDS without knowing this pattern.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

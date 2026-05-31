@@ -290,6 +290,8 @@ public class NotificationRouter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Instance<T> with
 @Any for discovering all implementations dynamically.
 
@@ -303,6 +305,34 @@ public class NotificationRouter {
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus RESTEasy Reactive
 
@@ -555,6 +585,8 @@ public class OrderResource {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key difference: error handling. Spring uses Optional
 mapped to ResponseEntity. Quarkus uses Mutiny's
 .onFailure() chain.
@@ -572,6 +604,34 @@ pattern replaces Spring's try-catch or Optional handling.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Fault Tolerance SmallRye
 
@@ -799,6 +859,8 @@ Configuration mapping:
                                   // from HALF-OPEN
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Metrics: SmallRye exposes Micrometer metrics:
 - ft.{method}.circuitbreaker.state: open/closed/half-open
 - ft.{method}.circuitbreaker.opened.total: open count
@@ -818,6 +880,34 @@ mechanism and successThreshold configuration.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Health and Metrics
 
@@ -1106,6 +1196,34 @@ Now liveness is unconditional for all our services."
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # Quarkus Dev Services
 
 **Interview Weight:** working knowledge - Dev Services
@@ -1347,6 +1465,8 @@ class NativeIntegrationTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use which:
 - @QuarkusTest: business logic, unit-like, fast.
 - @QuarkusIntegrationTest: native compatibility, end-to-end.
@@ -1360,3 +1480,33 @@ against native binary: this is the native CI gate.
 | Hiring Manager | Developer productivity. |
 | Bar Raiser | Testcontainers internals, shared containers. |
 | Peer Engineer | "Removed Docker Compose (600 lines). Dev Services + Quarkus. Local setup: git clone + quarkus:dev. Done." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

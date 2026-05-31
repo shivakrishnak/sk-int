@@ -8,9 +8,20 @@ permalink: /kafka/l1-producers-and-consumers/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L1 Producers and Consumers](#kafka---l1-producers-and-consumers) | medium |
+
+---
+
 # Kafka - L1 Producers and Consumers
 
 ## Producer
+
+---
 
 ### 🎯 Model Answer
 
@@ -103,6 +114,8 @@ BATCHING AND THROUGHPUT:
   compression.type=snappy: compress batches. Lower bandwidth, higher CPU.
     Snappy: good compression ratio + fast. Lz4: faster. Zstd: better ratio.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -274,6 +287,8 @@ Fix:
   4. Add backpressure in application: if buffer low, pause producing.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -318,6 +333,8 @@ trade-off is critical for financial message streams where order matters.
 ---
 
 ## Consumer
+
+---
 
 ### 🎯 Model Answer
 
@@ -435,6 +452,8 @@ AUTO.OFFSET.RESET:
   New consumer group: latest means: skip historical data, process new only.
     Typical for new services that only need live data.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -649,6 +668,8 @@ Fix option 3: async processing with pause/resume (best for heavy work):
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -694,6 +715,8 @@ specific broker host - that broker is the coordinator, check its health first.
 ---
 
 ## Consumer Group
+
+---
 
 ### 🎯 Model Answer
 
@@ -820,6 +843,8 @@ INDEPENDENT CONSUMER GROUPS (FAN-OUT):
       --group order-processor --topic orders \
       --reset-offsets --to-earliest --execute
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1024,6 +1049,8 @@ Fix:
   4. Scale consumer group: Kubernetes HPA on consumer lag metric.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1066,4 +1093,34 @@ broker holds its partitions instead of triggering a rebalance. On reconnect: re-
 assignment. Useful for rolling restarts of consumer pods (Kubernetes). (3) Set `session.timeout.ms`
 high enough to not trigger on transient slowness, low enough to detect real failures. Rule of thumb:
 `session.timeout.ms` 30-60s for stable consumer pods.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

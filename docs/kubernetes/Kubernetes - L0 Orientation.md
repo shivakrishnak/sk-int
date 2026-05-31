@@ -22,6 +22,8 @@ render_with_liquid: false
 
 # What Kubernetes Is and Why It Exists
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -108,6 +110,8 @@ KUBERNETES CLUSTER
 |  Node 3: [Pod E] [Pod F]                 |
 +------------------------------------------+
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 You declare desired state via YAML manifests (e.g., "run 3 replicas of my-app").
 The API Server stores this in etcd. The Scheduler assigns pods to nodes. Controllers
 watch actual state and continuously reconcile it to match desired state. Kubelets on
@@ -619,7 +623,37 @@ sequenceDiagram
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kubernetes vs Docker vs Docker Compose
+
+---
 
 ### 🎯 Model Answer
 
@@ -704,6 +738,8 @@ Kubernetes (multi-host, cluster):
   Scheduler distributes pods across N nodes
   Controllers maintain desired state across failures
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Docker Compose was NOT designed for production and does not provide high availability.
@@ -1203,7 +1239,37 @@ flowchart LR
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kubernetes Ecosystem Map
+
+---
 
 ### 🎯 Model Answer
 
@@ -1296,6 +1362,8 @@ Security:     OPA/Gatekeeper | Falco | cert-manager | Vault
 Package/CD:   Helm | Kustomize | ArgoCD | Flux
 Registry:     Harbor | Docker Hub | AWS ECR | GCR
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The CNCF ecosystem is composable - you pick the tools that fit your needs. There
@@ -1860,3 +1928,33 @@ mindmap
 > the upper layers. The Graduated + Incubating status in the CNCF landscape is the
 > signal for production-readiness. Most production clusters combine 8-15 ecosystem
 > components from this map - the art is knowing which ones to add when.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

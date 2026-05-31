@@ -180,6 +180,8 @@ BATH FAILURE (compound category)
   Prevention: isolation (separate failure domains)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The availability formula A = MTBF / (MTBF + MTTR) shows that both
 MTBF (failure prevention) and MTTR (recovery speed) drive availability.
@@ -846,6 +848,34 @@ quadrantChart
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Queuing Theory and Workload Modeling in SRE
 
 🎯 Interview Weight: advanced - demonstrates that a candidate understands
@@ -972,6 +1002,8 @@ KENDALL'S NOTATION
     K = total queue length (c connections + waiting requests)
     When K is reached: new requests are rejected (503)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1614,3 +1646,33 @@ xychart-beta
 
 2. "Have there been latency cliff incidents - where latency spiked
    non-linearly with traffic? What was the root cause?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

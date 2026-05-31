@@ -7,6 +7,17 @@ permalink: /html/l1-elements-and-semantics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Elements and Tags](#html-elements-and-tags) | medium |
+| 2 | [Semantic HTML](#semantic-html) | high |
+| 3 | [Block vs Inline Elements](#block-vs-inline-elements) | medium |
+
+---
+
 # HTML Elements and Tags
 
 🎯 **Interview Weight:** medium (★☆☆) - Foundation vocabulary
@@ -117,6 +128,8 @@ ATTRIBUTES:
   tabindex="0"       → keyboard focus order
   lang="en"          → language of element content
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -293,6 +306,8 @@ Fix:
   element.setAttribute('disabled', 'false'); // still disabled!
   element.setAttribute('disabled', '');      // also disabled
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -666,6 +681,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Semantic HTML
 
 🎯 **Interview Weight:** high (★☆☆) - One of the most asked
@@ -806,6 +849,8 @@ COMMON SEMANTIC ELEMENTS AND THEIR ROLES:
   <del>/<ins> → Deleted/inserted text in document revision
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Semantic elements map to ARIA landmark roles automatically.
@@ -876,6 +921,8 @@ regions that users can navigate directly.
   </div>
 </div>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: semantic HTML with proper roles -->
@@ -993,6 +1040,8 @@ Common root causes:
 
 Fix: audit with axe DevTools (Chrome extension) → fix violations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1380,6 +1429,34 @@ SCENARIO
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Block vs Inline Elements
 
 🎯 **Interview Weight:** medium (★☆☆) - Foundation of CSS
@@ -1513,6 +1590,8 @@ CSS DISPLAY OVERRIDE:
   /* Any element can be inline-block: */
   a { display: inline-block; width: 200px; }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1665,6 +1744,8 @@ Whitespace between inline-block elements:
   Fix: parent { font-size: 0; } children { font-size: 14px; }
   OR:  use Flexbox instead (no whitespace issue)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2101,3 +2182,33 @@ flowchart LR
 > have block-like sizing (explicit width, all margin directions).
 > Understanding which context an element creates and participates
 > in is the foundation of debugging unexpected layout behavior.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

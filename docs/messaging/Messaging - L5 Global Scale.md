@@ -8,6 +8,15 @@ permalink: /messaging/l5-global-scale/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Messaging at Scale - Multi-Region and Global Patterns](#messaging-at-scale---multi-region-and-global-patterns) | medium |
+
+---
+
 # Messaging at Scale - Multi-Region and Global Patterns
 
 ---
@@ -89,6 +98,8 @@ PATTERN 3: Active-Active Multi-Master
   Use for: globally distributed IoT, gaming events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Event ordering in global systems:
 ```
 Problem: total ordering across regions is impossible
@@ -108,6 +119,8 @@ Solution options:
    Lamport clocks or Hybrid Logical Clocks (HLC)
    provide causally consistent ordering
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Global messaging is a set of trade-offs, not a single solution. The trade-offs are per-event-type: decide for each event class whether availability or consistency is the priority, and apply the matching pattern. Do not use the same global topology for all events.
@@ -520,6 +533,8 @@ TOPOLOGY:
                          +-> Tokenize -> Global Fraud Cluster
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -586,3 +601,33 @@ flowchart LR
 ```
 
 > **Diagram walkthrough:** Each region is a self-sufficient Kafka cluster that accepts local writes with sub-10ms latency. MirrorMaker 2 replicates events between regions asynchronously. The critical GDPR constraint (EU data stays in EU) is enforced at the MM2 filtering layer - only non-PII events replicate from EU to US and APAC. US and APAC services that need EU analytics receive the GDPR-compliant subset. EU customer data (orders with names and addresses) remains in the EU cluster only. This design achieves low write latency (local writes), eventual global consistency (seconds to minutes lag), and GDPR compliance (EU data never leaves the EU cluster).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

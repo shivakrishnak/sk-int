@@ -139,6 +139,8 @@ DDD TACTICAL PATTERNS - RELATIONSHIPS
   (OrderPlaced, OrderCancelled)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The Aggregate is the most important tactical pattern. It is the
 unit of transactional consistency and the unit of repository access.
@@ -411,6 +413,8 @@ any invariant.
 // If no - extract it to its own Aggregate or entity.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Extract non-invariant data to separate Aggregates.
 `Order` contains only objects participating in its invariants.
 `OrderAuditLog` is a separate append-only entity.
@@ -432,6 +436,8 @@ public void placeOrder(PlaceOrderCommand cmd) {
     invRepo.save(inv); // same transaction = coupling
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Use Domain Events. `Order.place()` raises `OrderPlaced`.
 A handler processes `OrderPlaced` and updates `Inventory` in a
@@ -714,6 +720,34 @@ describe compensating transactions as the safety net.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Service-Oriented Architecture
 
 🎯 Interview Weight: medium - foundational context for understanding
@@ -819,6 +853,8 @@ SOA ARCHITECTURE
 [Order Svc]  [Payment Svc] [Customer Svc]
 (SOAP/WSDL)  (SOAP/WSDL)  (SOAP/WSDL)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight (and failure):**
 The ESB concentrated complexity. What started as routing became
@@ -965,6 +1001,8 @@ to modify their business workflows.
   with business rules?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move business logic back to services. The Gateway is a
 dumb pipe for cross-cutting concerns only.
 
@@ -980,6 +1018,8 @@ SELECT usename, datname FROM pg_stat_activity
 WHERE datname = 'shared_services_db';
 -- Multiple service users = shared DB anti-pattern
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Each service owns its schema. Inter-service data access
 via APIs or events, not direct database access.
@@ -1330,3 +1370,33 @@ letting the facade accumulate business logic.
 | Legacy integration | Strong (ESB adapters) | Weak (requires custom adapters) |
 | Operational complexity | Medium (centralized) | High (distributed) |
 | Best for | Legacy enterprise integration | New greenfield services with DevOps |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

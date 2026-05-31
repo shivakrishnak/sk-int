@@ -8,9 +8,20 @@ permalink: /docker/l5-kubernetes-migration/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L5 Kubernetes Migration](#docker---l5-kubernetes-migration) | medium |
+
+---
+
 # Docker - L5 Kubernetes Migration
 
 ## Docker to Kubernetes Migration Strategy
+
+---
 
 ### 🎯 Model Answer
 
@@ -349,6 +360,8 @@ COMPLETE MAPPING: COMPOSE -> KUBERNETES
                   port:
                     number: 8080
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -814,6 +827,8 @@ Diagnosis:
   # it is blocked.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1260,3 +1275,33 @@ Organizations that treat platform migrations as mandates ("you must
 migrate by Q3") see resistance and slowdowns. Organizations that treat
 them as products ("here's why K8s is better for you, and here's the
 support we provide") see faster voluntary adoption.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

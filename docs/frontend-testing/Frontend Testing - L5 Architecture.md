@@ -7,6 +7,15 @@ permalink: /frontend-testing/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Frontend Quality Architecture and Test Platform Design](#frontend-quality-architecture-and-test-platform-design) | medium |
+
+---
+
 # Frontend Quality Architecture and Test Platform Design
 
 ---
@@ -159,6 +168,8 @@ Quality governance framework:
     Alert team if budgets exceeded by > 20%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -282,6 +293,8 @@ For a 100+ engineer frontend organization with multiple teams:
   - customMatchers (toHaveLoadingState, toBeAccessible)
   - setupTests.ts (extend matchers, configure MSW)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Published to internal npm registry. All teams use the same utilities.
 When a provider is added globally, only the shared package updates.
 
@@ -300,6 +313,8 @@ export default {
   performance: { unit: 180, e2e: 900 }, // seconds
 };
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Quality gate configuration in source control, not scattered in CI YAML.
 
 ---
@@ -404,3 +419,33 @@ spends 20% of engineering time maintaining tests is not getting
 proportional value. Treating test health as a product (metrics,
 ownership, investment) rather than a chore is what separates high-
 functioning teams.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

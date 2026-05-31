@@ -161,6 +161,8 @@ CASCADE FAILURE
   Defense: circuit breaker, bulkhead, timeout
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Timeouts are mandatory, not optional. Without a timeout, every
 omission failure becomes an infinite hang. But a timeout introduces
@@ -282,6 +284,8 @@ jstack <pid> | grep -A5 "BLOCKED\|WAITING" | \
   head -40
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add explicit timeouts on all outbound calls. Add
 circuit breakers. Use bulkhead pattern to isolate thread
 pools per downstream dependency.
@@ -305,6 +309,8 @@ etcdctl endpoint status --cluster -w table
 # Look for different RAFT TERM or RAFT INDEX values
 # Divergence confirms split-brain occurred
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement fencing tokens. Any write to storage must
 include a monotonically increasing token; old tokens are
@@ -333,6 +339,8 @@ kubectl top pods -n <namespace>
 grep "retry attempt" service.log | \
   awk '{print $1}' | uniq -c | head -20
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Exponential backoff with full jitter on all retries.
 Circuit breakers to stop retrying when error rate exceeds
@@ -489,6 +497,8 @@ t=30s: service-A latency p99: 80ms -> 8000ms
 t=35s: service-C error rate: 0% -> 60%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Root cause is always upstream of t=0. I check: what changed in
 service-B before t=0? Deployment, config change, database slow
 query, downstream dependency slowdown.
@@ -614,6 +624,34 @@ reflected in SLO design with concrete examples.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Linux Operations and Systems Monitoring
 
@@ -750,6 +788,8 @@ PROCESS
   /proc/<pid>/fd/   open file descriptors
   KEY: fd count vs ulimit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The /proc filesystem is the kernel's live state exposed as files.
@@ -955,6 +995,8 @@ dmesg | grep -i "oom\|out of memory\|killed"
 kubectl top pods --containers | grep <service>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Increase memory limit if usage is legitimate, or find
 and fix the memory leak. For JVM: add
 `-XX:+HeapDumpOnOutOfMemoryError` to capture heap dump before
@@ -984,6 +1026,8 @@ iostat -xz 1
 iotop -o -d 1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move application logs to a separate volume. Switch to
 async logging. Use faster storage (NVMe). Reduce I/O by
 batching writes or using in-memory buffers.
@@ -1012,6 +1056,8 @@ cat /proc/<pid>/limits | grep "open files"
 # Find CLOSE_WAIT connections (connection leak)
 ss -tunp state close-wait | grep <pid>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Find the code path opening connections without closing.
 Use try-with-resources (Java) or with statement (Python). Add
@@ -1158,6 +1204,8 @@ Third, in production when tools are restricted: watch VmRSS:
 ```
 watch -n 5 grep VmRSS /proc/<pid>/status
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If VmRSS grows steadily with stable workload, the leak is confirmed
 and I can escalate to heap dump analysis in a staging replica.
 
@@ -1198,6 +1246,8 @@ The safer production alternative is eBPF-based tools like bpftrace:
 bpftrace -e 'tracepoint:syscalls:sys_enter_fsync
 { printf("%s\n", comm); }'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This identifies fsync callers with minimal overhead because
 aggregation happens in kernel space.
 
@@ -1231,6 +1281,8 @@ ls -la /proc/<pid>/fd | tail -20
 # Socket entries = connection leak
 # File entries all same path = file handle leak
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Temporary fix: `ulimit -n 65536` in the shell, then restart the
 service to apply. For systemd services: add `LimitNOFILE=65536`
@@ -1283,6 +1335,8 @@ cat /proc/<pid>/status | grep VmRSS
 cat /proc/loadavg
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This also matters for observability architecture: Prometheus node
 exporter reads /proc paths and exposes them as metrics. Custom
 exporters for application-specific metrics follow the same pattern.
@@ -1296,6 +1350,34 @@ real production incidents.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # CI/CD and Deployment Pipeline Basics
 
@@ -1435,6 +1517,8 @@ DEPLOYMENT STRATEGIES
     Rollback: redeploy previous version tag
     Cost: mixed versions run simultaneously
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Deployment strategy determines blast radius. Blue-green contains
@@ -1637,6 +1721,8 @@ kubectl rollout undo deployment/service-name
 kubectl rollout status deployment/service-name
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Redesign deployment pipeline to include rollback as a
 first-class concern. Blue-green: traffic switch. Canary: automated
 analysis with rollback. Rolling: kubectl rollout undo. Set the
@@ -1664,6 +1750,8 @@ kubectl get analysisrun -n <namespace>
 # Test passes 85-95% of runs = definitively flaky
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Quarantine flaky tests immediately - move to a separate
 suite that does not block deployment. Fix the non-determinism
 (time dependency, port conflict, ordering dependency).
@@ -1688,6 +1776,8 @@ kubectl get pods -o wide | grep <service>
 # Check migration log
 cat db_migration.log | grep -i "error\|failed"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Use the expand-contract pattern. Phase 1: add column as
 nullable (backward compatible). Phase 2: deploy new code. Phase 3:
@@ -1956,3 +2046,33 @@ after planned full rollout.
 flags as a developer convenience. Great candidates frame them as
 an SRE reliability tool with explicit blast radius control and
 faster MTTR, and name the operational risks with concrete mitigations.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

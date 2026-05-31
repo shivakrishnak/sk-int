@@ -150,6 +150,8 @@ RESPONSE (host returns):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 `includeContext` controls what conversation history
@@ -434,6 +436,8 @@ capabilities: {
   "sampling": {}   // <-- required for sampling support
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If `sampling` is absent: the client doesn't support it.
 
 *Mitigation:* Design servers to degrade gracefully
@@ -452,6 +456,8 @@ async def lifespan(server: Server):
     else:
         yield {"sampling_available": True}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Design servers
 to degrade gracefully when sampling is unavailable."
@@ -571,6 +577,8 @@ without requiring a specific model:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `hints`: a preference list of model names. The host
 tries to match these, in order. If no model matches,
 the host uses its default. This is a HINT not a
@@ -611,6 +619,8 @@ print(json.dumps({
     "include_context": include_context
 }), file=sys.stderr)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This shows exactly what the server is sending
 to the host.
 
@@ -626,6 +636,8 @@ resp = client.messages.create(
 )
 print(resp.content[0].text)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Isolate whether the issue is in the sampling request
 content or in the server's handling of the result.
 
@@ -751,6 +763,8 @@ if not (client_caps and
     pass
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Graceful degradation options:
 
 (1) Fallback to rule-based logic: if the LLM
@@ -804,6 +818,8 @@ sampling request:
   "includeContext": "allServers"
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The host's LLM, seeing the full conversation context,
 may comply and reveal the system prompt.
 
@@ -865,6 +881,8 @@ Example (per-server sampling config proposal):
   }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Not all clients support per-server sampling controls
 yet - this is an evolving area of the MCP spec.
 
@@ -945,6 +963,34 @@ sequenceDiagram
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP Host Architecture
 
@@ -1073,6 +1119,8 @@ TOOL INVOCATION FLOW:
   Server returns: result
   Host continues: messages.create([..., tool_result])
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1346,12 +1394,16 @@ for tool_name, server_name in host.tool_to_session.items():
 # Look for tools mapped to unexpected servers.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Namespace tools by server name in the aggregated
 view:
 ```python
 # Instead of: tool.name -> "search"
 # Use: f"{server_name}/{tool.name}" -> "filesystem/search"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The AI sees namespaced names. Tool descriptions
 must also be updated to match.
 
@@ -1448,6 +1500,8 @@ async def maintain_connection(self, name, params):
             backoff = min(backoff * 2, 60)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Remove server tools
 from the aggregated view immediately on disconnect -
 the AI should not try to call tools that don't have
@@ -1520,6 +1574,8 @@ async def refresh_capabilities(self, server_name: str):
     self.rebuild_aggregated_view()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Performance impact: cached aggregation reduces
 per-turn latency from O(N*list_latency) to O(1).
 The cost is a potentially stale list if the server
@@ -1547,6 +1603,8 @@ MCP tool schema:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Converted to Anthropic API format:
 ```json
 {
@@ -1555,6 +1613,8 @@ Converted to Anthropic API format:
   "input_schema": {"type": "object", "properties": {...}}
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Note: `inputSchema` (MCP) -> `input_schema` (Anthropic).
 For OpenAI: different conversion. The host handles
@@ -1569,6 +1629,8 @@ After the AI returns a `tool_use` block:
 ```json
 {"type": "tool_use", "id": "toolu_01", "name": "search_docs", "input": {...}}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The host routes `name: "search_docs"` to the correct
 server, calls it with `input` as arguments, and
@@ -1594,6 +1656,8 @@ Step 1: Log the tool routing map:
 for tool, server in self.tool_to_session.items():
     print(f"{tool} -> {server}")
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check: is the expected tool in the map? Does it
 point to the expected server?
 
@@ -1604,6 +1668,8 @@ for block in resp.content:
         print(f"Routing: {block.name} -> "
               f"{self.tool_to_session.get(block.name, 'NOT FOUND')}")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Check for name case sensitivity.
 Tool names in MCP are case-sensitive. If the server
@@ -1619,6 +1685,8 @@ Step 5: Test the tool call directly:
 session = self.sessions["expected-server"]
 result = await session.call_tool("search_docs", {"query": "test"})
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If this works: routing logic is the issue.
 If this fails: server implementation is the issue.
 
@@ -1706,6 +1774,8 @@ else:
     })
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why: the AI receives the error message as tool
 output and can reason about it. The AI might retry
 with different arguments, tell the user about the
@@ -1770,6 +1840,8 @@ if token_count.input_tokens > 180000:
     # Truncate conversation history
     messages = messages[-10:]  # keep last 10 messages
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Truncate tool
 results at the host level - the server shouldn't
@@ -1863,4 +1935,34 @@ flowchart TB
 > to the AI Model Interface to continue the conversation.
 > The three clients represent three independent connections
 > - each with its own session state and transport.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

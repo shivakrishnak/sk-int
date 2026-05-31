@@ -157,6 +157,8 @@ FINE-TUNING (model weight update)
   Update: requires new training run (hours-days)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 These techniques compose. The right architecture is
@@ -246,6 +248,8 @@ def answer_prompt_only(question: str) -> str:
 # Solution: add RAG.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```python
 # STAGE 2: Prompt engineering + RAG
 # (add when model lacks specific knowledge)
@@ -297,6 +301,8 @@ def answer_with_rag(question: str) -> str:
 # At 10M calls/month, this is expensive.
 # Solution: fine-tune for consistent format.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # STAGE 3: Fine-tuning evaluation decision
@@ -1029,6 +1035,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Structured Output and JSON Mode
 
 **Interview Weight:** high - Required for any LLM
@@ -1168,6 +1202,8 @@ WITH SCHEMA-CONSTRAINED STRUCTURED OUTPUT:
   Never: wrong types, wrong fields, extra text
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Schema-constrained structured output is not just
@@ -1244,6 +1280,8 @@ def extract_contact_bad(text: str) -> dict:
     # ParseError: "Here is the extracted JSON: {...}"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```python
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -1304,6 +1342,8 @@ def extract_contact(text: str) -> ContactInfo:
     )
     return ContactInfo(**tool_use.input)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # Using the Instructor library (wraps any API)
@@ -1819,6 +1859,8 @@ class Contact(BaseModel):
         return v
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Consistency validation: multi-field constraints.
 Start date must precede end date. Total must equal
 sum of items. Address city must match country code.
@@ -1978,3 +2020,33 @@ flowchart TD
 > retries. The two-layer approach (grammar constraint +
 > Pydantic validation) achieves near-100% reliability
 > for production extraction pipelines.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

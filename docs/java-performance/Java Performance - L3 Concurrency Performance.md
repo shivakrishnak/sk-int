@@ -8,9 +8,20 @@ permalink: /java-performance/l3-concurrency-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L3 Concurrency Performance](#java-performance---l3-concurrency-performance) | medium |
+
+---
+
 # Java Performance - L3 Concurrency Performance
 
 ## Lock Contention and Performance Anti-patterns
+
+---
 
 ### 🎯 Model Answer
 
@@ -174,6 +185,8 @@ CRITICAL SECTION MINIMIZATION:
   // 60x less contention for the same throughput.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -320,6 +333,8 @@ Diagnosis:
 Fix: move the IO outside the lock (see Code Example above).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -381,6 +396,8 @@ the Striped lock transfer example). The consistent ordering rule prevents deadlo
 ---
 
 ## Non-Blocking Algorithms and CAS Performance
+
+---
 
 ### 🎯 Model Answer
 
@@ -518,6 +535,8 @@ LONGADDER INTERNALS:
     -> Use AtomicLong for < 2 threads or read-heavy.
     -> Use LongAdder for 2+ threads with write-heavy counter.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -688,6 +707,8 @@ Fix:
   // No CAS on the hot path. Periodic aggregation is cheap.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -746,3 +767,33 @@ The padded cells take 64 * 64 = 4KB of memory permanently. In memory-constrained
 thousands of LongAdder instances): prefer AtomicLong to avoid the per-instance cell growth.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

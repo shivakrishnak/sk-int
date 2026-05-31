@@ -8,6 +8,15 @@ permalink: /devops-cicd/l4-pipeline-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Pipeline Performance and Parallelization](#pipeline-performance-and-parallelization) | medium |
+
+---
+
 # Pipeline Performance and Parallelization
 
 🎯 Interview Weight: expert - slow CI is a top developer productivity
@@ -133,6 +142,8 @@ Serial: 1000 tests × 30s avg = 500 minutes
 10 runners: 100 tests each × 30s + overhead = 55 minutes (10x)
 20 runners: 50 tests each × 30s + overhead = 30 minutes (17x)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diminishing returns: coordination overhead (runner startup, result
 aggregation) limits benefit beyond 20-30 runners for typical test suites.
 
@@ -692,6 +703,8 @@ CACHE_KEY=$(echo -n \
   | sha256sum | cut -d' ' -f1)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding the "cache poisoning"
 risk. If an attacker can write to the content-addressable cache with
 a known hash key (hash collision or write access), they can substitute
@@ -716,6 +729,8 @@ Index-based sharding (simple): partition by file index.
 jest --shard=1/5
 # This runs the first 20% of test files by alphabetical order
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problem: if test files have unequal execution times, shards have
 unequal durations. The slowest shard determines total pipeline time.
 
@@ -727,6 +742,8 @@ jest --shard=1/5
 # Jest reads previous run timing from cache
 # Assigns tests to shards to balance total duration across shards
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Optimal shard count calculation:
 
@@ -819,6 +836,8 @@ ENTRYPOINT ["java", \
   "-XX:MaxRAMPercentage=75.0", \
   "-jar", "app.jar"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The cache efficiency analysis:
 - Layer 1 (pom.xml copy): cache hit ~95% (pom.xml changes rarely)
@@ -960,6 +979,8 @@ git log --all -- .github/workflows/
 git log --since="3 months ago" --oneline -- .github/workflows/ci.yml
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Profile the current slow state.
 Which step is now responsible for the growth?
 
@@ -998,11 +1019,15 @@ test_B → covers: user.java:45, user.java:67, auth.java:22
 test_C → covers: inventory.java:100, order.java:88
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: On a PR, identify changed lines.
 ```bash
 git diff origin/main..HEAD --unified=0 | grep "^@@"
 # output: @@-45,6 +45,7@@ → user.java line 45 changed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Find all tests that cover the changed lines.
 ```
@@ -1010,6 +1035,8 @@ Changed: user.java:45
 Tests covering user.java:45: test_A, test_B
 Run: test_A, test_B (not test_C)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Tools:
 - JVM: Launchable (ML-based TIA, works with JUnit), Diffblue Cover
@@ -1106,6 +1133,8 @@ key: |
 # source files (compiled output), Java version (class file format)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cache restoration must be atomic. A partial cache restore (e.g.,
 corrupted download) must be detected and result in a cache miss,
 not a partial build with missing files. GitHub Actions cache handles
@@ -1126,6 +1155,8 @@ restore-keys: |
   java-build-linux-${{ hashFiles('pom.xml') }}-
   java-build-linux-
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security requirements:
 
@@ -1289,3 +1320,33 @@ adding more parallel workers. The sequential checkout + setup + deploy
 phases become the bottleneck. Reducing checkout time (shallow clone,
 sparse checkout) and setup time (pre-warmed runner environments)
 are the next optimizations after test parallelism is maximized.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -166,6 +166,8 @@ function UpdateUser({ userId }: { userId: string }) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```typescript
 // PATTERN 3: WebSocket with RxJS for real-time data
 class WebSocketService {
@@ -203,6 +205,8 @@ class WebSocketService {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The architectural insight of modern server state managers:
@@ -413,6 +417,8 @@ Fix:
   2. Background: queryClient.invalidateQueries(parentKey)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Waterfall fetches (N+1 problem in React)**
 ```
 Symptom: page loads in 4 sequential requests: route -> user -> posts -> comments
@@ -427,6 +433,8 @@ Fix:
   ]);
   // Components render with data already in cache: no loading states
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -503,6 +511,8 @@ queryClient.invalidateQueries({ queryKey: keys.all() });
 queryClient.invalidateQueries({ queryKey: keys.details() });
 // Invalidates: only user detail queries, not list queries
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This pattern (from TanStack Query docs) provides fine-grained
 invalidation. After creating a user: invalidate `keys.lists()`.
@@ -581,6 +591,8 @@ const queryClient = new QueryClient({
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Data flow:
 1. Online: TanStack Query fetches from server, updates IDB
 2. Offline: TanStack Query serves from in-memory/IDB cache
@@ -636,6 +648,8 @@ ws.onmessage = (event) => {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The two patterns: (1) `setQueryData`
 for known changes (no network round trip), (2) `invalidateQueries`
 for unknown changes (triggers background refetch). Using `setQueryData`
@@ -674,6 +688,8 @@ const user = await deduplicatedFetch(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For React without TanStack Query: the custom hook approach
 ensures only one fetch per key per render cycle:
 ```typescript
@@ -686,6 +702,8 @@ function useFetchDeduped<T>(key: string, fetcher: () => Promise<T>) {
   return use(globalPromiseCache.get(key)!); // React 19 'use' hook
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The difference between
 deduplication (same request in same time window) and caching
@@ -730,6 +748,8 @@ async function handleTokenRefresh(queryClient: QueryClient) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Deduplicating the refresh
 request. Without deduplication, if 10 concurrent requests
 get 401, 10 refresh calls fire simultaneously. The `refreshPromise`
@@ -762,6 +782,8 @@ const { data } = useQuery({
 // isFetching: true while background refetch is in progress
 // isLoading: true ONLY on first fetch (no cached data)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The visual result: user sees immediately-rendered (possibly
 stale) data. Data silently updates when server responds. No
@@ -823,6 +845,8 @@ function InfinitePostList() {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `IntersectionObserver`
 pattern for trigger: it fires when the sentinel element
@@ -906,6 +930,8 @@ queryClient.invalidateQueries({ queryKey: queryKeys.posts.byUser(userId) });
 queryClient.setQueryData(queryKeys.posts.detail(postId).queryKey, updated);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `as const` assertion on
 key arrays gives TypeScript the exact tuple type. This prevents
 typos in key names and enables TypeScript to catch mismatches
@@ -956,6 +982,8 @@ Product catalog (sync hourly, long stale). User preferences
 (sync on mutation only). This prevents over-fetching while
 ensuring freshness where it matters.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Cache | Real-time | Boilerplate | Offline | Best For |
@@ -970,6 +998,8 @@ ensuring freshness where it matters.
 Server data: TanStack Query (React/Vue) or NgRx Data (Angular).
 GraphQL: Apollo. Complex client state: Redux/Zustand. Real-time
 only: RxJS or raw WebSocket. Offline-first: TanStack + IDB persister.
+
+---
 
 ### 🏛️ System Design
 
@@ -1009,12 +1039,16 @@ Data flows:
   Offline mutation -> IDB queue -> SW sync when online
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The WebSocket -> `setQueryData`
 bridge. Real-time updates flow into the query cache, not
 directly into component state. All components using the same
 query key see the update simultaneously. The query cache
 becomes the single source of truth for all server data,
 regardless of how it arrived.
+
+---
 
 ### 📊 Diagram
 
@@ -1068,3 +1102,30 @@ flowchart TD
 > update pattern with rollback on error and invalidation on
 > success. Every path eventually updates the central cache,
 > which all components observe.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

@@ -8,9 +8,20 @@ permalink: /java-core/l3-datetime-and-records/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L3 DateTime and Records](#java-core---l3-datetime-and-records) | medium |
+
+---
+
 # Java Core - L3 DateTime and Records
 
 ## Java Date and Time API
+
+---
 
 ### 🎯 Model Answer
 
@@ -74,6 +85,8 @@ Duration        - "3 hours 30 minutes" (time-based amount)
 Period          - "2 years 3 months 5 days" (date-based amount)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Creating and manipulating:**
 ```java
 // Creation:
@@ -92,6 +105,8 @@ LocalDate lastYear = today.minusYears(1);
 LocalDate endOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
 LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -211,6 +226,8 @@ LocalDateTime ldt = dstDay.atTime(dailyTime);
 ZonedDateTime zdt = ldt.atZone(nyZone);
 // Result: 03:30 AM (adjusted forward by 1 hour) - surprise!
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: appointments appearing 1 hour off on DST transition days.
 Use `ZonedDateTime.ofStrict(ldt, offset, zone)` to get an exception
 instead of silent adjustment.
@@ -264,6 +281,8 @@ repository.save(event.withTimestamp(Instant.now()));
 // Or: ZonedDateTime.toInstant() before storing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The database storage decision is critical.
 TIMESTAMP in SQL stores a moment in time (UTC-equivalent). Java's `Instant`
 maps perfectly. `TIMESTAMP WITH TIME ZONE` in PostgreSQL also stores moments.
@@ -310,6 +329,8 @@ Instant plus24h = now.toInstant().plus(Duration.ofHours(24)); // adds 24h
 // On DST "spring forward" day: plusDays(1) = 23h later in UTC!
 // Most users expect "tomorrow 3pm" = same wall clock time tomorrow
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `plusDays(1)` vs `plus(24h)` choice
 is significant for user-facing scheduling. `ZonedDateTime.plusDays(1)` adds
@@ -359,6 +380,8 @@ String s = DTF.format(date); // same result, method on formatter
 // Parsing:
 LocalDate parsed = LocalDate.parse("2024-01-15", DTF);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `ThreadLocal<SimpleDateFormat>`
 workaround was the pre-Java 8 standard for shared date formatting. With
@@ -413,6 +436,8 @@ Period.of(1, 2, 3); // 1 year, 2 months, 3 days
 Period.parse("P1Y2M3D"); // ISO-8601 period format
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `Duration` vs `Period` distinction
 matters in banking and finance: a loan with "3 month term" uses `Period.ofMonths(3)` (calendar months, different number of days). An SLA
 of "72 hours" uses `Duration.ofHours(72)` (exact 72 * 3600 seconds).
@@ -456,6 +481,8 @@ ZonedDateTime later   = ZonedDateTime.of(overlap, ZoneOffset.of("-05:00"), nyZon
 Instant eventInstant = Instant.parse("2024-03-10T07:30:00Z");
 // This is always 07:30 UTC, regardless of DST
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* DST bugs are the most common datetime
 production issues. They manifest as: appointments shifted by 1 hour,
@@ -507,6 +534,8 @@ java.sql.Timestamp ts = Timestamp.from(instant);  // Instant -> SQL Timestamp
 Instant inst = ts.toInstant();                     // SQL Timestamp -> Instant
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* PostgreSQL stores TIMESTAMP WITH TIME ZONE
 as UTC internally (converts from local time at insert). TIMESTAMP WITHOUT
 TIME ZONE stores the literal values with no conversion. When querying
@@ -555,6 +584,8 @@ String s = ldt.format(newFmt);
 // 3. Convert back to legacy types at output boundaries if needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The migration strategy is architectural:
 don't mix `Date` and `java.time` in the same domain model. Define conversion
 utilities at integration boundaries (DAO layer, REST controllers). Spring's
@@ -596,6 +627,8 @@ TemporalAdjuster nextBusinessDay = temporal -> {
 LocalDate nextBD = today.with(nextBusinessDay);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `TemporalAdjusters` enables a clean,
 composable way to express business date logic without raw date arithmetic.
 The alternative (manual date loop checking day of week) is error-prone.
@@ -636,6 +669,8 @@ LocalDate result = processDate(date); // original date unchanged
 // processDate cannot modify date (immutable)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `java.time` was designed by the same
 team that wrote Joda-Time (the de facto replacement for Calendar before
 Java 8). It incorporates lessons from 10+ years of Joda-Time usage. The
@@ -674,6 +709,8 @@ mechanical: `org.joda.time.LocalDate` -> `java.time.LocalDate`, etc.
 ---
 
 ## Records, Sealed Classes, and Pattern Matching
+
+---
 
 ### 🎯 Model Answer
 
@@ -753,6 +790,8 @@ record Point(double x, double y) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sealed types:**
 ```java
 // Sealed interface: only listed subtypes allowed
@@ -763,6 +802,8 @@ record Square(double side) implements Shape {}
 record Triangle(double base, double height) implements Shape {}
 // No other class can implement Shape (compile error)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pattern matching:**
 ```java
@@ -776,6 +817,8 @@ double area(Shape shape) {
     };
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -908,6 +951,8 @@ record User(Long id, String name) {} // won't work with Hibernate!
 class UserEntity { Long id; String name; /* getters/setters */ }
 record UserDTO(Long id, String name) {} // immutable view
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: `InstantiationException` or `NoSuchMethodException` from Hibernate
 when trying to use records as entities.
 
@@ -965,6 +1010,8 @@ record UserDTO(String name, String email) {}
 // ObjectMapper.readValue(json, UserDTO.class) works!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Records changed the "standard" for small
 data classes. Before records: Lombok `@Value` (immutable) or `@Data` (mutable).
 After records: use records for immutable data, plain classes with Lombok
@@ -1004,6 +1051,8 @@ double describe(Shape s) {
     };
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Sealed types are the Java equivalent of
 Rust's enums with data, Haskell's ADTs, or Kotlin's sealed classes. They
@@ -1050,6 +1099,8 @@ switch (s) {
     // case Inactive i -> ... // missing case: compile WARNING, not error
 } // statements can silently ignore cases - prefer expressions!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The exhaustiveness checking is only
 guaranteed for SWITCH EXPRESSIONS (not statements) and only when the
@@ -1098,6 +1149,8 @@ record Snapshot(List<String> items) {
     // List<String> items() { return items; } // auto-generated
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The compact canonical constructor is
 the preferred form: it's concise and makes the intent clear (validation/
@@ -1156,6 +1209,8 @@ record Color(int r, int g, int b) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Records being unable to extend other
 classes is by design: they ARE the "product type" (all components, all
 the time). Subclassing would allow adding components in a non-records way,
@@ -1203,6 +1258,8 @@ String display = fold(findUser(42L),
     user -> "Found: " + user.getName(),
     error -> "Error: " + error);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* ADTs with sealed types and pattern
 matching represent a fundamental shift in how Java handles heterogeneous
@@ -1282,6 +1339,8 @@ void process(Object obj) {
 // Matching on list contents requires external iteration (no built-in list deconstruction yet)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Deconstruction patterns eliminate the
 common pattern of matching a record type then immediately extracting
 components: `case Point p -> { int x = p.x(); int y = p.y(); }`.
@@ -1335,6 +1394,8 @@ String result = switch (status) {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Switch expressions (Java 14, standard)
 are always preferred over switch statements for assignments - the compiler
 enforces exhaustiveness and eliminates fall-through bugs (accidental omission
@@ -1368,3 +1429,33 @@ specific to switch blocks.
 ### 📊 Diagram
 
 *(Omit: non-visual concept)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

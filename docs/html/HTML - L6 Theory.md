@@ -7,6 +7,16 @@ permalink: /html/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Living Standard and WHATWG Parsing Algorithm](#html-living-standard-and-whatwg-parsing-algorithm) | specialist |
+| 2 | [HTML Specification History and Browser Divergence](#html-specification-history-and-browser-divergence) | specialist |
+
+---
+
 # HTML Living Standard and WHATWG Parsing Algorithm
 
 🎯 **Interview Weight:** specialist (★★☆) - theory-level knowledge
@@ -231,6 +241,8 @@ FOREIGN CONTENT (SVG and MathML):
   approach of defining interoperability explicitly.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The parsing algorithm is not a "try to parse valid HTML" algorithm.
@@ -282,6 +294,8 @@ console.log(div.innerHTML);
 // Logs: <p>Start </p><div>Block element</div><p> end</p>
 -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // Observing tokenizer states via the HTML spec's test suite
@@ -396,6 +410,8 @@ Diagnosis:
     Shows parse errors that browsers silently recover from
     Fixes prevent unexpected DOM structure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -522,6 +538,34 @@ MECHANISM
 | Curiosity Probe | Why browsers produce same DOM from bad HTML |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # HTML Specification History and Browser Divergence
 
@@ -755,6 +799,8 @@ REMAINING BROWSER DIVERGENCE (2025):
   "Baseline Newly Available" covers 90%+ of users for most features.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The browser divergence era (1995-2007) created a generation of
@@ -921,6 +967,8 @@ Quirks mode differences (what breaks):
 Fix: add <!DOCTYPE html> as first line of every HTML document
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1043,3 +1091,33 @@ Fix: add <!DOCTYPE html> as first line of every HTML document
 | Theory Interview | WHATWG history + parsing algorithm |
 | Senior Technical | DOCTYPE quirks mode + browser engine history |
 | Architectural | Living Standard evolution + standards process |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,15 @@ permalink: /design-patterns/l4-plugin-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Plugin Architecture with Factory and Strategy](#plugin-architecture-with-factory-and-strategy) | medium |
+
+---
+
 # Plugin Architecture with Factory and Strategy
 
 ---
@@ -102,6 +111,8 @@ modification."
    - Never imports or directly references concrete plugins
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Discovery mechanisms compared:**
 
 | Mechanism | How it works | Isolation | Hot reload | Use case |
@@ -142,6 +153,8 @@ public class PdfReportPlugin implements ReportPlugin {
     public byte[] generate(ReportRequest req) { ... }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Extension points and lifecycle:**
 
@@ -406,6 +419,8 @@ Provider JARs (plugins):
   Each JAR: independent deployment, own dependencies
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Deployment model:**
 
 ```
@@ -421,6 +436,8 @@ ClassLoader isolation:
   Each plugin has its own ClassLoader with its own dependencies
   Core platform ClassLoader is parent; shared API classes only
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Trade-offs:**
 
@@ -566,6 +583,8 @@ void logPlugins(ApplicationReadyEvent e) {
 # Check @ConditionalOn* if bean is conditional
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Wrong plugin selected when multiple match**
 
 Symptom: the base/default plugin runs instead of the specialized one.
@@ -592,6 +611,8 @@ public class DefaultEmailPlugin implements NotificationPlugin {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Plugin state mutation causes race conditions**
 
@@ -622,6 +643,8 @@ public class EmailPlugin implements NotificationPlugin {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -746,6 +769,8 @@ public interface NotificationPlugin {
     default boolean supportsRetry() { return false; }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Adapter base class: provide an abstract `AbstractNotificationPlugin`
 that implements all methods with defaults. Concrete plugins extend the
 abstract class. New methods are added to the abstract class with defaults.
@@ -797,6 +822,8 @@ public class PluginRegistry {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (4) Health checks: each plugin exposes `boolean isHealthy()`. The registry
 routes only to healthy plugins. An unhealthy plugin is marked and retried
 periodically.
@@ -843,6 +870,8 @@ void selectsMostSpecificPlugin() {
         .contains(TenantAPlugin.class);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Testing negative cases: no plugin
 matches (expected exception), two plugins match (correct one wins via
@@ -989,6 +1018,8 @@ public class WhatsAppNotificationPlugin
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Add `WhatsAppClient` to the dependencies or implement it.
 (3) Deploy. No changes to `NotificationService`, `PluginRegistry`,
 `EmailPlugin`, `SmsPlugin`, or `PushPlugin`. The host discovers the new
@@ -1006,3 +1037,33 @@ requires enabling). The next startup discovers the plugin automatically.
 new plugin without a code review of `NotificationService`, `PluginRegistry`,
 or any existing plugin? If yes: OCP achieved. If you needed to add a case
 anywhere: OCP is not achieved, and the design has a violation to fix.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

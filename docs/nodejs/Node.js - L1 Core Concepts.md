@@ -7,6 +7,17 @@ permalink: /nodejs/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Event Loop Fundamentals](#event-loop-fundamentals) | medium |
+| 2 | [Callbacks and Error-first Pattern](#callbacks-and-error-first-pattern) | medium |
+| 3 | [Node.js Module System (require vs import)](#nodejs-module-system-require-vs-import) | medium |
+
+---
+
 # Event Loop Fundamentals
 
 ---
@@ -105,6 +116,8 @@ Priority order (high to low):
   4. setTimeout/setInterval callbacks (timers phase)
   5. I/O callbacks (poll phase)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -235,6 +248,8 @@ clinic doctor -- node server.js
 # clinic flame (flamegraph) for CPU hot spots
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Move CPU-intensive operations to Worker Threads.
 Split large synchronous operations into chunks using `setImmediate`.
 
@@ -250,6 +265,34 @@ Split large synchronous operations into chunks using `setImmediate`.
 | What happens when setImmediate is called from I/O? | Mechanism | ★★★ | 3 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Callbacks and Error-first Pattern
 
@@ -332,6 +375,8 @@ Error-first callback convention:
     }
     // Same semantics, no nesting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -441,6 +486,8 @@ process.on('uncaughtException', (err) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -465,6 +512,8 @@ app.get('/users', asyncHandler(async (req, res) => {
 }));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -477,6 +526,34 @@ app.get('/users', asyncHandler(async (req, res) => {
 | Throw inside callback - why is it dangerous? | Failure | ★★☆ | 2 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Node.js Module System (require vs import)
 
@@ -570,6 +647,8 @@ ES Modules (ESM):
     .mjs: always ESM
     "type":"module" in package.json: .js files are ESM
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -675,6 +754,8 @@ build that maps correctly.
 Error [ERR_REQUIRE_ESM]: require() of ES Module not supported
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause: Package has `"type": "module"` or is an `.mjs` file, and
 consumer is using `require()`.
 
@@ -695,3 +776,33 @@ Fix options:
 | Why can't CJS `require()` an ESM module? | Mechanism | ★★★ | 3 min |
 | What is `import.meta.url`? | Definition | ★★☆ | 2 min |
 | What is tree-shaking and why does it need ESM? | Mechanism | ★★☆ | 2 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

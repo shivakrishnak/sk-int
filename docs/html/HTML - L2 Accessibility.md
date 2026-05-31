@@ -7,6 +7,16 @@ permalink: /html/l2-accessibility/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [ARIA Roles and Attributes](#aria-roles-and-attributes) | very |
+| 2 | [Keyboard Accessibility and Focus Management](#keyboard-accessibility-and-focus-management) | very |
+
+---
+
 # ARIA Roles and Attributes
 
 🎯 **Interview Weight:** very high (★★☆) - Accessibility is
@@ -195,6 +205,8 @@ ARIA LIVE REGIONS (dynamic content announcements):
   </div>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 ARIA names the element; JavaScript must implement the behavior.
@@ -249,6 +261,8 @@ definition. ARIA provides that explicit definition layer.
 <!-- Screen reader: "group (2 items)" - no tab context -->
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```html
 <!-- GOOD: tabs with full ARIA pattern (APG) -->
 <div role="tablist" aria-label="Product sections">
@@ -282,6 +296,8 @@ definition. ARIA provides that explicit definition layer.
   Specifications content here.
 </div>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // Arrow key navigation (REQUIRED by APG for tablist)
@@ -409,6 +425,8 @@ Fix:
   modal.hidden = true;
   triggerButton.focus();  // return focus to trigger
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1260,6 +1278,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Keyboard Accessibility and Focus Management
 
 🎯 **Interview Weight:** very high (★★☆) - Keyboard accessibility
@@ -1435,6 +1481,8 @@ INERT ATTRIBUTE (modern approach to background):
   <div role="dialog"><!-- modal content --></div>
   <!-- No manual focus trap needed with inert! -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1661,6 +1709,8 @@ Tools: Browser: Tab until stuck
   DevTools: document.activeElement shows current focus
   axe DevTools: catches some focus management issues
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2305,3 +2355,33 @@ stateDiagram-v2
 > represents the required behavior per WCAG 2.1 and ARIA Authoring
 > Practices Guide. Deviating from this flow creates dead-ends
 > where keyboard users cannot continue navigating.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

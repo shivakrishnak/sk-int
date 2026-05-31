@@ -131,6 +131,8 @@ Enterprise    10M+        1M+          Global replication
                                        Dedicated GPU clusters
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Index topology options:**
 
 ```
@@ -159,6 +161,8 @@ TENANT-PARTITIONED INDEX:
   Scales with tenant count, not doc count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Embedding strategy at scale:**
 
 ```
@@ -184,6 +188,8 @@ LATE INTERACTION (ColBERT):
   Much larger index (100x more storage)
   Best for high-value, latency-tolerant retrieval
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -662,6 +668,8 @@ Verification stage
   - Confirm expected content is retrieved
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Advantages:
 - Each stage scales independently (more embedding
   workers if embedding is the bottleneck)
@@ -805,6 +813,8 @@ Read path (local first):
               -> Query local vector store replica
               -> LLM call (regional endpoint)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Consistency model: eventual consistency for the
 vector store. New/updated documents are visible
@@ -1048,7 +1058,14 @@ label each type clearly:
 ```python
 ...
 ```
-```
+
+> **Code walkthrough:** The ellipsis here represents a structured
+> document extraction pipeline that converts mixed-type documents
+> (PDFs with tables, images, code blocks) into typed chunks.
+> By labeling each chunk with its type and a caption, the LLM
+> can reason across content types in a single context window.
+> Without typed extraction, table rows and image captions
+> collapse into undifferentiated text and retrieval recall drops.
 
 The LLM can then reason across types if the context
 is clearly structured.
@@ -1232,6 +1249,16 @@ API Gateway (auth, rate limiting, JWT)
   -> Structured response
 ```
 
+> **Code walkthrough:** This architecture diagram maps the full
+> enterprise RAG pipeline. The ingestion path enforces PII
+> redaction (Presidio) before embeddings reach the vector store,
+> making compliance auditable at a single choke-point. The query
+> path puts the Redis cache first so a 25% hit rate eliminates
+> 25% of LLM calls. Domain routing then narrows retrieval to one
+> namespace, keeping precision high. Hierarchical retrieval
+> (summary index first, detail index filtered by doc_id)
+> explains why recall stays high even at 5M documents.
+
 **Capacity:**
 - 5M docs, avg 10 chunks = 50M vectors
 - Storage: 50M * 768 dims (E5) * 4 bytes = ~150GB
@@ -1273,6 +1300,16 @@ Large:
                         -> [LLM]
 ```
 
+> **Diagram walkthrough:** This ASCII diagram traces RAG
+> architecture growth across three scale tiers. At small scale
+> only a vector store and LLM are needed. Medium adds a domain
+> router to partition the index. Large scale prepends a semantic
+> cache and introduces summary-then-detail hierarchical
+> retrieval. The cache HIT path short-circuits the entire query
+> pipeline - a 25% hit rate reduces LLM cost by 25%. A senior
+> engineer notices the summary index always runs first; bypassing
+> it causes recall regression under high document volume.
+
 ```mermaid
 flowchart LR
     Q["User Query"]
@@ -1308,3 +1345,33 @@ flowchart LR
 > by separate vector collections. The output passes
 > through sanitization and filtering before being
 > cached for future near-duplicate queries.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

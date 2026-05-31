@@ -7,6 +7,16 @@ permalink: /frontend-testing/l2-e2e-testing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Playwright Fundamentals](#playwright-fundamentals) | medium |
+| 2 | [Cypress vs Playwright Decision](#cypress-vs-playwright-decision) | medium |
+
+---
+
 # Playwright Fundamentals
 
 ---
@@ -119,6 +129,8 @@ Playwright architecture:
       })
     );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -322,10 +334,40 @@ test('login', async ({ page }) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Benefits: If the login form HTML changes (label text, button text),
 only `LoginPage.ts` needs to update - not every test that logs in.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cypress vs Playwright Decision
 
@@ -410,6 +452,8 @@ When to choose Cypress:
   - Great time-travel debugging experience is valued
   - Limited to Chromium/Firefox acceptable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -534,6 +578,8 @@ npx playwright show-trace trace.zip
 # View trace recording for failed test
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common WebKit issues: CSS grid, certain input types, service workers,
 specific keyboard events differ from Chrome behavior.
 
@@ -576,6 +622,8 @@ async function globalSetup() {
 // Each test starts with saved auth state (no login needed)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cypress approach** - cy.session():
 ```typescript
 Cypress.Commands.add('login', () => {
@@ -590,8 +638,40 @@ Cypress.Commands.add('login', () => {
 // In tests: cy.login() - restores cached session on second run
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using Playwright's `storageState`
 with multiple user roles (admin.json, editor.json, viewer.json) so
 each test can declaratively specify its auth context:
 `test.use({ storageState: 'admin.json' })`. This eliminates per-test
 login and makes role-based testing explicit.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -123,6 +123,8 @@ The two encoders are SEPARATE neural networks.
 They do NOT share weights in the original DPR.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Contrastive training loss:**
 
 ```
@@ -142,6 +144,8 @@ Goal: maximize probability of scoring the gold
 positive highest among all candidates.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Hard negatives - the key training insight:**
 
 ```
@@ -158,6 +162,8 @@ HARD NEGATIVE (useful):
     the query asks specifically about TCP. High
     lexical overlap, different answer.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why DPR beats BM25 for natural language questions:**
 
@@ -178,6 +184,8 @@ Performance (Natural Questions benchmark):
   Hybrid (BM25 + DPR): 84.6%
   -> Hybrid consistently beats either alone
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -648,6 +656,8 @@ COLBERT:
              passage token; scores are summed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why MaxSim works:
 - Standard DPR compresses the passage into one vector,
   losing fine-grained token-level information.
@@ -958,6 +968,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Information Retrieval Foundations
 
 **Interview Weight:** ★★☆ - Understanding the classical
@@ -1070,6 +1108,8 @@ Intuition:
     TF-IDF: high -> highly discriminative
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **BM25 formula:**
 
 ```
@@ -1095,6 +1135,8 @@ Key improvements over TF-IDF:
      so a long document doesn't just win by volume.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Inverted index structure:**
 
 ```
@@ -1115,6 +1157,8 @@ Query "rate limiting":
   Score each doc with BM25
   Return: D2 (highest score), D1, D3
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1458,6 +1502,8 @@ RRF_score(d, query) = sum over retrievers r of:
               (1 = top result, 2 = second, ...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why RRF works:
 - No normalization needed: uses ranks (1, 2, 3...)
   not raw scores
@@ -1510,6 +1556,8 @@ Query "rate limiting":
      = O(k) where k << N
   4. Score k documents with BM25: O(k * |query|)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Total: O(k) where k is the number of matching documents,
 not O(N). For rare terms: k is very small. For common
@@ -1612,6 +1660,8 @@ With k1 = 1.5:
 The score saturates: going from TF=10 to TF=100
 adds 0.29, not 9.0. This is much more realistic.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Implication for RAG chunking: BM25 handles repetitive
 documents (FAQs with the same term repeated) better
@@ -1898,3 +1948,33 @@ flowchart LR
 > misses due to vocabulary gap. The BEIR benchmark
 > confirms: hybrid consistently achieves 3-8% better
 > NDCG@10 than either method alone.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

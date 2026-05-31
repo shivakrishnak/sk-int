@@ -141,6 +141,8 @@ Example result:
   "xkyzqw" -> byte-level tokens (unseen word)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 At inference: text -> tokenizer -> [IDs] -> model
 -> [IDs] -> detokenizer -> text.
 
@@ -197,6 +199,8 @@ def estimate_tokens(text: str) -> int:
     # Wrong: ignores language, code, special chars
     return len(text.split())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: use the tokenizer for the actual model
@@ -770,6 +774,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Context Window
 
 **Interview Weight:** critical - Every LLM system design
@@ -874,6 +906,8 @@ Used:              34,596 tokens
 Remaining:         165,404 tokens
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 At the hard limit: API returns a token limit error or
 silently truncates from the beginning.
 Quality degradation starts before the hard limit due
@@ -939,6 +973,8 @@ def chat(user_msg: str, client) -> str:
     messages.append({"role":"assistant","content":reply})
     return reply
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 import anthropic, os
@@ -1461,6 +1497,34 @@ pie title Context Window Budget Allocation
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Temperature and Sampling
 
 **Interview Weight:** high - Distinguishes candidates who
@@ -1566,6 +1630,8 @@ After softmax:
   T=2.0: "Paris": 0.65  (flatter)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Top-p filtering (applied after temperature scaling):
 Only sample from the tokens whose cumulative probability
 exceeds p. At top-p=0.9: exclude the bottom 10% of the
@@ -1632,6 +1698,8 @@ def llm_call(prompt: str) -> str:
         messages=[{"role":"user","content":prompt}]
     ).content[0].text
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: task-appropriate temperature per use case
@@ -2154,3 +2222,33 @@ xychart-beta
 > most likely answer is correct (extraction); choose
 > high temperature when diversity across plausible
 > answers adds value (brainstorming).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

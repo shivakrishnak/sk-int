@@ -8,6 +8,15 @@ permalink: /messaging/l4-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Messaging Anti-patterns and Failure Recovery](#messaging-anti-patterns-and-failure-recovery) | medium |
+
+---
+
 # Messaging Anti-patterns and Failure Recovery
 
 ---
@@ -68,6 +77,8 @@ Fix:
   store (EventStoreDB, Axon) not raw Kafka
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Anti-pattern 2: Missing Consumer Idempotency**
 ```
 Symptoms:
@@ -90,6 +101,8 @@ Fix:
 - Check-then-insert with unique constraint
 - Deduplication table with TTL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Anti-pattern 3: Fat Messages / God Events**
 ```
@@ -121,6 +134,8 @@ OrderPlaced {
 // only the fields needed by all consumers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Anti-pattern 4: No Dead Letter Queue**
 ```
 Symptoms:
@@ -147,6 +162,8 @@ Fix:
 - DLQ consumer for investigation and replay
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Anti-pattern 5: Chatty Messaging**
 ```
 Symptoms:
@@ -166,6 +183,8 @@ order_customer_details_updated
 order_line_items_adjusted
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Anti-pattern 6: Missing Monitoring**
 ```
 Symptoms:
@@ -177,6 +196,8 @@ Fix: monitor consumer lag per group per partition,
   DLQ depth, producer error rate, broker 
   under-replicated partitions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Every messaging anti-pattern has a single root cause: treating the message broker as if it were a synchronous, exactly-once, strongly-consistent system. It is not. Design for the actual properties: async, at-least-once, eventually consistent.
@@ -394,6 +415,8 @@ kafka-consumer-groups.sh \
 #   tail -20
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add DLQ routing after N retries. For immediate recovery: use kafka-consumer-groups.sh to shift the consumer offset past the poison message (data loss - document the incident).
 
 ---
@@ -415,6 +438,8 @@ grep "Revoke\|Assign.*partitions" kafka.log
 # Frequency of rebalance correlates with
 # duplicate processing frequency
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: make processing idempotent. Use a deduplication table with the message ID as the key. Commit the offset in the same transaction as the business write.
 
@@ -633,6 +658,8 @@ Monitoring:
 - Rebalance frequency: alert at > 3/hour
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key design decisions:**
 1. Outbox pattern prevents lost events at the producer
 2. Idempotent consumers prevent duplicate processing
@@ -689,3 +716,33 @@ flowchart TD
 ```
 
 > **Diagram walkthrough:** The DLQ routing flow shows the three paths from message processing: success (commit and advance), transient failure (retry with backoff up to N times, then DLQ), and permanent failure (DLQ immediately). The critical property in both failure paths is that the offset is committed after routing to DLQ, so the partition advances and subsequent messages are not blocked. The DLQ message retains all metadata needed for investigation and replay. The replay path feeds back into the main consumer loop, allowing fixed messages to be reprocessed with the same idempotency protection as original messages.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

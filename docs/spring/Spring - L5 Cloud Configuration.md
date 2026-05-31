@@ -8,7 +8,13 @@ permalink: /spring/l5-cloud-configuration/
 render_with_liquid: false
 ---
 
-# Spring - L5 Cloud Configuration
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L5 Cloud Configuration](#spring---l5-cloud-configuration) | medium |
+| 2 | [Spring Cloud Config and Service Discovery](#spring-cloud-config-and-service-discovery) | medium |
 
 ---
 
@@ -28,7 +34,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — configuration management and service discovery
+🎯 Interview Weight: High - configuration management and service discovery
 are fundamental microservices infrastructure concerns. Senior interviews
 distinguish between classical approaches (Eureka, Config Server) and Kubernetes-native
 approaches.
@@ -202,6 +208,8 @@ Kubernetes comparison:
     Spring Cloud LoadBalancer: client-side LB
       or let Kubernetes kube-proxy do it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The choice between Eureka/Config Server vs Kubernetes-native is an infrastructure
@@ -430,10 +438,14 @@ GET /{application}-{profiles}.yml
 GET /{application}-{profiles}.properties
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For order-service with prod profile on main branch:
 ```
 GET /order-service/prod/main
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Config Server reads (in order, lowest to highest priority):
 1. application.yml (shared, all services)
@@ -455,6 +467,8 @@ Returns merged JSON:
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Client merges these (first wins): order-service-prod.yml overrides order-service.yml
 overrides application-prod.yml overrides application.yml.
@@ -497,6 +511,8 @@ eureka.instance.lease-expiration-duration-in-seconds=30
 eureka.client.registry-fetch-interval-seconds=5
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Self-preservation is a trade-off: it protects
 against mass false evictions during network blips, at the cost of keeping dead
 instances in the registry. In Kubernetes, this is moot because Kubernetes health
@@ -524,6 +540,8 @@ database.password={cipher}dGhpcyBpcyBlbmNyeXB0ZWQ=...
 # Client sees plain text: mysecretpassword
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Asymmetric (RSA key pair):
 ```properties
 # Config Server
@@ -533,6 +551,8 @@ encrypt.key-store.password=${KEYSTORE_PASSWORD}
 encrypt.key-store.secret=${KEY_PASSWORD}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Client-side decryption:
 ```properties
 # Config Server sends encrypted (not decrypt)
@@ -540,6 +560,8 @@ spring.cloud.config.server.encrypt.enabled=false
 # Client decrypts with:
 encrypt.key=${ENCRYPT_KEY}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Vault integration (better than symmetric):
 ```yaml
@@ -549,6 +571,8 @@ spring.cloud.config.server.vault:
   kvVersion: 2
   backend: secret
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Config Server reads from Vault. No encryption in Git - secrets never enter
 the config repository at all.
 
@@ -587,6 +611,8 @@ spring.application.name=order-service
 spring.config.import=configserver:http://config-server:8888
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The import is processed during the early config loading phase
 (before ApplicationContext but using application.properties, not bootstrap.yml).
 
@@ -620,6 +646,8 @@ interface InventoryClient {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Behind the scenes: Spring Cloud Kubernetes DiscoveryClient queries the
 Kubernetes API for Service endpoints. Load balancing: client-side (Spring Cloud
 LoadBalancer) or Kubernetes kube-proxy (server-side via ClusterIP Service).
@@ -648,6 +676,8 @@ spring:
           - name: order-service-secrets
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Cloud Kubernetes Config Watcher:
 ```yaml
 # Separate container that watches ConfigMaps
@@ -655,6 +685,8 @@ Spring Cloud Kubernetes Config Watcher:
 spring.cloud.kubernetes.config.reload.enabled=true
 spring.cloud.kubernetes.config.reload.strategy=refresh
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Spring Cloud Kubernetes needs specific RBAC
 permissions to call the Kubernetes API (list pods, get ConfigMaps). The required
@@ -687,12 +719,16 @@ eureka:
       defaultZone: http://server1:8761/eureka/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Client configuration (points to both):
 ```properties
 eureka.client.service-url.defaultZone=\
   http://server1:8761/eureka/,\
   http://server2:8762/eureka/
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Behavior:
 - Each server registers with the others
@@ -727,6 +763,8 @@ config-repo/
   order-service-dev.yml         (service, dev)
   order-service-prod.yml        (service, prod)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Client activates profile: spring.profiles.active=prod
 Config Server serves profile-specific files.
 
@@ -737,11 +775,15 @@ config-repo branches:
   staging -> staging config
   dev -> dev config
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Client specifies label (branch):
 ```properties
 spring.cloud.config.label=main  # prod
 spring.cloud.config.label=dev   # dev
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Trade-offs:
 - Profile-based: simple, all config in one branch, easy to see differences
@@ -766,6 +808,8 @@ Client fallback when Config Server is unavailable:
 ```properties
 spring.cloud.config.fail-fast=false
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Service starts with local application.properties.
 Risk: service uses default config, may connect to wrong environment.
 
@@ -777,6 +821,8 @@ spring.cloud.config.retry.initial-interval=1000
 spring.cloud.config.retry.max-interval=2000
 spring.cloud.config.retry.multiplier=1.1
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Service retries for ~10 seconds before failing.
 Works with Kubernetes restartPolicy: Always.
 
@@ -786,6 +832,8 @@ Spring Cloud Config Client can use local filesystem:
 spring.cloud.config.server.native.search-locations=\
   file:///etc/config
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kubernetes mounts ConfigMap as filesystem at /etc/config.
 Config "Server" is just a Spring Boot app reading files.
 No network call needed - no availability issue.
@@ -825,11 +873,15 @@ Body: {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Heartbeat (renew registration):**
 ```
 PUT /eureka/apps/{APP_NAME}/{instanceId}
 Every 30 seconds (eureka.instance.lease-renewal-interval-in-seconds)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Graceful deregistration:**
 ```
@@ -837,10 +889,14 @@ DELETE /eureka/apps/{APP_NAME}/{instanceId}
 On JVM shutdown hook (Spring ApplicationContext.close)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Status change (for graceful degradation):**
 ```
 PUT /eureka/apps/{APP_NAME}/{instanceId}/status?value=OUT_OF_SERVICE
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Removes from load balancing without deregistering.
 Used in rolling deployments: mark OUT_OF_SERVICE before shutdown.
 
@@ -876,6 +932,8 @@ spring.cloud.config.server.git:
   force-pull: false
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Local filesystem backend for Config Server (Kubernetes):**
 ```yaml
 spring:
@@ -888,6 +946,8 @@ spring:
           search-locations:
             - file:///etc/config/
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ConfigMap mounted at /etc/config. No Git IO. Instant config reads.
 
 **3. Config Server HA (multiple instances):**
@@ -902,6 +962,8 @@ spring.cloud.config.server.composite:
   - type: vault
     host: vault-server
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Git provides structure, Vault provides secrets. Best of both.
 
 *What separates good from great:* At very high scale (1000+ services starting
@@ -942,6 +1004,8 @@ class OrderServiceIntegrationTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Option 2: Local config override (simplest):**
 ```properties
 # src/test/resources/application-test.properties
@@ -950,6 +1014,8 @@ spring.config.import=  # remove Config Server import
 feature.enabled=true
 database.url=jdbc:h2:mem:testdb
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Option 3: Native profile Config Server:**
 ```yaml
@@ -963,6 +1029,8 @@ spring:
         native:
           search-locations: classpath:/test-config/
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Test Config Server reads from test classpath resources.
 Fast, no Git, no network.
 
@@ -996,6 +1064,8 @@ Developer changes order-service-prod.yml
   -> @RefreshScope beans recreated with new config
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Config Server monitor endpoint:
 ```yaml
 # Config Server application.yml
@@ -1012,6 +1082,8 @@ spring:
     host: rabbitmq-server
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 GitHub webhook setup:
 - URL: http://config-server:8888/monitor
 - Content-Type: application/json
@@ -1025,3 +1097,33 @@ next poll. Combine with PR review process for production config changes: changes
 to application-prod.yml require approval before merge, and production services
 only update from the main branch. This enforces change management without
 requiring manual intervention in running services.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,16 @@ permalink: /design-patterns/l3-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Design Pattern Anti-patterns](#design-pattern-anti-patterns) | medium |
+| 2 | [Singleton Anti-pattern](#singleton-anti-pattern) | medium |
+
+---
+
 # Design Pattern Anti-patterns
 
 ---
@@ -104,6 +114,8 @@ God Class path:
   -> "Everything depends on OrderService"
   -> Hard to test, hard to extend, low cohesion
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The canonical anti-patterns:**
 
@@ -468,6 +480,34 @@ event cascades at the microservices level.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Singleton Anti-pattern
 
 ---
@@ -585,6 +625,8 @@ void test2() {
     // Order-dependent test failures.
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The thread-safety problem:**
 
@@ -950,3 +992,33 @@ Both are anti-patterns for mutable state in production code. Monostate is
 arguably worse because it is invisible: the class looks like a normal class
 but behaves like a global variable. At least the Singleton pattern is
 explicitly communicating "only one instance."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

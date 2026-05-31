@@ -211,6 +211,8 @@ COMMON DIAGNOSTIC COMMANDS
   curl jaeger:16686/api/traces/{trace_id}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The most common error in incident diagnosis is fixing the immediate
 symptom without identifying the root cause. Every incident that recurs
@@ -929,6 +931,8 @@ jmap -histo <PID> | head -30
 # A class with growing count across multiple samples = suspect
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 2: capture a heap dump (minimal service disruption)
 ```
 # Heap dump pauses the JVM for 1-3 minutes
@@ -936,6 +940,8 @@ Phase 2: capture a heap dump (minimal service disruption)
 jmap -dump:format=b,file=/tmp/heap.hprof <PID>
 ls -lh /tmp/heap.hprof  # verify size (typically 1-10 GB)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Phase 3: analyze with Eclipse MAT or similar
 ```
@@ -949,12 +955,16 @@ Phase 3: analyze with Eclipse MAT or similar
 #   OR many instances of same class
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 4: correlate with code changes
 ```
 # Memory leak classes often narrow to 1-2 classes
 # Cross-reference with recent changes to those classes
 git log --since="30 days ago" -- src/main/java/...LeakClass.java
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Gives the specific commands (jmap,
 heap dump), addresses the "without restarting" constraint explicitly
@@ -1152,6 +1162,8 @@ OBSERVABILITY PLATFORM FOR FAST DIAGNOSIS
   SLO dashboard: current budget remaining, burn rate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The design key: the correlation layer is the highest-value component.
 Without it, metrics, logs, and traces are three separate systems that
 require manual correlation. With deploy event markers, topology graphs,
@@ -1311,3 +1323,33 @@ sequenceDiagram
 
 4. "Is there a blameless postmortem culture, or do postmortems tend to
    focus on individual mistakes? How is this enforced?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

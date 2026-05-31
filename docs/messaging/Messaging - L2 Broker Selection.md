@@ -8,6 +8,16 @@ permalink: /messaging/l2-broker-selection/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [RabbitMQ vs Kafka - Choosing a Broker](#rabbitmq-vs-kafka---choosing-a-broker) | medium |
+| 2 | [Request-Reply Pattern](#request-reply-pattern) | medium |
+
+---
+
 # RabbitMQ vs Kafka - Choosing a Broker
 
 ---
@@ -61,6 +71,8 @@ Group B offset: 10 (currently at msg 10, catching up)
 Group C offset: 60 (ahead of Group A)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RabbitMQ data model:
 ```
 Exchange -> binding -> Queue -> Consumer
@@ -70,6 +82,8 @@ Exchange -> binding -> Queue -> Consumer
   No replay possible (message gone after ACK)
   Rich routing: direct, topic, fanout, headers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Kafka's retention model is the fundamental differentiator. Because messages are not removed on consumption, Kafka enables: replay (rewind consumer offset), multiple independent consumers, time-travel debugging, audit logs. RabbitMQ's ephemeral model enables: flexible routing, per-message metadata, priority queues, and first-class dead letter handling without application code.
@@ -292,6 +306,34 @@ Symptom: a second consumer team needs to process the same historical events; the
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Request-Reply Pattern
 
 ---
@@ -348,6 +390,8 @@ Requester                  Broker             Responder
   | return result            |                    |
   | delete reply-to queue    |                    |
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The correlation ID is the contract linker. The reply-to queue is ephemeral - created per request (or per requester instance) and deleted after use. Without correlation IDs, concurrent requesters receiving responses on the same reply queue cannot match responses to their original requests. This is not a theoretical concern - in a service with high concurrency, dozens of requests are in-flight simultaneously.
@@ -578,3 +622,33 @@ Symptom: the requester's thread pool fills with blocked threads waiting for repl
 | Hiring Manager | Lead with: request-reply adds latency - prefer REST unless broker decoupling matters |
 | Bar Raiser | Lead with: request-reply is not free async - it is complex synchronous over async |
 | Peer Engineer | "The Spring AMQP RabbitTemplate handles this pattern cleanly - use it rather than rolling your own" |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

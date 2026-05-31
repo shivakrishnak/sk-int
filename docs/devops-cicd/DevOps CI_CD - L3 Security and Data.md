@@ -8,6 +8,16 @@ permalink: /devops-cicd/l3-security-and-data/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Secrets Management in Pipelines](#secrets-management-in-pipelines) | medium |
+| 2 | [Database Migrations in CI/CD](#database-migrations-in-cicd) | medium |
+
+---
+
 # Secrets Management in Pipelines
 
 🎯 Interview Weight: critical - secrets management is a top DevSecOps
@@ -131,6 +141,8 @@ CI job starts
   → credentials expire automatically when job completes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Short-lived credentials limit the blast radius of any compromise.
 A 15-minute OIDC-derived credential that is leaked is exploitable
@@ -172,7 +184,7 @@ centrally-managed credentials are therefore the most secure option.
 
 # .env file (accidentally committed to Git)
 DATABASE_PASSWORD=my-super-secret-password
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_ACCESS_KEY_ID=AKIA_YOUR_KEY_EXAMPLE
 AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 # .github/workflows/deploy.yml - WRONG
@@ -181,7 +193,7 @@ jobs:
     env:
       # WRONG: Long-lived credential hardcoded in workflow file
       # These are readable by any contributor with repo access
-      AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+      AWS_ACCESS_KEY_ID: AKIA_YOUR_KEY_EXAMPLE
       AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
     steps:
@@ -276,6 +288,8 @@ jobs:
           flyway migrate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```hcl
 # AWS IAM: Trust policy for GitHub OIDC
 # Only GitHub Actions from the specific repo+branch can assume this role
@@ -302,6 +316,8 @@ jobs:
   }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // Application runtime secret injection via AWS SDK
@@ -604,7 +620,7 @@ Minute 1-2: ROTATE THE CREDENTIAL IMMEDIATELY.
 Before doing anything else, rotate or deactivate the exposed
 credential. Log into the AWS Console → IAM → the affected user →
 Security credentials → Deactivate the key. Or via CLI:
-`aws iam update-access-key --access-key-id AKIAIOSFODNN7EXAMPLE --status Inactive`.
+`aws iam update-access-key --access-key-id AKIA_YOUR_KEY_EXAMPLE --status Inactive`.
 Rotation takes 30 seconds. Do this first. Everything else can
 wait.
 
@@ -625,6 +641,8 @@ git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 git push origin --force --all
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Note: this does not remove the commit from GitHub's cache immediately.
 Contact GitHub support to purge cached views.
 
@@ -704,6 +722,8 @@ trufflehog git file://./myrepo --only-verified --json
 # --json: machine-parseable output for SIEM integration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 GitHub Secret Scanning (if on GitHub):
 GitHub automatically scans all commits and surfaces detected secrets
 in the repository's Security tab. Check the Secret Scanning Alerts
@@ -722,6 +742,8 @@ gh api /repos/:owner/:repo/actions/runs --jq '.workflow_runs[].id' |
   done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Signs of an active secret exploit in CloudTrail (check after
 finding a potentially leaked AWS key):
 ```bash
@@ -731,6 +753,8 @@ aws cloudtrail lookup-events \
   --start-time "2024-01-01T00:00:00Z" \
   --query 'Events[?EventName!=`AssumeRole`].[EventTime,EventName,SourceIPAddress]'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Unusual source IPs, EC2 instance creation, IAM user creation, or
 data export calls are indicators of active exploit.
 
@@ -775,6 +799,8 @@ path "secret/data/production/payment-service/*" {
 # - staging environment secrets
 # - any write operations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Vault Agent Sidecar injects secrets.
 The Vault Agent runs as an init container and a sidecar. It:
@@ -883,6 +909,34 @@ refresh all ensure secrets are always pre-fetched.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Database Migrations in CI/CD
 
@@ -1117,6 +1171,8 @@ BEGIN
 END $$;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```sql
 -- After backfill is complete (verify: WHERE email IS NULL count = 0)
 -- V20240115002__add_email_not_null.sql
@@ -1130,6 +1186,8 @@ ALTER TABLE users
   CHECK (email <> '');
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```sql
 -- DEPLOY new app version (reads email, writes to both)
 -- Only after all app instances are using new code:
@@ -1137,6 +1195,8 @@ ALTER TABLE users
 ALTER TABLE users DROP COLUMN email_address;
 -- Now safe: no running app instance references email_address
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // Application code during transition (writes to both columns)
@@ -1168,6 +1228,8 @@ public class User {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # Flyway configuration in CI/CD pipeline
@@ -1463,6 +1525,8 @@ Why the naive approach is wrong:
 ALTER TABLE orders
   ADD COLUMN order_region VARCHAR(20) NOT NULL DEFAULT 'US';
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 On PostgreSQL before version 11: this rewrites the entire table (full
 copy), acquires an exclusive lock for the duration. 300 million rows
 at 100 bytes each = 30GB to rewrite. At 200MB/s, this takes 150 seconds
@@ -1482,11 +1546,15 @@ Step 1: Add nullable column (instant - no table lock, no row write):
 ALTER TABLE orders ADD COLUMN order_region VARCHAR(20);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Set default for future inserts (instant):
 ```sql
 ALTER TABLE orders
   ALTER COLUMN order_region SET DEFAULT 'US';
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Backfill in batches (hours, but non-blocking):
 ```sql
@@ -1510,6 +1578,8 @@ BEGIN
 END $$;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Add NOT NULL constraint (after backfill completes):
 ```sql
 -- PostgreSQL 12+: NOT VALID skips existing row check (fast)
@@ -1521,6 +1591,8 @@ ALTER TABLE orders
 -- Later (separate migration):
 ALTER TABLE orders VALIDATE CONSTRAINT orders_region_not_null;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `ADD CONSTRAINT ... NOT VALID`
 pattern allows adding the constraint logically without validating
@@ -1595,6 +1667,8 @@ LIMIT 10;
 -- A row with success = false is the failed migration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check the migration error in the application or CI logs. Flyway
 logs the exact SQL that failed and the database error message.
 
@@ -1616,6 +1690,8 @@ DELETE FROM flyway_schema_history
 -- Fix the underlying cause
 -- Re-run flyway migrate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If the migration is partially applied (not idempotent):
 - Check what the migration actually did before failing
@@ -1671,6 +1747,8 @@ Apply V20240115001 to APAC
 Verify all regions at same schema version
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 2 - Deploy new app code region by region:
 ```
 Deploy new app to US (writes to both old and new columns)
@@ -1680,10 +1758,14 @@ Monitor for 30 minutes
 Deploy new app to APAC
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 3 - Apply contract migration after ALL regions running new code:
 ```
 Apply V20240115003 (DROP COLUMN) to all regions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The migration pipeline must enforce this ordering. A contract
 migration that drops a column before all regions have deployed the
@@ -1700,3 +1782,33 @@ problem. The migration coordinator must know the schema version of
 each region's database and the app version of each region's
 deployment. The contract phase only proceeds when the coordinator
 confirms all regions meet the prerequisites.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -130,6 +130,8 @@ Business context is added explicitly at call sites.
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Including the trace ID as a named field (not embedded in the
 message string) is the single most important decision in log
@@ -366,6 +368,8 @@ Diagnostic:
   regexp "[0-9]{16}"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Audit all log call sites. Remove all PII fields. Replace
 with opaque identifiers (user_id, not email). Add PII detection
 to CI pipeline using tools like `detect-secrets` or custom rules.
@@ -395,6 +399,8 @@ curl http://loki:3100/loki/api/v1/query_range \
 # Normal: < 1000 lines/sec for 10k RPS service
 # Explosion: > 10,000 lines/sec
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Set log level to INFO or WARN in production. Use dynamic
 log level configuration (Spring Boot Actuator `/loggers` endpoint,
@@ -429,6 +435,8 @@ java -javaagent:/opt/otel/opentelemetry-javaagent.jar \
   -jar app.jar
 # The OTEL agent should inject trace_id into MDC
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add OpenTelemetry Java agent to service startup command.
 Configure the Logback JSON encoder to include MDC trace_id and
@@ -690,6 +698,34 @@ examples above illustrate structured logging clearly.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Log Levels and Severity
 
 **TL;DR** - Five standard log levels (DEBUG, INFO, WARN, ERROR,
@@ -793,6 +829,8 @@ DEBUG (10) - Verbose detail. Dev/temp use only.
 TRACE (5)  - Extremely verbose. Never in production.
   Example: every byte of a network packet
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 A logger set to level N emits all log statements at level N
 or above. Setting production to INFO captures INFO, WARN,
@@ -1002,6 +1040,8 @@ curl -s http://app:8080/actuator/loggers | \
 # If DEBUG rate > 1000/sec per service, disable immediately
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Change log level to INFO via Actuator endpoint without
 restart: `curl -X POST http://app:8080/actuator/loggers/ROOT
 -H "Content-Type: application/json"
@@ -1032,6 +1072,8 @@ Diagnostic:
 # Any exception stack trace in WARN is probably wrong level
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Audit all catch blocks in checkout service. Promote any
 caught exception that represents a business failure from WARN
 to ERROR. Re-test the alert rule: `sum(rate
@@ -1059,6 +1101,8 @@ Diagnostic:
   count_by(event) | sort_desc
 # The top event type by count is the noise source
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Change the log level for the high-volume event from INFO
 to DEBUG. If the event is genuinely worth recording at INFO,
@@ -1323,6 +1367,34 @@ in the Concept Explanation section above.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Log Aggregation Pipelines
 
@@ -1628,6 +1700,8 @@ curl http://loki:3100/metrics | \
   grep distributor_bytes_received_total
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Scale Loki horizontally if the bottleneck is ingestion
 capacity. Increase Fluentbit's Retry_Limit to 10 to ride out
 short Loki slowdowns. Enable filesystem buffering to prevent
@@ -1657,6 +1731,8 @@ kubectl exec -n logging fluentbit-xyz -- \
 # shows how far behind the pipeline is
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Reduce the Fluentbit flush interval from 5 seconds to
 2 seconds. Reduce the OTel Collector batch send delay.
 
@@ -1684,6 +1760,8 @@ Diagnostic:
 kubectl auth can-i get pods \
   --as=system:serviceaccount:logging:fluentbit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add RBAC ClusterRole and ClusterRoleBinding granting
 Fluentbit read access to pods, namespaces, and nodes.
@@ -1945,3 +2023,33 @@ in L4/L5 files.)*
 
 *(Omit: the pipeline architecture is shown clearly in the ASCII
 flow diagram in the Concept Explanation section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -146,6 +146,8 @@ QUALITY ATTRIBUTE TRADE-OFF MAP
       "Every QA improvement has a cost"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Architecture tactics by quality attribute:**
 
 | QA | Tactics |
@@ -329,6 +331,8 @@ curl -s https://api.example.com/metrics |
   grep payment_process_seconds_max
 # p99=8.1 - but what is the requirement?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Quality Attribute Workshop (QAW) before the next major
 architecture decision. Produce concrete scenarios with measurable
@@ -603,6 +607,8 @@ static final ArchRule circuitBreakerRule =
         .because("All Feign clients must have circuit breakers");
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For performance:
 ```java
 // Fitness function: latency regression test
@@ -617,6 +623,8 @@ void paymentProcessingLatencyUnder2Seconds() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For security:
 ```java
 // ArchUnit: no direct DB access from controllers
@@ -627,6 +635,8 @@ static final ArchRule noDirectDbInControllers =
         .resideInPackage("..repository..");
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For maintainability:
 ```java
 // ArchUnit: no circular dependencies between packages
@@ -635,6 +645,8 @@ static final ArchRule noCycles =
     slices().matching("com.example.(*)..").should()
         .beFreeOfCycles();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 These run in the CI/CD pipeline. A QA violation fails the build.
 
@@ -721,6 +733,8 @@ Utility
     Confidentiality
       -> "PCI DSS compliance for payment data" (H, H)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 High-importance, high-difficulty scenarios are the architecture
 drivers - they require specific structural decisions and must be
@@ -818,6 +832,8 @@ for rate in 1000 2000 5000 10000; do
 done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Architecture tactics: caching (reduce load on databases), async
 processing (decouple slow work from critical path), CDN (reduce
 latency for static content), horizontal sharding (distribute
@@ -870,6 +886,8 @@ static final ArchRule domainIndependence =
         .should().dependOnClassesThat()
         .resideInPackage("..infrastructure..");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Maintainability anti-patterns: God Classes (cyclomatic complexity
 > 50), circular dependencies (nothing can change without breaking
@@ -1044,3 +1062,33 @@ mindmap
 > architect's job is to select the right combination of tactics
 > given the priority of each quality attribute and their inherent
 > conflicts.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

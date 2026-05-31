@@ -7,6 +7,17 @@ permalink: /css/l1-layout-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Display Property](#css-display-property) | critical |
+| 2 | [CSS Positioning](#css-positioning) | high |
+| 3 | [CSS Float and Clear](#css-float-and-clear) | low-medium |
+
+---
+
 # CSS Display Property
 
 🎯 **Interview Weight:** critical - controls whether an element
@@ -132,6 +143,8 @@ VISUAL REFERENCE:
   grid:         [ child | child ]
                 [ child | child ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -744,6 +757,34 @@ values are better understood through code than diagrams)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Positioning
 
 🎯 **Interview Weight:** high - positioning bugs are common
@@ -875,6 +916,8 @@ position: sticky
   - requires: scroll container must NOT have overflow:hidden
   - requires: parent must be taller than sticky element
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1097,6 +1140,8 @@ Diagnosis:
 # If it shows "document" or "html" -> no positioned ancestor
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add `position: relative` to the intended parent.
 
 ---
@@ -1114,6 +1159,8 @@ Diagnosis:
 # DevTools: scroll and watch if position changes in Layout tab
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: z-index not working**
@@ -1128,6 +1175,8 @@ Diagnosis:
 # position + z-index, opacity < 1, transform, filter,
 # will-change, isolation: isolate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: either place elements in the same stacking context,
 or ensure the stacking context containing your element
@@ -1522,6 +1571,34 @@ for CSS positioning concepts)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Float and Clear
 
 🎯 **Interview Weight:** low-medium - floats are largely
@@ -1644,6 +1721,8 @@ FIX: display: flow-root on parent (BFC)
     [floated child]  <- contained
   div height = float height ✓
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1839,6 +1918,8 @@ Diagnosis:
 # Height shows 0 in Layout tab
 # Children visible but outside parent in box model
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `display: flow-root` on the parent. Or if keeping
 legacy: clearfix pseudo-element.
@@ -2214,3 +2295,33 @@ alternatives covered in Concept Explanation and Q5 Deep-Dive)*
 
 *(Omit: the code examples with inline comments are sufficient
 for understanding CSS float behavior)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

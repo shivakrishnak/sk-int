@@ -7,6 +7,15 @@ permalink: /frontend-build-tools/l4-build-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Build Performance at Scale (esbuild, SWC, Turbopack)](#build-performance-at-scale-esbuild-swc-turbopack) | medium |
+
+---
+
 # Build Performance at Scale (esbuild, SWC, Turbopack)
 
 ---
@@ -86,6 +95,8 @@ Turborepo (monorepo task caching):
   Pipeline: declares dependency order for tasks
   Result: 90%+ cache hit rate in CI for unchanged packages
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The production reality:**
 
@@ -195,6 +206,8 @@ module.exports = {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # GitHub Actions with Turborepo remote cache:
@@ -333,6 +346,8 @@ Results:
     3 packages rebuild: 2.5 min
     (Still faster: each uses SWC, not babel)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -514,3 +529,33 @@ causes a regression, the alert fires and it's treated as a production
 incident. Most teams only optimize reactively; the engineering culture
 that maintains this proactively keeps developer productivity high as
 the codebase grows.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

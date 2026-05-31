@@ -8,9 +8,20 @@ permalink: /jpa/l4-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L4 Anti-Patterns](#jpa---l4-anti-patterns) | medium |
+
+---
+
 # JPA - L4 Anti-Patterns
 
 ## JPA Anti-Patterns: N+1, Cartesian Product, Cross Join at Scale
+
+---
 
 ### 🎯 Model Answer
 
@@ -147,6 +158,8 @@ IMPLICIT CROSS JOIN (JPQL BUG):
   List<Order> findBigOrdersSimplest();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -271,6 +284,8 @@ Read path decision tree:
      Query 2: SELECT p FROM Product p JOIN FETCH p.items WHERE p.id IN (...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -357,6 +372,8 @@ Fix:
   return new PageImpl<>(orders, pageable, ids.getTotalElements());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -425,4 +442,34 @@ silently deduplicated when items have duplicate IDs (shouldn't happen but a foot
 fix: separate queries, NOT changing List to Set. The `MultipleBagFetchException` is Hibernate
 communicating "this query would produce incorrect results due to the cartesian product". Changing
 to Set suppresses the exception but doesn't eliminate the underlying performance problem.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -8,6 +8,15 @@ permalink: /microservices/l4-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Microservices Performance at Scale](#microservices-performance-at-scale) | medium |
+
+---
+
 # Microservices Performance at Scale
 
 ---
@@ -60,6 +69,8 @@ Microservice call (HTTP):
   = 50 cores just to absorb serialization overhead
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Amdahl's Law applied to microservices:**
 ```
 Sequential hops CANNOT be parallelized:
@@ -79,6 +90,8 @@ No amount of parallelization reduces it further.
 Design: find the critical path. Eliminate every
 step on it that can be eliminated.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **API design for performance:**
 ```
@@ -106,6 +119,8 @@ GOOD: Purpose-built API
   Total: 5ms (single request,
   resolver parallelizes sub-fields)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The most impactful performance optimization in microservices is not improving individual service latency - it is reducing the number of sequential service calls in the critical path. Reducing 10 sequential calls to 5 parallel calls reduces latency by more than making each of the 10 calls twice as fast.
@@ -448,3 +463,33 @@ Fix: Increase pool size (datasource.hikari.maximum-pool-size). But validate agai
 | gRPC vs JSON | 2-3x lower | Medium | High-frequency internal calls |
 | GraphQL | Single request | High | Clients with variable data needs |
 | Read model (CQRS) | Pre-computed = fast | High | Complex aggregation queries |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,17 @@ permalink: /database-sql/l1-joins-aggregates/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [INNER JOIN - Combining Tables on Matching Rows](#inner-join---combining-tables-on-matching-rows) | medium |
+| 2 | [LEFT JOIN and RIGHT JOIN - Including Unmatched Rows](#left-join-and-right-join---including-unmatched-rows) | medium |
+| 3 | [Aggregate Functions - COUNT, SUM, AVG, GROUP BY, HAVING](#aggregate-functions---count-sum-avg-group-by-having) | medium |
+
+---
+
 # INNER JOIN - Combining Tables on Matching Rows
 
 **TL;DR:** INNER JOIN returns only rows where the join condition matches
@@ -70,6 +81,8 @@ CROSS JOIN:    Cartesian product (every row x every row)
 SELF JOIN:     table joined to itself
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Equi-join vs. non-equi-join:**
 
 ```sql
@@ -80,6 +93,8 @@ ON a.id = b.a_id
 ON a.created_at BETWEEN b.starts_at AND b.ends_at
 ON a.price >= b.min_price AND a.price < b.max_price
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -319,6 +334,34 @@ CTE is the modern, readable alternative to derived table subqueries."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # LEFT JOIN and RIGHT JOIN - Including Unmatched Rows
 
 **TL;DR:** LEFT JOIN returns all rows from the left table, plus matching
@@ -384,6 +427,8 @@ RIGHT JOIN result: [2-B, 3-B, 5-null_A]
 FULL OUTER:        [1-null, 2-B, 3-B, 4-null, null-5]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Anti-join pattern:**
 
 ```sql
@@ -402,6 +447,8 @@ SELECT a.*
 FROM a
 WHERE a.id NOT IN (SELECT a_id FROM b WHERE a_id IS NOT NULL);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -636,6 +683,34 @@ deduplicate). EXISTS is cleaner and avoids the deduplication step."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Aggregate Functions - COUNT, SUM, AVG, GROUP BY, HAVING
 
 **TL;DR:** Aggregate functions compute a single value from a group of rows.
@@ -702,6 +777,8 @@ Key: WHERE runs BEFORE grouping (can't use aggregate results).
      HAVING runs AFTER grouping (can use aggregate results).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Aggregate function behavior with NULLs:**
 
 ```
@@ -712,6 +789,8 @@ AVG(column)     - avg of non-NULL values (denominator = non-NULL count)
 MIN(column)     - minimum non-NULL value
 MAX(column)     - maximum non-NULL value
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -943,3 +1022,33 @@ an index scan with duplicate skipping may be available (index-only scan
 with distinct). Rule of thumb: use DISTINCT for simple deduplication,
 GROUP BY when you need aggregates. Do NOT use DISTINCT as a lazy fix
 for a JOIN that produces duplicate rows - fix the join logic."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

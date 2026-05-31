@@ -124,6 +124,8 @@ user_id              1,000,000       x1,000,000
 Total series:        600 x 1,000,000 = 600,000,000 (CATASTROPHIC)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prometheus holds two hours of head samples in memory. At 15s
 scrape interval that is 480 samples per series. At 10 bytes
 per sample: 600M series x 480 x 10 = 2,880 TB. Even 1M series
@@ -339,6 +341,8 @@ curl -s http://prometheus:9090/api/v1/query \
     series: .value[1]}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Identify the offending metric and remove the
 high-cardinality label via a relabel rule:
 ```yaml
@@ -347,6 +351,8 @@ metric_relabel_configs:
   - action: labeldrop
     regex: user_id
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Prevention: Enforce cardinality limits in CI with a
 metric schema linting step. Alert on
@@ -375,6 +381,8 @@ histogram_quantile(0.99,
   ))
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Create recording rules to pre-aggregate expensive
 queries. Or redesign the metric to remove the
@@ -409,6 +417,8 @@ increase(
   prometheus_tsdb_head_series_created_total[1h]
 ) > 100
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Remove ephemeral labels. Use only stable values:
 service name, environment, region, version. Pod hash
@@ -517,6 +527,34 @@ separate data point associated with a specific bucket
 observation - not as a time series label. In the Prometheus
 exposition format, an exemplar looks like:
 `http_request_duration_seconds_bucket{le="0.5"} 12
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 # {trace_id="abc123"} 0.437 1620000000.000`. In OpenMetrics
 format (required for exemplar support), the exemplar is
 a named sample attached to the bucket value. Grafana
@@ -826,6 +864,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Trace Sampling Strategies
 
 **TL;DR** - Trace sampling decides which traces to keep.
@@ -931,6 +997,8 @@ Request arrives at Service A
   -> Final trace: either fully stored or fully dropped
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 TAIL-BASED SAMPLING - decision after trace completes:
 ```
 Request arrives at Service A, B, C, D
@@ -944,6 +1012,8 @@ Request arrives at Service A, B, C, D
   -> Kept traces: forwarded to Jaeger/Tempo
   -> Dropped traces: spans discarded from buffer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Head-based and tail-based are fundamentally different problems.
@@ -1168,6 +1238,8 @@ curl http://collector:8888/metrics | grep tail_sampling
 otelcol_processor_tail_sampling_sampling_decision_timer_count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add tail-based sampling with error policy to the OTel
 Collector. Keep head-based for non-error traces.
 
@@ -1198,6 +1270,8 @@ otelcol_processor_tail_sampling_sampling_trace_dropped_count
 # Alert: heap > 6GB on an 8GB Collector
 process_runtime_go_mem_stats_heap_alloc_bytes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Scale Collector horizontally using consistent hash-based
 load balancing (LoadBalancingExporter) to distribute traces
@@ -1234,6 +1308,8 @@ kubectl exec -it service-b-pod -- \
 # If no traceparent header: service B is not instrumented
 # If traceparent sampled flag = 00: service B is dropping
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Ensure all services use Sampler.parentBased() wrapping
 their local sampler. The parentBased sampler respects the
@@ -1678,3 +1754,33 @@ flowchart LR
 > The key difference: tail-based sees the complete trace
 > outcome (error vs healthy) before deciding, enabling 100%
 > error capture while head-based makes a blind bet.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

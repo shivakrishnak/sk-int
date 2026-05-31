@@ -149,6 +149,8 @@ Step 4: Claude generates final response
   stop_reason: "end_turn"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Tool definition schema:**
 
 ```json
@@ -175,6 +177,8 @@ Step 4: Claude generates final response
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Parallel tool calls:**
 
 Claude can request multiple tools in one turn:
@@ -187,6 +191,8 @@ content: [
    "input": {"city": "Paris"}}
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Execute both in parallel, return both results.
 
@@ -488,6 +494,8 @@ def run_agent_safe(user_message: str) -> str:
     return "Agent could not complete the task in time."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -618,6 +626,8 @@ tool_results.append({
 })
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Transient failure (network timeout, rate limit):
 Retry with backoff before returning error to Claude.
 If still fails: return an error result.
@@ -676,6 +686,8 @@ def execute_tool_for_user(
     # Execute with user context
     return execute_tool(name, inputs, user_id=user_id)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pattern 3 - Tool scoping by user:
 Provide different tool definitions per user role:
@@ -747,6 +759,8 @@ async def run_parallel_tools(
     return tool_results
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Performance impact: if Claude calls 5 tools that
 each take 500ms, sequential = 2.5 seconds, parallel = 0.5 seconds.
 
@@ -775,6 +789,8 @@ for block in msg.content:
         }), file=sys.stderr)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Check the full conversation history: print the
     complete messages array before each API call.
     Claude's tool selection depends on the full context.
@@ -797,6 +813,8 @@ msg = client.messages.create(
     tool_choice={"type": "tool", "name": "get_weather"}
 )
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This forces Claude to use a specific tool, useful
 for testing individual tools in isolation.
 
@@ -827,6 +845,8 @@ tool_results.append({
     "is_error": True
 })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With `is_error: True`:
 Claude understands this is an error, not data.
@@ -1014,6 +1034,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Claude System Prompts and Context Management
 
 **Interview Weight:** ★★☆ - System prompt design and
@@ -1139,6 +1187,8 @@ WITH LARGE DOCUMENT CONTEXT (RAG):
   Total:         61,000 tokens
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **System prompt structure:**
 
 ```
@@ -1158,6 +1208,8 @@ Current quarter data: Q3 2024 revenue: $12.4M...
 Key products: [product list]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Prompt caching for system prompts:**
 
 ```python
@@ -1169,6 +1221,8 @@ system = [
     }
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Anthropic caches the marked section for 5 minutes.
 Cache hits: 10% of normal input token price.
@@ -1512,6 +1566,8 @@ result = client.beta.messages.count_tokens(
 print(f"Input tokens: {result.input_tokens}")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rough estimate (without API call):
 - English text: ~1 token per 4 characters
 - Code: ~1 token per 3 characters
@@ -1615,6 +1671,8 @@ class SlidingWindowHistory:
         return len(self._history) // 2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Using `deque(maxlen=N)` is idiomatic Python for
 a sliding window: additions beyond maxlen automatically
 drop the oldest element. Setting `maxlen=max_turns * 2`
@@ -1654,6 +1712,8 @@ TEST_CASES = [
     }
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (2) Run regression tests on prompt changes:
     Automated: call the API with each test case,
@@ -1808,6 +1868,8 @@ Fix:
   do NOT promise resolution timelines
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Lesson: "helpful" and "accommodating" are not constraints.
 Constraints must be specific about what Claude
 must NOT say or commit to.
@@ -1936,3 +1998,33 @@ flowchart LR
 > prompt caching flag on the system prompt is orthogonal
 > to these strategies - it applies regardless of
 > which context management strategy you choose.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -571,9 +571,21 @@ Only stop when:
   (see Interview Deep-Dive Rules in auto-loaded instructions)
 - File naming: `{Topic} - {Subtopic}.md` (SPACE-HYPHEN-SPACE, never em dash)
 - Folder naming: lowercase with hyphens (e.g., `java-concurrency/`)
-- Code lines: max 70 characters
-- ASCII diagrams: max 59 characters wide
-- Diagrams: DUAL format (ASCII first, then Mermaid below). All standard Mermaid types supported; common: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph
+- Code lines: max 70 characters. Always specify language after opening triple backtick.
+- Every code block MUST be followed by `> **Code walkthrough:**` (3-6 sentences
+  covering: (1) WHAT IT SHOWS, (2) KEY MECHANISM step-by-step, (3) WHY IT MATTERS
+  in production, (4) WHAT BREAKS when misapplied, (5) TAKEAWAY rule to internalise).
+  A bare code block without this walkthrough is a spec violation.
+- ASCII diagrams: max 59 characters wide (escape hatch: up to 79 chars only if
+  adjacent prose description exists AND content is clearer; >79 → split or Mermaid).
+- Every ASCII or Mermaid diagram MUST be followed by `> **Diagram walkthrough:**`
+  (3-5 sentences: (1) WHAT IT DEPICTS, (2) HOW TO READ IT naming each node,
+  (3) KEY RELATIONSHIP, (4) EDGE CASE on failure path, (5) INSIGHT a senior notices).
+- Every Mermaid block MUST also be preceded by a 1-2 sentence prose description.
+- Diagrams: DUAL format (ASCII first, then Mermaid immediately below). One shared
+  walkthrough AFTER Mermaid is sufficient for DUAL pairs. All 17 Mermaid types
+  supported; common: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram,
+  erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph.
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - No em dashes anywhere - use regular hyphens only
 - YAML frontmatter (when used) starts at byte 0 with `---`

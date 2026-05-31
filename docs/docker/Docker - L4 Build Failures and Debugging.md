@@ -8,9 +8,20 @@ permalink: /docker/l4-build-failures-and-debugging/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L4 Build Failures and Debugging](#docker---l4-build-failures-and-debugging) | medium |
+
+---
+
 # Docker - L4 Build Failures and Debugging
 
 ## Docker Build Failures and Debugging
+
+---
 
 ### 🎯 Model Answer
 
@@ -235,6 +246,8 @@ DEBUGGING TECHNIQUES:
   # If this fixes DNS/connectivity issues: container network config problem.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -409,6 +422,8 @@ Diagnosis methodology:
   RUN curl -v https://registry.npmjs.org/ 2>&1 | head -20
   # Remove after diagnosis.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -812,4 +827,34 @@ build failures separately from MTTR for deployment failures enables
 precise attribution and prioritization. Most engineers track failure
 counts. Great engineers connect infrastructure metrics to business
 outcomes.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

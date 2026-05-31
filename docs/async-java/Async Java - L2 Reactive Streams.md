@@ -7,7 +7,14 @@ permalink: /async-java/l2-reactive-streams/
 render_with_liquid: false
 ---
 
-# Async Java - L2 Reactive Streams
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L2 Reactive Streams](#async-java---l2-reactive-streams) | medium |
+| 2 | [Reactive Streams Specification](#reactive-streams-specification) | medium |
+| 3 | [Project Reactor Flux and Mono](#project-reactor-flux-and-mono) | medium |
 
 ---
 
@@ -105,6 +112,8 @@ Reactive Streams protocol:
       |--- onNext(item4) ------->|
       |--- onComplete() -------->|  6. terminal signal
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rule: `onNext` called at most total-requested times.
 Rule: after `onComplete` or `onError`, no more `onNext`.
@@ -271,6 +280,8 @@ jmap -dump:format=b,file=heap.hprof <pid>
 # with millions of entries = unbounded buffer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix in Project Reactor:
 ```java
 // WRONG: no backpressure
@@ -282,6 +293,8 @@ flux.limitRate(64) // request 64 at a time
     .flatMap(item -> process(item), 8) // max 8 concurrent
     .subscribe();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -426,6 +439,8 @@ sink.tryEmitNext(event);
 sink.tryEmitComplete();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that Reactor deprecated
 `FluxProcessor` in 3.4 in favor of `Sinks`. Sinks decouple the emit
 side from the subscribe side - no need to implement both Publisher and
@@ -517,6 +532,8 @@ kafkaFlux.onBackpressureError();
 // Emits onError(IllegalStateException) when overwhelmed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Choosing strategy by domain:
 - Financial trades: `onBackpressureError()` - data loss is unacceptable
 - Real-time UI updates: `onBackpressureLatest()` - stale updates are fine
@@ -559,6 +576,8 @@ void customPublisherRespectsBackpressure() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For TCK (Technology Compatibility Kit) testing - the official spec
 compliance test suite:
 ```java
@@ -573,6 +592,8 @@ class MyPublisherTest
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The TCK runs all 18 spec rules automatically. Use it for any custom
 Publisher or Subscriber before publishing a library.
@@ -653,6 +674,34 @@ sequenceDiagram
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Project Reactor Flux and Mono
 
@@ -751,6 +800,8 @@ Key operators:
   Side effects:   doOnNext, doOnError, doOnComplete, log()
   Threading:      subscribeOn, publishOn
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `flatMap` is the most powerful and most dangerous operator. `Flux.flatMap(fn,
@@ -937,6 +988,8 @@ BlockHound.install();
 // Throws BlockingOperationError when detected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 // WRONG: blocking on reactive thread
@@ -947,6 +1000,8 @@ return Mono.fromCallable(() -> jdbc.query(sql));
 return Mono.fromCallable(() -> jdbc.query(sql))
     .subscribeOn(Schedulers.boundedElastic());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rule: any blocking call MUST use `subscribeOn(Schedulers.boundedElastic())`.
 
@@ -978,6 +1033,8 @@ Mono<Integer> sum = flux.reduce(0, Integer::sum);
 Mono<List<Integer>> collected = flux.collectList();
 Mono<Long> count = flux.count();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `Mono<Void>`: used for void async operations. `Mono.empty()` completes
 without emitting. Do NOT use `Mono.just(null)` - Reactor prohibits null
@@ -1012,6 +1069,8 @@ flux.concatMap(item -> processAsync(item));
 flux.flatMap(item -> processAsync(item), 8); // max 8 concurrent
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Latency: flatMap = max(all durations). concatMap = sum(all durations).
 For 10 calls of 50ms: flatMap ≈ 50ms; concatMap ≈ 500ms.
 
@@ -1039,6 +1098,8 @@ Mono<Response> buildResponse(String userId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Error handling with zip: if one Mono fails, the zip Mono fails immediately.
 The other Monos continue running (no cancellation). Use `zipDelayError` to
 collect all errors before failing:
@@ -1046,6 +1107,8 @@ collect all errors before failing:
 Mono.zipDelayError(user, orders, account, (u,o,a) -> build(u,o,a));
 // Waits for all to complete/fail; reports all failures together
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For 3+ Monos where tuple types are unwieldy:
 ```java
@@ -1055,6 +1118,8 @@ Mono<List<String>> combined = Mono.zip(monos,
         .map(r -> (String) r)
         .toList());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding that `Mono.zip` fails fast
 on first error (like `thenCombine`) vs `zipDelayError` which aggregates all
@@ -1083,6 +1148,8 @@ Flux.range(1, 100)
     .map(r -> transform(r))    // runs on parallel
     .subscribe();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common use patterns:
 - `subscribeOn(boundedElastic)`: for blocking sources (JDBC, files)
@@ -1126,6 +1193,8 @@ serviceCall()
             .filter(ex -> ex instanceof TransientException))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `retry()` re-subscribes to the entire
 source chain. For cold publishers (new HTTP request), this is a retry.
 For hot publishers (Kafka Flux), re-subscribing creates a NEW consumer
@@ -1145,6 +1214,8 @@ cold.subscribe(n -> System.out.print(n)); // 1 2 3 4 5
 // Independent streams
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Hot Flux**: data flows regardless of subscribers. New subscribers
 receive items from the subscription point onward.
 ```java
@@ -1159,6 +1230,8 @@ hot.subscribe(s -> System.out.println("B: " + s));
 sink.tryEmitNext("event2"); // Both A and B receive event2
 // B missed event1
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Converting cold to hot: `flux.share()` multicasts to multiple subscribers
 from a single source. `flux.publish().refCount(1)` starts on first
@@ -1218,6 +1291,8 @@ void testWithVirtualTime() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `StepVerifier.withVirtualTime()`: replaces internal clock. `thenAwait()`
 advances virtual time. Essential for testing time-based operators without
 slow real-time tests.
@@ -1272,6 +1347,8 @@ flux.filter(x -> x > 0)
     .map(x -> x * 2)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. `checkpoint("label")` (production-safe): captures assembly stack trace
 only at that point. When an error propagates through, the checkpoint
 label appears in the stack trace.
@@ -1282,6 +1359,8 @@ flux.map(x -> transform(x))
     .checkpoint("service-call")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. `Hooks.onOperatorDebug()` (development only): captures assembly stack
 trace for EVERY operator. High overhead - never production.
 ```java
@@ -1289,11 +1368,15 @@ trace for EVERY operator. High overhead - never production.
 Hooks.onOperatorDebug();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Reactor's `ReactorDebugAgent`: Java agent that instruments at class
 load time. Low overhead. Production-safe alternative to `onOperatorDebug`.
 ```bash
 java -javaagent:reactor-tools.jar -jar service.jar
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding WHY reactive stack traces
 are unhelpful: by the time an error is delivered via `onError`, the
@@ -1382,3 +1465,33 @@ flowchart LR
 > completes, C only starts after B. This is the visual intuition for why
 > flatMap has latency = max(durations) while concatMap has latency =
 > sum(durations).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

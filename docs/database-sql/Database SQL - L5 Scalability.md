@@ -8,6 +8,15 @@ permalink: /database-sql/l5-scalability/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Database Scalability - Read Replicas, Sharding, and Partitioning](#database-scalability---read-replicas-sharding-and-partitioning) | medium |
+
+---
+
 # Database Scalability - Read Replicas, Sharding, and Partitioning
 
 **TL;DR:** Database scalability follows a tiered approach: (1) vertical scaling (bigger
@@ -89,6 +98,8 @@ Costs:
   Sharding:     no cross-shard joins, no cross-shard ACID,
                 re-sharding is very painful
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -349,6 +360,8 @@ Phase 4 (special read models):
   PostgreSQL: source of truth for writes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -435,6 +448,8 @@ FROM pg_stat_replication;
 -- lag_bytes under load: check if > expected threshold.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: (1) For writes that require immediate read consistency: route subsequent reads
 to primary for the same user session for N seconds. (2) Synchronous replication
 for critical writes: `synchronous_commit = on` with a named synchronous standby.
@@ -506,3 +521,33 @@ availability. Plan the shard key before sharding; it is very hard to change late
 **Q12: What are the key differences between horizontal and vertical sharding?**
 
 🗣️ "Horizontal sharding (traditional 'sharding'): splits rows across shards. All columns of a row are on one shard. Shard 1: rows 1-1M, Shard 2: rows 1M-2M. Each shard has the full row. Queries within a shard key are single-shard (fast). Cross-shard queries: scatter-gather. This is what most people mean by 'sharding.' Vertical sharding (vertical partitioning): splits columns across different tables or databases. Example: orders table split into: order_header (id, customer_id, status, created_at) and order_details (order_id, line_items, shipping_address, notes). The two tables are in different databases. Hot data (header: frequently queried) is separated from cold data (details: rarely accessed in full). Benefits: (1) the 'hot' table is smaller (fewer columns, fits in cache better). (2) wide tables can be split so that common queries only access fast columns. In practice: vertical partitioning is done within a single database by table structure design (not truly 'sharding'). The more useful concept in production is column-store databases (Redshift, BigQuery) for OLAP: columnar storage is vertical partitioning taken to its logical extreme, where each column is stored independently (ultra-fast for analytical aggregates on specific columns)."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

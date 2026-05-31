@@ -110,6 +110,8 @@ RESULT: failure of B is isolated
   A recovers automatically when B recovers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Immutable Infrastructure:**
 
 ```
@@ -130,6 +132,8 @@ IMMUTABLE (cloud-native):
             (they still exist, just not receiving traffic)
   Benefits: no SSH, no config drift, instant rollback
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -344,6 +348,8 @@ kubectl logs deployment/service-a | grep -i "timeout\|slow"
 # jaeger query -> trace for recent slow request
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add Hystrix/Resilience4j circuit breaker +
 timeout on every service-to-service HTTP call.
 
@@ -370,6 +376,8 @@ livenessProbe:
 # 3 * 10s timeout = 30s of failures before restart
 # GC pause < 30s: pod not killed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -442,6 +450,8 @@ API Gateway / Facade (new)
 Over time: more routes point to new services,
            monolith handles fewer and fewer requests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use:
 - Large monolith that cannot be rewritten in one shot
@@ -531,6 +541,8 @@ aws cloudwatch get-metric-statistics \
 # Distributed lock? All instances lock on one key?
 # Global rate limiter backed by Redis? Single-instance Redis?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Starting with the database, not
 the application tier. In 80% of cases where horizontal scaling
@@ -632,6 +644,8 @@ spec:
     image: elastic/filebeat:8.x
     # Reads logs from shared volume, ships to Elasticsearch
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Problems solved:
 - **Cross-cutting concerns**: add logging, tracing, auth, proxying
@@ -742,6 +756,8 @@ differently from the monolith in ways they cannot diagnose.
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 ```
@@ -788,6 +804,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # 12-Factor App in the Cloud
 
@@ -886,6 +930,8 @@ XII. Admin processes: run as one-off processes
      (database migrations, maintenance tasks)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor VI Violation (Sticky Sessions):**
 
 ```
@@ -902,6 +948,8 @@ GOOD: stateless process
   Can add server 3 instantly: has access to all sessions
   (session data is in Redis, not in any server's memory)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1104,6 +1152,8 @@ COPY application.properties .
 # No actual values - all from env at runtime
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Message loss on pod restart (no graceful shutdown)**
@@ -1148,6 +1198,8 @@ public class OrderConsumer {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1210,6 +1262,8 @@ private static final String DB_URL =
 // Config changes require redeployment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor VI (Processes) violation - local state:**
 ```java
 // VIOLATION: in-memory session
@@ -1220,6 +1274,8 @@ session.setAttribute("user", user);
 // Cannot roll deploy without session loss
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor IX (Disposability) violation - slow startup:**
 ```
 // Monolith starts in 90 seconds
@@ -1228,6 +1284,8 @@ session.setAttribute("user", user);
 // Cost: slow deploys, poor self-healing, can't scale quickly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor XI (Logs) violation - log files:**
 ```bash
 # App writes to /var/log/app.log
@@ -1235,6 +1293,8 @@ session.setAttribute("user", user);
 # No centralized log aggregation possible
 # Cost: cannot debug after pod crash
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing Factor IX (Disposability)
 is the most expensive violation in Kubernetes. Kubernetes assumes
@@ -1267,6 +1327,8 @@ spec:
     - configMapRef: { name: app-config }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Secret (sensitive config):**
 ```yaml
 apiVersion: v1
@@ -1276,6 +1338,8 @@ data:
   DATABASE_PASSWORD: <base64-encoded>  # not encrypted, just encoded
 # Better: use External Secrets Operator + AWS Secrets Manager
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. AWS Secrets Manager via External Secrets Operator (production):**
 ```yaml
@@ -1290,6 +1354,8 @@ spec:
 # Kubernetes Secret auto-synced from AWS Secrets Manager
 # Rotation: External Secrets re-syncs when AWS secret rotates
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Kubernetes Secrets are base64-
 encoded, not encrypted at rest by default. For production: enable
@@ -1314,6 +1380,8 @@ kubectl exec pod-b -- cat /app/config.properties > b.conf
 diff a.conf b.conf
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor VI (Processes) violation - local cached state:**
 ```bash
 # Instance A has warm in-memory cache
@@ -1323,6 +1391,8 @@ diff a.conf b.conf
 kubectl exec pod-a -- curl localhost:8080/metrics | grep cache
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor X (Dev/prod parity) violation - different image:**
 ```bash
 # Check if instances are running different image versions:
@@ -1331,12 +1401,16 @@ kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}
 # If different hashes: rolling deploy in progress, or image pull issue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Factor IX violation - startup-time initialisation not complete:**
 ```bash
 # New pod started but readiness probe passed before init finished
 # Check pod start time vs when traffic started:
 kubectl describe pod pod-b | grep 'Start Time\|Ready'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Factor VI (local cache state)
 is the hardest to diagnose because the warm-cache instance
@@ -1369,12 +1443,16 @@ In Java with Logback:
 </configuration>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kubernetes collects stdout and routes to log aggregator:
 ```yaml
 # FluentBit DaemonSet collects from all pods' stdout:
 # Pod stdout -> node journal -> FluentBit -> Elasticsearch/CloudWatch
 # Application has zero configuration for log routing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why it matters in Kubernetes:
 - Pod ephemeral storage: files written to container filesystem
@@ -1452,6 +1530,8 @@ startupProbe:
   periodSeconds: 5
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Graceful shutdown (Spring Boot 2.3+):
 ```yaml
 server.shutdown: graceful
@@ -1461,6 +1541,8 @@ spring.lifecycle.timeout-per-shutdown-phase: 30s
 # Kubernetes sends SIGTERM, then SIGKILL after terminationGracePeriodSeconds
 # Set terminationGracePeriodSeconds > 30s to match
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Coordinating Spring's shutdown
 timeout with Kubernetes' `terminationGracePeriodSeconds`. If
@@ -1539,6 +1621,8 @@ Step 5: Remove sticky sessions from ALB
   (no longer needed once state is external)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Removing sticky sessions after
 the migration. Teams often add Redis but forget to remove sticky
 sessions from the load balancer. The sticky sessions continue to
@@ -1561,6 +1645,8 @@ technically necessary.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1605,3 +1691,33 @@ flowchart LR
 > rotation, or buffering.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

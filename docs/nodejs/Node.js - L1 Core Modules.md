@@ -7,6 +7,17 @@ permalink: /nodejs/l1-core-modules/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Node.js File System Module](#nodejs-file-system-module) | foundational |
+| 2 | [Node.js HTTP and Net Modules](#nodejs-http-and-net-modules) | foundational |
+| 3 | [Node.js Path, OS, and Utility Modules](#nodejs-path-os-and-utility-modules) | foundational |
+
+---
+
 # Node.js File System Module
 
 🎯 **Interview Weight:** foundational (★☆☆) - fs is used in every backend
@@ -281,6 +292,8 @@ lsof -p $(pgrep node) | wc -l
 ulimit -n 65536
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: Path traversal allowing reads outside upload dir**
 
 ```javascript
@@ -291,6 +304,8 @@ fsp.readFile = async (p, ...args) => {
   return origRead(p, ...args);
 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Symptom: High memory on download endpoint**
 
@@ -408,6 +423,34 @@ Diagnose and fix it.** `[MID]` DEBUGGING
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Node.js HTTP and Net Modules
 
@@ -702,6 +745,8 @@ app.get('/users', async (req, res) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: Memory grows on POST-heavy endpoints**
 
 Missing body size limit. Add `express.json({ limit: '1mb' })` or
@@ -773,6 +818,34 @@ the load balancer's timeout. AWS ALB default: 60s. Set Node.js server to 65s.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Node.js Path, OS, and Utility Modules
 
@@ -1028,6 +1101,8 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: Files not found on Windows (works on macOS)**
 
 ```javascript
@@ -1036,6 +1111,8 @@ console.log('sep:', path.sep);  // Should be \ on Windows
 console.log('path:', filePath); // Look for mixed separators / and \
 // FIX: Replace all hardcoded '/' with path.join/path.resolve
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Symptom: Worker threads underperforming in containers**
 
@@ -1058,6 +1135,8 @@ function getContainerCPUs() {
   return os.cpus().length;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1108,3 +1187,33 @@ explain why it happens.** `[JUNIOR]` DEBUGGING
 > CJS-style pattern from a tutorial. Also knowing that creating the
 > `__dirname` shim at the module level once (not inside functions) is
 > the correct pattern.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

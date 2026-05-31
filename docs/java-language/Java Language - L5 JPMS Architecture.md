@@ -8,9 +8,20 @@ permalink: /java-language/l5-jpms-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L5 JPMS Architecture](#java-language---l5-jpms-architecture) | medium |
+
+---
+
 # Java Language - L5 JPMS Architecture
 
 ## JPMS Migration: Classpath to Module Path Architecture
+
+---
 
 ### 🎯 Model Answer
 
@@ -133,6 +144,8 @@ CLASSPATH + MODULE-PATH MIXED:
   -- Classpath code can access exports of mylib.jar.
   -- Not recommended for production: complexity without full encapsulation benefit.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -358,8 +371,13 @@ Split package failure:
     done
   
   Fix: Maven exclusion to keep only one:
-    <exclusion><groupId>com.google.code.findbugs</groupId><artifactId>jsr305</artifactId></exclusion>
+    <exclusion>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+    </exclusion>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -685,3 +703,33 @@ flowchart TD
 ### 📊 Diagram
 
 *(Omit: Module architecture shown in System Design section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

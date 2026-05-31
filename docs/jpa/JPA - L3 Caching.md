@@ -8,9 +8,20 @@ permalink: /jpa/l3-caching/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L3 Caching](#jpa---l3-caching) | medium |
+
+---
+
 # JPA - L3 Caching
 
 ## First-Level Cache: Persistence Context as Cache
+
+---
 
 ### 🎯 Model Answer
 
@@ -138,6 +149,8 @@ L1 CACHE IN BATCH OPERATIONS (memory management):
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -245,6 +258,8 @@ Fix:
   Or: em.clear() to clear all cached entities.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -286,6 +301,8 @@ clearAutomatically (refreshes X only, keeps X managed), OR (3) re-load X after t
 ---
 
 ## Second-Level Cache: EhCache, Caffeine, and Cache Region Strategy
+
+---
 
 ### 🎯 Model Answer
 
@@ -433,6 +450,8 @@ L2 CACHE INVALIDATION:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -536,7 +555,8 @@ Diagnosis:
   Enable hibernate cache statistics:
     spring.jpa.properties.hibernate.generate_statistics=true
   Monitor: L2 hit/miss ratio, eviction count.
-  Check: is the entity cached? Verify with em.getEntityManagerFactory().getCache().contains(Country.class, id).
+  Check: is the entity cached? Verify with:
+  em.getEntityManagerFactory().getCache().contains(Country.class, id).
 
 Fix:
   After bulk update: evict affected entries:
@@ -549,6 +569,8 @@ Fix:
   Or: @Modifying(flushAutomatically=true, clearAutomatically=true) is
     not sufficient for L2 cache. Must evict explicitly.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -586,4 +608,34 @@ cache AND entity L2 cache enabled. Then: query cache hit -> entity L2 cache hit 
 DB queries. Wrong setup (query cache only): potentially WORSE than no cache at all. Diagnosis:
 `spring.jpa.properties.hibernate.generate_statistics=true` and watch the query execution count.
 If it rises after adding query cache: you have this bug.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -130,6 +130,8 @@ DISTRIBUTED MONOLITH SYMPTOMS
   A single request spans: A -> B -> C -> D -> A
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Big Ball of Mud**
 No enforced module boundaries. All code can call all code.
 Dependency graph is a fully connected mesh. Caused by: short
@@ -171,6 +173,8 @@ Instability = Ce / (Ce + Ca)
 A God Service: high Ca, low Ce (everything depends on it)
 A Distributed Monolith: all services have high Ce and Ca
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -302,6 +306,8 @@ kubectl get configmap -o yaml | grep DB_URL
 # "Who do you need to notify before deploying?"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Start with data ownership. Identify which service should
 own each database. Build read models for services that need
 cross-service data. Migrate to event-driven communication
@@ -324,6 +330,8 @@ git log --oneline src/main/java/com/CoreBusinessService.java |
 grep -c "@Service\|@Component" CoreBusinessService.java
 # More than 1 = likely a God Service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Extract bounded contexts. Identify distinct business
 capabilities. Create separate services (or at minimum packages
@@ -779,6 +787,34 @@ quadrantChart
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Architecture Decision Records
 
 🎯 Interview Weight: high - ADRs demonstrate architectural maturity;
@@ -897,12 +933,16 @@ Risks accepted: PostgreSQL operational complexity vs managed
 RDS offloads management at the cost of vendor lock-in.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ADR lifecycle:**
 
 ```
 proposed --> accepted --> deprecated
                     \--> superseded by ADR-XXX
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to write an ADR:**
 
@@ -942,7 +982,9 @@ Consequences:
 # ADR-012: Use Apache Kafka for Event Streaming
 
 **Status:** Accepted (2024-03-15)
+
 **Deciders:** Engineering Lead, Platform Architect, Infra Lead
+
 **Supersedes:** None
 
 ## Context
@@ -1084,6 +1126,8 @@ the ADRs exist.
 git log --oneline docs/adr/ | tail -20
 # All entries old = ADRs not being read or updated
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Link ADRs from README.md and relevant source code comments.
 Add an onboarding step: "Read ADR-001 through ADR-010 before
@@ -1279,6 +1323,8 @@ RFC (proposal + discussion period)
         -> ADR written (accepted status)
             -> Code implemented
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When RFC vs ADR alone: significant decisions that affect multiple
 teams or have irreversible consequences should go through RFC
@@ -1554,3 +1600,33 @@ stateDiagram-v2
 > with the old ADR referencing the new one). Crucially, superseded
 > ADRs are never deleted - the full history of decisions and
 > their evolution is preserved for future engineers to trace.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

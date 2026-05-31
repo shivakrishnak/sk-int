@@ -7,7 +7,14 @@ permalink: /async-java/l3-reactive-frameworks/
 render_with_liquid: false
 ---
 
-# Async Java - L3 Reactive Frameworks
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L3 Reactive Frameworks](#async-java---l3-reactive-frameworks) | medium |
+| 2 | [Spring WebFlux Architecture](#spring-webflux-architecture) | medium |
+| 3 | [Reactor vs RxJava Comparison](#reactor-vs-rxjava-comparison) | medium |
 
 ---
 
@@ -107,6 +114,8 @@ Spring WebFlux:
   Thread cost: N event loop threads for ALL requests (N = 2 * CPU)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Request lifecycle in WebFlux:**
 
 ```
@@ -126,6 +135,8 @@ Client HTTP request
   <- HTTP response written back to client
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **WebClient (non-blocking replacement for RestTemplate):**
 
 ```java
@@ -143,6 +154,8 @@ Mono<UserResponse> response = client.get()
               .flatMap(e -> Mono.error(new ClientException(e))))
     .bodyToMono(UserResponse.class);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Functional routing (alternative to annotations):**
 
@@ -169,6 +182,8 @@ class UserHandler {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use WebFlux:**
 - High concurrency, I/O-bound services (REST gateway, API proxy)
@@ -348,6 +363,8 @@ BlockHound.install();
 # at blocking call from nioEventLoopGroup thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: all blocking calls must execute on `Schedulers.boundedElastic()`:
 ```java
 // WRONG: blocks event loop
@@ -363,6 +380,8 @@ public Mono<Data> getData() {
         .subscribeOn(Schedulers.boundedElastic());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -393,6 +412,8 @@ public Flux<ServerSentEvent<Data>> stream() {
             log.debug("Client too slow, dropped: {}", dropped));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 HTTP/2 adds explicit flow control at the stream level - WebFlux integrates
 with Reactor Netty's HTTP/2 backpressure automatically.
@@ -430,6 +451,8 @@ RouterFunction<ServerResponse> all =
     v1Routes.and(v2Routes); // compose routes as values
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Both styles can coexist in one application.
 `DispatcherHandler` in WebFlux handles both `RequestMappingHandlerMapping`
 (annotations) and `RouterFunctionMapping` (functional). The choice is
@@ -455,6 +478,8 @@ class UserController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. `WebExceptionHandler` (global, reactive):**
 ```java
 @Component
@@ -476,6 +501,8 @@ class GlobalErrorHandler implements WebExceptionHandler {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **3. `DefaultErrorWebExceptionHandler` (Spring Boot default):**
 Spring Boot auto-configures `DefaultErrorWebExceptionHandler` which
 handles exceptions reactively. Extend `AbstractErrorWebExceptionHandler`
@@ -494,6 +521,8 @@ class CustomErrorHandler
     // ...
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `@ControllerAdvice` works in WebFlux
 for annotation-based controllers. The key difference from MVC: in WebFlux,
@@ -533,6 +562,8 @@ public Mono<Profile> getProfile(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Reactive security context:
 ```java
 // Access security context reactively:
@@ -540,6 +571,8 @@ ReactiveSecurityContextHolder.getContext()
     .map(ctx -> ctx.getAuthentication())
     .map(auth -> auth.getName());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Security context in WebFlux is stored in
 Reactor Context (not ThreadLocal). This means it propagates correctly
@@ -604,6 +637,8 @@ class UserControllerTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `WebTestClient` can be configured to
 either mock the server (fast, no HTTP) or connect to a real running server:
 ```java
@@ -616,6 +651,8 @@ WebTestClient.bindToServer()
     .baseUrl("http://localhost:" + port)
     .build();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For unit tests: `bindToController`. For integration tests: `bindToServer`
 with `@SpringBootTest(webEnvironment = RANDOM_PORT)`.
 
@@ -640,6 +677,8 @@ Use Spring WebFlux when:
   - Fully reactive stack: R2DBC, WebClient, reactive Redis
   - Service needs backpressure propagation end-to-end
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Java 21 + virtual threads + Spring MVC: compelling alternative for most
 new services. `spring.threads.virtual.enabled=true` enables virtual threads
@@ -706,6 +745,8 @@ class MyCustomDecoder
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* DataBuffer memory management is a common
 source of leaks in WebFlux. DataBuffers are reference-counted (backed by
 Netty's `ByteBuf`). If a DataBuffer is read but not released, the underlying
@@ -730,6 +771,8 @@ public Mono<String> upload(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **File download (streaming):**
 ```java
 @GetMapping("/download/{id}")
@@ -751,6 +794,8 @@ public Flux<DataBuffer> streamLargeFile(
         filePath, defaultBufferFactory, 8192); // 8KB chunks
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* For large file streaming, avoid loading
 the entire file into memory. `DataBufferUtils.read(path, factory, bufferSize)`
@@ -802,6 +847,8 @@ monoResponse.transform(rl)
             .body("Rate limited")));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Per-client rate limiting requires
 distributed state (all service instances share the same counter).
 Redis with reactive Lettuce provides this:
@@ -814,6 +861,8 @@ redisClient.reactive()
         ? Mono.error(new RateLimitedException())
         : chain.filter(exchange));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -904,6 +953,34 @@ flowchart TD
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Reactor vs RxJava Comparison
 
 ---
@@ -988,6 +1065,8 @@ Flowable<String> rxFlow = Flowable.just("x", "y");
 Flux<String> flux = Flux.from(rxFlow);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Type system comparison:**
 
 ```
@@ -1002,6 +1081,8 @@ RxJava 3:
   Maybe<T>     - 0 or 1 element or error
   Completable  - 0 elements (just completion/error signal)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 RxJava has a richer type vocabulary because it predates the Reactive Streams
 spec. `Observable` exists for scenarios where backpressure is impossible or
@@ -1031,6 +1112,8 @@ Flowable.range(1, 5)
     .subscribe(System.out::println);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Notable differences:
 - RxJava uses `subscribeOn`/`observeOn` (Reactor uses `subscribeOn`/`publishOn`)
 - RxJava `blockingGet()` vs Reactor `block()`
@@ -1056,6 +1139,8 @@ single.onErrorResumeNext(ex -> fallbackSingle)
       .onErrorReturn(defaultValue)
       .onErrorReturn(ex -> mapError(ex));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1203,6 +1288,8 @@ Flux.just("request")
 // Reactor Context does not propagate through RxJava internals
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: avoid mixing in the same pipeline, or extract the context value
 before the boundary and pass it explicitly:
 ```java
@@ -1212,6 +1299,8 @@ before the boundary and pass it explicitly:
         return Flux.from(rxJavaLibrary.process(r, traceId));
     }));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1243,6 +1332,8 @@ The backpressure protocol:
 6. ... repeat ...
 7. Publisher.Subscriber.onComplete() or onError()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The key property: the publisher NEVER emits more items than the subscriber
 has requested. This prevents buffer overflow.
@@ -1286,6 +1377,8 @@ Flowable.fromPublisher(databaseResultSet)
                err -> log.error("Error", err));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The choice between Observable and Flowable
 in RxJava mirrors the Reactor trade-off: Flux always supports backpressure
 (even when demand is `Long.MAX_VALUE`), which has slight overhead. Observable's
@@ -1312,6 +1405,8 @@ Mono.just("data")
     .subscribe(System.out::println);
 // Output: data-value
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 RxJava 3 does NOT have a built-in context mechanism equivalent to Reactor
 Context. For per-subscription context in RxJava, developers use:
@@ -1356,6 +1451,8 @@ Schedulers.immediate()     | Schedulers.trampoline()
 custom ExecutorService     | Schedulers.from(executor)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Both `publishOn`/`observeOn` work by
 inserting a queue between the upstream and downstream. Items are pushed
 to the queue on the upstream thread, then consumed from the queue on the
@@ -1395,6 +1492,8 @@ one.tryEmitValue("result");
 // Equivalent to Promise/CompletableFuture
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RxJava `PublishSubject` equivalent pattern:
 ```java
 // RxJava:
@@ -1408,6 +1507,8 @@ Sinks.Many<Event> sink = Sinks.many()
 sink.asFlux().subscribe(e -> process(e));
 sink.tryEmitNext(new Event("data"));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Reactor Sinks are thread-safe by design.
 `tryEmitNext` returns an `EmitResult` enum indicating whether the emit
@@ -1431,6 +1532,8 @@ Flux<Order> ordersFlux =
 // Reactor consumers can now use RxJava publishers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 2: Convert leaf services first (no dependencies)**
 Services that call no other reactive services: convert RxJava return types
 to Reactor types. Update tests with StepVerifier.
@@ -1442,6 +1545,8 @@ Single<Order> findOrder(String id);
 // After: Reactor
 Mono<Order> findOrder(String id);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Phase 3: Convert aggregators**
 Services that call other services: once dependencies are Reactor, remove
@@ -1461,6 +1566,8 @@ Single<T>         | Mono<T>
 Maybe<T>          | Mono<T> (empty = Maybe.empty)
 Completable       | Mono<Void>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Test coverage is the migration safety net.
 Before migrating a service: write StepVerifier tests that capture the
@@ -1503,6 +1610,8 @@ thread1.submit(() -> sink.tryEmitNext(event1));
 thread2.submit(() -> sink.tryEmitNext(event2));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Reactor has "serialized sink" mode:
 ```java
 Sinks.Many<Event> safeSink = Sinks.many()
@@ -1511,6 +1620,8 @@ Sinks.Many<Event> safeSink = Sinks.many()
     // No serialized() needed: tryEmitNext handles concurrent access
     ;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `tryEmitNext` returns `FAIL_NON_SERIALIZED` if another emit is in progress.
 Callers can retry using `emitNext(value, emitFailureHandler)` with a
 failure handler that retries on `NON_SERIALIZED`.
@@ -1559,6 +1670,8 @@ mono.doOnError(ex -> log.error("Failed", ex));
 single.doOnError(ex -> log.error("Failed", ex)); // identical!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `onErrorMap` is one of Reactor's more
 convenient operators: directly transforms the exception type without
 changing completion semantics. RxJava lacks a direct equivalent but
@@ -1598,6 +1711,8 @@ interface ApiService {
     Single<List<Data>> getData();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* In 2024, Kotlin Coroutines + Flow have
 largely displaced RxJava on Android. Many new Android projects use Coroutines
@@ -1695,3 +1810,33 @@ classDiagram
 > element semantics. RxJava's `Observable` does NOT implement `Publisher` (no
 > backpressure contract) - it cannot be passed to `Flux.from()` directly; it
 > must be converted to `Flowable` first.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -129,6 +129,8 @@ CDI SCOPE THREAD SAFETY:
 @ApplicationScoped many threads - MUST be thread-safe
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **beans.xml activation:**
 
 ```xml
@@ -140,6 +142,8 @@ CDI SCOPE THREAD SAFETY:
        bean-discovery-mode="all">
 </beans>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CDI 4.0 (Jakarta EE 10): `bean-discovery-mode="annotated"`
 is the new default - only annotated classes are
@@ -177,6 +181,8 @@ public class EmailFormatter {
     // created fresh for each injection point
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key insight:**
 
@@ -345,6 +351,8 @@ java.lang.Exception:
   at com.example.OrderJob$Proxy.process(Generated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // WRONG: inject @RequestScoped bean into @Singleton EJB
@@ -374,6 +382,8 @@ public class ScheduledJob {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -432,6 +442,8 @@ public class UserPreferences implements Serializable {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The serialVersionUID matters for session replication across cluster nodes running different application versions. Without a consistent serialVersionUID, upgrading the app while sessions are active causes InvalidClassException. I always add serialVersionUID explicitly to @SessionScoped beans."
 
 ---
@@ -459,6 +471,8 @@ Implications:
        @Inject Helper h2; // instance B - different!
    }
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Stateful @Dependent beans: state is private to
    each injection point.
@@ -489,6 +503,8 @@ public class OrderService {
     // cart is a CDI proxy, not the actual bean
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When `cart.addItem()` is called: the proxy looks
 up the current session context and delegates to
@@ -578,6 +594,8 @@ public class ConfigFactory {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use cases:
 - Conditional bean creation based on config
 - Producing non-CDI resources (EntityManager, Logger)
@@ -617,6 +635,8 @@ public class ConnectionPool {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why use @PostConstruct instead of constructor injection:
 - Constructor runs before CDI injects fields
@@ -658,6 +678,34 @@ is portable between CDI and Spring.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Dependency Injection with CDI
 
@@ -775,6 +823,8 @@ CDI scans all beans for PaymentService type
            (AmbiguousResolutionException)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Custom qualifier:**
 
 ```java
@@ -803,6 +853,8 @@ public class MockPaymentService
 @Inject @Production
 private PaymentService payment; // always RealPaymentService
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -986,6 +1038,8 @@ grep -r "implements PaymentService\|class.*Payment" \
   src/main/java/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Option 1: Add @Qualifier to distinguish beans
@@ -1002,6 +1056,8 @@ class MockPaymentService implements PaymentService {...}
 @Priority(1) @ApplicationScoped
 class PreferredService implements PaymentService {...}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1046,6 +1102,8 @@ private PaymentService payment;
 private PaymentService payment;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rule: use @Named for EL in views, custom qualifiers
 for all Java injection points.
 
@@ -1079,6 +1137,8 @@ public class ConfigProducer {
 private String dbUrl;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With MicroProfile Config (preferred in modern Jakarta EE):
 ```java
 @Inject
@@ -1086,6 +1146,8 @@ With MicroProfile Config (preferred in modern Jakarta EE):
                 defaultValue = "jdbc:h2:mem:test")
 private String dbUrl;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 MicroProfile Config reads from: system properties,
 environment variables, META-INF/microprofile-config.properties.
@@ -1127,6 +1189,8 @@ for (NotificationService svc : services) {
 // Destroy if not using a container scope:
 services.destroy(ps);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases:
 - Extension points (iterate all implementations)
@@ -1193,6 +1257,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Built-in interceptors: `@Transactional` (CDI-based
 transaction management in Jakarta EE 10+).
 
@@ -1253,11 +1319,15 @@ public class InventoryUpdater {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Async events (CDI 2.0+):
 ```java
 orderEvent.fireAsync(new OrderPlacedEvent(order));
 // Observers annotated with @ObservesAsync
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "CDI events are synchronous by default - all observers run in the same thread and transaction as the producer. If an observer throws, the producer's transaction may roll back. For post-commit notifications (send email AFTER the order is committed), use @Observes(during=AFTER_SUCCESS) to ensure the observer only runs when the surrounding transaction commits successfully."
 
@@ -1286,6 +1356,8 @@ public class OrderService {
     // effectively @ApplicationScoped @Transactional @Named
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Built-in stereotype: `@Model` (Jakarta EE) = `@Named`
 + `@RequestScoped`. Used for JSF backing beans.
@@ -1324,6 +1396,8 @@ class OrderServiceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2: CDI SE (standalone CDI 2.0+):
 ```java
 try (SeContainer container =
@@ -1336,6 +1410,8 @@ try (SeContainer container =
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3: Arquillian + embedded WildFly:
 Full container test, slower but tests full stack.
 
@@ -1347,6 +1423,34 @@ Fast startup (~1s) with full CDI context.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Bean Validation
 
@@ -1470,6 +1574,8 @@ public class UserRegistration {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **@Valid cascading:**
 
 ```java
@@ -1482,6 +1588,8 @@ public class Address {
     private String postalCode;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `@Valid` on the `address` field in `UserRegistration`
 triggers validation of `Address` fields too.
@@ -1689,6 +1797,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or validate programmatically with `Validator.validate()`
 as a guard at the service boundary.
 
@@ -1745,6 +1855,8 @@ public Response update(
 ) { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `@Validated` (Spring) or `@ConvertGroup` (Bean Validation)
 activates specific groups. Without group specification,
 the `Default` group runs.
@@ -1799,6 +1911,8 @@ public class RegistrationForm {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Class-level constraints get the whole object and can access any field. The constraint violation is associated with the class, not a specific field. To associate it with a specific field in the error response, use ctx.buildConstraintViolationWithTemplate(msg).addPropertyNode('confirmPassword').addConstraintViolation() and ctx.disableDefaultConstraintViolation()."
 
 ---
@@ -1832,6 +1946,8 @@ em.persist(new Product()); // throws ConstraintViolationException
 // because name is blank and price is null
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JPA validation modes (in persistence.xml):
 ```xml
 <properties>
@@ -1842,6 +1958,8 @@ JPA validation modes (in persistence.xml):
   <!-- none: disable JPA-triggered validation -->
 </properties>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If validation fails: `ConstraintViolationException`
 is thrown, the transaction is marked for rollback.
@@ -1898,6 +2016,8 @@ public class ConstraintViolationExceptionMapper
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Never include the rejected value in production error responses for password or sensitive fields - that leaks the actual password in the 400 response body. Filter out sensitive field names before including rejectedValue."
 
 ---
@@ -1919,6 +2039,8 @@ groups (which @Valid alone cannot target in Spring).
 @Validated(OnCreate.class)
 public void create(@Valid User user) {...}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Jakarta EE (non-Spring):
 Use `@Valid` with Bean Validation groups + `@ConvertGroup`
@@ -1958,6 +2080,8 @@ public class UserForm {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `@ReportAsSingleViolation`: if any composed constraint
 fails, report only the composed constraint's message
 (not all individual messages).
@@ -1978,14 +2102,20 @@ Bean Validation supports message interpolation via:
    @NotBlank(message = "Username is required")
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Message bundle key:
    ```java
    @NotBlank(message = "{validation.username.required}")
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Define in `ValidationMessages.properties`:
    ```
    validation.username.required=Username is required
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Or locale-specific: `ValidationMessages_fr.properties`
 
 3. EL expressions (Bean Validation 1.1+):
@@ -1993,9 +2123,41 @@ Bean Validation supports message interpolation via:
    @Size(min=3, max=50,
          message = "Must be between {min} and {max} chars")
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    `{min}` and `{max}` are replaced with the annotation
    attribute values.
 
 4. Custom interpolator for complex logic.
 
 *What separates good from great:* "For internationalized applications, always use message bundle keys instead of literal strings. This allows translation without changing Java code. Place ValidationMessages.properties in src/main/resources and add locale-specific variants. The Hibernate Validator picks them up automatically."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

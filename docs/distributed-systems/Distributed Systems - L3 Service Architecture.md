@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-service-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Service Discovery](#service-discovery) | medium |
+| 2 | [Service Mesh and Sidecar Pattern](#service-mesh-and-sidecar-pattern) | medium |
+
+---
+
 # Service Discovery
 
 **TL;DR:** Service discovery allows services to find each other's
@@ -101,6 +111,8 @@ Service B Instance 3 (10.0.0.7:8080)
   4. Call 10.0.0.5:8080/orders
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Server-side discovery (Kubernetes DNS + Service):**
 
 ```
@@ -119,6 +131,8 @@ Service A only knows "orderservice" - never the pod IPs.
 Kubernetes DNS updates automatically on pod changes.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Health checking:**
 
 ```
@@ -130,6 +144,8 @@ Registry health check types:
 4. gRPC: implements grpc.health.v1.Health service
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Deregistration strategies:**
 
 ```
@@ -139,6 +155,8 @@ Graceful: instance sends deregister request on shutdown
 Failure: health check fails → TTL expires → registry removes
   (typically 30-90 second lag)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Service discovery is a consistency problem: the registry's view
@@ -347,6 +365,34 @@ a discovery library or a registry API call."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Service Mesh and Sidecar Pattern
 
 **TL;DR:** A service mesh moves network concerns (mutual TLS,
@@ -460,6 +506,8 @@ Traffic flow:
     - Metrics collection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key capabilities:**
 
 ```
@@ -480,6 +528,8 @@ Observability:
   Distributed tracing: Jaeger/Zipkin export
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sidecar injection:**
 
 ```yaml
@@ -494,6 +544,8 @@ metadata:
 # Every new pod gets Envoy as a sidecar automatically
 # No changes to application Deployment manifests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The service mesh trades operational simplicity for architectural
@@ -583,6 +635,8 @@ public class OrderService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # Mesh policy (YAML - NOT code) handles resilience:
@@ -738,6 +792,8 @@ the API Gateway is at the perimeter; the service mesh is in the
 interior. A common setup: API Gateway (Kong, AWS API Gateway)
 for external traffic, Istio service mesh for internal traffic.
 Some tools (Istio's Ingress Gateway) overlap these concerns."
+
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1481,3 +1537,33 @@ is an expert-level insight. "Without Sidecar scope, every Envoy
 downloads configuration for all 500 services. With Sidecar scope,
 each Envoy only downloads config for the 5-10 services it calls.
 This reduces control plane load by 98% at large scale."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

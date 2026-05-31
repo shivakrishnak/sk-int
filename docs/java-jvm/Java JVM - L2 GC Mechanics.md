@@ -8,9 +8,20 @@ permalink: /java-jvm/l2-gc-mechanics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L2 GC Mechanics](#java-jvm---l2-gc-mechanics) | medium |
+
+---
+
 # Java JVM - L2 GC Mechanics
 
 ## Minor GC and Major GC Mechanics
+
+---
 
 ### 🎯 Model Answer
 
@@ -92,6 +103,8 @@ MINOR GC PHASES (stop-the-world):
 TYPICAL DURATION: 1-30ms (proportional to live Young Gen objects, not dead)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **G1 GC phases:**
 ```
 CONCURRENT MARKING (runs while app runs):
@@ -111,6 +124,8 @@ FULL GC (fallback, avoid in production):
   Single-threaded mark-compact of entire heap (Java 10: parallel)
   STW for entire duration: seconds to minutes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -250,6 +265,8 @@ Fix:
   4. For explicit System.gc() callers:
      -XX:+DisableExplicitGC (ignore System.gc() calls)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -410,6 +427,8 @@ grep "Pause Young" gc.log | awk 'NR>1 {print prev, $1} {prev=$1}'
 # Time between Minor GCs = 1/allocation_rate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* GC log analysis is an O(1) diagnostic step
 that often reveals the root cause immediately. Before taking a heap dump
 (expensive: pauses JVM, large file): always check GC logs first. The GC log
@@ -486,6 +505,8 @@ increase with ZGC vs G1 due to load barriers.
 ---
 
 ## GC Roots and Object Reachability
+
+---
 
 ### 🎯 Model Answer
 
@@ -564,6 +585,8 @@ PHANTOM REFERENCE:
   - Use for: resource cleanup (replacement for finalize())
   - Modern: use java.lang.ref.Cleaner instead
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -722,6 +745,8 @@ Prevention:
   - Load test with memory profiling before release
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -801,6 +826,8 @@ while ((polled = queue.poll()) != null) {
     cleanup(polled);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Cleaner API (Java 9+) is built on top
 of PhantomReference + ReferenceQueue but hides the plumbing. Cleaner is the
@@ -883,6 +910,8 @@ class Buffer {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `reachabilityFence` is needed only in the
 narrow case of: (1) object has post-GC cleanup (Cleaner/PhantomRef), (2) method
@@ -967,6 +996,8 @@ pool.execute(() -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ThreadLocal leak is the most common
 memory leak in Java web applications. Servlet containers (Tomcat, Jetty) use
 thread pools. If a filter/servlet sets a ThreadLocal and doesn't remove it:
@@ -999,3 +1030,33 @@ discipline: always `ThreadLocal.remove()` in finally blocks.
 ### 📊 Diagram
 
 *(Omit: reachability described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

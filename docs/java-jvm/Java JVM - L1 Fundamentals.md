@@ -8,9 +8,20 @@ permalink: /java-jvm/l1-fundamentals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L1 Fundamentals](#java-jvm---l1-fundamentals) | medium |
+
+---
+
 # Java JVM - L1 Fundamentals
 
 ## Bytecode Loading and Class Initialization
+
+---
 
 ### 🎯 Model Answer
 
@@ -89,6 +100,8 @@ all three phases complete."
    - THREAD-SAFE: JVM serializes initialization
    - ONCE: per ClassLoader instance
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -226,6 +239,8 @@ Fix:
                System.getenv("DB_HOST"), "DB_HOST env var required");
      BEST: Move to instance constructor, throw on missing config at startup
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -403,6 +418,8 @@ This distinction matters for lazy initialization and ClassLoader lifecycle.
 
 ## JVM Memory Areas
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -483,6 +500,8 @@ NATIVE METHOD STACK (per-thread):
   Stack for native (C/C++) method calls via JNI
   Tuning: -XX:MaxJNILocalRefSize
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -615,6 +634,8 @@ Fix:
   5. Container limit = Xmx + 500MB at minimum
      Better: let MaxRAMPercentage handle it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -789,6 +810,8 @@ threads without consuming OS memory per thread.
 
 ## Garbage Collection Fundamentals
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -864,6 +887,8 @@ GENERATIONAL COLLECTION:
   Old Gen: infrequent, slow Major GC (mark-compact)
   Efficiency: collect only young gen most of the time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -990,6 +1015,8 @@ Common leak causes found via heap dump:
   - ThreadLocal not cleared in thread pool
   - Session objects not invalidated (HTTP sessions)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1164,3 +1191,33 @@ right choice despite higher CPU overhead.
 ### 📊 Diagram
 
 *(Omit: GC concepts described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

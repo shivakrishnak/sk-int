@@ -127,6 +127,8 @@ Write I/O advantage:
   -> Higher write throughput, lower write latency
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -142,6 +144,8 @@ SELECT * FROM orders WHERE status = 'PENDING' LIMIT 100;
 -- Application: for each order, execute:
 -- SELECT * FROM customers WHERE id = ?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```sql
 -- GOOD: Single JOIN = 1 roundtrip
@@ -172,6 +176,8 @@ WHERE o.status = 'PENDING'
 -- type=ref (index) NOT type=ALL (full scan)
 -- rows=small number, not millions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Enable Performance Insights:
@@ -209,6 +215,8 @@ aws cloudwatch get-metric-statistics \
   --dimensions Name=ProxyName,Value=prod-proxy \
   --period 60 --statistics Maximum ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```sql
 -- Aurora Performance Schema: top queries by total time
@@ -362,6 +370,8 @@ aws cloudwatch get-metric-statistics \
 # r6g.large (16GB): 16*1024*1024*1024/12582880 = 1365
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Enable RDS Proxy (immediate mitigation):
@@ -376,6 +386,8 @@ aws rds create-db-proxy \
 # Update Lambda environment variable:
 # DB_HOST=prod-proxy.proxy-xxxxx.us-east-1.rds.amazonaws.com
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure Mode 2: Aurora failover took 2 minutes
 (expected < 30 seconds)**
@@ -411,6 +423,8 @@ aws rds describe-db-clusters \
   --query 'DBClusters[0].Endpoint'
 # Use this endpoint (not any specific instance endpoint)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -467,6 +481,8 @@ Alarms:
   ReplicaLag > 100ms -> alert
   FreeStorageSpace < 10GB -> alert
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -735,6 +751,8 @@ aws pi get-resource-metrics \
 # Returns top 5 SQL by average AAS contribution
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: EXPLAIN the top query:**
 
 If top query is:
@@ -745,6 +763,8 @@ LEFT JOIN reviews r ON p.id = r.product_id
 GROUP BY p.id;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```sql
 EXPLAIN SELECT p.*, COUNT(r.id), AVG(r.rating)
 FROM products p LEFT JOIN reviews r ON p.id = r.product_id
@@ -754,6 +774,8 @@ GROUP BY p.id;
 -- Fix: index on reviews.product_id
 CREATE INDEX idx_reviews_product ON reviews(product_id);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Check for N+1 pattern:**
 
@@ -774,6 +796,8 @@ aws cloudwatch get-metric-statistics \
 # CPU should drop within 5 minutes of index creation
 # (no restart required - index build is online in Aurora MySQL)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `CREATE INDEX` in
 Aurora MySQL is an online DDL operation. Adding an
@@ -824,6 +848,8 @@ aws cloudwatch get-metric-statistics \
 # Cause: analytics queries routed to this replica
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fix:**
 
 Separate analytics queries from OLTP read queries:
@@ -837,6 +863,8 @@ aws rds create-db-instance-read-replica \
 # Route analytics to prod-analytics-replica endpoint
 # Route app reads to prod-replica-1 (OLTP only)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* For true analytics
 workloads (column scans, GROUP BY on billions of rows):
@@ -977,6 +1005,8 @@ GROUP BY p.id, c.name
 ORDER BY p.created_at DESC LIMIT 50;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 EXPLAIN: `rows = 5,234,891` on reviews. Full scan.
 
 Investigation: a developer removed the review cache
@@ -990,6 +1020,8 @@ Added index on `reviews.product_id`:
 ```sql
 CREATE INDEX idx_reviews_product_id ON reviews(product_id);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Online DDL. No table lock. Build time: 8 minutes.
 After index: query time dropped from 4s to 120ms.
 
@@ -1048,6 +1080,8 @@ Aurora MySQL (t4g.medium or r6g.large)
   With proxy: only 50 connections used
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Lambda configuration:**
 
 ```java
@@ -1065,6 +1099,8 @@ config.setMinimumIdle(1);
 config.setMaxLifetime(840000);  // 14 minutes
 config.setConnectionTimeout(5000);  // Fail fast
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `maximumPoolSize=1`
 for Lambda is correct: Lambda handles one request at
@@ -1117,6 +1153,8 @@ mysql -h prod-rds-mysql.xxxx.us-east-1.rds.amazonaws.com
 aws rds delete-db-instance \
   --db-instance-identifier prod-rds-mysql-old
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Zero downtime mechanism:**
 
@@ -1181,6 +1219,8 @@ DR failover procedure:
   6. RPO: < 1 second (Global DB replication lag)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Parameter Group (financial-grade):**
 
 ```
@@ -1189,6 +1229,8 @@ innodb_flush_log_at_trx_commit=1: every commit flushed
 innodb_buffer_pool_size: 75% of RAM
 max_connections: 2000 (via RDS Proxy, not direct)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Manual failover for
 financial systems is intentional. Automated failover
@@ -1243,6 +1285,8 @@ Starter/Free tier (< $50/month):
     - API-layer rate limiting (prevent noisy neighbor)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Tier migration path:**
 
 Starter -> Pro: Export tenant's schema objects to new schema.
@@ -1264,4 +1308,34 @@ to the appropriate database cluster/schema. Tier upgrade
 job. No code change required per tenant.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

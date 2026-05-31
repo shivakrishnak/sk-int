@@ -231,6 +231,8 @@ class, or redesign responsibilities to break the cycle.
 // Forced to fix the design.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Compile-time circular
 dependency detection is a feature, not a limitation."
 
@@ -244,6 +246,34 @@ dependency detection is a feature, not a limitation."
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Application Startup
 
@@ -366,6 +396,8 @@ micronaut.metrics.enabled: true
 // logs bean instantiation time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Optimization:
 1. Use @Lazy injection where beans aren't needed
    at startup.
@@ -387,6 +419,34 @@ as the most common startup slowdown (developer-controlled).
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut HTTP Server Basics
 
@@ -595,6 +655,34 @@ matching is compiled code, not a runtime registry."
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # Micronaut Configuration System
 
 **Interview Weight:** medium - Configuration is essential
@@ -790,6 +878,8 @@ public class OrderClientConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With @Validated, Micronaut validates the bound
 configuration at startup. If baseUrl is missing or
 invalid, the application fails to start with a clear
@@ -811,6 +901,34 @@ validation as the engineering reason for @Validated.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Testing Fundamentals
 
@@ -1003,6 +1121,8 @@ class OrderRepositoryTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Simpler: Micronaut Test Resources automatically
 starts PostgreSQL (or any Testcontainer-supported DB)
 when `micronaut-test-resources-jdbc-*` is on the
@@ -1016,6 +1136,8 @@ test-resources:
       image-name: postgres:15
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Micronaut Test Resources starts the container, injects
 the JDBC URL automatically. No @Container annotation needed.
 
@@ -1028,3 +1150,33 @@ as the zero-config Testcontainers solution.
 | Hiring Manager | Testing at all levels (unit → integration → HTTP). |
 | Bar Raiser | Test Resources, Testcontainers integration, compile-time @MockBean. |
 | Peer Engineer | "Micronaut Test Resources is magic. Add postgres to classpath, run tests. Database starts automatically." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

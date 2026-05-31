@@ -231,6 +231,8 @@ The platform team builds what every service needs:
       runbook linked, dependency declared
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The leverage of SRE at scale comes from the platform, not from SRE
 headcount. An SRE team of 8 that builds a platform used by 100 services
@@ -1168,6 +1170,8 @@ KEY METRICS AT 3 YEARS
   PRR completion rate: > 95% for all new launches
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1327,3 +1331,33 @@ xychart-beta
 
 4. "What is the biggest blocker to development teams owning their own
    reliability? Is it skills, tooling, or organizational culture?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

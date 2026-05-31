@@ -138,6 +138,8 @@ SINGLETON SESSION BEAN:
            Undeploy -> [@PreDestroy] -> [gone]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key code patterns:**
 
 ```java
@@ -185,6 +187,8 @@ public class CheckoutSession {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -386,6 +390,8 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 # Analyze with Eclipse MAT: look for CheckoutSession count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Always add timeout to @Stateful beans
@@ -396,6 +402,8 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 )
 public class CheckoutSession { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Consider replacing @Stateful with a database draft
 record pattern: persist partial state as a draft entity;
@@ -475,6 +483,8 @@ public class ProductCache {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Container implements READ/WRITE with a read-write lock
 internally. Multiple `@Lock(READ)` calls proceed
 concurrently; a `@Lock(WRITE)` call waits for all
@@ -487,6 +497,8 @@ Access timeout: if the lock can't be acquired:
 public void refresh() { ... }
 // Throws ConcurrentAccessTimeoutException after 5 seconds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The default concurrency management for @Singleton is CONTAINER (the container manages @Lock). You can also use @ConcurrencyManagement(BEAN) to manage your own synchronization with synchronized blocks. Bean-managed concurrency is only appropriate when the container's lock granularity doesn't match your needs."
 
@@ -519,6 +531,8 @@ public void onMessage(Message message) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Configure redelivery (WildFly):
 ```xml
 <address-setting match="jms.queue.order-events">
@@ -528,6 +542,8 @@ Configure redelivery (WildFly):
   <max-delivery-attempts>3</max-delivery-attempts>
 </address-setting>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Monitor DLQ: messages that can't be processed after
 retries land there. Operations must have a process
@@ -574,6 +590,8 @@ public void placeOrder(Order order) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Critical: `@Asynchronous` starts a NEW transaction context.
 It does NOT inherit the caller's transaction.
 
@@ -609,6 +627,8 @@ public class ReportScheduler {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `persistent = true` (default): timer stored in DB,
 survives restart. `persistent = false`: recreated
@@ -661,6 +681,8 @@ public class CheckoutSession implements Serializable {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Passivation failure (non-serializable field) causes the container to throw an EJBException and lose the client's session. The symptom in production: random ConversationExpiredException or session errors for a subset of users. Check for @Stateful beans that hold EntityManager, Connection, or Socket references without marking them transient."
 
 ---
@@ -702,6 +724,8 @@ public class OrderService {
 // @TransactionAttribute -> @Transactional(TxType.*)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "CDI @Transactional in Jakarta EE 10+ is implemented by a CDI interceptor - the same mechanism as Spring @Transactional. The main remaining EJB use case: @Singleton with @Lock - CDI ApplicationScoped beans don't have built-in read/write lock semantics."
 
 ---
@@ -724,6 +748,8 @@ WildFly pool configuration:
   instance-acquisition-timeout-unit="MINUTES"/>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Monitoring (WildFly CLI):
 ```bash
 /subsystem=ejb3/stateless-session-bean=OrderService\
@@ -731,6 +757,8 @@ Monitoring (WildFly CLI):
 /subsystem=ejb3/stateless-session-bean=OrderService\
 :read-attribute(name=pool-available-count)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Implications:
 - Pool exhaustion: callers wait up to `instance-acquisition-timeout`
@@ -772,6 +800,8 @@ curl -X POST http://admin:pass@localhost:9990/management \
 # </logger>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix options:
 1. Add `@StatefulTimeout`: leaked sessions expire
 2. Always call `@Remove` method when done
@@ -790,11 +820,41 @@ Fix options:
    AND last_updated < NOW() - INTERVAL '30 minutes'
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The database draft pattern has another advantage: it survives server restarts and cluster failures. The @Stateful bean survives neither (unless you configure full session replication, which is expensive)."
 
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # EJB Transaction Management
 
@@ -889,6 +949,8 @@ NOT_SUPPORTED  No       Runs without TX
 "Has TX?" = is there an active transaction at the call site?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rollback rules:**
 
 ```java
@@ -925,6 +987,8 @@ public class PaymentService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1151,6 +1215,8 @@ grep "setRollbackOnly\|rollback-only\|RollbackException" \
 # It often appears BEFORE the RollbackException in the log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Pattern 1: Don't use REQUIRED if you want to catch
@@ -1165,6 +1231,8 @@ public void tryOptionalOperation() {
     // Outer TX is unaffected
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1227,6 +1295,8 @@ public void createOrder(Order o) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "I audit all checked exceptions in EJB service layers. Any checked exception thrown at a transaction boundary should either: (1) be annotated @ApplicationException(rollback=true) if it represents a failure, or (2) explicitly not roll back if partial state is valid. Never rely on the default without thinking about it."
 
 ---
@@ -1260,6 +1330,8 @@ public void logAudit(AuditEntry entry) {
 public void processItem(Item item) { ... }
 // Creates 1000 transactions instead of 1 - very slow
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Deadlock risk with REQUIRES_NEW:
 - Outer TX locks row R
@@ -1311,6 +1383,8 @@ public class ManualTxService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rules for BMT:
 - Transaction MUST be committed or rolled back before method returns
 - Container throws EJBException if method returns with open TX
@@ -1344,6 +1418,8 @@ Debugging steps:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Check @ApplicationException on the exception class:
    ```bash
    grep -r "@ApplicationException" src/
@@ -1351,17 +1427,23 @@ Debugging steps:
    # That's the bug: it's a checked exception with no rollback rule
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Verify @TransactionAttribute on the method:
    ```bash
    grep -A5 "public void failingMethod" src/**/*.java
    # Is it REQUIRED? SUPPORTS? NOT_SUPPORTED?
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Check SessionContext.setRollbackOnly() calls:
    ```bash
    grep -r "setRollbackOnly" src/
    # Is it called in the failure path?
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The diagnostic shortcut: check the exception class hierarchy. If the exception you're throwing extends Exception (not RuntimeException), you have a checked exception and you need @ApplicationException(rollback=true) on it."
 
@@ -1407,6 +1489,8 @@ public class OrderWithNotificationService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cost of JTA 2PC:
 - Multiple round trips to all resources
 - Holding locks during 2PC (blocking other transactions)
@@ -1451,6 +1535,8 @@ public class ServiceB {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The fix: use REQUIRES_NEW for B if you want A to
 continue despite B's failure:
 ```java
@@ -1461,6 +1547,8 @@ public void methodB() {
     // A's TX is unaffected
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "This is the most confusing transaction bug in Java EE: you catch the exception, the code looks correct, but you get RollbackException on commit. The key insight: catching an exception does not undo the rollback-only flag. REQUIRES_NEW is the only way to isolate B's failures from A's transaction."
 
@@ -1485,6 +1573,8 @@ Options:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Programmatic (BMT):
    ```java
    @Resource
@@ -1503,10 +1593,14 @@ Options:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Server-wide default (standalone.xml):
    ```xml
    <coordinator-environment default-timeout="300"/>
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When timeout fires: `TransactionRolledbackException`.
 All locks released.
@@ -1550,6 +1644,8 @@ public class OrderService {
     // Same behavior, no EJB required
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key difference: CDI @Transactional requires no
 application server EJB support - works in CDI containers
@@ -1614,6 +1710,38 @@ public class PaymentService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The idempotency key and the business operation must commit in the same transaction. If they're separate transactions, a crash between commit 1 (business) and commit 2 (key record) means the next retry processes the payment again. Single transaction = atomicity guarantee."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

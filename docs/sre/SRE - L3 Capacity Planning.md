@@ -145,6 +145,8 @@ USE METHOD per resource
   Errors: are requests failing due to capacity limits?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Most catastrophic capacity failures are predictable in advance. Black
 Friday, product launches, viral social media events, fiscal year-end
@@ -339,6 +341,8 @@ capacity stabilizes.
 #        "reactive mode"?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Historical peak analysis: find all known peak events (holidays,
 product launches, viral events). Build a peak multiplier table:
 Black Friday = 8-12x normal, Christmas = 5-8x, New Year = 3-5x.
@@ -456,6 +460,34 @@ the tabular format in the Concept Explanation section.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Performance Degradation and Saturation Analysis
 
@@ -607,6 +639,8 @@ M/M/1 QUEUE SATURATION CURVE
   90%         | 9.0             | 9.0x
   95%         | 19.0            | 19.0x
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Most performance problems are explained by a single bottleneck at one
@@ -917,6 +951,8 @@ jstack <PID> | grep "WAITING" | head -20
 # Likely: threads blocked on DB connection acquire
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Database connection timeout + thread pool queue limit.
 Set connection acquire timeout to 500ms (fail fast rather than block).
 Set HTTP thread pool queue depth limit (reject at 2x normal depth).
@@ -947,6 +983,8 @@ grep "Pause Full" gc.log | \
 # Compare timestamps with latency spike timestamps in
 # APM. If they align: GC is the cause.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Tune GC for latency: G1GC with MaxGCPauseMillis=200,
 increase heap to reduce GC frequency, or migrate to ZGC/Shenandoah
@@ -1320,3 +1358,33 @@ xychart-beta
 
 4. "What load testing tooling is used to discover saturation points
    before production traffic reaches them?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

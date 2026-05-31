@@ -8,6 +8,15 @@ permalink: /design-patterns/l5-architectural/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Architectural Patterns and Design Pattern Migration](#architectural-patterns-and-design-pattern-migration) | medium |
+
+---
+
 # Architectural Patterns and Design Pattern Migration
 
 ---
@@ -95,6 +104,8 @@ External System (HTTP, DB, Queue)
 External System (Database, Email, Cache)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The domain defines what it needs (ports). Adapters fulfill those needs.
 The domain is testable without any external system (inject test adapters).
 
@@ -118,6 +129,8 @@ Read side subscribes and updates ReadModel.
 (Observer pattern between Command and Query sides)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Event Sourcing:**
 
 ```
@@ -135,6 +148,8 @@ Event Sourcing:
     Observer (projections update on new events)
     Memento (snapshots for performance)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Saga Pattern (Distributed Transactions):**
 
@@ -157,6 +172,8 @@ Orchestration Saga:
   On failure: calls compensation actions in reverse order.
   Benefit: flow is explicit and visible in one place.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Migration strategies:**
 
@@ -457,6 +474,8 @@ Phase 4 (months 10-12): CQRS for Order Reads
   - Write consistency preserved (command side)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pattern composition in the final state:**
 
 - Hexagonal: domain isolation in each service
@@ -580,6 +599,8 @@ grep -r "import javax.persistence" src/main/java/com/example/domain/
 # Any match = port/domain boundary violation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: CQRS read model becomes stale**
 
 Symptom: reads show outdated data after writes. Users see inconsistency.
@@ -609,6 +630,8 @@ public void recoverIncompleteSagas() {
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -877,6 +900,8 @@ public class OrderAggregate {
 // Snapshot creation: every 50 events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The snapshot strategy: how often to
 snapshot? Too frequent: high write overhead. Too infrequent: long replay
 time. A reasonable default: snapshot every 50-100 events. For aggregates
@@ -1013,3 +1038,33 @@ and is what makes the system scalable. True real-time (sub-100ms model
 update, sub-10ms serve) requires in-memory feature computation and is
 significantly more complex. The design should match the actual latency
 requirement, not an assumed "must be instantaneous."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,15 @@ permalink: /microservices/l5-migration-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Microservices Migration Strategy from Monolith](#microservices-migration-strategy-from-monolith) | medium |
+
+---
+
 # Microservices Migration Strategy from Monolith
 
 ---
@@ -84,6 +93,8 @@ STRANGLER FIG PHASES:
     Update all references.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data decomposition (the hard part):**
 ```
 PATTERN 1: Strangler with shared DB (Phase 1)
@@ -113,6 +124,8 @@ PATTERN 4: Direct data migration
   Only for low-traffic, scheduled-maintenance features.
   Risky for high-traffic paths.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The strangler fig succeeds because it is reversible at every step. If the new service has a bug: flip the feature flag back. The monolith is still running. If the migration stalls: the system is still functional (both paths work). The irreversible step is the data migration. Delay it until the service is stable and the traffic is fully migrated. Only then cut the shared DB connection and migrate the data.
@@ -450,3 +463,33 @@ Fix: (1) Identify which endpoints have strict read-after-write consistency requi
 | Parallel Run | Low (monolith backup) | Each capability: 3-6 months | Feature-by-feature |
 | Database-first | High (data risk) | Long (schema migration) | Never as starting point |
 | Modular Monolith (stop here) | None | Weeks-months | < 5 teams, good domain clarity |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

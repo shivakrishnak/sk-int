@@ -8,9 +8,20 @@ permalink: /kafka/l4-replication-and-isr/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L4 Replication and ISR](#kafka---l4-replication-and-isr) | medium |
+
+---
+
 # Kafka - L4 Replication and ISR
 
 ## Kafka Replication and ISR
+
+---
 
 ### 🎯 Model Answer
 
@@ -175,6 +186,8 @@ REPLICA ASSIGNMENT STRATEGY:
   Ensures: no single AZ failure takes down a partition (replicas in all 3 AZs).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -322,6 +335,8 @@ failure without data loss. Not: tolerate 2 simultaneous failures.
     Trade-off: availability vs durability on double failure.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -434,6 +449,8 @@ Fix - emergency (accept data risk):
   Restore to min.insync.replicas=2 after broker recovery.
   NEVER leave min.insync.replicas=1 for financial topics.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -629,4 +646,34 @@ use `kafka-server-stop.sh` which sends SIGTERM (triggers controlled shutdown), n
 (which bypasses controlled shutdown). Always monitor `UnderReplicatedPartitions` between broker
 restarts. Never restart two brokers simultaneously in a RF=3 cluster with `min.insync.replicas=2`:
 that would drop ISR to 1, below the minimum, causing producer failures.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

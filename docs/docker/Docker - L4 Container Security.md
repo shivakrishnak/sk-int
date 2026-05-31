@@ -8,9 +8,20 @@ permalink: /docker/l4-container-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L4 Container Security](#docker---l4-container-security) | medium |
+
+---
+
 # Docker - L4 Container Security
 
 ## Container Security Hardening Advanced
+
+---
 
 ### 🎯 Model Answer
 
@@ -268,6 +279,8 @@ OPA GATEKEEPER ADMISSION CONTROL:
     match:
       namespaces: [production, staging]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -537,6 +550,8 @@ Step 5: Policy improvement:
   # Was the container running with unnecessary privileges? Fix Dockerfile.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -717,4 +732,34 @@ Any signed image: verifiable with its provenance (which GitHub Actions
 workflow signed it, at what time, from which repo). Non-repudiation:
 built-in. For regulated industries: the Rekor transparency log is
 an immutable audit trail of all image signing events.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

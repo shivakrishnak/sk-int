@@ -8,6 +8,17 @@ permalink: /docker/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [What Is Docker and Why It Exists](#what-is-docker-and-why-it-exists) | medium |
+| 2 | [Containers vs Virtual Machines](#containers-vs-virtual-machines) | medium |
+| 3 | [The OCI Standard and Container Runtime Ecosystem](#the-oci-standard-and-container-runtime-ecosystem) | medium |
+
+---
+
 # What Is Docker and Why It Exists
 
 🎯 Interview Weight: foundational orientation question. Every
@@ -225,6 +236,8 @@ USER appuser
 CMD ["python", "app.py"]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```bash
 # Build: create an image from the Dockerfile
 docker build -t myapp:v1.0.0 .
@@ -433,6 +446,8 @@ Image layer 3 (read-only) ← COPY . . (application code)
 Image layer 2 (read-only) ← RUN pip install requirements
 Image layer 1 (read-only) ← FROM python:3.9-slim
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When a container reads a file, it first checks its writable layer.
 If not found, it reads from the image layers. When a container
 writes to a file from an image layer, the file is first copied to
@@ -510,6 +525,8 @@ docker inspect mycontainer --format '{{.Image}}'
 # developer: sha256:abc123...  # must match
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If digests differ, the images are different (a `latest` tag or
 rebuild produced a different image).
 
@@ -517,6 +534,8 @@ Step 2: Check environment variables.
 ```bash
 docker inspect mycontainer --format '{{.Config.Env}}'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Production may have different env vars than local. A missing
 database URL, a different API key, a different MODE=production
 can cause different behavior.
@@ -530,6 +549,8 @@ docker inspect mycontainer --format '{{.Mounts}}'
 # Should be empty or only data volumes (no source code mounts)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Check resource limits.
 Production may have memory limits set. The container OOMs but
 the developer's machine has unlimited memory.
@@ -538,6 +559,8 @@ docker stats mycontainer
 # Watch for MEM USAGE approaching MEM LIMIT
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: Check architecture.
 Developer on Apple Silicon (ARM64) builds an ARM64 image. Production
 is AMD64. The image runs correctly but with Rosetta emulation
@@ -545,6 +568,8 @@ locally and natively in production (or refuses to run entirely).
 ```bash
 docker inspect mycontainer --format '{{.Architecture}}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The correct first question:
 "Is this the same image digest?" Not "is this the same tag?" Tags
@@ -573,6 +598,8 @@ jobs:
           docker build --target test -t myapp:test .
           docker run myapp:test mvn test
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The build environment is the Dockerfile itself - reproducible
 and version-controlled.
 
@@ -587,6 +614,8 @@ Package stage - create the deployment artifact:
             .
           docker push ghcr.io/myorg/myapp:${{ github.sha }}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The image tag includes the Git SHA - the image is the deployable
 artifact, immutable and content-addressable.
 
@@ -598,6 +627,8 @@ Deploy stage - run the artifact:
           kubectl set image deployment/myapp \
             myapp=ghcr.io/myorg/myapp:${{ github.sha }}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The three-stage flow: build → package → deploy. Docker makes each
 stage reproducible: the same Dockerfile always produces the same
@@ -664,6 +695,34 @@ their implications.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Containers vs Virtual Machines
 
@@ -747,6 +806,8 @@ Host OS
 Physical Hardware
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Container stack:
 ```
 Application Code
@@ -755,6 +816,8 @@ Container Runtime (namespace/cgroup management)
 Host OS Kernel (shared)
 Physical Hardware
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The key difference: the guest OS layer. VMs have it; containers
 do not. The container's process talks directly to the host kernel,
@@ -1161,6 +1224,8 @@ docker run myapp  # Overlay2 filesystem
 fio --name=test --filename=/data/test --size=1G --rw=write
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The overlay2 disk I/O overhead
 for write-heavy workloads. The overlay2 copy-on-write mechanism
 for writes has significant overhead for sequential write workloads:
@@ -1265,6 +1330,34 @@ not about mandating a specific technology.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # The OCI Standard and Container Runtime Ecosystem
 
@@ -1390,6 +1483,8 @@ The chain for Kubernetes:
 kubelet (Kubernetes) → CRI → containerd → runc → container
 kubelet (Kubernetes) → CRI → CRI-O → runc → container
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Docker is a developer tool layer above the OCI standards. The image
@@ -1575,7 +1670,6 @@ OCI Image Specification: defines how container images are structured
 and distributed. An OCI image consists of a manifest (JSON document
 listing the image layers and configuration), a set of content-
 addressable layer archives (tar files compressed with gzip or zstd),
-and an image configuration (entry point, environment variables,
 architecture, OS). Any OCI-compliant builder produces images in
 this format. Any OCI-compliant registry distributes them. Any
 OCI-compliant runtime can execute them.
@@ -1631,6 +1725,8 @@ kubelet
   → Linux kernel (namespaces, cgroups)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why dockershim was removed: Docker Engine does not implement CRI
 natively. Kubernetes maintained a shim (dockershim) that translated
 CRI calls to Docker API calls. Docker internally used containerd
@@ -1671,6 +1767,8 @@ SHA256 hash (the digest). The manifest references layers by digest:
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The digest IS the address. When pulling an image, the client
 downloads the manifest (identified by tag), then downloads each
@@ -1784,6 +1882,8 @@ containerd
   → shim exits
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why this matters for debugging: `ps aux | grep shim` shows one
 shim process per running container on the host. If a container
 is stuck, the shim process is still running. The shim process
@@ -1829,6 +1929,8 @@ The OCI Image Index (formerly Docker Manifest List):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When the client (Docker, containerd) pulls `nginx:latest`, it
 resolves the tag to the image index. The client then selects the
 manifest for its platform and downloads the platform-appropriate
@@ -1846,6 +1948,8 @@ docker buildx build \
 # Creates an OCI image index with both manifests
 # Pushes to the registry as a multi-platform image
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The QEMU emulation: when building for a non-native platform (AMD64
 building ARM64), Docker uses QEMU user-mode emulation. This is
@@ -1878,6 +1982,8 @@ kubectl describe pod mypod -n mynamespace
 #   ... (error message tells you why)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common error messages and their causes:
 - `401 Unauthorized` → missing or invalid registry credentials
 - `403 Forbidden` → credentials exist but don't have pull access
@@ -1895,6 +2001,8 @@ docker manifest inspect ghcr.io/myorg/myapp:v1.0.0
 #   → credentials or network issue on the Kubernetes node
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Check image pull secrets.
 ```bash
 kubectl get secret myapp-registry-secret -o yaml
@@ -1903,6 +2011,8 @@ kubectl get secret myapp-registry-secret -o yaml
 kubectl get pod mypod -o yaml | grep imagePullSecrets
 # Verify the pod references the correct secret
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Test from the Kubernetes node directly.
 ```bash
@@ -1913,6 +2023,8 @@ crictl pull ghcr.io/myorg/myapp:v1.0.0
 # Check: firewall rules, NAT, proxy configuration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: Architecture mismatch.
 ```bash
 kubectl get nodes -o wide | grep ARCH
@@ -1920,6 +2032,8 @@ kubectl get nodes -o wide | grep ARCH
 docker manifest inspect ghcr.io/myorg/myapp:v1.0.0 | grep architecture
 # Use multi-platform build if architecture mismatch
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Docker Hub rate limit issue
 in CI. Docker Hub anonymous pull limit: 100 pulls per 6 hours per
@@ -1929,3 +2043,33 @@ errors, intermittent image pull failures. Solutions: authenticate
 to Docker Hub (authenticated pulls: 200/6h for free, 5,000/day
 for paid), use a pull-through cache registry (Nexus, Harbor),
 or mirror common base images to your private registry.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

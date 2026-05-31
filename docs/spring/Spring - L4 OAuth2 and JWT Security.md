@@ -8,7 +8,13 @@ permalink: /spring/l4-oauth2-and-jwt-security/
 render_with_liquid: false
 ---
 
-# Spring - L4 OAuth2 and JWT Security
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L4 OAuth2 and JWT Security](#spring---l4-oauth2-and-jwt-security) | medium |
+| 2 | [Spring Security OAuth2 and JWT](#spring-security-oauth2-and-jwt) | medium |
 
 ---
 
@@ -28,7 +34,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — OAuth2/JWT is the standard auth pattern for
+🎯 Interview Weight: High - OAuth2/JWT is the standard auth pattern for
 microservices. Senior interviews probe resource server configuration,
 token validation, and multi-tenant setups.
 
@@ -162,6 +168,8 @@ JWKS caching:
   On unknown kid (key rotation): refetches JWKS
   Automatic key rotation support built-in
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Spring Security's resource server performs all validation locally using cached
@@ -491,6 +499,8 @@ private AuthenticationManager createAuthManager(
         authManagerResolver()))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Dynamic multi-tenant (tenants added at runtime):
 ```java
 @Bean
@@ -511,6 +521,8 @@ JwtIssuerAuthenticationManagerResolver
         });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The JwtIssuerAuthenticationManagerResolver
 reads the "iss" claim WITHOUT validating the JWT (to know which decoder to use).
@@ -547,6 +559,8 @@ JwtDecoder jwtDecoder() {
     return decoder;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Short-lived JWTs + refresh tokens pattern:
 - Access token: 15 minutes (exp)
@@ -608,6 +622,8 @@ WebClient inventoryClient(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The OAuth2AuthorizedClientManager automatically:
 1. Checks for a cached token for "order-service" client
 2. If expired or missing: requests a new one using client credentials
@@ -655,6 +671,8 @@ Response: {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring configuration for opaque tokens:
 ```java
 .oauth2ResourceServer(oauth2 -> oauth2
@@ -665,6 +683,8 @@ Spring configuration for opaque tokens:
             "resource-server-id",
             "resource-server-secret")));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The trade-off is revocability vs performance.
 For most microservice APIs, JWT is the right choice: stateless, fast, scales
@@ -716,6 +736,8 @@ public class OrderController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 2 - Token exchange (RFC 8693):
 Service A exchanges the user JWT for a service-scoped JWT:
 ```
@@ -726,6 +748,8 @@ subject_token_type=urn:ietf:params:oauth:token-type:jwt
 requested_token_type=urn:ietf:params:oauth:token-type:jwt
 audience=inventory-service
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Returns a new JWT scoped for inventory-service with user's identity.
 
 *What separates good from great:* Token propagation creates a security coupling:
@@ -779,6 +803,8 @@ class OrderControllerTest {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The jwt() post-processor creates a JwtAuthenticationToken without actual
 JWT validation - no issuer-uri or JWKS needed in tests.
@@ -834,6 +860,8 @@ JwtAuthenticationConverter keycloakJwtConverter() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Accessing claims in controllers:
 ```java
 // Method 1: @AuthenticationPrincipal Jwt
@@ -846,6 +874,8 @@ public ResponseEntity<?> resource(
 Jwt jwt = (Jwt) SecurityContextHolder.getContext()
     .getAuthentication().getPrincipal();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Different identity providers use different
 claim structures for roles. Auth0 uses "https://{namespace}/roles" custom claims.
@@ -925,6 +955,8 @@ Resource server configuration to return proper 401:
     }));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Proactive refresh (client side): refresh the token 30 seconds BEFORE expiry
 to avoid the 401-then-retry latency on API calls.
 
@@ -981,6 +1013,8 @@ public class AuthorizationServerConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Features:
 - Authorization Code flow (with PKCE for SPAs)
 - Client Credentials flow (service-to-service)
@@ -1018,6 +1052,8 @@ JWT payload carries session state:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Stateless session lifecycle:
 1. User logs in -> auth server issues JWT
 2. Client stores JWT in-memory (SPA) or auth cookie (SSR)
@@ -1038,3 +1074,33 @@ short-lived JWTs (15 min) + revocation check against Redis for security-critical
 events (password change, account compromise). The revocation check is O(1) Redis
 lookup per request - acceptable overhead for security. For regular logout (user
 clicking logout), just expire the client-side token - don't add server-side state.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

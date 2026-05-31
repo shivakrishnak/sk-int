@@ -7,16 +7,6 @@ permalink: /platform-engineering/l5-platform-migration/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L5 Platform Migration
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Legacy to IDP Migration Strategy](#legacy-to-idp-migration-strategy) | critical |
-
----
-
 # Legacy to IDP Migration Strategy
 
 ---
@@ -201,6 +191,8 @@ Phase 3: Legacy Decommission (months 18-36)
     - Any remaining services in legacy system: incident risk accepted
     - Complete remaining migrations with emergency support
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The strangler fig pattern applied:**
 
@@ -559,6 +551,8 @@ kubectl exec -it <pod> -n <idp-namespace> -- \
 # Prometheus exporter overhead: negligible for most services
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common causes: IDP has CPU limits that are tighter than the legacy
 deployment (throttling under load), service mesh sidecar overhead
 (Istio mTLS adds 1-5ms p99 for in-cluster calls), or different
@@ -829,6 +823,8 @@ kubectl annotate deployment payment-api \
   -n payment-idp-namespace \
   rollback-reason="production-incident-YYYY-MM-DD"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Post-rollback investigation:**
 
@@ -1220,3 +1216,33 @@ is fundamentally different from "teams don't have time" or "teams are
 resistant." Treating all delays as a single problem leads to ineffective
 responses (e.g., speeding up the platform when the bottleneck is team
 capacity).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

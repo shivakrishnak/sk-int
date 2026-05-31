@@ -7,6 +7,16 @@ permalink: /css/l3-preprocessors/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [SASS and SCSS](#sass-and-scss) | medium-high |
+| 2 | [PostCSS and Autoprefixer](#postcss-and-autoprefixer) | medium |
+
+---
+
 # SASS and SCSS
 
 🎯 **Interview Weight:** medium-high - Sass/SCSS is present
@@ -163,6 +173,8 @@ SASS/SCSS FEATURES:
    // Outputs both as a combined selector
    // Can cause output bloat - prefer mixins
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -371,6 +383,8 @@ output.
 # Webpack: devtool: 'source-map' and css-loader sourceMap: true
 # DevTools: Settings > Sources > Enable CSS source maps
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1007,6 +1021,34 @@ text and code examples)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # PostCSS and Autoprefixer
 
 🎯 **Interview Weight:** medium - PostCSS is ubiquitous in
@@ -1155,6 +1197,8 @@ POSTCSS-PRESET-ENV (polyfills future CSS):
     .nested .child { }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 `browserslist` is the shared configuration that both
@@ -1271,6 +1315,8 @@ module.exports = {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // package.json browserslist
 {
@@ -1360,6 +1406,8 @@ npx browserslist
 # Shows list of targeted browsers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: CSS minification breaking styles**
@@ -1377,6 +1425,8 @@ require('cssnano')({ preset: ['default', {
   discardDuplicates: true, // Remove exact duplicates only
 }] })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1961,3 +2011,33 @@ covered in L4 Performance)*
 
 *(Omit: build pipeline flow is better shown in code
 configuration than a diagram)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

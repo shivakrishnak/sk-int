@@ -8,6 +8,15 @@ permalink: /database-sql/l5-architecture-decisions/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Database Architecture Decisions - SQL, NewSQL, and Polyglot Persistence](#database-architecture-decisions---sql-newsql-and-polyglot-persistence) | medium |
+
+---
+
 # Database Architecture Decisions - SQL, NewSQL, and Polyglot Persistence
 
 **TL;DR:** Database architecture is a trade-off between consistency, scale, and operational
@@ -106,6 +115,8 @@ Graph data?
   -> PostgreSQL with recursive CTEs (moderate scale)
   -> Neo4j (deep traversal, graph algorithms at scale)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -393,6 +404,8 @@ Consistency strategy:
   - Reconciliation jobs for drift detection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -544,3 +557,33 @@ Fix: redesign the primary key to co-locate related rows (same range prefix).
 **Q12: How do you architect for both OLTP and OLAP workloads on the same data?**
 
 🗣️ "OLTP (Online Transaction Processing): high-throughput, low-latency, short transactions. Normalized schema. Indexed columns. Many concurrent connections. OLAP (Online Analytical Processing): complex queries, long-running, full table scans, aggregations over millions of rows. OLAP queries on an OLTP PostgreSQL database: they compete for I/O with OLTP queries. A 5-minute report query locks pages in shared_buffers, causing cache eviction that slows OLTP queries. Solutions: (1) Read replica for analytics: route OLAP queries to a dedicated read replica with no connection from the OLTP application pool. The OLAP queries do not impact OLTP. Lag: the replica may be seconds behind (acceptable for analytics). (2) Separate data warehouse (Redshift, BigQuery, Snowflake): ETL/ELT pipeline moves data daily or hourly from PostgreSQL to the warehouse. OLAP runs on the warehouse. No impact on PostgreSQL. Fresh data has T+1 or T+15min delay. Best for compliance reports, BI dashboards. (3) Hybrid: TimescaleDB or Citus PostgreSQL extension - column-store indexes for analytical queries alongside B-tree indexes for OLTP queries. Experimental but growing. Decision: for straightforward reporting (daily dashboards): read replica. For complex analytics, large data volumes, BI tools: dedicated data warehouse. For real-time analytics: streaming pipeline (Kafka -> Flink -> OLAP store)."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

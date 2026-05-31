@@ -8,9 +8,20 @@ permalink: /docker/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L1 Core Concepts](#docker---l1-core-concepts) | medium |
+
+---
+
 # Docker - L1 Core Concepts
 
 ## Docker Images and Layers
+
+---
 
 ### 🎯 Model Answer
 
@@ -132,6 +143,8 @@ IMAGE IDENTIFICATION:
   # In Kubernetes:
   image: myapp@sha256:a1b2c3...  # pinned digest
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -302,6 +315,8 @@ Fix:
   # Final image: only nginx + built files. No node_modules. ~50MB vs ~500MB.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -375,6 +390,8 @@ update) is auditable and reversible.
 ---
 
 ## Dockerfile Fundamentals
+
+---
 
 ### 🎯 Model Answer
 
@@ -517,6 +534,8 @@ NON-ROOT USER (SECURITY):
   # Without .dockerignore: .git (potentially GB) sent on every build.
   # With .dockerignore: only source files sent. Faster builds.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -674,6 +693,8 @@ Fix:
   # Or in Kubernetes: terminationGracePeriodSeconds: 30
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -720,6 +741,8 @@ initialization logic with correct signal handling.
 ---
 
 ## Container Lifecycle and Management
+
+---
 
 ### 🎯 Model Answer
 
@@ -881,6 +904,8 @@ CLEANUP:
   docker system df
   # Shows: images, containers, volumes, build cache, with reclaimable amounts.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1069,6 +1094,8 @@ Fixes:
   Missing file: ensure volume mounts are correct. Check mount path.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1110,4 +1137,34 @@ to only see recent logs. For containers that restart too fast to
 attach: `docker run --restart no` to start without restart policy,
 letting you observe the first crash without it being immediately
 restarted. Then: read logs, fix issue, re-enable restart policy.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

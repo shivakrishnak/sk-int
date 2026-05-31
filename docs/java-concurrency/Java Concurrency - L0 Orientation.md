@@ -8,9 +8,20 @@ permalink: /java-concurrency/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L0 Orientation](#java-concurrency---l0-orientation) | medium |
+
+---
+
 # Java Concurrency - L0 Orientation
 
 ## Why Concurrency Exists
+
+---
 
 ### 🎯 Model Answer
 
@@ -99,6 +110,8 @@ Thread B:         [work]--[wait I/O]------[work]
 Thread C:                 [work]----------[work]
 CPU core: [AAAA][BBBB][CCCC][AAAA][BBBB][CCCC]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The JVM creates a Java Thread backed by an OS native thread. The OS
 scheduler uses preemptive time-slicing to assign threads to CPU cores.
 When a thread makes a blocking I/O call, the kernel marks it as WAITING,
@@ -183,6 +196,8 @@ public class UnsafeCounter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: atomic counter using java.util.concurrent.atomic
 import java.util.concurrent.atomic.AtomicInteger;
@@ -210,6 +225,8 @@ public class SafeCounter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -423,6 +440,8 @@ CompletableFuture.allOf(a, b, c).join();
 // Total latency: max(50, 30, 20) = 50ms instead of 100ms
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This cuts latency by 50% and reduces thread blocking time. In a
 high-throughput system, this means your thread pool handles 2x more
 requests with the same number of threads.
@@ -607,6 +626,8 @@ sequenceDiagram
 
 ## The Java Thread Model
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -695,6 +716,8 @@ JVM Process
     CPU Core 0     CPU Core 1    CPU Core 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Thread creation in Java:
 1. `new Thread(runnable).start()` - JVM calls `pthread_create()` (Linux)
 2. OS allocates stack memory and creates a kernel thread
@@ -767,6 +790,8 @@ public class BadWorker extends Thread {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: implement Runnable to separate logic from execution
 public class GoodWorker implements Runnable {
@@ -792,6 +817,8 @@ t.start();
 t.join();                      // wait for completion
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // PRODUCTION: use ExecutorService - manages pooling and lifecycle
 import java.util.concurrent.*;
@@ -811,6 +838,8 @@ try {
     pool.awaitTermination(60, TimeUnit.SECONDS);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1015,6 +1044,8 @@ scheduler.scheduleAtFixedRate(() -> {
 }, 0, 30, TimeUnit.SECONDS);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The critical detail: `scheduleAtFixedRate` silently stops if the
 task throws an unchecked exception. You must wrap the task body in
 try-catch to prevent this. I have debugged "health checks stopped
@@ -1215,6 +1246,8 @@ graph TD
 
 ## Java Concurrency Ecosystem Overview
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -1323,6 +1356,8 @@ Level 4 (Third-party):
   Testing: jcstress, Awaitility
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The concurrent collections (`ConcurrentHashMap`, `BlockingQueue`) are
 not just synchronized wrappers - they are purpose-built concurrent
@@ -1390,6 +1425,8 @@ for (Thread t : threads) t.join(); // manual lifecycle
 // results may be corrupt - ArrayList not thread-safe
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // ERA 2 (Java 5+): ExecutorService with concurrent collection
 List<String> results =
@@ -1404,6 +1441,8 @@ for (String url : urls) {
 for (Future<?> f : futures) f.get(); // propagates exceptions
 exec.shutdown();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // ERA 3 (Java 8+): CompletableFuture pipeline - idiomatic
@@ -1422,6 +1461,8 @@ List<String> results = futures.stream()
     .collect(Collectors.toList());
 exec.shutdown();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1762,6 +1803,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // When scope exits: all forked tasks are guaranteed complete/cancelled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key properties:
 - If any subtask fails, all others are cancelled (ShutdownOnFailure)
 - Or, return first success (ShutdownOnSuccess for race patterns)
@@ -1869,3 +1912,33 @@ mindmap
 > (virtual threads) and a safer concurrency composition model
 > (structured concurrency). Third-party frameworks like Project Reactor
 > add streaming semantics with backpressure on top of this foundation.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

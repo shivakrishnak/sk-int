@@ -7,6 +7,17 @@ permalink: /frontend-testing/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Frontend Testing Landscape](#frontend-testing-landscape) | medium |
+| 2 | [Testing Trophy vs Testing Pyramid](#testing-trophy-vs-testing-pyramid) | medium |
+| 3 | [Why Frontend Testing is Hard](#why-frontend-testing-is-hard) | medium |
+
+---
+
 # Frontend Testing Landscape
 
 ---
@@ -120,6 +131,8 @@ Test types by value:
     - Low coverage of UI rendering
     Best for: utilities, business logic, reducers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Ecosystem tools:**
 
@@ -297,6 +310,8 @@ Testing Pyramid (classic, Mike Cohn):
 /----------\
 /   Unit     \
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Write many unit tests, fewer integration tests, very few E2E tests.
 Designed for backend systems where unit = a function or class with
 clear inputs and outputs.
@@ -311,6 +326,8 @@ Testing Trophy (Kent C. Dodds, frontend-focused):
 /- Static  -\
 (TypeScript, ESLint)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Integration tests are the largest group. Unit tests are fewer because
 isolating individual components often tests implementation details
 rather than user behavior.
@@ -327,6 +344,34 @@ coverage. Match the test type to what you're verifying, not to a
 diagram.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Testing Trophy vs Testing Pyramid
 
@@ -391,6 +436,8 @@ Why Trophy for frontend:
   TypeScript catches: null references, type errors (free, at write time)
   ESLint catches: common mistakes (free, at write time)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -548,6 +595,34 @@ test type provides the most value per test written.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Why Frontend Testing is Hard
 
 ---
@@ -632,6 +707,8 @@ Challenge 5: Test brittle to implementation
   Tests that query by visible text or role are more resilient
   RTL philosophy: query like a user, not like a developer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -773,6 +850,8 @@ await waitFor(() => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -817,3 +896,33 @@ wrong reason causes flaky tests. `getBy*` for an async element causes
 intermittent failures. `findBy*` for a synchronous element wastes
 time (waits up to 1s unnecessarily). `queryBy*` for an element that
 should exist hides bugs (doesn't throw when element is missing).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

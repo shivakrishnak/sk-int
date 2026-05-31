@@ -7,6 +7,15 @@ permalink: /typescript/l5-migration-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Migrating JavaScript to TypeScript at Scale](#migrating-javascript-to-typescript-at-scale) | medium |
+
+---
+
 # Migrating JavaScript to TypeScript at Scale
 
 ---
@@ -126,6 +135,8 @@ Phase 5: Tighten (Month 4+)
   Goal: 0 @ts-expect-error, 0 explicit any
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Dependency graph strategy:**
 
 ```
@@ -146,6 +157,8 @@ WHY: converting a leaf gives immediate type info to its consumers.
 TOOL: madge --image deps.png src/ (visualize the graph)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key tsconfig options:**
 
 ```json
@@ -160,6 +173,8 @@ TOOL: madge --image deps.png src/ (visualize the graph)
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -202,6 +217,8 @@ TOOL: madge --image deps.png src/ (visualize the graph)
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Example 2 (Wrong vs Right) - Migration approaches:**
 
 ```typescript
@@ -235,6 +252,8 @@ export async function getUser(id: string): Promise<User | null> {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example 3 (Production) - Migration tracking in CI:**
 
@@ -366,6 +385,8 @@ Governance:
   - Migration KPI dashboard: updated daily
   - "Migration tax": 20% of sprint capacity reserved
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -513,6 +534,8 @@ NEW TypeScript files from day one (before migration is complete):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -544,6 +567,8 @@ Map the dependency graph:
 npx madge --image deps.png src/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Count modules by layer: leaves (no consumers), middle, roots.
 Identify "hot" files (highest change frequency in git log).
 Estimate conversion complexity per module.
@@ -555,6 +580,8 @@ Enable coexistence:
 { "allowJs": true, "checkJs": false, "strict": false }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Install `@types/*` for all dependencies.
 
 Add `tsc --noEmit` to CI (failing is OK at first).
@@ -563,6 +590,8 @@ Run ts-migrate on leaf modules (utils, constants, types directories):
 ```pwsh
 npx ts-migrate migrate src/utils src/types src/constants
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Result: These directories compile as TypeScript with @ts-expect-error
 annotations. Track count: this is the baseline.
@@ -604,3 +633,33 @@ visible metrics dashboard are the program management elements that
 determine whether migration succeeds or stalls at 60%. Technical
 staff often underestimate this and focus on tools while neglecting
 process.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

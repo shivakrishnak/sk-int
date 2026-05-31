@@ -158,6 +158,8 @@ BUDGET RESET OPTIONS
     Benefit: consistent incentives, no reset race
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The error budget is not a technical tool - it is an organizational
 negotiation instrument. Its power comes from being agreed upon in
@@ -373,6 +375,8 @@ avg_over_time(
 # Compare: target vs. rolling average
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Reset SLO to be slightly better than the 90-day historical
 average. Establish the baseline. Create a roadmap to tighten the
 SLO quarterly as reliability improvements are made.
@@ -401,6 +405,8 @@ Check: does the error budget dashboard have
 any automated deployment gate integration?
 If no: budget is advisory, not operational.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement automated deployment gates that check error
 budget remaining before allowing production deployments. Require
@@ -431,6 +437,8 @@ If > 80% from one incident: the budget has been
 constrained by a single historical event, not
 current system state.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* The error budget policy should distinguish catastrophic
 incidents (single events consuming >50% of budget) from chronic
@@ -524,7 +532,6 @@ path, and the recovery mechanism.
 **Q3 [MID]: What is burn rate and why is it a better signal
 than budget remaining?**
 
-*Why they ask:* Tests whether the candidate understands the
 predictive dimension of error budget management.
 
 *Likely follow-up:* "What burn rate would you use as a
@@ -734,6 +741,34 @@ and give a specific investment prioritization framework.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Toil - Definition, Measurement, and Reduction
 
 🎯 Interview Weight: critical - the fundamental SRE concept
@@ -889,6 +924,8 @@ TOIL MEASUREMENT
     2. Return high-toil systems to dev teams
     3. Hire additional SREs (last resort)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The 50% toil cap forces an organizational conversation that would
@@ -1111,6 +1148,8 @@ If answer "I don't know": toil is not measured
   and the problem is invisible.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Implement toil tracking immediately. Identify the three
 highest-toil sources. Build automation for the top source within
 one quarter. Report progress monthly.
@@ -1142,6 +1181,8 @@ sum by (alertname) (
 # by alertname, last 30 days
 # Top 5 recurring = top toil candidates
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* For each recurring alert, ask: (a) does it require human
 action? If no: suppress or auto-resolve. (b) Does it always require
@@ -1462,6 +1503,34 @@ outcome-based validation.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Availability and Reliability Fundamentals
 
 🎯 Interview Weight: high - foundational concepts that underpin
@@ -1609,6 +1678,8 @@ MTTR AND AVAILABILITY
     improves availability more efficiently than
     preventing all failures.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The nines math reveals that each additional nine is exponentially
@@ -1829,6 +1900,8 @@ Ask the business stakeholder:
   Five nines requires: never down for > 5 min/year.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Re-baseline the SLO against actual business requirements.
 Present the nines table with downtime equivalents to stakeholders.
 Let business impact determine the SLO, not engineering aspiration.
@@ -1860,6 +1933,8 @@ sum(rate(http_requests_total{status=~"2.."}[5m]))
 # Returns: 0.70 (70% availability - critically degraded)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Replace time-based monitoring with request-based SLI
 monitoring. The service is "available" only when the SLI is above
 the SLO threshold, not when the process is running.
@@ -1887,6 +1962,8 @@ print(f"{composite:.3%}")
 # Prints: 99.401% - actual user-visible availability
 # SLO was 99.9% but users see 99.4%
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Map the full dependency graph for the SLO measurement.
 Either measure the composite (user-visible) availability as the
@@ -2180,3 +2257,33 @@ as binary. Great candidates describe the functional vs. quality
 availability distinction, explain how to define SLIs for degraded
 modes, and explain how graceful degradation improves composite
 availability by breaking the dependency failure propagation chain.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

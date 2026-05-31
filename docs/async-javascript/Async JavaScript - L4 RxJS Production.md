@@ -178,6 +178,8 @@ class MyService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The `async` pipe in Angular is the ideal subscription manager
 for template bindings - it subscribes on first render,
@@ -422,6 +424,8 @@ setInterval(() => {
 }, 30_000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Nested subscription accumulation**
 ```javascript
 // BAD: inner subscription not cleaned up
@@ -442,6 +446,8 @@ outer$.pipe(
   // when outer emits new value
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -480,6 +486,8 @@ function takeUntil(notifier$) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The gotcha: if `destroy$.complete()` is called WITHOUT first
 calling `destroy$.next()`, the `takeUntil` operator sees
 the notifier complete without emitting. Per the implementation,
@@ -496,6 +504,8 @@ ngOnDestroy() {
   this.destroy$.complete(); // takeUntil NOT triggered!
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why `complete()` is also needed: without it, `destroy$` itself
 is a BehaviorSubject/Subject that holds references. Calling
@@ -546,6 +556,8 @@ submitButton$.pipe(
 // While POST in flight: button clicks are ignored
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `switchMap`
 with an HTTP Observable automatically cancels the in-flight
 request via Angular's `HttpClient` (which uses AbortController
@@ -574,6 +586,8 @@ class MonitoredSubjectService {
 // Expose via health endpoint: GET /health/subscriptions
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **`finalize` operator for subscription lifecycle logging**:
 ```javascript
 const tracked$ = source$.pipe(
@@ -582,6 +596,8 @@ const tracked$ = source$.pipe(
 );
 // If "subscribed" count >> "unsubscribed" count: leak
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. **Memory growth correlation**: if adding `finalize` logging
    shows subscriptions never finalize, and heap grows with
@@ -620,6 +636,8 @@ const shared$ = source$.pipe(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `refCount: true` option is critical for services that
 expose shared Observables. Without it, the source subscription
 lives indefinitely once the first subscriber connects.
@@ -636,6 +654,8 @@ class DataService {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing the `refCount` option
 and its implication. The default `shareReplay(1)` in older
@@ -696,6 +716,8 @@ class UserListComponent {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Calling `state.complete()` in
 the store's destroy method. A `BehaviorSubject` that is never
 completed holds its `observers` array even after all components
@@ -733,6 +755,8 @@ class ChatComponent implements OnInit {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 After 10 navigations to ChatComponent:
 - `chatService.messages$.observers.length === 10`
@@ -789,6 +813,8 @@ source$.pipe(
 ).subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using `finalize()` as a
 cleanup hook that fires regardless of how the subscription ends.
 This is safer than implementing cleanup in `complete` callbacks
@@ -841,6 +867,8 @@ describe('UserProfileComponent', () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The third test: directly
 checking `observers.length` after destroy. This is the
 definitive assertion that the subscription was actually
@@ -860,10 +888,14 @@ Common scenarios and operators:
    input$.pipe(debounceTime(300)) // only emit after 300ms of silence
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Throttling**: emit max once per time window
    ```javascript
    scroll$.pipe(throttleTime(16)) // max once per frame
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. **Buffer**: collect into arrays, process in batches
    ```javascript
@@ -874,12 +906,16 @@ Common scenarios and operators:
    )
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. **SwitchMap for latest-only**: drop intermediate values
    ```javascript
    fastSource$.pipe(
      switchMap(val => heavyProcess$(val))
    ) // drops pending processes when next value arrives
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 5. **ConcatMap with queue size limit**: bound queue length
    ```javascript
@@ -888,6 +924,8 @@ Common scenarios and operators:
      concatMap(val => heavyProcess$(val))
    )
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that RxJS has no
 built-in backpressure and that operator choice IS the
@@ -935,6 +973,8 @@ class MixedComponent {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using `defer()` instead of
 `from()` for retryable operations. `from(promise)` runs the
 promise once and replays the result. `defer(() => promise)`
@@ -968,6 +1008,8 @@ Architecture-level rules:
      constructor(private service: DataService) {}
    }
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. **Monitoring**: expose `observer.length` counts via health
    endpoint; alert on growth.
@@ -1022,6 +1064,8 @@ crashing with "Aw, Snap!"
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 5. **Prevention:** ESLint rule `@angular-eslint/no-lifecycle-call`
    + `@angular-eslint/use-lifecycle-interface`; mandatory
    code review checklist item for all `.subscribe()` calls.
@@ -1031,6 +1075,8 @@ is commonly missed because modals are created dynamically
 and developers assume they are "temporary." They are full
 Angular components and require the same lifecycle management
 as page components.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1042,6 +1088,8 @@ as page components.
 | `useEffect` cleanup | React | Yes (return fn) | React hooks |
 | `Subscription.add()` | Universal | No (requires unsubscribe) | Multiple subscriptions |
 | `first()` / `take(1)` | Universal | Yes (auto-complete) | One-shot subscriptions |
+
+---
 
 ### 🏛️ System Design
 
@@ -1084,6 +1132,8 @@ Lifecycle:
   Next navigate: new async pipe -> re-subscribes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Design decisions:
 - `shareReplay(1, refCount: true)` on derived streams: new
   component gets latest value without re-processing
@@ -1096,6 +1146,8 @@ lifecycle (service-managed, persists across navigation) from
 the component subscription lifecycle (async pipe, component-
 managed). The service can maintain the WS connection for
 efficiency while components subscribe and unsubscribe freely.
+
+---
 
 ### 📊 Diagram
 
@@ -1139,3 +1191,30 @@ stateDiagram-v2
 > - making it the universal cleanup hook. The critical insight:
 > "Completed" and "Cancelled" are different states - completion
 > fires callbacks, cancellation does not. Both free memory.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

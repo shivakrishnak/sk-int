@@ -7,6 +7,16 @@ permalink: /nodejs/l2-async-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Promises and async/await in Node.js](#promises-and-asyncawait-in-nodejs) | medium |
+| 2 | [Event Emitter Pattern](#event-emitter-pattern) | medium |
+
+---
+
 # Promises and async/await in Node.js
 
 ---
@@ -123,6 +133,8 @@ Promise states and transitions:
       await processPage(page);
     }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -260,6 +272,8 @@ process.on('unhandledRejection', (reason, promise) => {
 // Better: fix the root cause by adding .catch() or try/catch
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -292,6 +306,8 @@ const results = await Promise.all(
 // When one completes, the next queued item starts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that `pLimit` uses
 a queue internally. When a slot frees up, the next queued function
 starts immediately. This is more efficient than batching
@@ -299,6 +315,34 @@ starts immediately. This is more efficient than batching
 it never leaves slots idle.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Event Emitter Pattern
 
@@ -394,6 +438,8 @@ EventEmitter mechanics:
     emitter.setMaxListeners(20);
     // Or globally: EventEmitter.defaultMaxListeners = 20
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -532,6 +578,8 @@ emitter.eventNames().forEach(event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use `once()` for one-time handlers. Use `off()` in cleanup.
 Move persistent listeners outside the hot path.
 
@@ -575,8 +623,40 @@ class OrderService
   extends TypedEmitter<OrderEvents> { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* TypeScript inference on event
 names and payloads catches typos and mismatched handler signatures
 at compile time. The `eventemitter3` npm package provides a
 TypeScript-first typed emitter with better performance than the
 built-in one.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

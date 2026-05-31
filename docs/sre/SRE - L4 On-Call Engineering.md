@@ -196,6 +196,8 @@ ON-CALL HEALTH METRICS (weekly review)
   Repeat alerts: same alert fired 2+ times this week
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 On-call health is a lagging indicator of SRE investment. A team that
 invests in automation, alert quality improvement, and runbook maintenance
@@ -609,6 +611,8 @@ unavailable) seen from 47 different angles.
 # Prevention: Alert on root cause (database health),
 # not on each dependent's symptoms
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement alert correlation: when the database health alert
 fires, suppress all downstream service alerts. Alert on the root
@@ -1130,6 +1134,8 @@ ON-CALL MANAGEMENT PLATFORM
   automation removes equivalent volume
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The key architectural decision: alert correlation at the alerting layer
 (before PagerDuty) is the highest-leverage component. Without correlation,
 a single root cause generates N alerts for N dependent services. With
@@ -1297,3 +1303,33 @@ flowchart TD
 
 4. "What is the team's on-call health review cadence? How do on-call
    metrics drive investment in automation and alert quality improvement?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

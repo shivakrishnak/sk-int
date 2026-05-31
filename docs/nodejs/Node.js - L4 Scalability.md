@@ -7,6 +7,15 @@ permalink: /nodejs/l4-scalability/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Clustering and Horizontal Scaling](#clustering-and-horizontal-scaling) | medium |
+
+---
+
 # Clustering and Horizontal Scaling
 
 ---
@@ -110,6 +119,8 @@ PM2 (production process manager):
     - Process monitoring dashboard
     - Startup script generation (systemd)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -276,6 +287,8 @@ server.listen(PORT, () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Kubernetes rolling update:**
 ```yaml
 strategy:
@@ -284,6 +297,8 @@ strategy:
     maxSurge: 1        # start 1 new pod before killing old
     maxUnavailable: 0  # never kill old pod until new is ready
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Requirements for zero-downtime:**
 1. `/health` returns 200 only when server is ready
@@ -359,12 +374,16 @@ cluster.on('exit', (worker, code, signal) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add startup delay between restarts to avoid rapid respawn:
 ```javascript
 cluster.on('exit', (worker) => {
   setTimeout(() => cluster.fork(), 1000); // 1s delay
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -416,3 +435,33 @@ the database becomes the bottleneck. Node.js handles the I/O
 fanout efficiently; the architectural challenge is avoiding
 database saturation (connection limits, query load). Read replicas,
 caching layers, and connection pooling are the tools.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

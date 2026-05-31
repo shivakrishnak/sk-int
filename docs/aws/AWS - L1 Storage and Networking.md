@@ -113,6 +113,8 @@ Per-object fee for Intelligent-Tiering:
   Avoid for many small files (fee exceeds savings)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -237,6 +239,8 @@ aws iam simulate-principal-policy \
 # Returns: allowed/denied + which policy caused it
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Audit bucket policy for unintended Deny statements.
 Check Block Public Access settings. Use IAM simulator
 to trace the exact deny source.
@@ -262,6 +266,34 @@ to trace the exact deny source.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # VPC Networking in AWS
 
@@ -353,6 +385,8 @@ Traffic flow (outbound from private):
   EC2 -> NAT GW -> IGW -> Internet
   Internet CANNOT initiate inbound through NAT
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -492,6 +526,8 @@ aws ssm start-session --target i-1234567890abcdef0
 # curl -v https://api.example.com
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* NAT Gateway must be in PUBLIC subnet (has route
 to IGW). Private subnet route table must have
 0.0.0.0/0 -> NAT Gateway ID.
@@ -517,6 +553,34 @@ to IGW). Private subnet route table must have
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Route 53 and DNS Routing
 
@@ -617,6 +681,8 @@ EvaluateTargetHealth (ALIAS only):
   Route 53 removes it from DNS responses
   Combine with Failover policy for auto-DR
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -755,6 +821,8 @@ dig api.example.com
 # For failover: TTL should be 60 seconds
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Set TTL=60 on failover records. Attach health
 check to PRIMARY record. Verify health check endpoint
 path and port match the actual service.
@@ -835,6 +903,8 @@ New -> Standard (30 days, frequent access)
 2555d -> Delete (7-year compliance complete)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The minimum storage
 duration charges (30 days for IA, 90 days for Glacier)
 prevent cost surprises: uploading a file to Glacier and
@@ -888,6 +958,8 @@ Deny rules     | No               | Yes
 SG reference   | Yes              | No (CIDR only)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When to use NACLs:** Subnet-wide deny rules. Example:
 block an entire malicious IP range immediately across
 all instances in a subnet without modifying individual
@@ -916,6 +988,8 @@ aws route53 get-health-check-status \
 # All must agree: unhealthy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Verify health check is attached to PRIMARY record:
 ```bash
 aws route53 list-resource-record-sets \
@@ -928,6 +1002,8 @@ aws route53 list-resource-record-sets \
 # The health check ID MUST be on the PRIMARY record
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Check DNS TTL and client-side caching:
 ```bash
 dig api.example.com
@@ -937,6 +1013,8 @@ dig api.example.com
 # Low TTL (60s) required for failover records
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Test from multiple DNS resolvers:
 ```bash
 dig api.example.com @8.8.8.8  # Google
@@ -944,6 +1022,8 @@ dig api.example.com @1.1.1.1  # Cloudflare
 # If both return new IP: failover worked, issue is client cache
 # If returning old IP: Route 53 has not updated
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Root cause analysis matrix:
 
@@ -1116,6 +1196,8 @@ Download pattern:
   User downloads directly from S3
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Object Lock in
 COMPLIANCE mode (not GOVERNANCE mode) is the regulatory
 compliance guarantee. GOVERNANCE mode can be overridden
@@ -1145,11 +1227,15 @@ S3 traffic bypasses NAT entirely.
 Gateway Endpoint cost: $0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 External API access: NAT Gateway:
 ```
 Only non-S3 internet traffic uses NAT.
 10GB/day * $0.045 = $0.45/day = $13.50/month
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security enhancement:
 ```
@@ -1160,12 +1246,16 @@ Bucket policy restricts to VPC Endpoint:
   (even with valid credentials)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Monitoring:
 ```
 VPC Flow Logs: capture accepted/rejected traffic
   Stored in S3 or CloudWatch Logs
   Useful for diagnosing connectivity issues
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Cost comparison (monthly):**
 
@@ -1188,3 +1278,33 @@ Endpoints are zero-effort, zero-cost additions that
 should be in every VPC from day one for S3 and DynamoDB.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

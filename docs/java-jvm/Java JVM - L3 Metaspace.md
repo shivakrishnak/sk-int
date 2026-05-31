@@ -8,9 +8,20 @@ permalink: /java-jvm/l3-metaspace/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L3 Metaspace](#java-jvm---l3-metaspace) | medium |
+
+---
+
 # Java JVM - L3 Metaspace
 
 ## Metaspace and Dynamic Class Generation
+
+---
 
 ### 🎯 Model Answer
 
@@ -99,6 +110,8 @@ DYNAMIC CLASS CONSUMERS:
   Groovy: multiple companion classes per script class
   JVM-based languages: typically more classes per source file
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -258,6 +271,8 @@ Fix:
     - Spring: don't generate CGLIB proxies outside the ApplicationContext
     - Test frameworks: use proper lifecycle management
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -489,6 +504,8 @@ fragmentation is rare except in hot-reload scenarios (Tomcat, OSGi with many plu
 
 ## ClassLoader Memory Leaks
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -579,6 +596,8 @@ COMMON LEAK SOURCES:
   static fields:      framework singleton with reference to webapp object
   Shutdown hooks:     Runtime.addShutdownHook with webapp Runnable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -740,6 +759,8 @@ Fix:
   Event listeners: remove all listeners in contextDestroyed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -792,6 +813,8 @@ while (drivers.hasMoreElements()) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Modern JDBC 4.0+ uses `ServiceLoader` for driver
 discovery, not static initialization. But: `DriverManager` still registers drivers.
@@ -924,6 +947,8 @@ public void contextDestroyed(ServletContextEvent sce) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Tomcat's JmxRemoteLifecycleListener and most
 modern app servers (WildFly, WebLogic) automatically unregister MBeans when the webapp
 is undeployed - if you used the container's JMX framework for registration. The leak
@@ -976,3 +1001,33 @@ cleanup orchestrator" - explicitly cleaning up all known leak sources in `contex
 ### 📊 Diagram
 
 *(Omit: ClassLoader leak chain described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

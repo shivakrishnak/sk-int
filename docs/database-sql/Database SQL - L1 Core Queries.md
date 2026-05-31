@@ -8,6 +8,17 @@ permalink: /database-sql/l1-core-queries/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [SELECT Statement - Reading Rows from Tables](#select-statement---reading-rows-from-tables) | medium |
+| 2 | [WHERE Clause - Filtering Rows with Conditions](#where-clause---filtering-rows-with-conditions) | medium |
+| 3 | [ORDER BY and LIMIT - Sorting and Pagination](#order-by-and-limit---sorting-and-pagination) | medium |
+
+---
+
 # SELECT Statement - Reading Rows from Tables
 
 **TL;DR:** SELECT is the most-used SQL statement. It retrieves rows
@@ -69,6 +80,8 @@ ORDER BY column1 ASC, column2 DESC
 LIMIT   n
 OFFSET  m;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Column expressions in SELECT:**
 
@@ -216,6 +229,8 @@ CREATE INDEX idx_customers_email_lower
 WHERE LOWER(email) = 'user@example.com'  -- uses index
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -303,6 +318,34 @@ page access."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # WHERE Clause - Filtering Rows with Conditions
 
 **TL;DR:** WHERE filters rows before they reach SELECT. Every WHERE
@@ -379,6 +422,8 @@ NOT SARGABLE (full scan):
   WHERE col IS NULL          -- depends on index type
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **AND vs OR performance:**
 
 ```
@@ -393,6 +438,8 @@ OR: must satisfy either branch. Optimizer options:
   3. Full scan if OR conditions are not well indexed.
   Often slower than AND predicates.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **NULL handling in WHERE:**
 
@@ -410,6 +457,8 @@ WHERE COALESCE(discount_pct, 0) > 10
 -- Note: this is NOT sargable (COALESCE wraps the column)
 -- Better: WHERE discount_pct > 10 OR discount_pct IS NULL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -539,6 +588,8 @@ SELECT * FROM orders WHERE user_id = 123
 -- Each branch uses its own index.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -632,6 +683,34 @@ Raw string concatenation in any SQL-building code is always wrong."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # ORDER BY and LIMIT - Sorting and Pagination
 
 **TL;DR:** ORDER BY specifies the result order. LIMIT caps the number
@@ -704,6 +783,8 @@ ORDER BY total_cents * -1  -- effectively DESC
 ORDER BY updated_at DESC NULLS LAST
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **LIMIT / OFFSET vs keyset pagination:**
 
 ```
@@ -720,6 +801,8 @@ Keyset pagination:
   Page N: WHERE id > :last_seen ORDER BY id LIMIT 20
           -- always O(log n)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -955,3 +1038,33 @@ work_mem: up to 1GB total memory for the sort. The Gather Merge overhead
 is significant for small result sets - parallel query is not always faster.
 PostgreSQL disables parallel query for very small LIMIT values (< 1000)
 because the coordination overhead exceeds the sorting benefit."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

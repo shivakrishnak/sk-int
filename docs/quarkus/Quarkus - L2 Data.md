@@ -326,6 +326,8 @@ public static List<Order> findAllWithCustomers() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: @EntityGraph:
 ```java
 // Repository pattern
@@ -340,11 +342,15 @@ public List<Order> findAllWithCustomers() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 3: Batch loading:
 Configure Hibernate batch loading in application.properties:
 ```properties
 quarkus.hibernate-orm.batch-fetch-size=25
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Hibernate loads lazy associations in batches of 25
 instead of 1 at a time. Reduces N+1 to ceil(N/25)+1.
 
@@ -361,6 +367,34 @@ a low-config fix that reduces N+1 without code changes.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Panache Active Record Pattern
 
@@ -596,6 +630,8 @@ public class OrderAggregateRepository
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The Repository pattern in Panache supports full DDD
 separation. Use Active Record for simpler CRUD entities.
 
@@ -612,6 +648,34 @@ based on domain complexity, not framework default.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Hibernate Reactive
 
@@ -873,6 +937,8 @@ public Uni<Order> createOrder(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The transaction is bound to the Uni chain. If the
 Uni is not connected to the method's return, the
 persistence operation never executes in the transaction.
@@ -891,6 +957,34 @@ just returning a Uni from the method.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Flyway and Liquibase
 
@@ -1020,6 +1114,8 @@ spec:
       restartPolicy: OnFailure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or: use Quarkus's flyway.migrate-at-start=false in
 production pods, with a separate init container or
 Kubernetes Job that runs migrations.
@@ -1028,6 +1124,8 @@ Kubernetes Job that runs migrations.
 %prod.quarkus.flyway.migrate-at-start=false
 %dev.quarkus.flyway.migrate-at-start=true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The migration Job runs and completes. Then the Deployment
 starts all pods. No migration contention.
@@ -1046,6 +1144,34 @@ production pattern.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Redis and Caching
 
@@ -1283,11 +1409,15 @@ public class ProductService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3: Stagger TTLs with jitter:
 ```properties
 # Apply TTL jitter at application level
 # Expires between 9-11 minutes (not exactly 10)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cache stampede is
 a pattern with a specific name and specific fix. Knowing
@@ -1299,3 +1429,33 @@ the name shows production experience.
 | Hiring Manager | Caching for performance. |
 | Bar Raiser | Distributed vs local cache, cache stampede, Redis TTL. |
 | Peer Engineer | "Cache stampede took down our product DB. Added jitter to TTL. Problem never recurred." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

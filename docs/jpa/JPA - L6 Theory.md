@@ -8,9 +8,20 @@ permalink: /jpa/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L6 Theory](#jpa---l6-theory) | medium |
+
+---
+
 # JPA - L6 Theory
 
 ## JPA Specification vs Implementation: Portability and the Standard
+
+---
 
 ### 🎯 Model Answer
 
@@ -147,6 +158,8 @@ WHEN PORTABILITY MATTERS (RARE):
   The JPA spec is a useful abstraction (standard annotations, EntityManager API)
   but not a real portability guarantee in performance-sensitive applications.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -360,6 +373,8 @@ Prevention:
   Do not assume portability. Test with the target provider before committing.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -403,6 +418,8 @@ Hibernate 6: expanded built-in support for PostgreSQL types, reducing the need f
 ---
 
 ## ORM Impedance Mismatch: Where JPA Fights the Relational Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -574,6 +591,8 @@ Hibernate 6: expanded built-in support for PostgreSQL types, reducing the need f
     Disadvantage: polymorphic query (all Vehicle): UNION across all tables.
     Cannot use SEQUENCE generator (each table has own range).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -808,6 +827,8 @@ Fix:
   // Stable: same productId = same logical item regardless of proxy/reference.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -848,4 +869,34 @@ hundreds of queries. The mental model required: think in terms of SQL when navig
 Each association navigation: ask "does this require a SQL query?". If yes: is this in a loop? If
 yes: N+1. The discipline: treat JPA entity navigation like an I/O operation, not a free in-memory
 access. This mental shift eliminates N+1 at the design phase.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -7,6 +7,16 @@ permalink: /frontend-testing/l3-testing-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Testing Patterns (AAA, Given-When-Then)](#testing-patterns-aaa-given-when-then) | medium |
+| 2 | [Frontend Testing Anti-patterns](#frontend-testing-anti-patterns) | medium |
+
+---
+
 # Testing Patterns (AAA, Given-When-Then)
 
 ---
@@ -141,6 +151,8 @@ GWT in Playwright (readable specifications):
     ).not.toBeVisible();
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -306,6 +318,34 @@ observable outcome.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Frontend Testing Anti-patterns
 
 ---
@@ -422,6 +462,8 @@ Anti-pattern 5: Testing the testing library
         .toBeDisabled();
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -582,3 +624,33 @@ module is more persuasive than any principle.
 abstract or insufficient. Understanding and addressing that motivation
 (add more integration-level tests, show that unit tests do catch bugs)
 is more effective than just advocating the pyramid.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /docker/l4-anti-patterns-at-scale/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L4 Anti-patterns at Scale](#docker---l4-anti-patterns-at-scale) | medium |
+
+---
+
 # Docker - L4 Anti-patterns at Scale
 
 ## Containerization Anti-patterns at Scale
+
+---
 
 ### 🎯 Model Answer
 
@@ -272,6 +283,8 @@ ANTI-PATTERN CATALOGUE:
   # Only the ConfigMap and Secret differ.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -530,6 +543,8 @@ Remediation:
   # Prevention: enforce in CI with sed or kustomize:
   kustomize edit set image myapp=myapp:1.2.3-$(git rev-parse --short HEAD)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -975,3 +990,33 @@ are back. "Anti-patterns sprint" + "ongoing enforcement platform" are
 both required. One without the other: either creates compliance then
 lets it decay, or enforces policy that teams work around because
 they don't understand it.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

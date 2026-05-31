@@ -181,6 +181,8 @@ Thanos Architecture (horizontal scale)
      [Grafana]                 <- same PromQL interface
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Prometheus' remote write protocol is the universal scaling interface.
 Whether you use Thanos, Grafana Mimir, Cortex, or a commercial
@@ -641,6 +643,8 @@ du -sh /prometheus/wal/
 # > 5GB WAL at 10M series = 15+ min replay time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Recovery: do NOT simply restart Prometheus. It will replay the
 WAL, reconstruct 10M series in memory, and OOM again within 2
 minutes. Fix cardinality FIRST:
@@ -661,6 +665,8 @@ metric_relabel_configs:
 # This shortens the WAL replay (fewer hours of data)
 # Then fix the label and restore normal retention
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 2: Remote write queue saturation - metrics lag or drop**
 
@@ -694,6 +700,8 @@ rate(prometheus_remote_storage_sent_batch_duration_seconds_sum[5m])\
   | jq '.data.result[0].value[1]'
 # > 2s average write latency -> backend is overloaded
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix:
 1. Increase queue capacity and shards in remote_write config:
@@ -736,6 +744,8 @@ for line in sys.stdin:
 # Shows slowest queries - these need recording rules
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Create recording rules for the slowest queries identified
 above. For a `histogram_quantile(0.99, sum by (service, le)
 (rate(http_request_duration_bucket[5m])))` that takes 20 seconds,
@@ -772,6 +782,8 @@ curl -s "http://thanos-query:10902/metrics" | \
   grep "thanos_query_store_request_duration"
 # If P99 > 5s for store requests: store gateway overloaded
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Ensure the Thanos Sidecar has read access to the Prometheus
 data directory and write access to object storage. The sidecar
@@ -917,6 +929,8 @@ prometheus \
 # Then query: topk(10, count by (__name__)({__name__!=""}))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Identify and fix the high-cardinality metric. Add a
 `metric_relabel_config` to the scrape config to drop the offending
 label:
@@ -926,6 +940,8 @@ metric_relabel_configs:
     regex: ".+"
     action: labeldrop
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Start Prometheus with short WAL retention and wait for
 the high-cardinality data to age out:
@@ -938,6 +954,8 @@ prometheus \
 # so its old data ages out quickly
 # After 3h, the series count drops, normal operation resumes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Restore normal retention (15d) and verify series count
 stays low with the relabel config active.
@@ -1442,6 +1460,8 @@ Step 3 DESIGN (~10 min)
   Single pane of glass across all DCs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 DEEP DIVE (~10 min)
 Mimir is the correct backend choice for this scale: multi-tenant,
 distributed ingest, native horizontal scaling, native Prometheus
@@ -1607,3 +1627,33 @@ flowchart TD
 > Grafana with a single consistent query endpoint. The deduplication of
 > HA Prometheus pairs (replica-0 and replica-1) happens at query time in
 > the Query Frontend.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

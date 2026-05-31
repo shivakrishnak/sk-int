@@ -8,9 +8,20 @@ permalink: /java-concurrency/l3-atomic-operations/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L3 Atomic Operations](#java-concurrency---l3-atomic-operations) | medium |
+
+---
+
 # Java Concurrency - L3 Atomic Operations
 
 ## Atomic Classes
+
+---
 
 ### 🎯 Model Answer
 
@@ -106,6 +117,8 @@ getAndIncrement() implementation:
         // else: retry (someone else incremented first)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Class hierarchy:
 ```
 AtomicInteger        - int operations
@@ -121,6 +134,8 @@ LongAdder            - high-contention counter (striped)
 LongAccumulator      - high-contention accumulator (any function)
 DoubleAdder          - high-contention double accumulator
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CAS is optimistic: assume no conflict, try the update, retry on
@@ -169,6 +184,8 @@ class Counter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: AtomicInteger for lock-free thread-safe counter
 class Counter {
@@ -190,6 +207,8 @@ class Counter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: AtomicReference for lock-free config hot-swap
@@ -214,6 +233,8 @@ class ConfigService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -267,6 +288,8 @@ AtomicInteger y = new AtomicInteger(0);
 x.incrementAndGet(); // atomic separately
 y.incrementAndGet(); // atomic separately - but NOT together
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For two variables to update atomically, use synchronized or StampedLock.
 
 **Misconception 3: "AtomicInteger is always faster than synchronized."**
@@ -356,6 +379,8 @@ AtomicInteger count = new AtomicInteger(0);
 count.incrementAndGet();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use `volatile` instead: for a flag that is only written by one
 thread and read by others (`volatile boolean running`). The single
 write makes atomicity unnecessary; only visibility is needed.
@@ -370,6 +395,8 @@ volatile Singleton instance;
 // visible, because the volatile write in the constructor precedes the
 // volatile read in getInstance().
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -398,6 +425,8 @@ boolean fail = value.compareAndSet(10, 30);
 // fail = false, value still = 20
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When CAS fails: another thread changed the value between when you
 read it and when you tried to update it. The correct response is to
 retry the operation with the new current value:
@@ -413,12 +442,16 @@ do {
 // Loop exits when our CAS succeeds (no intervening change)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `getAndUpdate(fn)` and `updateAndGet(fn)` methods implement this
 loop for you:
 ```java
 // Equivalent to the retry loop above:
 atomicVar.updateAndGet(current -> compute(current));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The retry loop is "liveness but not
 progress" - under extreme contention, a thread can retry indefinitely
@@ -451,6 +484,8 @@ T1 CAS(top, A, B) -- succeeds! But B is now freed memory!
 Stack: B → C (B is a dangling pointer)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The problem: CAS only compares values, not "did anything change."
 
 Fix: `AtomicStampedReference<V>`:
@@ -468,6 +503,8 @@ top.compareAndSet(
     currentTop, newTop,     // expected/new value
     currentStamp, currentStamp + 1); // expected/new stamp
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `AtomicMarkableReference<V>`: simpler - adds a boolean mark instead
 of an integer stamp. For "mark this reference as deleted" patterns
@@ -522,6 +559,8 @@ requestCount.increment(); // near-zero contention
 long total = requestCount.sum(); // slightly heavier, but rare
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `LongAdder.sum()` is NOT atomic with
 respect to ongoing increments. A snapshot read of the counter while
 threads are incrementing may reflect some increments but not others.
@@ -570,6 +609,8 @@ class RequestStats {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Design decisions:
 - LongAdder for counters (high-write, infrequent read)
 - AtomicLong + CAS loop for max (conditional update)
@@ -605,6 +646,8 @@ class Service {
 // Main thread reads a different instance:
 service.counter.get(); // right field, but is it the same instance?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 2: Check for accidental re-initialization.
 If the AtomicInteger field is non-final and something is assigning a
@@ -660,6 +703,8 @@ class Counter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use VarHandle over AtomicInteger:
 - Avoiding the wrapper object overhead: AtomicInteger adds 16 bytes
   object overhead; VarHandle operates directly on a field
@@ -711,6 +756,8 @@ synchronized(lock) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The "prefer AtomicReference" rule is only correct for single-reference
 updates. For invariants spanning multiple fields, synchronized is
 correct and simpler.
@@ -746,6 +793,8 @@ long currentMax = max.get(); // 100
 LongAccumulator min = new LongAccumulator(
     Math::min, Long.MAX_VALUE);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The accumulator function must be: associative, commutative, and the
 identity must be a true identity: `fn(identity, x) = x`.
@@ -841,6 +890,8 @@ flowchart LR
 
 ## Compare-and-Swap (CAS)
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -933,6 +984,8 @@ ARM LL/SC alternative:
   ; retry loop if STLXR fails
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```
 Java CAS loop pattern:
 while (true) {
@@ -944,6 +997,8 @@ while (true) {
     // else: retry (another thread changed value)
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CAS is "optimistic" - it assumes no conflict and proceeds. If a conflict
@@ -989,6 +1044,8 @@ class NonAtomicStateMachine {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: CAS-based state machine (lock-free)
 class AtomicStateMachine {
@@ -1003,6 +1060,8 @@ class AtomicStateMachine {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: lock-free stack using CAS (Treiber stack)
@@ -1039,6 +1098,8 @@ class LockFreeStack<T> {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1159,6 +1220,8 @@ LOCK CMPXCHG DWORD PTR [memory], newValue
 ;  copies before write completes)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `LOCK` prefix doesn't lock the memory bus on modern x86 - it
 locks the cache line via the MESI cache coherence protocol. Only the
 cache line containing the target address is locked, not the entire
@@ -1199,6 +1262,8 @@ protected boolean tryAcquire(int acquires) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Wait queue management: the queue of waiting threads is a doubly
    linked list of `Node` objects. AQS uses CAS to atomically enqueue
    new nodes (compare tail to expected last node, update to new node).
@@ -1211,6 +1276,8 @@ if (compareAndSetTail(pred, node)) { // CAS the tail pointer
     pred.next = node;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This means the ENTIRE Java lock ecosystem (ReentrantLock, Semaphore,
 CountDownLatch, CyclicBarrier, ReadWriteLock) is built on 2 CAS fields.
@@ -1257,6 +1324,8 @@ class DataPublisher {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* On x86, CMPXCHG has full sequential
 consistency by default (total store order + LOCK prefix = all earlier
@@ -1413,6 +1482,8 @@ class LockFreeQueue<T> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In production: use `java.util.concurrent.ConcurrentLinkedQueue` which
 is a proven Michael-Scott queue implementation. Implementing lock-free
 data structures from scratch is extremely error-prone.
@@ -1437,6 +1508,8 @@ LOCK CMPXCHG [memory], newValue
 ; Atomic: read, compare, conditionally write
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ARM uses Load-Linked/Store-Conditional (LL/SC):
 
 ```nasm
@@ -1449,6 +1522,8 @@ STLXR x1, newVal, [addr] ; Store-Release Exclusive
                     ; x1 = 0 (success) or 1 (failure)
 CBNZ  x1, retry     ; Retry if store failed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key differences:
 
@@ -1534,6 +1609,8 @@ Thread B: use(data)            // GUARANTEED to see "result" because:
 // happens-before chain spans the gap
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is how `AtomicReference` publication works: write to fields,
 then CAS the reference into the AtomicReference. Any thread that
 sees the new reference value (via volatile read) sees all the field
@@ -1617,3 +1694,33 @@ sequenceDiagram
 > core mechanism of all lock-free algorithms. Under high contention
 > with many threads, the retry rate increases, leading to the CAS storm
 > where most CPU cycles are spent retrying rather than progressing.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

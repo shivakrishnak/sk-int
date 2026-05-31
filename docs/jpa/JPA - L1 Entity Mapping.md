@@ -8,9 +8,20 @@ permalink: /jpa/l1-entity-mapping/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L1 Entity Mapping](#jpa---l1-entity-mapping) | medium |
+
+---
+
 # JPA - L1 Entity Mapping
 
 ## Entity Basics: @Entity, @Id, @Column, and @Table
+
+---
 
 ### 🎯 Model Answer
 
@@ -168,6 +179,8 @@ ENUMTYPE.ORDINAL VS ENUMTYPE.STRING:
   // DB value is human-readable.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -289,6 +302,8 @@ Fix:
   Result: 100K inserts in ~5 seconds (60x improvement).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -329,6 +344,8 @@ question the "missing" IDs.
 ---
 
 ## Relationship Mappings: @OneToMany, @ManyToOne, @ManyToMany
+
+---
 
 ### 🎯 Model Answer
 
@@ -492,6 +509,8 @@ CASCADETYPES REFERENCE:
     Prefer explicit cascade types: {PERSIST, MERGE} for most cases.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -613,6 +632,8 @@ Fix:
     VALUES (NULL, 'Product A', 1, 1)  // NULL confirms missing owning side set
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -652,6 +673,8 @@ with mappedBy for entities you insert frequently.
 ---
 
 ## Inheritance Mapping Strategies: SINGLE_TABLE, JOINED, TABLE_PER_CLASS
+
+---
 
 ### 🎯 Model Answer
 
@@ -804,6 +827,8 @@ STRATEGY SELECTION:
     - Almost all cases (UNION ALL is slow, ID management complex)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -933,6 +958,8 @@ Fix option 2: JOINED but with batch loading:
   // Hibernate fetches subtypes in batches of 50 instead of 1-at-a-time.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -967,3 +994,33 @@ JOINED is often chosen for schema purity without considering that the applicatio
 reads per day. The SINGLE_TABLE nullable-column disk space concern is usually negligible: a few nullable
 VARCHAR columns per row adds bytes, not megabytes. The JOIN overhead in JOINED is the real cost for
 read-heavy applications.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

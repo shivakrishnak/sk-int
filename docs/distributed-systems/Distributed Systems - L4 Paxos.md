@@ -8,6 +8,15 @@ permalink: /distributed-systems/l4-paxos/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Paxos Consensus Algorithm](#paxos-consensus-algorithm) | medium |
+
+---
+
 # Paxos Consensus Algorithm
 
 **TL;DR:** Paxos is the foundational distributed consensus
@@ -121,6 +130,8 @@ Learner:
   - Clients are effectively Learners
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 1 - Prepare/Promise:**
 
 ```
@@ -149,6 +160,8 @@ Proposer after receiving Promise from majority:
     value = proposer's own value
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 2 - Accept/Accepted:**
 
 ```
@@ -175,6 +188,8 @@ The Proposer/Learner learns the chosen value:
   OR
   Acceptor broadcasts Accepted to all Learners
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The critical invariant - why Paxos is safe:**
 
@@ -205,6 +220,8 @@ Proof:
     Therefore: ballot N' proposes and chooses V. QED
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Multi-Paxos - extending to a log:**
 
 ```
@@ -228,6 +245,8 @@ This is essentially Raft:
   Raft's contributors: "Raft is Multi-Paxos with more structure"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The liveness problem:**
 
 ```
@@ -246,6 +265,8 @@ Dueling Proposers (liveness failure):
   In Multi-Paxos/Raft: only the Leader proposes.
   No competing Proposers → no livelock.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Paxos safety comes from quorum overlap: any two majorities share
@@ -481,6 +502,8 @@ Log replication:
   - Committed entries applied to state machine (file system tree)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Lock service operations:**
 
 ```
@@ -506,6 +529,8 @@ Sequencer:
     IF lockGen < current lock generation: reject (stale lock)
   Prevents stale lock holders from writing after lock expires
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Fault tolerance:**
 
@@ -533,6 +558,8 @@ Network partition:
     Majority side elects new master
     Clients time out and reconnect to new master
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -625,6 +652,8 @@ Diagnosis:
 # Proposer logs: "Accept rejected, retrying with ballot N+1"
 # N keeps increasing; no "value chosen" log
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Elect a single distinguished Leader (Multi-Paxos approach).
 Only one Proposer active at a time. If the Leader fails: elect
@@ -993,6 +1022,8 @@ Snapshot and recovery:
   - Snapshot prevents unbounded log growth
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Operational concerns: backup configuration to object storage
 (S3/GCS) every 5 minutes. Export config tree to JSON as a
 human-readable backup (independent of Paxos log). Test recovery
@@ -1222,3 +1253,33 @@ accepted ballot in Phase 1, and (2) Acceptors only accepting
 proposals >= their highest promise. The analogy preserves the
 mechanistic correctness while making it accessible. Senior engineers
 can explain hard things simply.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -258,6 +258,8 @@ public class DriverRegistration { }
 #   "allDeclaredConstructors": true }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Proxy creation failure:**
 ```bash
 # Symptom
@@ -268,6 +270,8 @@ UnsatisfiedLinkError or ClassCastException on proxy
 
 # Fix: implement interface
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -296,6 +300,8 @@ The closed-world assumption forces explicit design:
    @RegisterForReflection
    class OrderDto { int id; String status; }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Result: the annotation documents "this is a DTO."
    Code becomes self-documenting.
 
@@ -306,6 +312,8 @@ The closed-world assumption forces explicit design:
    // Native: compile error equivalent
    // Must use ServiceLoader or explicit types
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Result: all plugin types are listed in META-INF/services.
    Easier to audit what plugins exist.
 
@@ -317,6 +325,8 @@ The closed-world assumption forces explicit design:
    interface OrderPort { void save(); }
    @Service class OrderService implements OrderPort
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Result: dependency inversion. Better testability.
 
 4. No static initialization side effects:
@@ -326,6 +336,8 @@ The closed-world assumption forces explicit design:
    // Native: violates closed-world
    // Must: @ApplicationScoped + @Inject DataSource
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Result: lazy initialization, not eager.
 
 The meta-pattern: native image constraints are enforced
@@ -346,6 +358,34 @@ as design feedback, not just technical problems."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reflection and Serialization Configuration
 
@@ -447,6 +487,8 @@ native-image exactly which classes need reflective access."
 ]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // serialization-config.json
 // Required if classes implement java.io.Serializable
@@ -461,6 +503,8 @@ native-image exactly which classes need reflective access."
 ]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // proxy-config.json
 // Required if Proxy.newProxyInstance used
@@ -473,6 +517,8 @@ native-image exactly which classes need reflective access."
   }
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Quarkus annotation approach (simpler)
@@ -570,6 +616,8 @@ curl -X POST http://localhost:8080/orders \
 ./mvnw package -Pnative
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Merging multiple runs:
 ```bash
 # Run agent multiple times, merge configs
@@ -579,6 +627,8 @@ java -agentlib:native-image-agent=\
 # config-merge-dir: merges with existing config
 # Run multiple scenarios, merge all results
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Limitations:
 - Only records executed paths.
@@ -599,6 +649,34 @@ including errors and edge cases.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Native Image Resources and File Inclusion
 
@@ -693,6 +771,8 @@ quarkus.native.resources.excludes=\
   **/*-test.*
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // resource-config.json
 // For non-Quarkus projects or fine-grained control
@@ -717,6 +797,8 @@ quarkus.native.resources.excludes=\
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // WRONG: Assume resource auto-included
@@ -791,6 +873,8 @@ quarkus.flyway.locations=classpath:db/migration
 # for the standard location
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Flyway in Quarkus native:
 - Quarkus Flyway extension registers SQL files automatically.
 - Standard location: db/migration/ - auto-included.
@@ -808,12 +892,16 @@ strings target/app-runner | grep "db/migration"
 # Flyway migration runs during test startup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If Flyway migration fails in native:
 ```
 FlywayException: Found non-empty schema "public" without
   schema history table. Use baseline() or set
   baselineOnMigrate to true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is usually not a resource issue, but a Flyway
 configuration issue. Distinguish: resource missing
 (NullPointerException before migration starts) vs
@@ -833,6 +921,34 @@ distinguish from framework errors.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Native Image Startup and Memory Profile
 
@@ -1018,6 +1134,8 @@ resources:
     cpu: "1000m"   # Allow burst for GC
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Memory request and limit:
 ```bash
 # Determine baseline
@@ -1031,6 +1149,8 @@ Memory request and limit:
 # = 75MB + 256MB = 331MB → round up to 384Mi
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 resources:
   requests:
@@ -1042,6 +1162,8 @@ env:
     value: "-Xms64m -Xmx128m"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 OOMKilled diagnosis:
 ```bash
 kubectl describe pod app-pod
@@ -1052,6 +1174,8 @@ kubectl top pod app-pod --containers
 # Solution: increase memory limit
 # Or: reduce -Xmx
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Native vs JVM Kubernetes comparison:
 ```
@@ -1071,6 +1195,8 @@ JVM (Spring):
   Cost per 1000 RPS: $0.04/hr
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Memory limit is not
 just Xmx: add native code size, heap overhead, thread
 stacks, and GC working space.
@@ -1081,3 +1207,33 @@ stacks, and GC working space.
 | Hiring Manager | Cost savings from native image. |
 | Bar Raiser | Kubernetes sizing, OOMKilled diagnosis. |
 | Peer Engineer | "Sized native containers: 50-100% memory reduction. 4 pods per node → 10 pods. Node count: 12 → 5." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

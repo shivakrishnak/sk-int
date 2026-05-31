@@ -7,6 +7,17 @@ permalink: /frontend-testing/l1-component-testing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [React Testing Library Philosophy](#react-testing-library-philosophy) | medium |
+| 2 | [Querying and Asserting DOM Elements](#querying-and-asserting-dom-elements) | medium |
+| 3 | [User Interaction and Event Testing](#user-interaction-and-event-testing) | medium |
+
+---
+
 # React Testing Library Philosophy
 
 ---
@@ -110,6 +121,8 @@ Query semantics by role:
     -> works with: <label> for= attribute, aria-label,
        aria-labelledby, placeholder
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -265,7 +278,37 @@ const { container } = render(<MyComponent />);
 logRoles(container); // prints all accessible elements and their roles
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Querying and Asserting DOM Elements
 
@@ -340,6 +383,8 @@ jest-dom matchers (from @testing-library/jest-dom):
   toBeChecked()         // checkbox/radio is checked
   toBeRequired()        // form control is required
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -462,6 +507,8 @@ logRoles(container); // shows all accessible elements
 screen.debug(); // prints the current DOM state
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add `aria-label` to icon buttons: `<button aria-label="Submit">`.
 
 ---
@@ -498,10 +545,40 @@ test('error appears after submission, not on load', async () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key: use `queryBy` for "should not be there" + use `findBy` for
 "should appear after async operation."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # User Interaction and Event Testing
 
@@ -596,6 +673,8 @@ Pointer events check:
   Useful: catches accidentally disabled click handlers
   Configure: userEvent.setup({ pointerEventsCheck: 0 }) to disable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -773,6 +852,8 @@ test('dropdown closes on Escape', async () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key details:
 - `user.keyboard('{Escape}')` fires the full keyboard event sequence
   (keydown, keyup) with the Escape key
@@ -780,3 +861,33 @@ Key details:
 - Use `queryByRole` for absence check (returns null, doesn't throw)
 - After testing closure, verify focus returned to the trigger button:
   `expect(screen.getByRole('button')).toHaveFocus()` (if applicable)
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

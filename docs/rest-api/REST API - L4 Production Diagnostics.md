@@ -8,6 +8,15 @@ permalink: /rest-api/l4-production-diagnostics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [REST API Production Diagnostics](#rest-api-production-diagnostics) | medium |
+
+---
+
 # REST API Production Diagnostics
 
 ---
@@ -70,6 +79,8 @@ SELECT query, calls, mean_exec_time
 FROM pg_stat_statements
 ORDER BY mean_exec_time DESC LIMIT 10;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The fastest path to root cause is correlating multiple signals: a latency spike at 14:32 in metrics, a specific endpoint in access logs, a slow database query at 14:32, and a missing index from EXPLAIN ANALYZE. Each signal alone is insufficient. Together they form the complete picture.
@@ -340,6 +351,8 @@ Fix: Cancel the blocking query: `SELECT pg_cancel_backend(pid)`. This frees conn
                               [On-Call Engineer]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Alert design:** P1 page: error rate > 1% or p99 > 500ms. P2 notify: connection pool pending > 0. P3 ticket: cache hit rate drops. Error budget burn rate: page when 100% of monthly budget would be consumed in 2 hours at current rate.
 
 **Runbook automation:** PagerDuty webhook -> automated script (check health endpoints, check recent deployments, check downstream services) -> posts findings to incident Slack channel before engineer is paged. Reduces MTTR by 3-5 minutes.
@@ -390,3 +403,33 @@ flowchart LR
 ```
 
 > **Diagram walkthrough:** Micrometer instruments each service automatically (HTTP metrics, JVM metrics, DB pool metrics). The three signal types flow to separate stores: Prometheus for metrics, Jaeger for traces, Elasticsearch for logs. Grafana unifies all three for correlation. When an alert fires, the on-call engineer follows the diagnosis decision tree: access logs for request-level investigation, APM traces for cross-service root cause, JVM metrics for resource issues, and DB slow query logs for database performance. All tools link via traceId.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

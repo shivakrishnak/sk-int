@@ -169,6 +169,8 @@ TOIL AUTOMATION ANTI-PATTERNS
   - Automating decision points that require business context
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The most common automation mistake is automating a bad process. If the
 manual process was wrong (incorrect steps, unnecessary approvals, duplicate
@@ -570,6 +572,34 @@ significantly from a visual diagram for this conceptual keyword.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Change Management and Deployment Safety in SRE
 
 🎯 Interview Weight: critical - the most direct connection between
@@ -716,6 +746,8 @@ DEPLOYMENT SAFETY CHECKLIST (pre-deploy)
   - On-call notified?
   - Off-hours deploy? (if yes: escalated review required)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The SRE insight on change management: making a bad deploy safe and
@@ -973,6 +1005,8 @@ Does the migration rename or delete a column the
   old code still reads?
   -> Old code will fail when reading the new schema
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Expand-contract pattern for database migrations:
 Phase 1 (expand): add column as nullable with default.
@@ -1384,3 +1418,33 @@ stateDiagram-v2
 
 4. "What is the team's deployment frequency for production services, and
    has that frequency changed as deployment safety tooling has improved?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

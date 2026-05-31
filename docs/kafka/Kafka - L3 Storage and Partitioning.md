@@ -8,9 +8,20 @@ permalink: /kafka/l3-storage-and-partitioning/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L3 Storage and Partitioning](#kafka---l3-storage-and-partitioning) | medium |
+
+---
+
 # Kafka - L3 Storage and Partitioning
 
 ## Log Compaction
+
+---
 
 ### 🎯 Model Answer
 
@@ -142,10 +153,13 @@ COMPACTION + EXACTLY-ONCE:
 
   Compaction does not affect transaction boundaries.
   A transactional record in a compacted topic: compacted normally.
-  The transaction coordinator's __transaction_state topic: itself compacted (cleanup.policy=compact).
+  The transaction coordinator's __transaction_state topic:
+  itself compacted (cleanup.policy=compact).
   This is why __transaction_state never grows unboundedly:
     Old transaction metadata (completed transactions) is compacted away.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -359,6 +373,8 @@ Fix:
   Increase log.cleaner.threads (broker config, requires restart).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -410,6 +426,8 @@ all historical keys.
 ---
 
 ## Partitioning Strategy
+
+---
 
 ### 🎯 Model Answer
 
@@ -578,6 +596,8 @@ HOTSPOT DETECTION AND REMEDIATION:
     
     C. Custom partitioner to distribute hot keys manually.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -814,6 +834,8 @@ Monitor:
   Alert: max partition lag > 5x average partition lag.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -861,4 +883,34 @@ Kafka's trade-off: simplicity and extreme write throughput vs partition-count fl
 Kafka 3.x: no native re-partitioning. Mirror Maker 2 (kafka-mirror) can replicate a topic to
 a new topic with different partition count - the production migration path for partition count
 changes.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

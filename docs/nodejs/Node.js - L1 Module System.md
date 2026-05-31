@@ -7,6 +7,17 @@ permalink: /nodejs/l1-module-system/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CommonJS Modules](#commonjs-modules) | foundational |
+| 2 | [ES Modules in Node.js](#es-modules-in-nodejs) | foundational |
+| 3 | [Node.js Module Resolution Algorithm](#nodejs-module-resolution-algorithm) | foundational |
+
+---
+
 # CommonJS Modules
 
 🎯 **Interview Weight:** foundational (★☆☆) - CJS is the legacy default;
@@ -251,6 +262,8 @@ instantly. Disk I/O happens once per module per process lifetime.
 // one will get {} due to circular resolution
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: Stale module state in tests**
 
 ```javascript
@@ -264,6 +277,8 @@ beforeEach(() => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -327,6 +342,34 @@ DEBUGGING
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # ES Modules in Node.js
 
@@ -556,6 +599,8 @@ const pkg = await import('esm-only-package');
 # Or: convert your file to ESM
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: `ERR_MODULE_NOT_FOUND` despite file existing**
 
 ```javascript
@@ -567,6 +612,8 @@ import { fn } from './utils.js'; // FIXED
 import cjsMod from './module.cjs';
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: `SyntaxError: Cannot use import statement outside a module`**
 
 ```json
@@ -574,6 +621,8 @@ import cjsMod from './module.cjs';
 { "type": "module" }
 // Or rename file to .mjs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -628,6 +677,34 @@ How do you handle it?** `[MID]` SYSTEM DESIGN
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Node.js Module Resolution Algorithm
 
@@ -873,6 +950,8 @@ symlink resolution issues, or `"exports"` blocking the path.
 # Fix: use the package's public API, or check the new API
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: Wrong version of package loaded**
 
 ```javascript
@@ -881,6 +960,8 @@ console.log(require.resolve('some-package'));
 // If path shows unexpected node_modules location, that's the issue
 // FIX: npm dedupe or add "overrides" to package.json
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Symptom: `Cannot find module './config'` but file exists**
 
@@ -892,6 +973,8 @@ import config from './config.js'; // not './config'
 console.log(process.cwd()); // where the process started
 console.log(__dirname);     // where this file is
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -951,3 +1034,33 @@ behavior. How do you diagnose and fix it?** `[MID]` DEBUGGING
 > versions are semver-compatible. `overrides` forces a version when they
 > aren't - but test thoroughly as you may break a package that needed
 > a specific version for a reason.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

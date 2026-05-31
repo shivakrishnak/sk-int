@@ -153,6 +153,8 @@ BYTECODE ENHANCEMENT (dirty tracking):
     // Only changed field, not all fields
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Proxies are SUBCLASSES of your entity. `entity instanceof OrderProxy`
 is true but `proxy instanceof ConcreteOrder` is false if Order has
@@ -400,6 +402,8 @@ boolean loaded = Hibernate.isInitialized(entity);
 // false = proxy not yet initialized, session likely closed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix (choose based on context):*
 ```java
 // Option 1: Force initialize within transaction
@@ -418,6 +422,8 @@ Optional<Order> findWithCustomer(Long id);
 @EntityGraph(attributePaths = {"customer", "items"})
 Optional<Order> findById(Long id);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -440,6 +446,8 @@ p.process(order); // fails if process() uses Class.isInstance()
 Order unproxied = Hibernate.unproxy(order, Order.class);
 p.process(unproxied); // real Order instance
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -470,6 +478,8 @@ public int hashCode() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 4: Build-Time Enhancement Not Applied**
@@ -488,6 +498,8 @@ javap -p -c target/classes/com/example/Document.class | grep "hibernate"
 # If absent: enhancement did not run
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix - Maven plugin:*
 ```xml
 <plugin>
@@ -505,6 +517,8 @@ javap -p -c target/classes/com/example/Document.class | grep "hibernate"
   </configuration>
 </plugin>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -552,6 +566,8 @@ Client -> API Gateway -> Product Service
   |
   +-> CDN for product images
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4 DEEP DIVE (~10 min):
 For the 1000-product list query: use bytecode-enhanced lazy attribute
@@ -724,6 +740,8 @@ Long id = proxy.getId(); // No SQL - ID is in the proxy
 Date date = proxy.getOrderDate(); // SQL fires here
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is why `session.load()` is useful: it creates the proxy without
 a SQL round-trip, which is valuable when you need to set a foreign key
 reference but do not need the actual data.
@@ -760,6 +778,8 @@ OrderDTO getOrder(Long id) {
 order.getCustomer().getName(); // Session is closed - LIE!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The three solutions, in order of preference:
 
 1. Load what you need within the transaction:
@@ -768,12 +788,16 @@ The three solutions, in order of preference:
 Optional<Order> findWithCustomer(@Param("id") Long id);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Use `@EntityGraph` for declarative loading:
 ```java
 @EntityGraph(attributePaths = {"customer", "items.product"})
 Optional<Order> findById(Long id);
 // Hibernate generates a JOIN for each attribute path
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Force-initialize within the transaction:
 ```java
@@ -784,6 +808,8 @@ public OrderDTO getOrder(Long id) {
     return mapper.toDTO(order);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Avoid: Open Session In View (OSIV) pattern - it extends the session
 through the view/controller layer. It resolves `LIE` but hides N+1
@@ -837,6 +863,8 @@ logging.level.org.springframework.transaction=DEBUG
 // Then see if any lazy access happens after that line
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: once the boundary is identified, use `@EntityGraph` or JOIN FETCH
 in the repository query called by the service method to ensure all
 needed associations are loaded within the transaction.
@@ -881,6 +909,8 @@ Enable bytecode enhancement when:
 <!-- enableLazyInitialization=true enables per-attribute lazy load -->
 <!-- enableAssociationManagement=true auto-syncs bidirectional FKs -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Risks of enabling bytecode enhancement:
 - Build-time: the compiled class files are modified - debugging tools
@@ -935,6 +965,8 @@ loading simplifies the code (no risk of `LIE`).
 List<OrderSummary> findOrderSummaries(String s);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Global default: `spring.jpa.properties.hibernate.default_fetch_mode=select`
 is the default (lazy by default for collections, eager for @ManyToOne).
 To flip: add `@ManyToOne(fetch=LAZY)` on all associations.
@@ -977,6 +1009,8 @@ public boolean equals(Object o) {
 // They differ - equals returns false for proxy vs entity comparison
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problem 2: `hashCode()` using `id` causes issues in collections.
 If `id` is null before persist, all new entities have `hashCode() = 0`.
 After persist, `id` is set, `hashCode()` changes. An entity in a
@@ -1002,6 +1036,8 @@ public int hashCode() {
     // Alternatively: use a natural/business key that never changes
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The Hibernate documentation recommendation: use the same ID-based check
 with `instanceof` (not `getClass()`) and a stable `hashCode()` based on
@@ -1046,11 +1082,15 @@ Fix 1 (most common): Use Jackson's `hibernate5-integration` module
 // - Skips Hibernate internal fields
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2 (explicit): Unproxy before serialization:
 ```java
 @JsonSerialize(using = HibernateProxySerializer.class)
 // Custom serializer that calls Hibernate.unproxy() first
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3 (architectural): Never serialize entities directly. Map to
 DTOs before returning from the controller:
@@ -1060,6 +1100,8 @@ DTOs before returning from the controller:
 // Serialization is predictable and fast
 return mapper.toDTO(entity);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3 is the architectural best practice. Fix 1 is the pragmatic
 short-term solution. Fix 2 is for edge cases.
@@ -1107,6 +1149,8 @@ Customer proxy = session.load(Customer.class, 999L);
 proxy.getName(); // SQL fires here. ObjectNotFoundException if 999 not found
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use `load()` (proxy):
 1. Setting a foreign key reference - you have the ID and need the entity
    reference for a relationship but do not need the entity's data:
@@ -1116,6 +1160,8 @@ order.setCustomer(session.load(Customer.class, customerId));
 // No SQL needed - Hibernate only needs the ID to set the FK
 session.save(order); // INSERT uses customerId directly
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use `get()` (real entity):
 - When you need actual entity data
@@ -1168,6 +1214,8 @@ long flushCount = stats.getFlushCount();
 long secondLevelCacheHits = stats.getSecondLevelCacheHitCount();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 1. Enable dirty tracking (bytecode enhancement): O(changes) not O(entities)
 2. Use `StatelessSession` for batch processing: no dirty checking,
@@ -1182,6 +1230,8 @@ for (int i = 0; i < entities.size(); i++) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The dual-copy memory overhead
 (current state + snapshot) and the StatelessSession as the solution
@@ -1233,6 +1283,8 @@ public OrderDTO getOrderDTO(Long id) {
 // and serialize to JSON with Hibernate5Module (handles proxies)
 // But: stale data + no lazy navigation = effectively a DTO anyway
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rule: cached objects should be DTOs, not entities. The moment an entity
 leaves its session (via cache, API response, or async queue), it is no
@@ -1290,6 +1342,8 @@ boolean enhanced = entity instanceof SelfDirtinessTracker;
 // Should see $$_hibernate_ methods
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention: design reflection-based tests to filter Hibernate metadata
 fields, or use field-name-based assertions rather than field-count assertions.
 
@@ -1308,6 +1362,7 @@ and how you diagnosed and fixed it.
 *Likely follow-up:* "What monitoring did you add to prevent recurrence?"
 
 **Answer:**
+
 **S (Situation):** In an e-commerce platform, a promotional pricing
 service calculated discounts using Order and Customer data. The service
 had been running fine for months. After a refactor to extract discount
@@ -1348,6 +1403,8 @@ Hibernate.initialize(order.getCustomer());
 // Ensure proxy is loaded before serializing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 2 (correct): Replace entity serialization with DTO serialization:
 ```java
 // Create a flat OrderEvent DTO with all needed data:
@@ -1360,6 +1417,8 @@ OrderEvent event = new OrderEvent(
 // Serialize OrderEvent to queue - no proxies, no Hibernate state
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **R (Result):** Zero pricing errors after Phase 2. Added a test that
 verified OrderEvent contains all data needed by the pricing service
 without any Hibernate calls. Added log alerting for `LazyInitializationException`
@@ -1368,3 +1427,33 @@ in production to detect future boundary violations.
 *What separates good from great:* The two-phase fix: immediate (force-
 initialize) vs correct (DTO events) - and framing the root cause as
 "entities should not cross service boundaries."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

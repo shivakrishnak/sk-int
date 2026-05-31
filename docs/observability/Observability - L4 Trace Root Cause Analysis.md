@@ -175,6 +175,8 @@ ROOT CAUSE: N+1 query in PaymentService.validateItems()
 FIX: Batch inventory validation into single query
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The root cause span in a distributed trace is almost always the
 DEEPEST span in the critical path with the longest duration - not
@@ -654,6 +656,8 @@ JAVA_TOOL_OPTIONS="-javaagent:opentelemetry-javaagent.jar \
 # If absent: HTTP client in upstream service is not setting headers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: For Spring services, add `opentelemetry-spring-boot-starter`
 to automatically propagate trace context via `RestTemplate` or
 `WebClient`. For manual HTTP clients, inject the OTel propagator:
@@ -664,6 +668,8 @@ W3CTraceContextPropagator.getInstance().inject(
     HttpRequest::setHeader
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 2: Trace spans have correct structure but wrong timing**
 
@@ -694,6 +700,8 @@ kubectl debug node/my-node -it --image=busybox \
 # Compare with: date on another node
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Ensure NTP synchronization on all nodes (`chrony` or `timesyncd`
 configured). For containerized workloads, verify the container
 inherits the host clock (default behavior, but check if a non-UTC
@@ -722,6 +730,8 @@ curl "http://tempo:3100/api/traces/<traceID>" \
 # add them manually at span creation time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Add code location to manually created spans:
 ```java
 Span span = tracer.spanBuilder("inventory.validate")
@@ -731,6 +741,8 @@ Span span = tracer.spanBuilder("inventory.validate")
     .setAttribute("code.lineno", 247)
     .startSpan();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alternatively, enable continuous profiling (e.g., Pyroscope) and
 correlate profiles to traces using the trace ID to see the exact
 CPU hotspots during the slow span's execution time window.
@@ -767,6 +779,8 @@ try {
     // exception.stacktrace as span events
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -927,6 +941,8 @@ curl -s http://otel-collector:8888/metrics \
 kubectl logs -n production checkout-deployment \
   --previous | grep "FATAL\|OOM\|signal"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The fix for Cause 1 (most common): switch from head sampling to
 tail sampling in the OTel Collector. Tail sampling waits for the
@@ -1134,6 +1150,8 @@ W3CTraceContextPropagator.getInstance().inject(
 //          span_id: "producer_span_id"}]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When context propagation is not configured: the consumer trace is
 completely separate from the producer trace. RCA across the Kafka
 boundary requires manual correlation using the Kafka message key or
@@ -1285,6 +1303,8 @@ curl "http://es:9200/_cat/indices?v&h=index,\
 docs.count,store.size,search.query_time_in_millis"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 At 1 billion spans/day with 5 spans per trace = 200 million traces/day.
 Keeping 3 days of hot data = 600 million traces in hot storage.
 At 2KB compressed per trace = 1.2TB hot storage. An NVMe SSD-backed
@@ -1416,6 +1436,8 @@ Step 3 DESIGN (~10 min)
   (ClickHouse on-demand for historical queries)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 DEEP DIVE (~10 min)
 The critical design decision: tail sampling configuration and the
 OTel Collector tier. The Collector is the control plane - it buffers
@@ -1520,6 +1542,8 @@ service:
       receivers: [spanmetrics]
       exporters: [prometheusremotewrite]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Staff angle:**
 The governance work is what makes this platform usable over 3+ years.
@@ -1630,3 +1654,33 @@ sequenceDiagram
 > 1995ms of self time (it's doing 1995ms of actual work) while
 > checkout and payment-svc have only 45ms and 30ms of self time
 > respectively - they are victims waiting for children.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

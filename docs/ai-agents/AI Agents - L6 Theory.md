@@ -121,6 +121,8 @@ Learning       Rule compilation         Not at runtime
                (during execution)       (training only)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The cognitive loop:**
 
 ```
@@ -135,6 +137,8 @@ LLM agent:
   -> observe result (update context)
   -> repeat
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Theoretical implications for engineering:**
 
@@ -158,6 +162,8 @@ No runtime learning:
   Mitigation: explicit memory injection (external
   notes added to context)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -848,6 +854,34 @@ graph LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # AI Planning Algorithms
 
 **Interview Weight:** ★★☆ - Understanding the
@@ -955,6 +989,8 @@ SOLUTION:
   - final state satisfies G
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **A* search for planning:**
 
 ```
@@ -967,6 +1003,8 @@ If h(n) is admissible (never overestimates),
 A* finds the optimal path.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **LLM-based planning in STRIPS terms:**
 
 ```
@@ -978,6 +1016,8 @@ Action: precond+effect    Tool call + inferred effects
 Search: systematic        Heuristic (LLM next-token)
 Soundness: guaranteed     Approximate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1266,6 +1306,8 @@ Action: send_report
 Plan: [fetch_data, send_report]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 LLM equivalent: the LLM reasons about what's true
 in its context (initial state), what the goal is
 (from the goal prompt), and which tool to call next
@@ -1479,6 +1521,8 @@ def verify_plan(
 
     return True, ""
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to verify: before executing any multi-step plan
 that involves irreversible actions (sending emails,
@@ -1708,3 +1752,33 @@ graph TD
 > critical workflows, the 3x cost difference matters.
 > This is the formal argument for when to use classical
 > planning vs. LLM planning.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

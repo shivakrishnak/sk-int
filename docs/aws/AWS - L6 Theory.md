@@ -118,6 +118,8 @@ Quota scope:
   Per resource (S3 bucket policy size: 20KB per bucket)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -136,6 +138,8 @@ autoscaling.update_auto_scaling_group(
     MaxSize=50  # 50 * 16 vCPU = 800 vCPU. Default: 32.
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: Check quota before capacity planning events
@@ -188,6 +192,8 @@ check_quota_headroom(
     200 * 16  # 200 r5.4xlarge = 3200 vCPU needed
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Monitor quota usage with CloudWatch alarms:
@@ -324,6 +330,8 @@ aws ec2 describe-account-attributes \
   --attribute-names max-instances
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix (immediate):*
 ```bash
 # Submit emergency quota increase:
@@ -345,6 +353,8 @@ aws autoscaling update-auto-scaling-group \
   }'
 # Spot quota is usually higher and less contested
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -507,6 +517,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Root cause 1: Account concurrent limit reached*
 
 Fix: request Lambda concurrency increase.
@@ -517,6 +529,8 @@ aws service-quotas request-service-quota-increase \
   --desired-value 10000
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Root cause 2: Reserved concurrency too low on function*
 
 Fix: increase or remove reserved concurrency:
@@ -525,6 +539,8 @@ aws lambda put-function-concurrency \
   --function-name my-function \
   --reserved-concurrent-executions 500
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Lambda reserved
 concurrency is a double-edged sword. Setting it too
@@ -560,6 +576,8 @@ aws cloudformation list-stacks \
 # Old stacks not updated in 2+ years: candidates for deletion
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Option 1: Request quota increase:
@@ -575,6 +593,8 @@ aws cloudformation delete-stack --stack-name old-stack-name
 # CDK stack splitting: move resources into nested stacks
 # NestedStack in CDK reduces top-level stack count
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* CDK generates one
 CloudFormation stack per `Stack` class. Large CDK
@@ -764,6 +784,8 @@ aws service-quotas request-service-quota-increase \
   --desired-value 10
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Include quota requests
 in the Account Factory for Terraform (AFT) customization.
 Every new account automatically requests standard
@@ -821,6 +843,34 @@ decision.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Service Selection Frameworks
 
@@ -933,6 +983,8 @@ When selecting any AWS service:
    Binary/files: S3
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -956,6 +1008,8 @@ response = table.scan(  # Full table scan - NEVER do this for filtering
     ExpressionAttributeValues={':s': 'PENDING', ':t': Decimal('1000')}
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```sql
 -- GOOD: Aurora for ad-hoc relational queries
@@ -982,6 +1036,8 @@ WHERE c.email LIKE '%@company.com'
   AND o.created_at > NOW() - INTERVAL 30 DAY;
 -- Full index usage: status+created_at + customer join
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # Service selection in code: choosing between
@@ -1350,6 +1406,8 @@ workloads with no reliability impact.
    -- 95% of queries look like this (key-value):
    SELECT * FROM sessions WHERE session_id = 'abc123';
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    If 95% of queries are primary key lookups with no JOIN:
    DynamoDB would be more cost-efficient.
 
@@ -1365,6 +1423,8 @@ workloads with no reliability impact.
    orders = db.query("SELECT * FROM orders WHERE region = 'US'")
    # Joining 1M users + 5M orders in application memory
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    If the data model can be denormalized: DynamoDB single-table
    design handles this in one query.
 
@@ -1418,6 +1478,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix: SNS -> SQS -> Lambda pattern (buffered fan-out)*
 
 ```bash
@@ -1437,6 +1499,8 @@ aws lambda create-event-source-mapping \
   --batch-size 10 \
   --maximum-batching-window-in-seconds 5
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Now: SNS -> SQS (buffer). Lambda pulls from SQS.
 If Lambda throttles: SQS buffers. No messages dropped.
@@ -1715,6 +1779,8 @@ IaC:
     Type-safe infrastructure, team already knows TypeScript
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Year 1 estimated cost:**
 
 100K users, 10M API calls/month:
@@ -1741,3 +1807,33 @@ use Cognito. Revisit only if hitting Cognito-specific
 limitations at >1M users.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

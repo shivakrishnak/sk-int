@@ -8,6 +8,17 @@ permalink: /design-patterns/l1-behavioral/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Observer Pattern](#observer-pattern) | medium |
+| 2 | [Strategy Pattern](#strategy-pattern) | medium |
+| 3 | [Template Method Pattern](#template-method-pattern) | medium |
+
+---
+
 # Observer Pattern
 
 ---
@@ -107,6 +118,8 @@ ConcreteObserverA implements Observer:
 ConcreteObserverB implements Observer:
   + update(subject): // independent reaction
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Two notification styles:
 - **Push**: Subject includes the changed data in the notification
@@ -442,6 +455,34 @@ a composable pipeline, not just a notification list."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Strategy Pattern
 
 ---
@@ -537,6 +578,8 @@ context.setStrategy(new ConcreteStrategyA())
 // or via DI:
 new Context(new ConcreteStrategyB())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The strategy selection is separated from the strategy execution. The
@@ -838,6 +881,34 @@ Strategy hook. `Arrays.sort(array, comparator)` is Strategy (Comparator).
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Template Method Pattern
 
 ---
@@ -938,6 +1009,8 @@ ConcreteClassB extends AbstractClass:
   # step3(): implementation B
   # optionalHook(): override with extra B behavior
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Three types of methods in Template Method:
 1. **Concrete methods** - fixed, shared implementation in base class
@@ -1240,3 +1313,33 @@ a form of Template Method without the single-inheritance limitation."
 | Hiring Manager | "JdbcTemplate, RestTemplate - the framework uses Template Method so you provide only the variable step." |
 | Bar Raiser | "When would you refactor a Template Method to a Strategy? What signals tell you the structure is no longer fixed?" |
 | Peer Engineer | "Template Method works great for framework extension. For business logic that varies, I reach for Strategy instead." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

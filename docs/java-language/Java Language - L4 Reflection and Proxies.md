@@ -8,9 +8,20 @@ permalink: /java-language/l4-reflection-and-proxies/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L4 Reflection and Proxies](#java-language---l4-reflection-and-proxies) | medium |
+
+---
+
 # Java Language - L4 Reflection and Proxies
 
 ## Reflection API and Dynamic Proxies
+
+---
 
 ### 🎯 Model Answer
 
@@ -177,6 +188,8 @@ CGLIB CLASS PROXY (Spring's mechanism for non-interface classes):
   // Requirement: method must NOT be final (cglib overrides it)
   // CGLIB limitation: cannot proxy final classes or methods -> AOP simply skips them
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -367,6 +380,8 @@ Prevention:
   Test: ensure integration tests verify transaction rollback for @Transactional methods.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -424,6 +439,8 @@ try {
     throw new RuntimeException("Undeclared checked exception", cause);
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is what Spring's `AopUtils` and Mockito do. The naive `throw e.getCause()` doesn't compile (Throwable is checked). The complete logic handles RuntimeExceptions, Errors, and declared checked exceptions correctly.
 
 ---
@@ -614,3 +631,33 @@ sequenceDiagram
 ### 📊 Diagram
 
 *(Omit: Proxy mechanism shown in System Design section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

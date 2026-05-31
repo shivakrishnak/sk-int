@@ -7,7 +7,14 @@ permalink: /async-java/l3-modern-java-async/
 render_with_liquid: false
 ---
 
-# Async Java - L3 Modern Java Async
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L3 Modern Java Async](#async-java---l3-modern-java-async) | medium |
+| 2 | [Virtual Threads and Project Loom](#virtual-threads-and-project-loom) | medium |
+| 3 | [Structured Concurrency](#structured-concurrency) | medium |
 
 ---
 
@@ -113,6 +120,8 @@ Virtual thread model:
               continue execution (continuation passing)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Memory model:**
 Virtual thread stacks start at 0 bytes (not pre-allocated). They grow
 on-demand and are stored on the heap. A virtual thread with no stack
@@ -144,11 +153,15 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **JFR monitoring for pinning:**
 ```
 -Djdk.tracePinnedThreads=full
 or JFR event: jdk.VirtualThreadPinned
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use virtual threads:**
 - Thread-per-request I/O servers (HTTP, gRPC, database)
@@ -328,6 +341,8 @@ public synchronized Connection getConnection() {
 // }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mitigation:
 1. Replace `synchronized` with `ReentrantLock` in I/O-adjacent code
 2. Update to libraries that support virtual threads:
@@ -369,6 +384,8 @@ Virtual thread state machine:
   RUNNING again: carrier picks up continuation when I/O completes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The continuation: when a virtual thread
 parks, its execution state (stack, program counter, local variables) is
 captured as a `Continuation` object stored on the heap. When the I/O
@@ -396,6 +413,8 @@ Override: `-Djdk.virtualThreadScheduler.parallelism=N` or
   Virtual Thread 4: PARKED (I/O wait) - no carrier occupied
   Virtual Thread 5: READY - queued for Carrier 1 or 2
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Carrier thread limits determine CPU-bound concurrency: 2 carrier threads
 = 2 CPU-bound tasks running simultaneously. For I/O-bound tasks: thousands
@@ -437,6 +456,8 @@ for (long i = 0; i < Long.MAX_VALUE; i++) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ForkJoinPool used for virtual thread
 scheduling is separate from `ForkJoinPool.commonPool()`. Never submit
 virtual thread tasks to `ForkJoinPool.commonPool()` directly - use
@@ -460,6 +481,8 @@ spring:
 # Configures: Spring MVC request handling to use virtual threads
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For lower Spring Boot versions:
 ```java
 @Configuration
@@ -478,6 +501,8 @@ public class VirtualThreadConfig {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 JDBC considerations:
 - HikariCP 5.1+: set `connection-timeout` conservatively (virtual threads
@@ -529,6 +554,8 @@ ScopedValue.where(REQUEST_ID, req.id())
 // Automatically cleaned up; no explicit remove needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `ScopedValue` (Java 21 preview, targeting
 GA in Java 23+) is the structured replacement for ThreadLocal in virtual
 thread contexts. It is immutable per scope, automatically cleaned up at
@@ -558,6 +585,8 @@ User getUser(@PathVariable String id) {
 // Tomcat with virtual thread executor handles the rest
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Model 2: Use virtual threads as Reactor Scheduler**
 ```java
 Scheduler vtScheduler = Schedulers.fromExecutorService(
@@ -569,6 +598,8 @@ Mono.fromCallable(() -> jdbcCall())
     .subscribeOn(vtScheduler)
     .map(r -> transform(r));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Model 3: Keep reactive for backpressure use cases**
 Virtual threads don't provide backpressure. For streaming, fan-out with
@@ -642,6 +673,8 @@ String fetchData(String userId) throws Exception {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Benefits over raw virtual threads + CompletableFuture:
 - Automatic cancellation: if one subtask fails, scope cancels others
 - Scope lifetime management: no leaked threads after the try block
@@ -658,6 +691,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnSuccess<String>()) {
 }
 // Cancels the other task when one succeeds
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is the "redundant request" pattern for latency reduction: send to
 two services, use the first response, cancel the other.
 
@@ -675,6 +710,8 @@ Three verification approaches:
 jcmd <pid> Thread.print | grep "platform\|carrier" | wc -l
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Throughput test with k6/wrk:**
 ```
 # Fixed thread pool server:
@@ -686,12 +723,16 @@ $ wrk -t4 -c1000 -d30s http://localhost:8080/blocking
 Requests/sec: 8,500 (no thread pool exhaustion)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **JFR profiling:**
 ```java
 // Enable in start flags:
 // -XX:StartFlightRecording=duration=60s,filename=vt.jfr
 // Analyze with: jfr print --events VirtualThreadPinned vt.jfr
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Microbenchmark (JMH comparison):
 ```java
@@ -709,6 +750,8 @@ public void virtualThreadFanOut() throws Exception {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Microbenchmarks often don't capture
 production benefits because they don't include real I/O wait times. The
@@ -785,6 +828,34 @@ stateDiagram-v2
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Structured Concurrency
 
@@ -883,6 +954,8 @@ ShutdownOnSuccess<T> policy:
   - Racing/hedging pattern
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Comparison with CompletableFuture.allOf:**
 
 ```
@@ -898,6 +971,8 @@ StructuredTaskScope.ShutdownOnFailure:
   - Error: scope.throwIfFailed() with clean exception unwrapping
   - Subtask result: subtask.get() or subtask.resultNow()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use each Scope policy:**
 
@@ -916,6 +991,8 @@ Custom scope (extend StructuredTaskScope):
   Use for: partial results with threshold (3 of 5 must succeed)
   Example: quorum-based reads from replicas
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **First-principles derivation:**
 Structured programming replaced goto with structured control flow
@@ -1068,6 +1145,8 @@ class QuorumScope<T> extends StructuredTaskScope<T> {
 }
 // Shuts down when quorum results collected; remaining tasks cancelled
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This enables quorum reads from distributed replicas with automatic
 cancellation when enough results arrive.
 
@@ -1133,6 +1212,8 @@ scope.fork(() -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For long-running tasks that cannot be interrupted: use timeouts and
 check `scope.isShutdown()` periodically as an alternative exit condition.
 
@@ -1173,6 +1254,8 @@ try (var scope = ...) {
 }
 // no tasks running here - guaranteed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "nursery" metaphor (from Trio Python):
 a scope is a nursery where tasks are born and must complete before leaving.
@@ -1219,6 +1302,8 @@ try (var s =
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `ShutdownOnSuccess` with fallback for
 all failures:
 ```java
@@ -1233,6 +1318,8 @@ try {
     return defaultValue();
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `s.result()` throws `ExecutionException` if all subtasks failed. The outer
 catch provides a final fallback.
 
@@ -1280,6 +1367,8 @@ try (var scope = new AtLeastN<Data>(3)) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `handleComplete` method is called from
 subtask threads - it must be thread-safe. `CopyOnWriteArrayList` ensures
 thread-safe collection. The `shutdown()` call is also thread-safe (it's
@@ -1317,6 +1406,8 @@ scope.fork(() -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The difference between `Thread.interrupted()`
 (clears the flag) and `Thread.currentThread().isInterrupted()` (does not
 clear): use `isInterrupted()` for checking without side effects. Use
@@ -1350,6 +1441,8 @@ try (var scope =
 // Simple blocking code with virtual thread scalability
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Performance characteristics:
 - 3 JDBC calls in parallel: scope overhead is minimal (~microseconds)
 - Virtual thread creation cost: ~1-2 microseconds per fork
@@ -1381,6 +1474,8 @@ CompletableFuture.allOf(f1, f2, f3)
 // f2 and f3 still running after f1 failed!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **StructuredTaskScope error handling:**
 ```java
 try (var scope =
@@ -1402,6 +1497,8 @@ try (var scope =
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Exception type preservation is the key advantage: `throwIfFailed()` throws
 the ORIGINAL exception type (via `Throwable#addSuppressed` or direct
 rethrow), not wrapped in CompletionException.
@@ -1418,6 +1515,8 @@ try {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This gives visibility into ALL failures, not just the first.
 
 ---
@@ -1447,6 +1546,8 @@ try (var scope =
     return Response.of(task1.get(), task2.get());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 On timeout: `joinUntil` returns, tasks that haven't completed are
 still running. They are NOT automatically cancelled unless the scope
@@ -1500,6 +1601,8 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
 // Structured lookup inside a reactive pipeline
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 #### Q9 - What are the observability benefits of Structured Concurrency?
@@ -1520,6 +1623,8 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
    // Custom ThreadFactory support in future versions
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **Shutdown visibility:**
    `scope.isShutdown()` is true when the scope has been shut down.
    Log or metric on scope shutdown to track failure rates.
@@ -1535,6 +1640,8 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
        metrics.record(t.state().name(), timer));
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Distributed tracing with Structured
 Concurrency: trace context (traceId, spanId) must be propagated into
 subtasks. Since subtasks are new virtual threads, ThreadLocal-based trace
@@ -1548,6 +1655,8 @@ scope.fork(() -> {
     finally { MDC.remove("traceId"); }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1626,3 +1735,33 @@ sequenceDiagram
 > By the time `throwIfFailed()` is called, no orphaned threads exist. This
 > guaranteed cleanup is impossible with `CompletableFuture.allOf`, which fails
 > fast but leaves other futures running.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

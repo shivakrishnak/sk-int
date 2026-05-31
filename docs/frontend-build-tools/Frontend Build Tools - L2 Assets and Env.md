@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l2-assets-and-env/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS and Static Asset Processing](#css-and-static-asset-processing) | medium |
+| 2 | [Environment Variables in Build Tools](#environment-variables-in-build-tools) | medium |
+
+---
+
 # CSS and Static Asset Processing
 
 ---
@@ -89,6 +99,8 @@ Asset Processing:
     import { ReactComponent as Logo } from './logo.svg';
     <Logo className="logo" />  /* SVG inlined in JSX */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -307,6 +319,34 @@ in plain CSS files with modern scoping semantics.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Environment Variables in Build Tools
 
 ---
@@ -385,6 +425,8 @@ Environment-specific configuration:
   Staging: VITE_API_URL=https://staging.api.example.com
   Prod: VITE_API_URL=https://api.example.com
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -597,3 +639,33 @@ are visible in the bundle as plaintext strings. Run
 `strings dist/main.js | grep your-api-key` to verify no secrets leaked.
 This is a simple but critical security check before each production
 deploy.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

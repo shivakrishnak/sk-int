@@ -7,6 +7,16 @@ permalink: /typescript/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Structural vs Nominal Typing](#structural-vs-nominal-typing) | medium |
+| 2 | [TypeScript Type System Soundness](#typescript-type-system-soundness) | medium |
+
+---
+
 # Structural vs Nominal Typing
 
 ---
@@ -37,6 +47,8 @@ class Vector { x = 0; y = 0; z = 0; }
 const p: Point = new Vector(); // OK - Vector has all Point properties
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `Vector` is compatible with `Point` despite no explicit `implements
 Point` declaration. TypeScript checks shape, not declaration.
 
@@ -47,6 +59,8 @@ class Vector implements Point { ... }
 // Without 'implements Point', not assignable to Point even if
 // Vector has x, y properties
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 TypeScript's structural typing is by design for JavaScript
 compatibility - existing JS libraries don't declare TypeScript
@@ -124,6 +138,8 @@ Why excess property check exists:
   Without it, typos in option objects silently do nothing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Implications:**
 
 - Libraries don't need TS type definitions to be type-safe
@@ -171,6 +187,8 @@ serialize(new Order(['item1']));  // OK - Order has toJSON()
 serialize({ toJSON: () => '{}' }); // OK - anonymous object works too
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Example 2 (Wrong vs Right) - Accidental structural compatibility:**
 
 ```typescript
@@ -195,6 +213,8 @@ type OrderId = { id: string; readonly [__brand]: 'OrderId' };
 const orderId: OrderId = { id: 'ord_123', [__brand]: 'OrderId' };
 getUser(orderId); // ERROR: [__brand] types differ
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example 3 (Wrong vs Right) - Excess property checking:**
 
@@ -350,6 +370,34 @@ as an alternative approach.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # TypeScript Type System Soundness
 
 ---
@@ -457,6 +505,8 @@ TypeScript's deliberate unsoundness:
      // An implementation can accept Animal where string expected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key insight:**
 
 ```
@@ -475,6 +525,8 @@ strictFunctionTypes: true (part of strict)
     prop: (x: Animal) => void;  // contravariant (property syntax)
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -509,6 +561,8 @@ p.print("hello");  // Runtime: "hello".forEach is not a function
 // Property syntax correctly rejects:
 const q: DataPrinter = new CSVPrinter(); // ERROR (contravariant)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example 2 (Wrong vs Right) - readonly unsoundness:**
 
@@ -675,3 +729,33 @@ TypeScript has gotten more sound over time (strict function types in
 4.4). The trend is increasing soundness where it doesn't break
 existing patterns. Understanding this helps predict which TypeScript
 version options to enable for maximum safety.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

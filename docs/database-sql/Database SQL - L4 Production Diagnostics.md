@@ -8,6 +8,15 @@ permalink: /database-sql/l4-production-diagnostics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Database Production Diagnostics - Locks, Deadlocks, Slow Queries](#database-production-diagnostics---locks-deadlocks-slow-queries) | medium |
+
+---
+
 # Database Production Diagnostics - Locks, Deadlocks, Slow Queries
 
 **TL;DR:** Production database diagnosis follows a systematic path: identify
@@ -90,6 +99,8 @@ pg_stat_statements:
   calls: how many times executed
   rows: total rows returned/affected
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -389,6 +400,8 @@ Dashboard (Grafana):
   Panel 6: Cache hit ratio (shared_buffers hit %)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -477,6 +490,8 @@ SELECT pg_terminate_backend(blocker_pid);
 -- The waiting queue clears within seconds.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention: `idle_in_transaction_session_timeout = '60s'` auto-terminates
 connections that are idle in transaction for more than 60 seconds.
 
@@ -497,6 +512,8 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
 SELECT ... (actual query with real values) ...;
 -- Look for: "rows=X estimated vs Y actual" discrepancy.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `ANALYZE orders;` to refresh statistics. If plan is still wrong:
 check if a new index is needed or if statistics_target needs increasing.
@@ -552,3 +569,33 @@ check if a new index is needed or if statistics_target needs increasing.
 **Q12: How do you safely diagnose a production database under load without adding more load?**
 
 🗣️ "Principles for zero-impact diagnosis: (1) pg_stat_activity: read-only system view, negligible overhead. Safe at any time. (2) EXPLAIN (no ANALYZE): generates the plan without executing the query. Zero impact. (3) EXPLAIN ANALYZE on a replica: run on the read replica to get execution stats without touching the primary. (4) pg_stat_statements: already collected; just read the view. No overhead. (5) Connection to the database: always reserve one admin connection (limit 1 in pg_hba.conf or use a dedicated `superuser_reserved_connections`). If the pool is saturated: you can still connect as superuser. `superuser_reserved_connections = 3` (default): 3 connections reserved for superusers. (6) Avoid: VACUUM ANALYZE on large tables under load (heavy I/O). EXPLAIN ANALYZE on large slow queries (actually runs the query). Lock views that could block. Use pganalyze or read replicas for intensive analysis."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

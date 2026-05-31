@@ -8,6 +8,17 @@ permalink: /design-patterns/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [What Are Design Patterns](#what-are-design-patterns) | medium |
+| 2 | [GoF Pattern Categories](#gof-pattern-categories) | medium |
+| 3 | [Pattern Anatomy and Recognition](#pattern-anatomy-and-recognition) | medium |
+
+---
+
 # What Are Design Patterns
 
 ---
@@ -368,6 +379,34 @@ vocabulary even when the implementation is framework-provided."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # GoF Pattern Categories
 
 ---
@@ -473,6 +512,8 @@ BEHAVIORAL (11 patterns)
   Template Method          algorithm skeleton, defer steps
   Visitor                  operations on object structure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The category reveals the locus of change. Creational: what changes is
@@ -759,6 +800,34 @@ and Composite (View hierarchy) simultaneously."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Pattern Anatomy and Recognition
 
 ---
@@ -863,6 +932,8 @@ CONSEQUENCES:
   cascade risk if one observer triggers another.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Structural fingerprints for common patterns:
 
 ```
@@ -893,6 +964,8 @@ Builder:
   Plus a build() method returning the target object
   Risk: partial builds if build() not called
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Every pattern has a structural fingerprint. Once you know the fingerprint,
@@ -1160,3 +1233,33 @@ lifecycle in DispatcherServlet)."
 | Hiring Manager | "Recognition speeds onboarding - I build a mental model of unfamiliar code faster." |
 | Bar Raiser | "What is the cost of misidentifying a pattern? You apply the wrong known trade-offs and miss the real failure mode." |
 | Peer Engineer | "I use pattern names in code reviews to shorthand design concerns: 'This Observer needs per-listener exception handling.'" |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

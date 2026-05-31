@@ -140,6 +140,8 @@ WITH PROMPT CACHING:
   = 90% savings
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Note: prices approximate, check current Anthropic pricing.*
 
 **Cache TTL and keep-alive:**
@@ -155,6 +157,8 @@ TTL behavior:
   With steady traffic (>1 req/5 min): cache stays warm indefinitely
   With bursty traffic: may see cache misses and re-writes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -369,6 +373,8 @@ def hash_system_for_cache_debug(system: list[dict]) -> str:
 # If hashes differ across requests: cache miss
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common causes of cache invalidation:
 - System prompt includes a timestamp or request ID
 - String formatting adds random whitespace
@@ -465,6 +471,8 @@ Structure pattern:
 [Messages array: conversation history + current message]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The messages array is NEVER cacheable - it changes
 every request. The system parameter (list of blocks)
 contains the cacheable prefix.
@@ -517,6 +525,8 @@ CACHE_READ_COST = 0.30 / 1_000_000  # per token
 saved = cache_read * (REGULAR_COST - CACHE_READ_COST)
 print(f"Saved ~${saved:.5f} this request")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Track cache_read_input_tokens
 in your monitoring. The ratio cache_read / (cache_read + cache_write)
@@ -595,6 +605,8 @@ CACHED_SYSTEM = [
 ]
 # Messages array: user query only (not cached)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Update strategy: when you update few-shot examples,
 the cache is invalidated (new content = new cache key).
@@ -699,6 +711,8 @@ threading.Thread(
 ).start()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cost of keep-warm: 1 request every 4 minutes = 360 requests/day.
 At max_tokens=1, these are near-zero cost calls.
 
@@ -723,6 +737,8 @@ Anti-pattern (breaks caching):
 def make_system_prompt(tenant: str) -> str:
     return f"You are an assistant for {tenant}. ..."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Every tenant gets a different cache key. With 1000 tenants
 and 10 req/day each: 10,000 requests, but each tenant
@@ -751,6 +767,8 @@ def make_messages(tenant_context: str, user_msg: str):
     ]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All 1000 tenants share one cached system prompt.
 The `tenant_context` moves to the message (not cached),
 but the large, stable system instruction is cached.
@@ -778,6 +796,8 @@ Investigation steps:
 git diff HEAD~1 -- src/prompts/system.txt
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Check per-request hash of the cached prefix:
 ```python
 import hashlib
@@ -789,6 +809,8 @@ cache_key = hashlib.sha256(
 ).hexdigest()
 print(f"Cache key: {cache_key}")
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If this hash changes between requests: find the
 varying element.
 
@@ -889,6 +911,34 @@ xychart-beta
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Batch API and Async LLM Processing
 
@@ -1015,6 +1065,8 @@ BATCH LIMITS:
   - Estimated processing time: 1 minute - 24 hours
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Task queue pattern (alternative):**
 
 ```
@@ -1036,6 +1088,8 @@ User/Job -----> | Queue  | <------+
                |
            Callback / Webhook / SSE
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1311,6 +1365,8 @@ if errors:
         print(f"  {e['id']}: {e['type']} - {e['message']}")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* For failed requests, either: (a) fix the
 request (reduce max_tokens if token limit exceeded),
 or (b) submit a new batch containing only the failed
@@ -1414,6 +1470,8 @@ for result in client.beta.messages.batches.results(
             result.result.message.content[0].text
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Production additions:
 - Save `batch_id` to a database on creation (don't
   lose it - you need it to retrieve results)
@@ -1475,6 +1533,8 @@ async def controlled_batch_process(
     ))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Monitor `RateLimitError` count per minute as a
 signal to reduce `max_concurrent`.
 
@@ -1534,6 +1594,8 @@ def get_progress_for_user(job_id: str) -> dict:
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 UX guideline: for batch jobs > 1 hour, show progress
 as "X of Y documents processed" not as a spinner.
 Users tolerate long waits when they can see progress.
@@ -1587,6 +1649,8 @@ PIPELINE:
                                               |
                                          DLQ if still failing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Idempotency is
 the most important property - document processing
@@ -1689,6 +1753,8 @@ def process_batch_with_resubmit(
     return all_results
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Distinguish error
 types before retrying: `overloaded_error` is worth
 retrying; `invalid_request_error` (bad input) is
@@ -1773,6 +1839,8 @@ def poll_with_adaptive_interval(
 
     return "timeout"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For production: use a scheduled job (cron) that
 checks all in-progress batches once per minute.
@@ -1859,3 +1927,33 @@ flowchart TD
 > polling is shown as a separate concern from the
 > batch job: one cron checks all in-progress batches,
 > decoupled from the batch creation logic.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

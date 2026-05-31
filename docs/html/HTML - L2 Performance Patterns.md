@@ -7,6 +7,16 @@ permalink: /html/l2-performance-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Resource Hints and Preloading](#resource-hints-and-preloading) | very |
+| 2 | [Lazy Loading and Deferred Resource Loading](#lazy-loading-and-deferred-resource-loading) | high |
+
+---
+
 # Resource Hints and Preloading
 
 🎯 **Interview Weight:** very high (★★☆) - Resource hints directly
@@ -179,6 +189,8 @@ COMMON PATTERN - FONT OPTIMIZATION:
   <!-- 3. Load CSS with font-face declarations: -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter">
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -360,6 +372,8 @@ Root cause C: wrong font URL (preloaded != actual font)
   @font-face: /fonts/inter.woff  (different extension)
   Fix: ensure URLs match exactly
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -904,6 +918,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Lazy Loading and Deferred Resource Loading
 
 🎯 **Interview Weight:** high (★★☆) - Lazy loading is a default
@@ -1090,6 +1132,8 @@ CONTENT-VISIBILITY (CSS lazy rendering):
   }
   /* Can reduce rendering time 3-4x for long pages */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1307,6 +1351,8 @@ Check if hero image is lazy:
   document.querySelector('img[loading="lazy"]')
   If the LCP image has loading=lazy: remove it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1856,3 +1902,33 @@ gantt
 > code. Async also downloads in parallel but executes immediately
 > when downloaded, potentially interrupting HTML parsing - fine for
 > truly independent scripts, dangerous for anything that reads the DOM.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

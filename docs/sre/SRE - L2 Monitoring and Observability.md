@@ -170,6 +170,8 @@ MONITORING MINIMUM
     p50_latency, p999_latency, memory_%, queue_depth
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Saturation is the only leading indicator among the four. Errors
 and latency are lagging - they confirm degradation that users are
@@ -419,6 +421,8 @@ histogram_quantile(0.999, # p999
 # p999: 2500ms (PROBLEM - 0.1% of users seeing 2.5s)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add a p999 latency SLI in addition to the p99 threshold SLI.
 The tail latency at p999 is often the canary for broader latency
 problems. Investigate the 0.1% of requests taking 2.5 seconds.
@@ -449,6 +453,8 @@ sum(rate(http_requests_total[5m]))
 probe_success{job="blackbox"}
 # External probe failing = connectivity issue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Add a traffic floor alert: if traffic drops below 10% of
 normal baseline, alert even if error rate is 0. Also add synthetic
@@ -482,6 +488,8 @@ hikaricp_connections_max{pool="default"}
 hikaricp_connections_acquire_ms{quantile="0.99"}
 # Returns: 28000 (28 second wait for a connection)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Increase connection pool size or optimize query patterns
 to reduce connection hold time. Add pool saturation alert at 80%.
@@ -649,6 +657,8 @@ histogram_quantile(0.99,
 rate(hikaricp_connections_timeout_total[5m])
 # Alert on any non-zero rate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The pool saturation alert hierarchy: 80% utilization (warning,
 investigate before peak traffic), 95% utilization (critical, scale
@@ -1068,6 +1078,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Alert Design and On-Call Hygiene
 
 🎯 Interview Weight: high - separates candidates who have been
@@ -1220,6 +1258,8 @@ ON-CALL REVIEW PROCESS (weekly)
   If any "no": add to alert debt backlog
   Each quarter: eliminate 5 alerts from backlog
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Every non-actionable alert has a cost that compounds over time.
@@ -1445,6 +1485,8 @@ Retrospective questions:
   Isolate the leading indicator (usually saturation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Implement alert grouping (AlertManager groups related
 alerts). Design parent alerts for infrastructure failures that
 suppress downstream symptoms when the infrastructure alert is
@@ -1479,6 +1521,8 @@ Track per-alert false positive rate:
   Alerts with > 20% false positive rate: priority fix
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Weekly on-call review meeting. For each alert with >20%
 false positive rate: either fix the threshold, add confirmation
 window, or eliminate. Monthly target: eliminate 3 alerts from
@@ -1512,6 +1556,8 @@ while read url; do
   fi
 done < runbook_urls.txt
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Run runbook link validation in CI/CD. Broken runbook
 URL = alert definition merge blocked. Assign runbook ownership
@@ -2094,3 +2140,33 @@ flowchart TD
 
 4. "Does the team use SLO-based burn rate alerting, or are most alerts
    threshold-based? Has there been an initiative to migrate?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

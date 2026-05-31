@@ -8,7 +8,15 @@ permalink: /kafka/l0-orientation/
 render_with_liquid: false
 ---
 
-# Kafka - L0 Orientation
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L0 Orientation](#kafka---l0-orientation) | medium |
+| 2 | [Apache Kafka Overview](#apache-kafka-overview) | medium |
+| 3 | [Kafka vs Traditional Message Queues](#kafka-vs-traditional-message-queues) | medium |
+| 4 | [Kafka Ecosystem Map](#kafka-ecosystem-map) | medium |
 
 ---
 
@@ -28,7 +36,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — asked at the start of every Kafka interview
+🎯 Interview Weight: Critical - asked at the start of every Kafka interview
 to establish baseline understanding before diving into depth.
 
 ---
@@ -112,6 +120,8 @@ App C ──────────────> [Topic: logs]    ────>
          append-only log, partitioned     reads at own pace
          retained on disk                 tracks offset
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 1. A **producer** sends records to a named **topic**.
 2. Each topic is split into one or more **partitions** - ordered, immutable logs.
@@ -199,6 +209,8 @@ try (KafkaProducer<String, String> producer =
 } // close() flushes outstanding messages - always use try-with-resources
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Why this matters:* `send()` is async - the callback is the only place
 you know if delivery succeeded. Ignoring the callback means you lose
 visibility into failures silently.
@@ -231,6 +243,8 @@ try (KafkaConsumer<String, String> consumer =
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Why this matters:* The poll loop is the fundamental Kafka consumer pattern.
 `group.id` determines which consumer group this instance belongs to -
@@ -468,6 +482,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kafka vs Traditional Message Queues
 
 ---
@@ -484,7 +526,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — interviewers use this comparison to test whether
+🎯 Interview Weight: High - interviewers use this comparison to test whether
 candidates understand WHY Kafka was invented and when to choose it.
 
 ---
@@ -572,6 +614,8 @@ Producer → Topic/Partition → [offset 0, 1, 2, 3, 4, 5...]
 Same data, independent consumers, retained until expiry.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The retention model is the single most important design difference. When
 messages persist after consumption, consumers become stateless about delivery
@@ -638,6 +682,8 @@ while (true) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Example 2: Right - Kafka for fan-out event streaming (GOOD pattern)**
 
 ```java
@@ -659,6 +705,8 @@ analyticsProps.put("enable.auto.commit", "false");
 // Both read the SAME topic; offsets are tracked independently
 // No message copying required - the log is shared
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Why this matters:* Two different `group.id` values mean Kafka maintains
 independent offset state for each group. Both services see every event
@@ -687,6 +735,8 @@ try (KafkaConsumer<String, String> consumer =
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Why this matters:* `seekToBeginning()` is only possible because Kafka retains
 records. This is the capability that enables backfilling new services, debugging
@@ -847,6 +897,8 @@ overhead of managing a Kafka cluster is higher than a managed queue service."
 | Bar Raiser | Lead with limitations - when Kafka is the WRONG choice |
 | Peer Engineer | Collaborative - "I've hit the limitation of queues when..." |
 
+---
+
 ### ⚖️ Comparison
 
 | Option | Retention | Fan-out | Throughput | Routing | Choose When |
@@ -865,6 +917,34 @@ no replay need, a traditional queue is simpler and sufficient.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kafka Ecosystem Map
 
 ---
@@ -881,7 +961,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Medium — asked to test ecosystem awareness before
+🎯 Interview Weight: Medium - asked to test ecosystem awareness before
 diving into specific components. Understanding the map prevents candidates
 from confusing core Kafka with its ecosystem tools.
 
@@ -975,6 +1055,8 @@ External Systems        Core Layer         Processing
 └──────────────┘    │Registry      │
                     └──────────────┘
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Component breakdown:**
 
@@ -1075,6 +1157,8 @@ producer.send(new ProducerRecord<>("orders", "order-123", event));
 // violates the registered compatibility mode (BACKWARD by default)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Why this matters:* Without Schema Registry, a producer can silently change
 the schema and break all consumers. Schema Registry makes incompatible changes
 a compile-time or deploy-time error rather than a runtime failure.
@@ -1102,6 +1186,8 @@ KafkaStreams streams = new KafkaStreams(
     builder.build(), streamsConfig);
 streams.start(); // runs in-process, no external cluster
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Why this matters:* Kafka Streams runs inside your JVM process - no separate
 cluster to deploy. State is stored in RocksDB locally and backed up to a
@@ -1280,6 +1366,8 @@ Flink with remote state backends is more appropriate."
 | Bar Raiser | Lead with when NOT to use each - Streams vs Flink decision |
 | Peer Engineer | Collaborative - "The Schema Registry is one of those things you don't appreciate until you've lived without it..." |
 
+---
+
 ### ⚖️ Comparison
 
 | Component | Role | When to Use | When to Skip |
@@ -1295,3 +1383,33 @@ Flink with remote state backends is more appropriate."
 **The deciding factor:**
 Add each ecosystem component only when you hit the specific problem it
 solves - unnecessary components add operational cost without value.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

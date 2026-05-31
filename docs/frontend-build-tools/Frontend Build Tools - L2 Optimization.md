@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l2-optimization/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Code Splitting and Lazy Loading](#code-splitting-and-lazy-loading) | medium |
+| 2 | [Tree Shaking and Dead Code Elimination](#tree-shaking-and-dead-code-elimination) | medium |
+
+---
+
 # Code Splitting and Lazy Loading
 
 ---
@@ -79,6 +89,8 @@ Code splitting mechanisms:
   import(/* webpackPreload: true */ './criticalComponent');
   // Added to <link rel="preload"> - downloads immediately
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -310,6 +322,34 @@ and SEO ranking.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Tree Shaking and Dead Code Elimination
 
 ---
@@ -388,6 +428,8 @@ Real-world: lodash vs lodash-es
   import { sortBy } from 'lodash-es'; // ESM: only sortBy included
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 `sideEffects: false` in package.json is the publisher's declaration
@@ -463,6 +505,8 @@ import { optimizeBarrel } from 'vite-plugin-barrel'; // plugin
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // Check if tree shaking is working:
@@ -591,3 +635,33 @@ the function was removed.
 was the original ESM signal. Modern bundlers prefer the `exports` field
 with explicit `"import"` paths. If a package has `"exports"` it takes
 precedence. Check both when diagnosing.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

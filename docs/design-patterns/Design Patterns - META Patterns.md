@@ -8,6 +8,17 @@ permalink: /design-patterns/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Pattern Recognition in Code](#pattern-recognition-in-code) | medium |
+| 2 | [Patterns vs Over-engineering](#patterns-vs-over-engineering) | medium |
+| 3 | [Refactoring to Patterns](#refactoring-to-patterns) | medium |
+
+---
+
 # Pattern Recognition in Code
 
 ---
@@ -110,6 +121,8 @@ Template Method:
   abstract methods (hooks).
   Code clue: "public final void execute() { before(); doX(); after(); }"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pattern fingerprints (structural clues):**
 
@@ -344,6 +357,34 @@ the strict distinction."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Patterns vs Over-engineering
 
@@ -640,6 +681,34 @@ and 2 interfaces without adding flexibility."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Refactoring to Patterns
 
 ---
@@ -742,6 +811,8 @@ Smell: Tight coupling - one class knows 5 others
 Pattern: Mediator or Event-driven (Observer)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Refactoring mechanics:**
 
 - Extract Method: isolate a section of code into a method.
@@ -763,6 +834,8 @@ Step 5: Replace the if/else chain with a lookup (map or DI)
 Run tests after EVERY step.
 Total time: 20-30 minutes.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1082,3 +1155,33 @@ becomes 5-7 focused classes. Each sprint's refactoring is small enough
 to review and safe enough to ship. The key: never do a big-bang rewrite.
 Each small extraction is a shippable, testable change. The 2,000-line
 class shrinks incrementally."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

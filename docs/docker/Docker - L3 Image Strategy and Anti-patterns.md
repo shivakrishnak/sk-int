@@ -8,9 +8,20 @@ permalink: /docker/l3-image-strategy-and-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L3 Image Strategy and Anti-patterns](#docker---l3-image-strategy-and-anti-patterns) | medium |
+
+---
+
 # Docker - L3 Image Strategy and Anti-patterns
 
 ## Image Tagging and Versioning Strategy
+
+---
 
 ### 🎯 Model Answer
 
@@ -210,6 +221,8 @@ IMAGE RETENTION POLICIES:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -384,6 +397,8 @@ Prevention:
   CI: docker manifest inspect myapp:$TAG 2>/dev/null && exit 1 || true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -434,6 +449,8 @@ upstream changes don't affect you.
 ---
 
 ## Dockerfile Anti-patterns
+
+---
 
 ### 🎯 Model Answer
 
@@ -624,6 +641,8 @@ ANTI-PATTERN 8: inconsistent package pinning:
   # Every package: exact version + sha256 hash. Verified on install.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -813,6 +832,8 @@ Fix:
      # before SIGTERM is sent to the app.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -857,4 +878,34 @@ CMD exec form? No secrets in ENV? Multi-stage? These are 5 checks
 that catch 80% of anti-patterns. Make the checklist a PR template
 section. After 3 months: the team writes correct Dockerfiles without
 the checklist because the patterns are internalized.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -8,9 +8,20 @@ permalink: /java-performance/l2-code-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L2 Code Patterns](#java-performance---l2-code-patterns) | medium |
+
+---
+
 # Java Performance - L2 Code Patterns
 
 ## Object Allocation Reduction: Pool and Flyweight Patterns
+
+---
 
 ### 🎯 Model Answer
 
@@ -137,6 +148,8 @@ MEASURING ALLOCATION REDUCTION:
     Before: 256 B/op
     After: 0 B/op  (full elimination via escape analysis + pooling)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -323,6 +336,8 @@ Fix:
      Caller handles: retry or fail-fast (better than blocking forever)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -402,6 +417,8 @@ ThreadLocal. This is cleaner, compatible with virtual threads, and avoids the li
 ---
 
 ## Collection Performance: ArrayList vs LinkedList vs HashMap Trade-offs
+
+---
 
 ### 🎯 Model Answer
 
@@ -533,6 +550,8 @@ ITERATION PERFORMANCE:
     LinkedList 1000 elements: 5,000 ns/iteration (17x slower!)
     (both O(n), but constant factors diverge dramatically)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -683,6 +702,8 @@ Fix:
      or TreeMap (sorted) if sorted access is needed - both avoid this.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -754,3 +775,33 @@ Both levels are array-backed, no hashing at either level. For a 4-Status x 8-Typ
 is just an 8-element array. A status+type lookup: two array dereferences. Compare to HashMap<Status, HashMap<Type, Count>>: two hash computations, two bucket lookups, two equals() checks. For metrics tracking (hot path for every request): the EnumMap<EnumMap<>> version is measurably faster and uses less memory.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

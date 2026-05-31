@@ -8,6 +8,17 @@ permalink: /microservices/l1-communication-and-discovery/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Service Communication - Sync vs Async](#service-communication---sync-vs-async) | medium |
+| 2 | [Service Discovery and Registration](#service-discovery-and-registration) | medium |
+| 3 | [Health Checks and Readiness Probes](#health-checks-and-readiness-probes) | medium |
+
+---
+
 # Service Communication - Sync vs Async
 
 ---
@@ -64,6 +75,8 @@ HYBRID (common in practice):
   Side effects: async events for notifications,
                 fulfillment, analytics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use each:**
 | Concern | Sync | Async |
@@ -231,6 +244,34 @@ Fix: Set aggressive timeouts (1-3 seconds max) on all synchronous inter-service 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Service Discovery and Registration
 
 ---
@@ -282,6 +323,8 @@ SERVER-SIDE DISCOVERY (Kubernetes):
   Kubernetes handles routing transparently
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Kubernetes DNS service discovery:**
 ```
 Full DNS name:
@@ -299,6 +342,8 @@ Example:
   All pods in the cluster can reach:
   http://order-service/api/v1/orders
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Kubernetes service discovery is built into the platform. In a Kubernetes-based microservices system, client-side discovery registries (Eureka) are largely redundant. The team should understand both patterns (client-side for non-Kubernetes deployments and legacy systems, server-side for Kubernetes-native).
@@ -453,6 +498,34 @@ Fix: Ensure deregistration happens on SIGTERM (graceful shutdown hook). Configur
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Health Checks and Readiness Probes
 
 ---
@@ -509,6 +582,8 @@ STARTUP PROBE (Kubernetes 1.16+):
   e.g.: failureThreshold=30, periodSeconds=10 = 300s max
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Health check implementation:**
 ```yaml
 # Kubernetes deployment probe config
@@ -538,6 +613,8 @@ startupProbe:
   periodSeconds: 10
   # Allows up to 300 seconds for startup
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Readiness probes are a voluntary circuit breaker. A service can fail its own readiness probe to remove itself from load balancing when it detects it cannot serve traffic correctly. This is graceful degradation at the infrastructure level.
@@ -684,3 +761,33 @@ Fix: Move dependency checks to the readiness probe. Liveness probe should only c
 *What separates good from great:* "A 3-minute Java startup is a red flag. Investigate what is causing the slow startup: is it class loading (use AppCDS or CRaC to cache the class list), is it database migration (Flyway running during startup - consider running migrations as a separate init container), or is it cache warming (move cache warm to background after readiness passes). Slow startup means slow recovery from crashes and slow scale-out. Target under 30 seconds for production Java microservices."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

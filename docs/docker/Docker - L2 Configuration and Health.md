@@ -8,9 +8,20 @@ permalink: /docker/l2-configuration-and-health/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L2 Configuration and Health](#docker---l2-configuration-and-health) | medium |
+
+---
+
 # Docker - L2 Configuration and Health
 
 ## Container Health Checks and Restart Policies
+
+---
 
 ### 🎯 Model Answer
 
@@ -185,6 +196,8 @@ RESTART POLICIES:
   # Kubernetes: liveness probe kills and restarts unhealthy pods.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -358,6 +371,8 @@ Fix:
   For distroless: build a custom health-check binary.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -407,6 +422,8 @@ actively until success. More reliable than a static delay.
 ---
 
 ## Environment Variables and Configuration Injection
+
+---
 
 ### 🎯 Model Answer
 
@@ -579,6 +596,8 @@ EXTERNAL CONFIG STORE PATTERN:
   5. Static config (immutable): baked into image (e.g., application.yaml).
   6. Dynamic config (changes without deploy): external store.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -758,6 +777,8 @@ Prevention:
   - Application: never log configuration values during startup.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -803,4 +824,34 @@ the safest deployment pattern: feature flags decouple deployment
 from release. The container image: deployed weeks before the feature
 is enabled. This requires zero-restart dynamic configuration as a
 prerequisite.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

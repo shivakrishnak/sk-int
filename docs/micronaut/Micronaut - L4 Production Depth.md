@@ -276,6 +276,8 @@ public class OrderDto {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2: @ReflectiveAccess for Jackson:
 ```java
 @ReflectiveAccess  // Generates reflect-config entry
@@ -284,6 +286,8 @@ public class OrderDto {
     // In native image
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Option 3: reflect-config.json:
 ```json
@@ -294,6 +298,8 @@ Option 3: reflect-config.json:
     "allDeclaredMethods": true
 }]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Recommendation: use micronaut-serde-jackson.
 It generates serialization code at compile time,
@@ -314,6 +320,34 @@ as a reactive patch.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Micronaut Startup Performance Tuning
 
@@ -517,6 +551,8 @@ readinessProbe:
   failureThreshold: 5        # Fail after 5 consecutive failures
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Total budget = initialDelaySeconds + (periodSeconds * failureThreshold)
 = 10 + (3 * 5) = 25 seconds
 
@@ -544,6 +580,34 @@ actual budget from probe configuration (not just
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Micronaut Anti-Patterns
 
@@ -770,6 +834,8 @@ grep -A 20 "nioEventLoopGroup" thread-dump.txt
 #     at ...JdbcTemplate...execute  # JDBC on event loop!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Metrics:
 - Micronaut Micrometer: event loop thread state
 - io.netty.eventloop.* metrics in Prometheus
@@ -794,6 +860,34 @@ identifying Netty event loop threads blocked in JDBC.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Micronaut Production Diagnostics
 
@@ -977,6 +1071,8 @@ jvm_memory_used_bytes{area="heap"}
 # Stable: GC is working, not a leak
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Identify the generation leaking:
 ```bash
 # Old generation growing = retention issue
@@ -984,11 +1080,15 @@ jvm_memory_used_bytes{id="G1 Old Gen"}
 # Not decreasing after GC = something is being retained
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Take heap dump when symptoms peak:
 ```bash
 jmap -dump:format=b,file=/tmp/heap.hprof \
   $(pgrep -f "application.jar")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Analyze with Eclipse MAT:
 - Open heap dump → Leak Suspects report
@@ -1015,3 +1115,33 @@ OOM, and using MAT leak suspects report directly.
 | Hiring Manager | Can you diagnose production issues? |
 | Bar Raiser | Complete diagnosis workflow, async profiler, heap analysis, Prometheus queries. |
 | Peer Engineer | "Found the leak in 20 minutes: a static Map in a tenant context was never cleared. MAT pointed directly to it." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

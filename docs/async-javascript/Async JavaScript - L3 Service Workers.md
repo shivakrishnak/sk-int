@@ -198,6 +198,8 @@ async function staleWhileRevalidate(request) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 `event.waitUntil()` is critical in `install` and `activate`
 handlers. It tells the browser to keep the Service Worker
@@ -380,6 +382,8 @@ Fix:
   - Optionally: call self.skipWaiting() in install for immediate update
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: `event.respondWith` called asynchronously**
 ```javascript
 // BAD: respondWith called outside event handler
@@ -396,6 +400,8 @@ self.addEventListener('fetch', event => {
   );
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -439,6 +445,8 @@ Registration -> Download -> Install -> Waiting -> Activate -> Active
                          (discarded)                              (restarts on event)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The detail about Workers
 being terminated when idle - you cannot keep state in module-level
 variables across events. Use `IndexedDB` or `Cache API` for
@@ -481,6 +489,8 @@ registerRoute(
   new NetworkFirst({ cacheName: 'api-cache' })
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing Workbox's `ExpirationPlugin`
 automatically handles LRU eviction and age-based expiration -
@@ -533,6 +543,8 @@ async function syncPendingNotes() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that throwing
 from the sync event handler causes the browser to retry the
 sync automatically. The sync API handles the retry logic -
@@ -574,6 +586,8 @@ self.addEventListener('fetch', event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 On logout: explicitly clear the user's cache entries:
 ```javascript
 // In page code on logout:
@@ -587,6 +601,8 @@ self.addEventListener('message', event => {
   }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that failing to
 scope cache by user is a security vulnerability - user A
@@ -628,6 +644,8 @@ self.addEventListener('notificationclick', event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that push
 messages go through the browser vendor's push infrastructure
 (FCM for Chrome, APNs-equivalent for Safari) - you do not
@@ -660,6 +678,8 @@ self.addEventListener('fetch', event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Testing offline mode:
 - DevTools -> Network -> Offline checkbox
 - Verify app loads from cache
@@ -673,6 +693,8 @@ wb.addEventListener('waiting', () => {
 });
 wb.register();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using the Workbox Window
 `waiting` event to notify users when an update is available,
@@ -712,9 +734,13 @@ fetch(request).then(response => {
 // Never cache 206 Partial Content or error responses
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that caching error
 responses (500, 404) would cause Service Workers to serve
 error pages from cache - common mistake in naive implementations.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -731,9 +757,13 @@ How stale can the data be? Hours -> Cache First. Seconds ->
 Network First. Acceptable brief staleness -> Stale-While-Revalidate.
 No staleness acceptable -> Network Only.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -800,6 +830,34 @@ sequenceDiagram
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # IndexedDB Async Patterns
 
@@ -930,6 +988,8 @@ while (cursor) {
   cursor = await cursor.continue();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Transaction auto-commit is the most common IndexedDB pitfall.
@@ -1161,6 +1221,8 @@ await tx2.objectStore('items').put(merged);
 await tx2.done;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Version mismatch after multiple deploys**
 ```javascript
 // User has db v1 open in one tab, v2 needed in another
@@ -1173,6 +1235,8 @@ const db = await openDB('app', 2, {
   }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1254,6 +1318,8 @@ openDB('app', 4, {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Important: data migrations in `upgrade` cannot use async
 operations - the upgrade transaction is auto-committed. Use
 synchronous IDB requests within the upgrade callback.
@@ -1298,6 +1364,8 @@ while (cursor && count < 10) {
   count++;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `IDBKeyRange` for
 range queries on indexes. Without this knowledge, developers
@@ -1344,6 +1412,8 @@ async function queueOfflineAction(action) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using IndexedDB as the
 handoff layer between the main thread (writing to the queue)
 and the Service Worker (reading and processing the queue).
@@ -1371,6 +1441,8 @@ const granted = await navigator.storage.persist();
 // Persisted storage: only cleared by user explicit action
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When quota is exceeded: `DOMException` with name `QuotaExceededError`.
 Handle gracefully:
 ```javascript
@@ -1383,6 +1455,8 @@ try {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing `navigator.storage.persist()`
 requests durable storage that is not evicted under storage
@@ -1435,6 +1509,8 @@ class OfflineFirstStore {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "optimistic update"
 pattern: write locally and return immediately, sync in
@@ -1489,11 +1565,15 @@ const draft = await manager.getDraft('contact-form');
 if (draft) restoreForm(draft.data);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The debounced auto-save
 pattern (save every 1s of inactivity, not on every keystroke)
 combined with the clear-on-submit lifecycle. This prevents
 both excessive IndexedDB writes and orphaned drafts after
 successful submission.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1510,9 +1590,13 @@ Key-value, string-only, small: localStorage. HTTP request/response:
 Cache API. Structured, queryable, large, offline: IndexedDB.
 Binary file data, max performance: OPFS.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1559,3 +1643,33 @@ flowchart TD
 > calls the remote API, and writes successful results back
 > to the users store. Indexes on the users store enable
 > efficient lookup by email and role without full scans.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

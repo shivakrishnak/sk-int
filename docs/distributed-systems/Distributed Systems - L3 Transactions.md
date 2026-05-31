@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-transactions/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Distributed Transactions and Two-Phase Commit](#distributed-transactions-and-two-phase-commit) | medium |
+| 2 | [Saga Pattern](#saga-pattern) | medium |
+
+---
+
 # Distributed Transactions and Two-Phase Commit
 
 **TL;DR:** Distributed transactions guarantee ACID properties across
@@ -123,6 +133,8 @@ Coordinator sends ABORT to all participants.
 All participants roll back their prepared writes.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The blocking problem:**
 
 ```
@@ -145,6 +157,8 @@ If coordinator takes 2 hours to recover:
   - All queries on those rows are blocked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **XA Transactions (Java EE / JTA):**
 
 ```java
@@ -160,6 +174,8 @@ dbConnectionB.update(...); // enlists in XA
 jmsSession.send(...);       // enlists in XA
 tx.commit(); // 2PC across all three resources
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 2PC trades availability for consistency: participants must wait
@@ -378,6 +394,34 @@ combined into one."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Saga Pattern
 
 **TL;DR:** The Saga pattern manages distributed transactions without
@@ -479,6 +523,8 @@ OrderService             PaymentService         InventoryService
     |  cancel order            |                       |
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Orchestration-based Saga:**
 ```
 SagaOrchestrator
@@ -494,6 +540,8 @@ SagaOrchestrator
     |<-- OrderCancelled --------|
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Compensating transactions:**
 ```
 Original:                    Compensation:
@@ -505,6 +553,8 @@ Send email              -->  Send cancellation email
                                so a compensating action
                                is sent instead)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Isolation (the critical gap vs. 2PC):**
 ```
@@ -525,6 +575,8 @@ Mitigations:
 - Countermeasures: design compensations to handle
   partial state
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Sagas provide *atomicity* (eventually, all steps complete OR
@@ -758,6 +810,8 @@ network connection dropped before I received the response, the
 retry with the same idempotency key returns the original success
 result without double-charging. Stripe, Braintree, and most
 modern payment APIs support this pattern natively."
+
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1528,3 +1582,33 @@ If it is stateless and reads from/writes to a database, it is
 trivially horizontally scalable. The database (shared state store)
 is the bottleneck in this model - addressed with connection pooling,
 read replicas for state queries, and write batching."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

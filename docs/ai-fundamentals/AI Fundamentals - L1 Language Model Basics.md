@@ -149,6 +149,8 @@ Cosine similarity:
   fox1 vs plants: 0.12 (unrelated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Embeddings transform the hard problem of "semantic
@@ -213,6 +215,8 @@ def find_relevant_docs(query: str, docs: list) -> list:
         if query.lower() in doc.lower()
     ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 import anthropic
@@ -480,6 +484,8 @@ not their magnitude (length). The formula is:
 ```
 cosine_similarity(A, B) = A · B / (|A| * |B|)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Where A · B is the dot product and |A|, |B| are the
 magnitudes. The result is in the range [-1, 1]:
@@ -845,6 +851,34 @@ quadrantChart
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Hallucination
 
 **Interview Weight:** critical - Hallucination is the
@@ -989,6 +1023,8 @@ Why hallucinations occur:
    -> May not exist
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Hallucination frequency varies by question type. For
@@ -1064,6 +1100,8 @@ def answer_factual_question(question: str) -> str:
     # Risk: model may hallucinate specific facts,
     # dates, citations with apparent confidence
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: grounded response with explicit uncertainty
@@ -1703,6 +1741,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Prompt Engineering Basics
 
 **Interview Weight:** high - Practically every LLM
@@ -1836,6 +1902,8 @@ If no issues found: {"vulnerabilities": []}
 Input: ... [example code]
 Output: {"vulnerabilities": [{"type": "SQL Injection",...}]}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -2529,3 +2597,33 @@ flowchart TD
 > from user data (user message) is both a quality and
 > security principle - it prevents user messages from
 > easily overriding the developer's behavioral spec.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

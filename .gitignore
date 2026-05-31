@@ -10,6 +10,7 @@ cacert.pem
 build.log
 bundle_install.log
 _tmp_kw.md
+_val*.txt
 
 # --- MkDocs (legacy output) ---
 site/

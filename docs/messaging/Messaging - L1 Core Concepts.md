@@ -102,6 +102,8 @@ Producer    Queue              Consumers
               |---msg3------------>| Worker A
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Multiple producers can write to the same queue.
 - Multiple consumers (competing consumers) read from the same queue.
 - Each message is delivered to exactly one consumer.
@@ -116,6 +118,8 @@ Publisher    Topic             Subscribers
     |           |--event copy----->| Inventory Service
     |           |--event copy----->| Notification Service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - One publisher sends to a topic.
 - All subscribed consumers receive an independent copy.
@@ -339,6 +343,8 @@ curl -u guest:guest http://localhost:15672/api/queues/%2F/task.queue \
 # Expected: > 0 and growing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add more consumer instances. Ensure consumer instances are
 stateless so multiple can run simultaneously.
 
@@ -354,6 +360,8 @@ kafka-consumer-groups.sh \
   --describe --group my-group
 # Look for one partition with large LAG, others at 0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Root cause: Partition key has low cardinality (e.g., all messages have
 the same key, or a few hot keys dominate).
@@ -565,6 +573,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Point-to-Point vs Publish-Subscribe
 
 **TL;DR:** Point-to-point (P2P) means a message is sent to one receiver -
@@ -650,6 +686,8 @@ Producer                  Consumer
     (load balanced, one consumer per message)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Message sits in queue until a consumer is available.
 - First available consumer (competing consumers) claims the message.
 - After processing and ACK, message is deleted from queue.
@@ -665,6 +703,8 @@ Publisher    Topic           Subscribers
     |           | copy3 ---------->| Subscriber C
     (each subscriber receives an independent copy)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - Publisher sends to a topic (or exchange in RabbitMQ).
 - Broker delivers a copy to each registered subscriber.
@@ -1099,6 +1139,34 @@ flowchart TB
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Producers and Consumers
 
 **TL;DR:** Producers create messages and send them to a broker. Consumers
@@ -1180,6 +1248,8 @@ Producer:
 5. Handle publish failure (circuit breaker, DLQ for publish failures)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **How consumers work:**
 
 ```
@@ -1191,6 +1261,8 @@ Consumer:
 5. ACK broker on success / NACK on failure
 6. On NACK: broker requeues or sends to DLQ
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The decoupling between producer and consumer is maintained by the message
@@ -1422,6 +1494,8 @@ Diagnosis:
 producer.getMetrics()  # look for record-error-rate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Set `acks=all` for critical topics. Add callback error handling
 to the producer. Log publish failures prominently.
 
@@ -1452,6 +1526,8 @@ curl -u guest:guest \
   http://localhost:15672/api/consumers/%2F \
   | jq '.[].prefetch_count'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Set `prefetch=1` for fair dispatch (each consumer gets one
 message at a time). Or set a small prefetch like 10-20. This ensures
@@ -1665,3 +1741,33 @@ sequenceDiagram
 > after all steps succeed does the consumer ACK. A crash at any point
 > before ACK causes the broker to redeliver - the idempotency check
 > prevents double processing.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

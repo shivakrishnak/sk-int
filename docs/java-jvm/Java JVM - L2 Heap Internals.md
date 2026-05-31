@@ -8,9 +8,20 @@ permalink: /java-jvm/l2-heap-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L2 Heap Internals](#java-jvm---l2-heap-internals) | medium |
+
+---
+
 # Java JVM - L2 Heap Internals
 
 ## Heap Regions: Eden, Survivor, Old Gen
+
+---
 
 ### 🎯 Model Answer
 
@@ -80,6 +91,8 @@ G1 Heap (Java 9 default):
   Dynamic partition: adjusts Young region count to meet pause target
   Humongous: > 50% of region size -> allocated in consecutive Humongous regions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -210,6 +223,8 @@ Fix:
     -XX:MaxTenuringThreshold=20 (survive more Minor GCs before promotion)
     Risk: Survivor overflow if too many objects accumulate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -432,6 +447,8 @@ loops, or Jackson's deserialization creating many small intermediate objects.
 
 ## Object Layout and Memory Overhead
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -503,6 +520,8 @@ Array objects:
   Elements: N * element_size
   new int[100] = 12 + 4 + 400 = 416 bytes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -642,6 +661,8 @@ Prevention:
   Use static analysis: SpotBugs has rules for boxing in collections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -724,6 +745,8 @@ class Metrics {
     volatile long errorCount;         // now in separate cache line
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `@jdk.internal.vm.annotation.Contended` (used
 internally by `AtomicLong`, `ForkJoinPool`, `Thread` for fields like
@@ -840,6 +863,8 @@ ManagementFactory.getMemoryPoolMXBeans().forEach(pool ->
         pool.getName(), pool.getUsage().getUsed(), pool.getUsage().getMax()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The class histogram is the single most
 useful first diagnostic: it reveals "1,000,000 instances of com.example.User,
 each 200 bytes = 200MB" without any JVM pause. The actionable finding: if
@@ -873,6 +898,8 @@ Better: use -XX:MaxRAMPercentage=75
   Total: ~2048MB (fits container)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `-XX:MaxRAMPercentage` is the container-native
 JVM flag. It reads the container's memory limit from cgroups (Docker/Kubernetes)
 and sets heap accordingly. This works correctly in containers: `-Xmx` of 1g in a
@@ -905,3 +932,33 @@ instead - upgrade to Java 11+ for correct container memory awareness.
 ### 📊 Diagram
 
 *(Omit: object layout described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

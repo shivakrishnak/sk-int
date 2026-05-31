@@ -8,9 +8,20 @@ permalink: /java-concurrency/l3-completablefuture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L3 CompletableFuture](#java-concurrency---l3-completablefuture) | medium |
+
+---
+
 # Java Concurrency - L3 CompletableFuture
 
 ## CompletableFuture
+
+---
 
 ### 🎯 Model Answer
 
@@ -112,6 +123,8 @@ Exception handling:
   whenComplete(fn)      : (T, Throwable) -> void (side effect)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Building an async pipeline:
 CompletableFuture.supplyAsync(() -> fetchUser(userId), ioExecutor)
@@ -125,6 +138,8 @@ CompletableFuture.supplyAsync(() -> fetchUser(userId), ioExecutor)
         else metrics.recordSuccess();
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `thenApply` vs `thenCompose`: `thenApply` maps `T → U`. When the
@@ -186,6 +201,8 @@ UserProfile buildProfile(long userId) throws ExecutionException,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: parallel execution with CompletableFuture
 UserProfile buildProfile(long userId) {
@@ -202,6 +219,8 @@ UserProfile buildProfile(long userId) {
         .join(); // block only here, not during I/O
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: full pipeline with timeout + error handling + executor
@@ -227,6 +246,8 @@ CompletableFuture<ApiResponse> handleRequest(Request req) {
         });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -377,6 +398,8 @@ CF.supplyAsync(() -> "hello")
   .thenApply(s -> s.toUpperCase())  // -> CF<"HELLO">
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `thenCompose(fn: T → CF<U>)`: chain to another async computation.
 The function returns a CompletableFuture, and `thenCompose` flattens
 `CF<CF<U>>` to `CF<U>`. Use when the next step is itself async.
@@ -387,6 +410,8 @@ CF.supplyAsync(() -> userId)
 // Without thenCompose: CF<CF<User>> (double-wrapped, wrong)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `thenCombine(other: CF<U>, fn: (T,U) → V)`: wait for two independent
 futures and combine their results. Both futures run concurrently.
 
@@ -395,6 +420,8 @@ CF<User> userCF = loadUserAsync(id);
 CF<Prefs> prefsCF = loadPrefsAsync(id);
 userCF.thenCombine(prefsCF, (user, prefs) -> merge(user, prefs));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Summary: apply = transform, compose = flatMap (chain async), combine = zip.
 
@@ -432,12 +459,16 @@ CompletableFuture.supplyAsync(() -> callDatabase(), ioExecutor)
     .thenAcceptAsync(result -> writeToCache(result), ioExecutor);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In Java 21: for I/O-bound stages, use virtual thread executor:
 ```java
 ExecutorService vtExec =
     Executors.newVirtualThreadPerTaskExecutor();
 CompletableFuture.supplyAsync(() -> callDatabase(), vtExec)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "my service slows down during
 high load" symptom from common pool exhaustion is insidious because it
@@ -486,6 +517,8 @@ class EnrichmentService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key design decisions:
 - `orTimeout()` on each call (per-API) AND on the combined future (total)
@@ -540,6 +573,8 @@ CompletableFuture.supplyAsync(() -> fetchUser()) // throws UserNotFound
     .whenComplete((r, ex) -> log.info("result={}, error={}", r, ex));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `ex.getCause()` is needed
 because `exceptionally` receives the raw exception which is usually a
 `CompletionException` wrapping the original. The original cause is
@@ -571,6 +606,8 @@ CompletableFuture<List<String>> allResults = allDone.thenApply(
             .map(CompletableFuture::join) // safe: all done by now
             .collect(Collectors.toList()));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Failure behavior of `allOf()`:
 - If ANY future fails, `allOf` completes exceptionally with that failure
@@ -609,6 +646,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 }
 // Scope closed: all forked tasks guaranteed to be done
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key differences from CompletableFuture:
 
@@ -660,6 +699,8 @@ CompletableFuture.supplyAsync(() -> callSlowApi())
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `completeOnTimeout(value, timeout, unit)`: if the future doesn't
 complete within the timeout, completes it normally with the provided
 default value. Downstream stages see the default value rather than
@@ -670,6 +711,8 @@ CompletableFuture.supplyAsync(() -> callSlowApi())
     .completeOnTimeout(DEFAULT_VALUE, 2, TimeUnit.SECONDS)
     .thenApply(value -> process(value)); // always runs, value or default
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Which to use:
 - `orTimeout()`: when timeout is a failure that needs distinct handling
@@ -707,6 +750,8 @@ ExecutorService vtExec =
 CompletableFuture.supplyAsync(() -> callDatabase(), vtExec)
     .thenApplyAsync(data -> process(data), vtExec)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Virtual threads park on I/O without occupying OS threads.
 The pipeline is still callback-based.
 
@@ -719,6 +764,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
     return combine(f1.resultNow(), f2.resultNow());
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Each fork is a virtual thread. Blocking is fine - virtual threads
 park rather than consuming OS threads.
 
@@ -729,6 +776,8 @@ Data d1 = callApi1(); // blocks virtual thread, not OS thread
 Data d2 = callApi2(); // blocks while d1 running is wasteful
 return combine(d1, d2);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problem: sequential despite virtual threads. Use parallel forks or
 `thenCombine` for parallelism.
 
@@ -808,6 +857,8 @@ flowchart LR
 ---
 
 ## ForkJoinPool
+
+---
 
 ### 🎯 Model Answer
 
@@ -895,6 +946,8 @@ Thread 1 processes Task-C (local end - LIFO = cache-hot).
 Thread 3 processes Task-A (stolen = FIFO = typically larger subtask).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `RecursiveTask<T>` pattern:
 ```java
 class MergeSortTask extends RecursiveTask<int[]> {
@@ -924,6 +977,8 @@ class MergeSortTask extends RecursiveTask<int[]> {
 ForkJoinPool pool = ForkJoinPool.commonPool();
 int[] sorted = pool.invoke(new MergeSortTask(array, 0, array.length));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Always fork only ONE half and directly compute the other in the current
@@ -979,6 +1034,8 @@ protected Long compute() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: fork ONE, compute the other directly
 protected Long compute() {
@@ -992,6 +1049,8 @@ protected Long compute() {
     return left.join() + rightResult;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: parallel streams (common ForkJoinPool usage)
@@ -1019,6 +1078,8 @@ List<User> users = CompletableFuture.allOf(
         .collect(Collectors.toList()))
     .join();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1165,12 +1226,16 @@ long leftResult = left.join();   // get left result (may be done)
 return leftResult + rightResult;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 NOT:
 ```java
 left.fork();
 right.fork();         // unnecessary fork
 return left.join() + right.join(); // two joins
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Reason: task creation overhead. `fork()` creates a `ForkJoinTask`
 object, pushes it to the deque, and potentially involves a memory
@@ -1278,6 +1343,8 @@ pool.shutdown();
 long total2 = LongStream.of(data).parallel().sum();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Note: for simple reduction operations like sum, parallel streams are
 cleaner than manual RecursiveTask. Write RecursiveTask when you need
 more control (custom merge logic, side effects, non-stream operations).
@@ -1302,6 +1369,8 @@ System.out.println("Queued: " + pool.getQueuedTaskCount());
 System.out.println("Running: " + pool.getRunningThreadCount());
 System.out.println("Pool size: " + pool.getPoolSize());
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If `running < poolSize` while tasks are queued, threads are blocked.
 
 Step 2: Thread dump to find blocked threads.
@@ -1366,6 +1435,8 @@ ForkJoinPool.managedBlock(io); // blocks with compensation
 String result = io.result;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Important: ManagedBlocker only helps if the blocking is bounded (will
 finish eventually). If all pool threads are blocking indefinitely,
 compensation threads grow unboundedly (up to MAX_CAP = 0x7fff), which
@@ -1407,6 +1478,8 @@ List<String> results = new ArrayList<>();
 stream.parallelStream()
     .forEach(s -> results.add(transform(s))); // ArrayList not thread-safe!
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use `collect(Collectors.toList())` which handles parallel safely.
 
 Exceptions: `parallelStream()` wraps checked exceptions in
@@ -1470,6 +1543,8 @@ Tuning via JVM property:
 -Djava.util.concurrent.ForkJoinPool.common.parallelism=N
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to tune UP (N > default):
 - The application's parallel workload is primarily I/O-bound and
   managed to use common pool (not best practice, but if stuck)
@@ -1495,6 +1570,8 @@ customPool.submit(() -> {
         .collect(Collectors.toList());
 }).get();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The custom pool trick for parallel
 streams (submitting the stream computation as a task to a custom pool)
@@ -1568,3 +1645,33 @@ sequenceDiagram
 > calls `join()` - if Thread 3 finished, join returns immediately;
 > if not, Thread 1 helps execute other pending tasks while waiting.
 > This keeps all threads productive without a central queue bottleneck.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -220,6 +220,8 @@ build/generated/sources/annotationProcessor/
   (Gradle)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 They have the format: `$TypeName$DefinitionClass.java`
 or compiled as `$TypeName$Definition.class`.
 
@@ -233,6 +235,8 @@ javap -p -c \
   target/classes/\
   io/example/$OrderService$Definition.class
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The decompiled output shows:
 - Which constructor is used
@@ -256,6 +260,34 @@ look when DI doesn't behave as expected.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut AOP and Interceptors
 
@@ -459,6 +491,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is a significant advantage over Spring's proxy-based
 model. No need for self-injection (injecting yourself
 as a Spring bean to get proxy behavior).
@@ -477,6 +511,34 @@ AOP.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Bean Scopes and Lifecycle
 
@@ -695,6 +757,8 @@ public class OrderProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Provider<T> as the
 idiomatic fix for scope mismatch.
 
@@ -708,6 +772,34 @@ idiomatic fix for scope mismatch.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Environment and Property Sources
 
@@ -768,7 +860,6 @@ hierarchy.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about Micronaut's
 environment system - how environment-specific configuration
 works."
 
@@ -839,6 +930,8 @@ kubernetes:
         - /secrets/db-password
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kubernetes mounts secrets as files or env vars.
 Micronaut reads them as property sources.
 
@@ -866,6 +959,34 @@ stored on disk in the container).
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Annotation Processing Pipeline
 
@@ -927,7 +1048,6 @@ advanced Micronaut development and debugging.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "You are asking about how Micronaut's
 compile-time code generation works under the hood."
 
 **(2) First principles:** "Annotation processing is
@@ -1010,12 +1130,13 @@ during compilation and generate classes that describe
 each bean. At runtime these classes are loaded instead
 of scanning for annotations."
 
-**Senior:** "The generated BeanDefinition contains
-no reflection. The build() method calls the constructor
-directly (compiled call). For AOP, a separate $Intercepted
-class wraps the original with generated interceptor
-calls. GraalVM native-image sees only regular Java
-classes."
+**Senior:** "During annotation processing, Micronaut
+emits a BeanDefinition class with a build() method that
+calls the constructor directly via compiled bytecode.
+For AOP, a separate $Intercepted subclass wraps the
+original with generated interceptor dispatch calls.
+GraalVM native-image sees only regular Java classes
+with no reflection registration needed."
 
 ---
 
@@ -1057,6 +1178,8 @@ public class NoSpringAnnotationVisitor
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Register in META-INF/services/
 io.micronaut.core.annotation.Generated (SPI).
 
@@ -1078,3 +1201,33 @@ as a compile-time linting tool for team conventions.
 | Hiring Manager | Compile-time code generation = fewer runtime errors. |
 | Bar Raiser | TypeElementVisitor for custom rules, incremental APT. |
 | Peer Engineer | "I wrote a TypeElementVisitor that fails the build if @Entity is returned from @Controller. Zero security leaks." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

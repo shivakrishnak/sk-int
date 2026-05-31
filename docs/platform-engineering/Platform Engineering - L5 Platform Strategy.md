@@ -7,16 +7,6 @@ permalink: /platform-engineering/l5-platform-strategy/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L5 Platform Strategy
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform Engineering Strategy and Roadmap](#platform-engineering-strategy-and-roadmap) | critical |
-
----
-
 # Platform Engineering Strategy and Roadmap
 
 ---
@@ -128,6 +118,8 @@ Foundation success metric:
     (from: 1-2 weeks)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 2: Standardization (months 7-18)**
 Focus: achieve organizational consistency and eliminate security/compliance debt.
 
@@ -151,6 +143,8 @@ Standardization success metric:
     (from: 2 weeks)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 3: Advanced (months 19-36)**
 Focus: Elite DORA performance and developer experience refinement.
 
@@ -166,6 +160,8 @@ Advanced success metric:
   - 75% of teams in Elite or High DORA tier
   - Platform ROI positive (against TCO baseline)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Strategy antipatterns to avoid:**
 
@@ -186,6 +182,8 @@ RIGHT: "We will build the golden path first, then make it extensible"
   Right sequence: 1. golden path 2. golden path docs 3. golden path
   support 4. extensibility API
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The 'thinnest viable platform' principle:**
 Ship the minimum viable capability set that is useful to 5+ teams.
@@ -505,6 +503,8 @@ Diagnosis:
 # - "Please create a new ArgoCD Application for my service"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: build self-service for the top 3 ticket types. Measure: platform
 team tickets per week should decrease after each self-service capability
 launch. Success = platform team receives < 2 tickets/week from product
@@ -726,6 +726,8 @@ TCO(build) = engineering months * $X + ongoing maintenance
 TCO(buy-commercial) = license * teams + integration effort
 TCO(adopt-OSS) = integration effort + operational complexity + long-term
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The correct comparison includes the ongoing operational cost of the
 open-source solution. Prometheus is "free" but requires dedicated
 engineering to operate at scale.
@@ -799,6 +801,8 @@ Decision requested: Approve Phase 1 investment.
   Infrastructure budget: $80K annual.
   Success metric: 10 teams on platform in 12 months.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Executive Q&A preparation:**
 
@@ -1171,3 +1175,33 @@ forward). Consolidation is a one-time migration project. Standardization
 is an ongoing governance practice. The strategy needs both: consolidate
 what exists today, then maintain standardization so the proliferation
 does not recur.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

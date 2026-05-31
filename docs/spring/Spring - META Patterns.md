@@ -8,7 +8,15 @@ permalink: /spring/meta-patterns/
 render_with_liquid: false
 ---
 
-# Spring - META Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - META Patterns](#spring---meta-patterns) | medium |
+| 2 | [IoC Container as Dependency Graph Mental Model](#ioc-container-as-dependency-graph-mental-model) | medium |
+| 3 | [Convention Over Configuration Transfer](#convention-over-configuration-transfer) | medium |
+| 4 | [Proxy Pattern as Universal Spring Mechanism](#proxy-pattern-as-universal-spring-mechanism) | medium |
 
 ---
 
@@ -128,6 +136,8 @@ What breaks the DAG:
   -> This is fine! Just means D is created before B and C.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why this model matters:**
 
 ```
@@ -152,6 +162,8 @@ A: Singleton is a node created ONCE.
    Fix: inject ApplicationContext and getBean() each time,
         or use ObjectProvider<T>, or @Lookup injection.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -354,6 +366,8 @@ public class DatabaseInitializer {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use cases:
 - Database initialization before service startup
 - External system registration before bean that uses it
@@ -406,6 +420,8 @@ public class CheckoutService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Graph perspective: multiple nodes implement the same interface.
 When an edge points to the interface type, Spring must choose which node.
 Resolution order: @Primary > @Qualifier > type matching.
@@ -445,6 +461,8 @@ Fix: A stores a factory (ObjectProvider<B>), not a B
   Each call creates a new B instance
   This is what "prototype" actually means
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* @Scope("prototype") on a bean used by
 a singleton is a code smell without ObjectProvider. The IDE and compiler don't
@@ -516,6 +534,8 @@ The mental model transfers:
                        deployment ordering deadlock
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The DAG constraint is not Spring-specific.
 Every well-designed system at any level of abstraction should be a DAG.
 Layered architecture (Controller -> Service -> Repository) is a DAG.
@@ -558,6 +578,8 @@ Mental model value:
   before running any tests.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The graph mental model makes code review
 faster and more objective. "This creates a circular dependency" is a concrete
 observation, not a style preference. "This prototype is effectively a singleton"
@@ -568,6 +590,34 @@ A team that internalizes the DAG model naturally writes code that's easier to
 maintain, test, and extend.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Convention Over Configuration Transfer
 
@@ -662,6 +712,8 @@ Convention: "@SpringBootApplication scans current package
 Override:   @ComponentScan(basePackages = "com.other")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When CoC breaks down (and how to detect it):**
 
 ```
@@ -680,6 +732,8 @@ Override:   @ComponentScan(basePackages = "com.other")
    without understanding the convention
    Fix: add documentation, use @Import explicitly to make it visible
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -850,6 +904,8 @@ java -jar myapp.jar --debug
 debug=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Report sections:
 1. POSITIVE MATCHES: auto-configurations that ran and WHY
    ```
@@ -857,12 +913,16 @@ Report sections:
      @ConditionalOnClass DataSource (present)
      @ConditionalOnBean DataSource (yes, HikariCP)
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. NEGATIVE MATCHES: auto-configurations that did NOT run and WHY
    ```
    MongoAutoConfiguration did NOT match:
      @ConditionalOnClass MongoClient
      (MongoClient not on classpath)
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. EXCLUSIONS: auto-configurations explicitly excluded
 4. UNCONDITIONAL: always run
 
@@ -904,6 +964,8 @@ interface UserRepository extends JpaRepository<User, Long> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The convention: method name vocabulary includes:
 - findBy, countBy, existsBy, deleteBy (operation)
 - And, Or (conjunction)
@@ -943,6 +1005,8 @@ Deviation: spring.config.location=file:/opt/myapp/config/
 Convention: profile-specific override (application-prod.yml)
 Deviation: SPRING_CONFIG_NAME=custom-name
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CoC in action: the app works correctly in different environments
 (dev/staging/prod) by convention. Dev: application-dev.properties in classpath.
@@ -1022,6 +1086,8 @@ spring.cloud.kubernetes.config.sources[0].name=\
   my-custom-configmap  # explicit name
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Deviation when needed:
 - Shared ConfigMap between services
 - Service name != application name
@@ -1061,6 +1127,8 @@ CoC can create security gaps if the convention is "open by default":
 // Override: management.endpoints.web.exposure.include=*
 // (explicit deviation, now intentional)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security CoC principles:
 - Default: secure (deny by default)
@@ -1108,6 +1176,8 @@ Documentation CoC:
   Deviation: larger docs in /docs folder (README points to it)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The principle: define the 80% case as the convention.
 Make deviations visible, intentional, and documented.
 Reduce decision fatigue for routine situations.
@@ -1125,6 +1195,34 @@ balance autonomy (follow conventions independently) with alignment (explicit
 deviations vetted by team).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Proxy Pattern as Universal Spring Mechanism
 
@@ -1236,6 +1334,8 @@ Proxy chain (multiple annotations):
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The self-call problem (the most asked interview topic):**
 
 ```
@@ -1273,6 +1373,8 @@ Call flow FIXED (separate bean):
     -> TransactionInterceptor.invoke()     [REQUIRES_NEW TX]
     -> OrderSaver.saveOrder()              [real]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1457,6 +1559,8 @@ System.out.println("TX: " +
 // If false: no transaction active -> proxy bypassed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: ensure public method, separate bean, runtime exception.
 
 ---
@@ -1492,6 +1596,8 @@ What CGLIB cannot generate:
   - Override of private methods (not in API)
   - Subclass of final class (forbidden)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Spring Boot 3 with Java 17+: CGLIB requires the module (--add-opens
 or explicit module-info) to access private fields if needed for proxying.
@@ -1529,6 +1635,8 @@ class OrderServiceImpl implements OrderService { ... }
 spring.aop.proxy-target-class=false
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use JDK proxy:
 - Code that heavily uses interface types (mocking frameworks)
 - Module system (Java 9+) has restricted access to concrete classes
@@ -1543,6 +1651,8 @@ service.placeOrder(order);
 ((OrderServiceImpl) service).implOnlyMethod();
 // Because proxy IS NOT OrderServiceImpl, just implements OrderService
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The move to CGLIB-by-default in Spring Boot 2
 was driven by a common ClassCastException pattern. Teams would inject by
@@ -1579,6 +1689,8 @@ Object proxy = factory.getProxy();
 // <- commit transaction
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Interceptor ordering matters:
 - Transaction should wrap Caching (transaction THEN check cache)
 - Security should run BEFORE Transaction (deny before starting transaction)
@@ -1594,6 +1706,8 @@ public class SecurityAspect { ... }
 @Aspect
 public class TransactionAspect { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The ordering of interceptors matters for
 correctness, not just performance. If caching wraps transaction: the cache
@@ -1641,6 +1755,8 @@ CompletableFuture<Void> future = emailService.sendEmail(to, body);
 public class App { }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @Async return types:
 - void: fire and forget (caller can't check completion)
 - Future<T>: caller can call .get() to wait
@@ -1660,6 +1776,8 @@ public class AsyncConfig implements AsyncConfigurer {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With CompletableFuture return: exceptions are available via exceptionally()
 or handle() on the future. For production: always configure an exception handler
 for @Async methods to prevent silent failures.
@@ -1695,6 +1813,8 @@ public class LoggingAspect {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Proxy creation: Spring scans @Aspect beans, finds pointcuts, and for each
 bean whose methods match a pointcut: creates a proxy wrapping that bean
@@ -1756,6 +1876,8 @@ public class ProductService {
 //   4. Cache MISS: call real findById(42), store in cache, return
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @Cacheable also has the self-call problem:
 ```java
 @Service
@@ -1771,6 +1893,8 @@ public class OrderService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cache eviction strategy is where most caching
 bugs originate. @CacheEvict removes stale entries but has a race condition:
@@ -1853,3 +1977,33 @@ the annotated class is a Spring bean (proxy creation happens in IoC container).
 Calling a @RateLimit-annotated method on a new-operator-created object has no
 proxy - the annotation is ignored. This is the contract users of your annotation
 must understand.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

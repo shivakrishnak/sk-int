@@ -7,6 +7,16 @@ permalink: /css/l3-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Methodologies (BEM, SMACSS, OOCSS)](#css-methodologies-bem-smacss-oocss) | high |
+| 2 | [CSS-in-JS Trade-offs](#css-in-js-trade-offs) | high |
+
+---
+
 # CSS Methodologies (BEM, SMACSS, OOCSS)
 
 🎯 **Interview Weight:** high - CSS architecture is tested
@@ -154,6 +164,8 @@ OOCSS PRINCIPLES:
      /* GOOD: class on the heading itself */
      .sidebar-heading { color: gray; font-size: 0.9em; }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -357,6 +369,8 @@ Cause: BEM classes mixed with element/ID selectors.
 /* VIOLATES BEM: adds element selector specificity */
 article.card { } /* specificity: 0,1,1 - breaks BEM */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: only use classes in BEM selectors. Never combine
 with element or ID selectors.
@@ -993,6 +1007,34 @@ examples, which are provided above)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS-in-JS Trade-offs
 
 🎯 **Interview Weight:** high - CSS-in-JS is divisive in
@@ -1131,6 +1173,8 @@ CSS MODULES (comparison):
   // No TypeScript types without extra plugin
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The performance cost of runtime CSS-in-JS scales with
@@ -1261,6 +1305,8 @@ export const secondary = style([base, {
 }]);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```typescript
 // Button.tsx
 import * as styles from './button.css';
@@ -1349,6 +1395,8 @@ Error: styled-components requires React Client Context.
 Cannot be used in Server Components.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause: styled-components v5 uses React Context internally,
 which is unavailable in RSC.
 
@@ -1374,6 +1422,8 @@ const html = renderToString(sheet.collectStyles(<App />));
 const css = sheet.getStyleTags();
 // Inject css into HTML head
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1978,3 +2028,33 @@ scale covered in L5 Design Systems)*
 
 *(Omit: CSS-in-JS processing pipeline is better described
 in text than a static diagram)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

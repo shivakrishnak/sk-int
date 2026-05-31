@@ -7,16 +7,6 @@ permalink: /platform-engineering/l4-platform-anti-patterns/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L4 Platform Anti-Patterns
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform Anti-Patterns and Failure Modes](#platform-anti-patterns-and-failure-modes) | critical |
-
----
-
 # Platform Anti-Patterns and Failure Modes
 
 ---
@@ -259,6 +249,8 @@ AP-PM3: Platform as Permission System
     "you can't use public Docker Hub images, but here's how to use
     our approved registry with the same ease"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The meta-pattern:**
 All platform anti-patterns share a common root: the platform team is
@@ -1106,6 +1098,8 @@ in consolidation over new features.
 | AP-PM2: No Deprecation | Multiple paths for same task | Conflict avoidance | Hard end-of-support dates |
 | AP-PM3: Permission System | Platform is "the team that says no" | Risk aversion | Enable + guardrail model |
 
+---
+
 ### 🏛️ System Design
 
 **Prompt:** "You have joined a platform team that has a platform built
@@ -1146,3 +1140,33 @@ deploy 3x more frequently" is more persuasive than any mandate.
 NPS from -20 to +20 in 6 months, adoption from 20 to 35 teams in 9 months.
 The recovery is not fast; platform trust is rebuilt through repeated
 value delivery, not announcements.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

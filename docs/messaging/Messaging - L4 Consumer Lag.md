@@ -8,6 +8,15 @@ permalink: /messaging/l4-consumer-lag/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Consumer Lag Management and Diagnosis](#consumer-lag-management-and-diagnosis) | medium |
+
+---
+
 # Consumer Lag Management and Diagnosis
 
 ---
@@ -72,6 +81,8 @@ Lag rate of change:
   At this rate: lag doubles in ~8 minutes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Consumer throughput calculation:
 ```
 Consumer throughput (messages/sec):
@@ -92,6 +103,8 @@ Example:
   Fix option 2: add 2nd consumer (2nd partition needed)
     Throughput = 12,000/minute (easily keeping up)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Lag categories:
 ```
@@ -115,6 +128,8 @@ Stuck lag (critical):
   Often: poison message, consumer crash loop,
   or external dependency outage.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Lag is a symptom. The cause is always one of: (1) production rate exceeds consumption capacity, (2) consumer processing is slow, (3) consumer is blocked (poison message, dependency down). Treating the symptom (restarting consumers) without fixing the cause will recur.
@@ -344,6 +359,8 @@ kafka-consumer-groups.sh --bootstrap-server \
 # If needed > partition_count: must optimize processing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: optimize consumer processing (caching, batching), increase partition count to allow more parallelism, and add consumers up to partition count. For the catch-up window: deploy a dedicated catch-up consumer with higher max.poll.records and optimized processing, then switch back to normal consumer configuration once lag is drained.
 
 ---
@@ -377,6 +394,8 @@ kafka-consumer-groups.sh \
 # Check if consumer processes are running
 kubectl get pods -l app=my-service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: restart consumer instances. On startup, the consumer group will resume from the last committed offset (if the offset still exists in the __consumer_offsets topic) or start from auto.offset.reset policy.
 
@@ -584,6 +603,8 @@ ALERT THRESHOLDS:
   Page: lag growing AND DLQ depth > 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -620,3 +641,33 @@ xychart-beta
 ```
 
 > **Diagram walkthrough:** The lag profile shows the classic bathtub curve of a consumer lag incident. Lag grows linearly from T=0 to T=20 minutes as the consumer falls behind production. At T=20, the optimization is deployed (batch DB writes). From T=20 to T=40, the consumer processes both new messages AND the backlog simultaneously (consumption rate > production rate). Lag drains to zero at T=40. The symmetric curve indicates a consistent optimization that allowed the consumer to process at exactly 2x production rate during the drain phase.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

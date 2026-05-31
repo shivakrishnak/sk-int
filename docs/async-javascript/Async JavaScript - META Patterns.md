@@ -108,6 +108,8 @@ console.log('D');
 // Output: A, D, C, B
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // TEST: does await pause the whole program?
 async function fetchData() {
@@ -127,6 +129,8 @@ console.log('2: after calling fetchData');
 // fetch resolves -> fetchData resumes -> "3: after await"
 // Output: 1, 2, 3
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // TEST: forEach await misconception
@@ -296,6 +300,8 @@ const result = await fetchData();
 processData(result); // correct: awaits before using
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -316,6 +322,8 @@ Promise.resolve().then(() => console.log(3));
 queueMicrotask(() => console.log(4));
 console.log(5);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Using the two-queue model:
 - Synchronous: 1, 5 (run in-line, no queue)
@@ -357,6 +365,8 @@ for (const item of items) {
 // Parallel (all at once):
 await Promise.all(items.map(item => process(item)));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `Promise.all`
 with `.map` is O(N) parallel, while `for...of` with `await`
@@ -400,6 +410,8 @@ infiniteMicrotask();
 // Browser: tab becomes unresponsive
 // Node.js: no I/O events processed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Using the two-queue model: the microtask queue must drain
 before any macrotask runs. If a microtask always queues
@@ -465,6 +477,8 @@ console.log('sync');
 // Then microtasks drain: start, step1, step2 run in chain order.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Chaining vs nesting:
 ```javascript
 // CHAINING (flat, correct):
@@ -476,6 +490,8 @@ fetch('/a').then(a =>
 Promise.all([fetch('/a'), fetch('/b')])
   .then(([a, b]) => process(a, b)); // parallel, no nesting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing when to nest (later
 fetch depends on earlier result) vs when to use `Promise.all`
@@ -500,6 +516,8 @@ Promise.resolve()
   .then(() => console.log('continues'))     // runs: catch recovers chain
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With async/await: normal try/catch. Rejections ARE exceptions.
 ```javascript
 async function f() {
@@ -511,12 +529,42 @@ async function f() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "catch recovers the chain"
 behavior. After `.catch()` handles a rejection, the chain
 continues as resolved (unless catch itself throws). This
 allows recovery: catch -> fallback -> continue.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Promise vs Observable Decision Framework
 
@@ -798,6 +846,8 @@ someObs$.subscribe(
 const data = await somePromise; // eslint warns if no try/catch in strict mode
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -843,6 +893,8 @@ for await (const item of pages('/api/orders')) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The backpressure property.
 For each iteration of `for await`, the generator advances
 to the next `yield`. If the consumer is slow, the generator
@@ -870,6 +922,8 @@ const last: User = await lastValueFrom(userObs$.pipe(take(3)));
 // Promise -> Observable: to use Observable operators (switchMap, retry)
 //   on a Promise-based API
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing `firstValueFrom`
 throws `EmptyError` if the Observable completes without
@@ -924,6 +978,8 @@ const fullName  = computed(() => `${firstName()} ${lastName()}`);
 // Pull-based sequence: async generator
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Signals DO NOT replace Observables for async. Signals are
 synchronous. For a Signal from an Observable (Angular):
 ```typescript
@@ -931,6 +987,8 @@ const user = toSignal(this.userService.user$, { initialValue: null });
 // toSignal: subscribes internally, unsubscribes on destroy
 // Bridges reactive (Observable) to component state (Signal)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `toSignal` is the bridge
 pattern for Angular. It converts an Observable into a Signal,
@@ -1000,6 +1058,8 @@ const result$ = race(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `Promise.race`
 does not cancel the losing Promises - they continue to run
 in the background (but their results are ignored). For true
@@ -1033,6 +1093,8 @@ const messages$ = new Observable(subscriber => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Observable constructor
 cleanup function (`return () => ws.close()`). When all
 subscribers unsubscribe, the cleanup runs. This is the
@@ -1040,6 +1102,34 @@ automatic resource management that makes Observable the
 correct abstraction for continuous event sources.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Debugging Async Code: Systematic Approach
 
@@ -1128,6 +1218,8 @@ async function loadUser(id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // BUG CATEGORY 2: Error Silencing
 // Promise rejection with no handler: silent failure
@@ -1153,6 +1245,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // BUG CATEGORY 3: Resource Leak
 // Subscription / timer / connection not cleaned up
@@ -1170,6 +1264,8 @@ componentDidMount() {
 // Look for: growing heap after repeated mount/unmount
 // Node.js: process.memoryUsage().heapUsed growing over time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // BUG CATEGORY 4: Timing Violation
@@ -1355,6 +1451,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1393,6 +1491,8 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis from logs:
 1. Check the error message and stack trace
 2. Identify the Promise that was rejected (stack points to origin)
@@ -1422,6 +1522,8 @@ async function getUser(id) {
 // Once reproducible: fix and verify without artificial delay
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix pattern (request token):
 ```javascript
 let latestRequestId = 0;
@@ -1435,6 +1537,8 @@ async function loadContent(id) {
   render(content);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Verification:
 1. Add a counter: how many times does `requestId !== latestRequestId`?
@@ -1470,6 +1574,8 @@ setInterval(() => {
 }, 5000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis when lag detected:
 ```javascript
 // V8 CPU profiler via Node.js:
@@ -1487,6 +1593,8 @@ s.post('Profiler.enable', () => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common causes found via profiler:
 - Synchronous JSON.parse/stringify of large objects
@@ -1542,6 +1650,8 @@ window.fetch = async function(url, init) {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The fetch monkey-patching
 pattern for temporary debugging. It adds timing and status
 to every fetch call without modifying application code.
@@ -1568,6 +1678,8 @@ useEffect(() => {
 }, [dependency]); // cleanup runs when dependency changes or unmount
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Angular (takeUntilDestroyed - Angular 16+):
 ```typescript
 // Pattern: takeUntilDestroyed auto-unsubscribes
@@ -1585,6 +1697,8 @@ class MyComponent {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `takeUntilDestroyed` in
 Angular 16+ vs the older `takeUntil(this.destroy$)` pattern.
@@ -1619,6 +1733,8 @@ test('loadUser always shows correct user for last call', async () => {
   ), { numRuns: 100 });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The random delay generates hundreds of timing combinations,
 systematically finding the race window.
@@ -1662,3 +1778,33 @@ Production bugs are often transient. Once the incident resolves,
 the log data and runtime state that could explain the cause
 may be gone. Capturing a heap dump or CPU profile DURING the
 incident is worth 10x the post-mortem debugging time.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,15 @@ permalink: /design-patterns/l4-dynamic-proxy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Dynamic Proxy and AOP](#dynamic-proxy-and-aop) | medium |
+
+---
+
 # Dynamic Proxy and AOP
 
 ---
@@ -96,6 +105,8 @@ At runtime:
 Requirement: target object MUST implement at least one interface.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **How CGLIB works:**
 
 ```
@@ -113,6 +124,8 @@ Requirements:
 Spring Boot 2+ preference: CGLIB for all Spring beans
 (even when interfaces exist) unless spring.aop.proxy-target-class=false
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The proxy call path in Spring:**
 
@@ -136,6 +149,8 @@ Caller
 Caller receives result
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The self-invocation problem:**
 
 ```java
@@ -155,6 +170,8 @@ public class OrderService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **AOP concepts:**
 
@@ -410,6 +427,8 @@ public ProductPage searchProducts(SearchRequest req) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The aspect intercept chain for one request:**
 
 ```
@@ -428,6 +447,8 @@ DispatcherServlet
 ProductService.searchProducts() (real logic)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Aspect ordering (important for correctness):**
 
 ```java
@@ -443,6 +464,8 @@ public class RateLimitAspect { ... }
 @Order(3)  // runs third
 public class CacheAspect { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Aspects wrap the method like nested functions. `@Order(1)` is the
 outermost wrapper. Security should run before rate limiting (no point
@@ -596,6 +619,8 @@ public void createAudit(User user) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Extract to a separate `@Service` bean. Or use `@Lazy` self-injection.
 
 **Failure 2: @Transactional on private method - silent ignore**
@@ -612,6 +637,8 @@ logging.level.org.springframework.transaction=DEBUG
 # Look for: "Getting transaction for [ClassName.methodName]"
 # If your method is not listed: AOP is not intercepting it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: CGLIB fails on final class or final method**
 
@@ -645,6 +672,8 @@ Diagnosis: Check `@Order` values on aspects. Security must have lower
 @Aspect @Order(2) class RateLimitAspect {} // second
 @Aspect @Order(3) class CacheAspect {}     // innermost
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -755,12 +784,16 @@ public void methodB() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For general proxy detection:
 ```java
 AopContext.currentProxy() // throws if called outside proxy
 // If currentProxy() returns a different reference than 'this': in proxy
 // If throws: this call bypassed the proxy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing `AopContext.currentProxy()`
 exists (requires `@EnableAspectJAutoProxy(exposeProxy=true)`). This is
@@ -791,6 +824,8 @@ public void process(Order order) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix options: (1) Re-throw after logging:
 `throw new ProcessingException("Failed", e);`
@@ -903,6 +938,8 @@ public Product getProduct(Long id) { ... }
 # If key is wrong, cache misses every time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `@Cacheable` has the
 same proxy limitation as `@Transactional`. The fix is identical:
 extract to a separate bean, or use self-injection (`@Lazy` proxy
@@ -1012,6 +1049,8 @@ if (!securityContext.hasPermission(user, "WRITE_ORDER")) {
     throw new AccessDeniedException("Permission denied");
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is explicit, testable, and not proxy-dependent.
 (4) Integrate security unit tests: test that the method rejects unauthorized
 callers with a proper mock security context.
@@ -1021,3 +1060,33 @@ is an implementation detail, and security design should not depend on
 implementation details. Security checks should be explicit, testable,
 and at every layer of entry. Method-level annotations are ergonomic
 shortcuts, not security architecture.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

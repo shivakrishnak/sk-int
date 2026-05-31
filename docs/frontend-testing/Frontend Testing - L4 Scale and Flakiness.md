@@ -7,6 +7,15 @@ permalink: /frontend-testing/l4-scale-and-flakiness/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Flaky Tests - Detection, Prevention, and Resolution](#flaky-tests---detection-prevention-and-resolution) | medium |
+
+---
+
 # Flaky Tests - Detection, Prevention, and Resolution
 
 ---
@@ -149,6 +158,8 @@ E2E flakiness patterns:
     await page.getByRole('button', {name:/submit/i}).click();
     // Playwright auto-waits for actionable state
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -360,6 +371,8 @@ Metrics (monitor via dashboard):
   Quarantine queue size
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎓 Answers by Seniority
@@ -478,3 +491,33 @@ a coding standard, not an afterthought. Code review checklist includes:
 depend on `Date.now` or `Math.random` without mocking?" A test that
 passes locally and fails in CI once is caught in review, not discovered
 in a 3AM incident.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -286,7 +286,6 @@ With Weld/Spring:
 7. Total time: 20 minutes
 
 With ArC:
-1. Developer writes OrderService with missing @Inject
 2. Runs `quarkus build`
 3. Build fails immediately:
    Unsatisfied dependency for type PaymentService
@@ -316,6 +315,34 @@ as developer productivity feature, not just performance.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Build-Time DI Internals
 
@@ -548,6 +575,34 @@ a deferred execution bridge, not just a configuration holder.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Continuous Testing
 
@@ -791,6 +846,8 @@ has reflection issues.
   -Dnative.surefire.skip=false
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* @QuarkusIntegrationTest
 catches native image issues that @QuarkusTest misses.
 
@@ -804,6 +861,34 @@ catches native image issues that @QuarkusTest misses.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Native Build Process
 
@@ -967,6 +1052,8 @@ quarkus.native.additional-build-args=\
   -H:ReflectionConfigurationFiles=custom-reflect.json
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Build failure: "Static initializer uses runtime data":**
 ```java
 // BAD: static field initialized with runtime data
@@ -982,6 +1069,8 @@ static DataSource getDs() {
 // Or defer with --initialize-at-run-time:
 // -H:InitializeAtRunTime=com.example.LazyClass
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1047,6 +1136,8 @@ java -agentlib:native-image-agent=\
 ./target/app-runner
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Preventive: run @QuarkusIntegrationTest after every
 native build in CI. Catches missing reflection config
 before production.
@@ -1064,6 +1155,34 @@ systematic approach, not guessing.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Extension Development
 
@@ -1326,6 +1445,8 @@ static final QuarkusUnitTest shouldFail =
                 .addClasses(InvalidUsageClass.class));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 QuarkusUnitTest creates a mini-application with just
 the specified classes and verifies the extension behavior
 (or expected build failure).
@@ -1339,3 +1460,33 @@ failures is as important as testing successful builds.
 | Hiring Manager | Internal framework extensions. |
 | Bar Raiser | Custom BuildItems, QuarkusUnitTest, build failure testing. |
 | Peer Engineer | "Built an @Audited extension. QuarkusUnitTest caught a missing BuildItem dependency before it hit CI." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

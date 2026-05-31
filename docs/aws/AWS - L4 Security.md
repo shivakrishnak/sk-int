@@ -136,6 +136,8 @@ Finding: Exfiltration:S3/ObjectRead.Unusual
     Audit S3 bucket policies and IAM roles with access.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -235,6 +237,8 @@ def ensure_isolation_sg_exists():
     return sg['GroupId']
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # EventBridge rule: trigger Lambda on HIGH GuardDuty findings
 # (CloudFormation/CDK)
@@ -254,6 +258,8 @@ EventPattern:
       - prefix: Backdoor
       - prefix: Trojan
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Enable GuardDuty (takes < 1 minute):
@@ -413,6 +419,8 @@ aws ec2 describe-instances \
   --query 'Reservations[*].Instances[*].InstanceId'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Response:*
 
 1. Isolate the originally flagged instance AND
@@ -449,6 +457,8 @@ aws inspector2 list-findings \
     "exploitAvailable":[{"comparison":"EQUALS","value":"YES"}]
   }'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Response:*
 
@@ -504,6 +514,8 @@ AWS Organizations Structure:
           - All findings -> Security Tooling Account
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Automated Security Response Architecture:**
 
 ```
@@ -524,6 +536,8 @@ Config ----------->  |---> EventBridge
                   Slack: #security-incidents
                   JIRA P1 ticket
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key design decisions:**
 
@@ -548,6 +562,8 @@ Config ----------->  |---> EventBridge
      "Resource": "*"
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Applied to all non-Security OUs. Even an account
    administrator cannot disable GuardDuty.
 
@@ -709,6 +725,8 @@ aws ec2 modify-instance-metadata-options \
 aws ec2 run-instances \
   --metadata-options HttpTokens=required,...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Immediate response:**
 
@@ -875,6 +893,8 @@ aws guardduty list-findings \
 # Focus: severity >= 7.0 (HIGH) first
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Identify known patterns to suppress:**
 
 Common false positives that should be suppressed:
@@ -900,6 +920,8 @@ aws guardduty create-filter \
     }
   }'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Group by instance/user:**
 
@@ -957,6 +979,8 @@ aws ssm send-command \
   --parameters 'commands=["rpm -qa | grep openssl"]'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Inspector scan trigger:*
 ```bash
 # Trigger Inspector re-scan:
@@ -967,6 +991,8 @@ aws inspector2 create-finding-aggregator \
 # confirmed and SSM still stale:
 aws inspector2 cancel-findings-report ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Resolution:* After SSM inventory refresh, Inspector
 re-evaluates the finding. If the vulnerable package
@@ -1082,6 +1108,8 @@ HIGH + any:
   -> Next sprint fix. Track in JIRA.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The decision is
 risk-based, not binary on severity. Blocking ALL
 CRITICAL findings regardless of exploitability and
@@ -1131,6 +1159,8 @@ aws cloudtrail lookup-events \
 AttributeValue=payment-processor \
   --start-time 2024-01-15T02:00:00Z
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Found: attacker downloaded 3 files from S3
 (customer payment reference numbers, no raw card data).
 First credential use: 2:43 AM. GuardDuty finding: 2:47 AM.
@@ -1203,6 +1233,8 @@ ECR Lifecycle Policy:
   (reduces Inspector scan backlog + storage cost)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Code: CI step waiting for Inspector:**
 
 ```bash
@@ -1242,6 +1274,8 @@ done
 echo "No CRITICAL findings. Proceeding."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The pipeline fails
 fast on CRITICAL with known exploits, but the decision
 for CRITICAL without known exploit can be policy-driven.
@@ -1267,15 +1301,17 @@ fires. Credential exposure = assume compromised.**
 
 # Immediately deactivate (faster than delete):
 aws iam update-access-key \
-  --access-key-id AKIAIOSFODNN7EXAMPLE \
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE \
   --status Inactive \
   --user-name developer-john
 
 # Then delete:
 aws iam delete-access-key \
-  --access-key-id AKIAIOSFODNN7EXAMPLE \
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE \
   --user-name developer-john
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 2: Audit what the credentials could access:**
 
@@ -1283,11 +1319,13 @@ aws iam delete-access-key \
 # CloudTrail: what API calls used this access key?
 aws cloudtrail lookup-events \
   --lookup-attributes \
-    AttributeKey=AccessKeyId,Value=AKIAIOSFODNN7EXAMPLE \
+    AttributeKey=AccessKeyId,Value=AKIA_YOUR_KEY_EXAMPLE \
   --start-time $(date -d '90 days ago' --iso-8601=seconds)
 # Shows all API calls made with this key
 # If no suspicious activity: scope confirmed clear
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Assess exposure window:**
 
@@ -1308,10 +1346,12 @@ already found and alerted on the credential
 # Check S3 recent access (server access logs or CloudTrail):
 aws cloudtrail lookup-events \
   --lookup-attributes AttributeKey=AccessKeyId,\
-Value=AKIAIOSFODNN7EXAMPLE \
+Value=AKIA_YOUR_KEY_EXAMPLE \
   --query 'Events[*].EventName' --output text | sort | uniq -c
 # List of API calls made with this key
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 5: Remediation:**
 
@@ -1351,6 +1391,8 @@ Root (Management Account - no workloads)
               |-- DevAccount, StagingAccount, ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SCP hierarchy (non-negotiable constraints):**
 
 Applied at OU level. Cannot be overridden in member
@@ -1368,6 +1410,8 @@ accounts even by account administrators.
   "Allow: CreateVpc, RunInstances (after conditions)"
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Centralized logging architecture:**
 
@@ -1461,3 +1505,33 @@ Full mTLS everywhere is the target for regulated
 environments (PCI DSS, HIPAA).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

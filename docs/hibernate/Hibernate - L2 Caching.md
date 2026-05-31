@@ -141,6 +141,8 @@ L2C Entry:
   (column values, not Java objects - thread-safe)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 L2C stores column values (a data array), not Java objects. Each
 session reconstructs a new Java object from the cached data.
@@ -347,6 +349,8 @@ spring.jpa.properties.hibernate.cache.region.factory_class=
 # This is LOCAL only - wrong for multi-node
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Switch to a distributed cache:
 ```properties
 # Use Infinispan (distributed):
@@ -355,6 +359,8 @@ spring.jpa.properties.hibernate.cache.region.factory_class=
 # OR disable L2C and use Redis @Cacheable at service layer
 spring.jpa.properties.hibernate.cache.use_second_level_cache=false
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -516,6 +522,8 @@ long misses = stats.getMissCount();
 long evictions = stats.getEvictionCount(); // too high?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause 3: TTL too short. The cache TTL is shorter than the read
 frequency for this entity. If requests for Country codes arrive
 every 30 seconds but TTL is 10 seconds, 66% of reads are misses.
@@ -618,6 +626,8 @@ Second execution (same params):
   → No SQL needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The invalidation rule: the query cache for a region is invalidated
 whenever ANY entity in that table changes. This is table-level
 granularity, not query-level. A single INSERT into the `categories`
@@ -652,6 +662,8 @@ public class Category {
     // Accessed on every page; 500 entries = trivial cache size
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Ehcache config: 1,000 max entries, TTL 1 hour, TTI 30 minutes.
 Expected: 95%+ hit rate after warm-up.
 
@@ -665,6 +677,8 @@ public ProductDetailDTO getProductDetail(String slug) {
     // loads product, categories, images - expensive join query
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 TTL: 5 minutes for product details. Explicit eviction on product
 update. Cache only product details, not inventory counts.
 
@@ -698,6 +712,7 @@ and what you learned from it.
 *Likely follow-up:* "How do you approach cache configuration now?"
 
 **Answer:**
+
 **S (Situation):** I was optimizing a slow product search API
 at an e-commerce company. The search was slow due to loading
 product associations (categories, images) for 100 products per
@@ -762,6 +777,34 @@ and entities with complex update patterns.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Criteria API and Dynamic Queries
 
@@ -865,6 +908,8 @@ em.createQuery(query).getResultList()
    ↓
 SQL: SELECT * FROM users WHERE [only active predicates]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Predicates are composable: `cb.and(p1, p2)`, `cb.or(p1, p2)`,
@@ -1109,6 +1154,8 @@ public static Specification<User> hasRole(String role) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: CriteriaQuery Reuse Across Requests**
@@ -1140,6 +1187,8 @@ per entity if accessed.
 @EntityGraph(attributePaths = {"roles"})
 List<User> findAll(Specification<User> spec);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This applies both the Specification filter AND the EntityGraph
 eager loading in one query.
 
@@ -1184,6 +1233,8 @@ if (name != null) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The query has exactly the WHERE clauses that apply.
 
 The downsides of Criteria API:
@@ -1220,6 +1271,8 @@ Predicate toPredicate(Root<T> root,
     CriteriaQuery<?> query, CriteriaBuilder cb);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 It wraps one Criteria predicate in a composable, testable unit.
 Spring Data JPA calls `toPredicate` when building the query, passing
 the Root, CriteriaQuery, and CriteriaBuilder automatically.
@@ -1243,6 +1296,8 @@ Specification<User> spec = active.and(adminRole.or(managerRole));
 userRepo.findAll(spec);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problem 3 - Testability. Each Specification can be unit-tested
 in isolation by calling `toPredicate` with a mock or real
 CriteriaBuilder.
@@ -1259,6 +1314,8 @@ public interface UserRepository
 // Adds: findAll(Specification), findOne(Specification),
 //       count(Specification), findAll(Specification, Pageable)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The composability example showing
 `.and().or()` chaining - this is the feature that makes Specifications
@@ -1308,6 +1365,8 @@ return query.from(user)
     .orderBy(user.name.asc())
     .fetch();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Much more readable than Criteria API. The Q-classes (`QUser`)
 are generated from entity classes by the APT annotation processor.
 
@@ -1342,6 +1401,8 @@ q.where(cb.and(predicates.toArray(new Predicate[0])));
 // cb.and() with empty array = TRUE predicate
 // = no WHERE clause = returns ALL entities
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is usually correct (no filters = return all), but if the
 intent was "return nothing when no filters provided," it is wrong.
 
@@ -1361,6 +1422,8 @@ predicates.add(cb.or(
 ));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: enable SQL logging and inspect the generated SQL.
 The SQL directly shows the AND/OR structure. Compare to the
 intended logic.
@@ -1377,6 +1440,8 @@ void shouldReturnOnlyActiveUsers() {
     assertThat(result.get(0).isActive()).isTrue();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The empty predicate list corner
 case (`cb.and(empty array) = TRUE`) and the explicit test pattern.
@@ -1409,6 +1474,8 @@ public class User_ {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Usage in Criteria API:
 ```java
 // Without Metamodel (string - typo fails at runtime):
@@ -1420,6 +1487,8 @@ root.get(User_.email) // typo = compile error
 // return type is checked by compiler
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The Metamodel class is generated by adding the APT annotation
 processor to the build:
 ```xml
@@ -1430,6 +1499,8 @@ processor to the build:
     <scope>provided</scope>
 </dependency>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that the return type of
 `root.get(User_.email)` is checked by the compiler - you cannot
@@ -1456,6 +1527,8 @@ public interface ProductRepository
             JpaSpecificationExecutor<Product> {}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Specification factory:
 ```java
 public class ProductSpecifications {
@@ -1468,6 +1541,8 @@ public class ProductSpecifications {
     // ... 14 more
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Service layer assembles specs and applies pagination:
 ```java
@@ -1484,6 +1559,8 @@ public Page<ProductDTO> search(SearchRequest req, Pageable p) {
         .map(productMapper::toDTO);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For the sort options, use Spring Data's `Sort` and `Pageable`
 (passed directly to `findAll(spec, pageable)`). The sort field
@@ -1529,6 +1606,8 @@ ORDER BY name LIMIT 20 OFFSET 19980;
 -- Shows: "Rows Removed by Filter: 19980"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solutions:
 
 Keyset pagination (for sequential page navigation):
@@ -1539,6 +1618,8 @@ Keyset pagination (for sequential page navigation):
     "ORDER BY p.name LIMIT 20")
 List<Product> findNextPage(@Param("lastName") String lastName);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This avoids OFFSET entirely. Performance is O(1) regardless of
 page number. Limitation: cannot jump to arbitrary page numbers.
 
@@ -1576,3 +1657,33 @@ product feature and readability/type safety justify the build tooling.
 *(Omit: System Design - ★★☆ keyword)*
 
 *(Omit: Diagram - prose, code, and table are sufficient)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

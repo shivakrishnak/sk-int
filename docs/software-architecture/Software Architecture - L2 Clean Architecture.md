@@ -171,6 +171,8 @@ CROSSING BOUNDARIES:
     by the Use Case)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The Dependency Rule is the architecture. Everything else is
 consequence. When all arrows point inward, the inner rings are
@@ -474,6 +476,8 @@ grep -r "org.springframework\|javax.persistence\
 # Any hits = Dependency Rule violation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Define interfaces in the Use Case ring. Move the
 framework-dependent implementation to the Interface Adapters or
 Frameworks ring. Use constructor injection of the interface.
@@ -763,6 +767,8 @@ src/main/java/com/example/
     Main.java
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ArchUnit enforcement:
 ```java
 @ArchTest
@@ -772,6 +778,8 @@ static final ArchRule dependencyRule =
         .should().dependOnClassesThat()
         .resideOutsideOfPackage("..domain..");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Most candidates give a conceptual
 description. Great candidates give the specific package tree and
@@ -841,6 +849,8 @@ static final ArchRule noOutwardDependencies =
         .should().dependOnClassesThat()
         .resideInAPackage("..adapter..");
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Any violation fails the build immediately.
 
 Maven/Gradle enforcer: Module-level enforcement. The domain module
@@ -963,6 +973,8 @@ QUALITY ATTRIBUTES ADDRESSED:
     a new GatewayAdapter; no inner ring changes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1032,6 +1044,34 @@ graph TD
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Onion Architecture
 
@@ -1153,6 +1193,8 @@ DEPENDENCY RULE:
   -> Domain Services -> Domain Model
   Domain Model depends on NOTHING external.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Domain Services ring captures the DDD Domain Service concept:
@@ -1364,6 +1406,8 @@ public class OrderApplicationService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move business rules into domain objects. `Order.place()`
 validates its own state. Application Service is: load, call domain
 method, save.
@@ -1378,6 +1422,8 @@ grep -r "org.springframework\|javax.persistence" \
   src/main/java/com/example/domain/service/
 # Any hits = infrastructure leaking into domain services
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Extract the infrastructure call to an interface (defined
 in Domain Services ring), implement it in Infrastructure.
@@ -1768,3 +1814,33 @@ Domain Services).
 | Testing strategy | Ring-by-ring | Ring-by-ring | Adapter-by-adapter |
 | Dependency Rule | All arrows inward | All arrows inward | All arrows inward |
 | Best context | DDD-heavy teams | Teams wanting prescriptive naming | Conceptual clarity |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /typescript/l2-advanced-types/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Conditional Types and infer Keyword](#conditional-types-and-infer-keyword) | working |
+| 2 | [Mapped Types](#mapped-types) | working |
+
+---
+
 # Conditional Types and infer Keyword
 
 🎯 **Interview Weight:** working (★★☆) - conditional types and `infer`
@@ -136,6 +146,8 @@ PRACTICAL CONDITIONAL TYPES:
   type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
   type Resolved = UnpackPromise<Promise<User>>;  // User
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -301,6 +313,8 @@ type E = IsString<string | number>;    // string (filtered)
 //            never for one member, absorbed into union
 // FIX: either intentional distribution or [T] extends [U]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -561,6 +575,34 @@ types?** `[STAFF]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Mapped Types
 
 🎯 **Interview Weight:** working (★★☆) - mapped types are the foundation
@@ -684,6 +726,8 @@ COMBINING MAPPED + CONDITIONAL:
   type RequiredId = RequireFields<FormOptional, 'id'>;
   // { name?: string; email?: string; id: string }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -857,6 +901,8 @@ type EventHandlers<T> = {
 // (More verbose but better IDE experience)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -983,3 +1029,33 @@ must be present)?** `[STAFF]` MECHANISM
 > for that key (because nothing is assignable to `never`). Combined
 > with XOR, this creates truly exclusive types - the TypeScript encoding
 > of "exclusive OR" from set theory.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

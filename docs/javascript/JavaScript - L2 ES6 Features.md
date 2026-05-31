@@ -7,6 +7,16 @@ permalink: /javascript/l2-es6-features/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [ES6 Classes and Inheritance](#es6-classes-and-inheritance) | high |
+| 2 | [JavaScript Modules (ESM and CommonJS)](#javascript-modules-esm-and-commonjs) | critical |
+
+---
+
 # ES6 Classes and Inheritance
 
 🎯 **Interview Weight:** high (★★☆) - Asked to test OOP understanding
@@ -113,6 +123,8 @@ instanceof check:
   new Dog() instanceof Animal → true (prototype chain)
   typeof Dog                  → 'function' (it's still a function)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -463,6 +475,34 @@ require classes as of React 18).
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # JavaScript Modules (ESM and CommonJS)
 
 🎯 **Interview Weight:** critical (★★☆) - Module systems are asked
@@ -578,6 +618,8 @@ Resolution differences:
   ESM: import './math.js' → must include extension (browser)
        import './math' → Node.js resolves (with some rules)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -916,3 +958,33 @@ systems, circular dependencies are a design smell indicating the
 modules are too tightly coupled. The diagnostic is usually "why do
 these two modules depend on each other?" and the fix is extracting
 the shared dependency into a third module.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

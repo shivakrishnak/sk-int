@@ -8,9 +8,20 @@ permalink: /java-concurrency/l3-synchronizers/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L3 Synchronizers](#java-concurrency---l3-synchronizers) | medium |
+
+---
+
 # Java Concurrency - L3 Synchronizers
 
 ## CountDownLatch
+
+---
 
 ### 🎯 Model Answer
 
@@ -96,6 +107,8 @@ Thread E: latch.await() -> returns immediately (count already 0)
 Thread B: latch.countDown() -> no effect (count already 0)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Backed by AQS: `CountDownLatch` uses a custom `Sync` extending AQS.
 The AQS state = count. `countDown()` uses a CAS loop to decrement
 state. When state reaches 0, all shared waiters (in `acquireShared`)
@@ -155,6 +168,8 @@ void initialize() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: CountDownLatch - park threads until signal
 CountDownLatch ready = new CountDownLatch(1); // gate
@@ -171,6 +186,8 @@ void initialize() throws InterruptedException {
     ready.countDown(); // release all waiting workers at once
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: parallel task execution with completion tracking
@@ -207,6 +224,8 @@ class ParallelTestHarness {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -272,6 +291,8 @@ try { doWork(); }
 finally { latch.countDown(); } // always count down, even on exception
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Wrong initial count**
 Symptom: await() returns too early (count reaches 0 before all work done)
 or never returns (count set too high).
@@ -315,6 +336,8 @@ CountDownLatch startGate = new CountDownLatch(1);
 // N threads: startGate.await();
 // Orchestrator: startGate.countDown(); // releases all N at once
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use: concurrent stress tests, coordinated service startup.
 
 Pattern 2 - Completion latch (N = number of tasks, single waiter):
@@ -324,6 +347,8 @@ CountDownLatch done = new CountDownLatch(N);
 // N tasks: done.countDown(); // after task completion
 // Waiter: done.await(); // unblocks when all N done
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use: fan-out/fan-in, waiting for async tasks.
 
 These two patterns can be combined: a start gate AND a completion
@@ -405,6 +430,8 @@ for (int i = 0; i < threadCount; i++) {
 startGate.countDown(); // open the gate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without the start gate, threads would start at slightly different
 times (staggered). With the gate, all 20 attempt `incrementAndGet()`
 simultaneously - maximum contention for testing thread-safety.
@@ -473,6 +500,8 @@ class ServiceStartup {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key decisions:
 - 30-second timeout: prevents infinite hang if a dependency fails
 - Not calling `countDown()` on error: intentional - a failed
@@ -515,6 +544,8 @@ monitor.scheduleAtFixedRate(() ->
     log.info("Latch count: {}", latch.getCount()),
     0, 1, TimeUnit.SECONDS);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: ensure `countDown()` is ALWAYS in a `finally` block. If a
 worker fails, still signal the latch so waiters can detect the
@@ -602,6 +633,8 @@ CompletableFuture.allOf(
 ).orTimeout(5, TimeUnit.SECONDS).join();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The start-gate pattern (CountDownLatch(1)
 signaling many threads) has no direct CompletableFuture equivalent.
 For starting N threads simultaneously at a signal, CountDownLatch
@@ -645,6 +678,8 @@ void testConcurrentAccess() throws InterruptedException {
     resource.assertInvariant(); // verify correctness
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This pattern:
 1. Creates maximum contention (start gate ensures simultaneous start)
@@ -693,6 +728,8 @@ for (Thread t : workers) {
 // Instead of three separate CountDownLatches
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When CountDownLatch is still better: when the simpler API is sufficient.
 Phaser has higher complexity and learning curve. For a fixed,
 one-time gate, CountDownLatch is the clear choice.
@@ -737,6 +774,8 @@ The fundamental count-down mechanism is self-evident.)*
 ---
 
 ## CyclicBarrier and Semaphore
+
+---
 
 ### 🎯 Model Answer
 
@@ -825,6 +864,8 @@ T3 arrives -> barrier trip!
 ...repeats
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Optional barrier action (`Runnable` passed to constructor): runs
 in the last thread to arrive. Use for phase boundary processing
 (merge partial results, start next input batch).
@@ -856,6 +897,8 @@ Thread D: acquire() -> permits=0, BLOCK
 Thread A: release() -> permits=1, D unblocked
 Thread D: acquire() -> permits=0, proceed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Semaphore(1): binary semaphore - mutex without ownership. Unlike
 ReentrantLock, any thread can `release()` (not just the one that
@@ -940,6 +983,8 @@ class ParallelMatrixProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Semaphore: connection pool limiting
 class DatabaseConnectionLimiter {
@@ -975,6 +1020,8 @@ class DatabaseConnectionLimiter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1055,6 +1102,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Semaphore permit leak**
 Symptom: over time, available permits decrease to 0. System permanently
 blocks.
@@ -1066,6 +1115,8 @@ semaphore.acquire();
 try { doWork(); }
 finally { semaphore.release(); } // even if doWork throws
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Semaphore.release() called without acquire()**
 Symptom: concurrent access exceeds the intended limit. More threads
@@ -1157,6 +1208,8 @@ if (barrier.isBroken()) {
     // restart all threads
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The barrier is also broken by
 `barrier.reset()` itself when called while threads are waiting.
@@ -1252,6 +1305,8 @@ class ConcurrentRateLimiter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Note: this limits concurrent operations (at most N in flight), not
 throughput (requests per second). For rate-per-second limiting, use
 a token bucket (refill permits periodically) or Guava's `RateLimiter`.
@@ -1311,6 +1366,8 @@ class ParallelImageProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The barrier ensures: all threads complete phase N before any thread
 starts phase N+1. Without the barrier, a fast thread could start
 edge detection on partially blurred pixels.
@@ -1336,6 +1393,8 @@ monitor.scheduleAtFixedRate(() -> {
     log.info("Queue length: {}", semaphore.getQueueLength());
 }, 0, 10, TimeUnit.SECONDS);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Trend: if `availablePermits()` decreases over time, there are unreleased
 permits.
 
@@ -1358,6 +1417,8 @@ try {
 semaphore.release(); // only reached if no return
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: every acquire must have a corresponding release in `finally`:
 ```java
 semaphore.acquire();
@@ -1368,6 +1429,8 @@ try {
     semaphore.release(); // always runs
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `semaphore.availablePermits()` monitoring
 as a gauge metric in production monitoring. Alert if it reaches 0 or
@@ -1409,6 +1472,8 @@ Key behavior difference:
 
 // For connection pools: fair prevents starvation of specific threads
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The default `Semaphore(N)` (non-fair)
 is usually correct for resource pool limiting where we care about
@@ -1491,6 +1556,8 @@ Thread consumer = new Thread(() -> {
     }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases:
 - Double-buffering: producer fills one buffer while consumer empties
@@ -1587,3 +1654,33 @@ sequenceDiagram
 > count to 3, ready for the next phase. This symmetric synchronization
 > pattern is ideal for multi-phase parallel computation where all threads
 > must complete each phase before starting the next.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

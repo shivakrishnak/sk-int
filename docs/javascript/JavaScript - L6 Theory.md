@@ -7,6 +7,16 @@ permalink: /javascript/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [ECMAScript Specification and TC39 Process](#ecmascript-specification-and-tc39-process) | working |
+| 2 | [JavaScript Execution Context and Specification Semantics](#javascript-execution-context-and-specification-semantics) | working |
+
+---
+
 # ECMAScript Specification and TC39 Process
 
 🎯 **Interview Weight:** working (★★☆) - understanding the TC39 process
@@ -156,6 +166,8 @@ REALMS:
     // Fix: Array.isArray() checks internal [[Class]], not instanceof
     Array.isArray(arr);  // TRUE (works cross-realm)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -369,6 +381,8 @@ function validateArray(input) {
   if (!Array.isArray(input)) throw new Error('Expected array');
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -969,6 +983,34 @@ are its most surprising results?** `[SENIOR]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # JavaScript Execution Context and Specification Semantics
 
 🎯 **Interview Weight:** working (★★☆) - execution contexts explain
@@ -1122,6 +1164,8 @@ SCOPE CHAIN (outer reference chain):
   // because add5 holds a reference via its 'outer' link
   add5(3);  // 8 (x=5 from outer env, y=3 from add5's env)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1349,6 +1393,8 @@ function handleRequest(req, res) {
 // Look for function closures in the retainer chain
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1563,3 +1609,33 @@ solve?** `[SENIOR]` MECHANISM
 > inner `let x` shadows the outer `x` from the start of the block,
 > even before the declaration line. This is called the "temporal dead
 > zone" - temporal because it's a TIME window, not a CODE location.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

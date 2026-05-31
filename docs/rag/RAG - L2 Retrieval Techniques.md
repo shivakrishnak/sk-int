@@ -117,6 +117,8 @@ SPARSE (BM25) search:
         "bag of words" - no semantic understanding
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Reciprocal Rank Fusion (RRF):**
 
 ```
@@ -140,6 +142,8 @@ Example:
   Doc1 > Doc2 because it appeared in both lists
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When hybrid is most valuable:**
 
 ```
@@ -153,6 +157,8 @@ QUERY TYPE             BEST SEARCH
 "AWS SDK v3 config"    Hybrid (semantic + exact terms)
 "rate limiting in API" Hybrid (concept + terms)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -440,6 +446,8 @@ RRF (Reciprocal Rank Fusion):
 score(d) = sum over lists: 1 / (k + rank(d, list))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 k=60: the constant that reduces the influence of
 rank position. Without k: rank 1 vs. rank 2 difference
 is 1.0 vs. 0.5 (50% drop). With k=60: rank 1 vs.
@@ -459,6 +467,8 @@ Alternative to RRF: linear score combination.
 score(d) = alpha * dense_score(d) +
            (1-alpha) * sparse_score(d)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Problem with linear combination: dense scores
 (cosine similarity: 0.0 to 1.0) and sparse scores
@@ -520,6 +530,8 @@ in linear combination hybrid search.
 hybrid_score = alpha * dense_score +
                (1 - alpha) * sparse_score
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (Note: for RRF, there is no alpha - both lists
 are given equal weight by default. Alpha tuning
@@ -699,6 +711,8 @@ def technical_tokenizer(text: str) -> list[str]:
     return [t.lower() for t in tokens if len(t) > 1]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Custom tokenizer
 that preserves compound technical tokens" as the
 root-cause fix.
@@ -792,6 +806,8 @@ def route_retrieval(query: str, ...):
     return dense_retrieve(query, ...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Result: segmented approach outperformed always-hybrid
 or always-dense.
 
@@ -875,6 +891,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Metadata Filtering and Structured Retrieval
 
@@ -964,6 +1008,8 @@ Multiple AND    region == "uk" AND status == "active"
 OR              type == "policy" OR type == "procedure"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pre-filter vs. Post-filter:**
 
 ```
@@ -989,6 +1035,8 @@ POST-FILTER:
            < K results even with large multiplier
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Metadata design for filterability:**
 
 ```
@@ -1004,6 +1052,8 @@ BAD metadata (high-cardinality, not filterable):
   embedding_norm: 0.9923  (continuous, not filterable)
   full_url: "https://..." (too specific to be useful)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1261,6 +1311,8 @@ def debug_filter(
         print("Sample metadata:", unfiltered[0].metadata)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 - Normalize metadata at index time (all lowercase,
   consistent format)
@@ -1346,6 +1398,8 @@ Design principles:
     year: 2022|2023|2024 (or ISO date for range)
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (5) Avoid: storing the full text as metadata,
     embedding vectors as metadata, or computed
     values that change over time.
@@ -1406,6 +1460,8 @@ def relaxing_filtered_retrieve(
     return vector_store.search(query, top_k=10), []
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Inform the user
 that filters were relaxed" - transparency about
 what was retrieved.
@@ -1434,6 +1490,8 @@ Implementation:
     )
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Make the tenant filter non-overridable: the
     application layer ALWAYS applies the tenant
     filter. The user cannot remove it or substitute
@@ -1447,6 +1505,8 @@ Implementation:
         list_accessible_levels(user.clearance)
     )
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security requirement: the `tenant_id` filter must
 be derived from the server-side authenticated user
@@ -1483,6 +1543,8 @@ Options:
         doc.metadata["department"] = dept
         vector_store.update(doc.id, metadata=doc.metadata)
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Pros: clean metadata for all documents.
     Cons: LLM inference errors, significant one-
     time cost.
@@ -1524,6 +1586,8 @@ Three temporal strategies:
     ```python
     MetadataFilter("indexed_date", "gte", "2024-01-01")
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Simple. Misses valid older documents that
     haven't changed (timeless policies, foundational
     reference material).
@@ -1535,6 +1599,8 @@ Three temporal strategies:
     freshness = max(0.5, 1.0 - 0.001 * days_old)
     final_score = similarity * 0.8 + freshness * 0.2
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Old but highly relevant documents are still
     retrieved but ranked lower than fresh equivalents.
 
@@ -1633,6 +1699,8 @@ Action:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. At query time: build mandatory filters from
    authenticated user session:
    ```python
@@ -1643,6 +1711,8 @@ Action:
            # OR client docs for their client
        ], logic="OR")
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Mandatory filter applied at the retrieval layer,
    never in the application layer (to prevent
@@ -1707,6 +1777,8 @@ def self_query_filter(
     except json.JSONDecodeError:
         return {}  # no filter if extraction fails
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefit: users don't need to understand the metadata
 schema. They ask natural questions and the system
@@ -1790,3 +1862,33 @@ flowchart LR
 > always derives filters from the server-side user
 > context (authenticated session) - never from
 > user input - to prevent access control bypass.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

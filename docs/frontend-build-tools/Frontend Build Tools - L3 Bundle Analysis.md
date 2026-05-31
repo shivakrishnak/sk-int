@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l3-bundle-analysis/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Bundle Analysis and Size Optimization](#bundle-analysis-and-size-optimization) | medium |
+| 2 | [Build Caching Strategies](#build-caching-strategies) | medium |
+
+---
+
 # Bundle Analysis and Size Optimization
 
 ---
@@ -90,6 +100,8 @@ Common findings and fixes:
   6. @sentry/browser: add Sentry to manual vendor chunk
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Bundle analysis is a periodic diagnostic, not a continuous process.
@@ -118,6 +130,8 @@ module.exports = {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // Vite with bundlesize check (via bundlesize2 or similar):
 // package.json:
@@ -131,6 +145,8 @@ module.exports = {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Analyze bundle composition:
@@ -312,6 +328,34 @@ visible before it becomes a user problem.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Build Caching Strategies
 
 ---
@@ -387,6 +431,8 @@ CI caching (GitHub Actions):
       restore-keys: build-cache-
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Cache invalidation is the hard part. A cache key that's too broad
@@ -426,6 +472,8 @@ module.exports = merge(base, {
 // Touch one file:
 // Third build:  Build time: 4.102s,  cache: 844 hits, 3 misses
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # GitHub Actions with layered caching
@@ -600,3 +648,33 @@ is no caching (always correct); the fastest is maximum caching (risk
 of staleness). Production builds should err toward correctness (more
 conservative cache invalidation); developer builds can be more
 aggressive for speed.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

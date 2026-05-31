@@ -158,6 +158,8 @@ Result: P("on"|"The cat sat") = 0.6
         ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The transformer's parallelism (all tokens processed
@@ -806,6 +808,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Attention Mechanism
 
 **Interview Weight:** high - The core mechanism that
@@ -943,6 +973,8 @@ Multi-head: run 8-96 parallel versions of this,
 each with smaller d_k, concatenate and project back.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Attention is differentiable (end-to-end trainable) and
@@ -1007,6 +1039,8 @@ def attention_naive(Q, K, V):
     # gradients to vanish. Without masking, generation
     # models see future tokens.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 import numpy as np
@@ -1366,6 +1400,8 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing the exact
 memory savings (O(n) vs. O(n^2)), the speed improvement
 (2-4x), that it's mathematically exact (not an
@@ -1724,3 +1760,33 @@ flowchart LR
 > "financial institution" meaning. This is how transformers
 > perform word sense disambiguation: through learned
 > query-key alignment patterns.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

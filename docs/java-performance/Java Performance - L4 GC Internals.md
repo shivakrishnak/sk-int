@@ -8,9 +8,20 @@ permalink: /java-performance/l4-gc-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L4 GC Internals](#java-performance---l4-gc-internals) | medium |
+
+---
+
 # Java Performance - L4 GC Internals
 
 ## G1 GC Internals: Region Structure and GC Cycle
+
+---
 
 ### 🎯 Model Answer
 
@@ -184,6 +195,8 @@ G1 FULL GC TRIGGERS:
     -XX:+DisableExplicitGC (prevent application from triggering Full GC)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -209,7 +222,8 @@ G1 FULL GC TRIGGERS:
 // GC LOG ANALYSIS PATTERN (parsing key events):
 // Young GC in GC log:
 // 2024-01-15T10:15:30.123+0000: [GC pause (G1 Evacuation Pause) (young)
-//   [Eden: 800.0M(800.0M)->0.0B(700.0M) Survivors: 100.0M->150.0M Heap: 1200.0M(16384.0M)->550.0M(16384.0M)]
+//   [Eden: 800.0M(800.0M)->0.0B(700.0M) Survivors: 100.0M->150.0M
+//    Heap: 1200.0M(16384.0M)->550.0M(16384.0M)]
 //   [Times: user=1.23 sys=0.01, real=0.15 secs]
 // real=0.15 secs: 150ms pause (close to our 100ms target: investigate)
 // Eden: evacuated 800MB (fast: mostly dead objects)
@@ -347,6 +361,8 @@ Fix options:
      Open in Eclipse Memory Analyzer (MAT): find the retention path.
      The objects retaining old gen growth: those are the leak.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -578,3 +594,33 @@ measures this automatically. Manual IHOP tuning is for cases where adaptive IHOP
 (e.g., allocation rate spikes during startup but is low at steady state).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

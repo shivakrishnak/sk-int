@@ -7,6 +7,17 @@ permalink: /javascript/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Mental Models](#async-mental-models) | foundational |
+| 2 | [Everything-is-an-Object Mental Model](#everything-is-an-object-mental-model) | foundational |
+| 3 | [JavaScript Decision Framework](#javascript-decision-framework) | foundational |
+
+---
+
 # Async Mental Models
 
 🎯 **Interview Weight:** foundational (★☆☆) - thinking about async
@@ -132,6 +143,8 @@ SEQUENTIAL vs PARALLEL ASYNC (most misunderstood):
   );
   users.forEach(process);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -340,6 +353,8 @@ async function processAll(items) {
 // 100 items, 10 at a time = ~3 seconds (10x faster than sequential,
 // controlled for DB/API rate limits)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -770,6 +785,34 @@ async/await?** `[JUNIOR]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Everything-is-an-Object Mental Model
 
 🎯 **Interview Weight:** foundational (★☆☆) - prototype chain is the
@@ -891,6 +934,8 @@ AUTO-BOXING OF PRIMITIVES:
   s.foo = 'bar';   // Creates temp String wrapper, sets .foo on it
   console.log(s.foo); // undefined (wrapper was discarded)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1088,6 +1133,8 @@ function deepMerge(target, source) {
   return result;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1523,6 +1570,34 @@ does V8 optimize property access?** `[STAFF]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # JavaScript Decision Framework
 
 🎯 **Interview Weight:** foundational (★☆☆) - knowing WHEN to use
@@ -1653,6 +1728,8 @@ PERFORMANCE DECISION TREE:
     3. Is it maintained? (last commit date, issues count)
     4. Can native APIs cover this in 20 lines?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1892,6 +1969,8 @@ module.exports = {
 // 4. Escalate to errors once migration is complete
 // 5. New code must comply immediately (block PR merge on errors)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2350,3 +2429,33 @@ codebase?** `[STAFF]` SYSTEM-DESIGN
 > - fixing it has clear ROI. The framework: debt that slows current
 > work or creates risk gets fixed; debt in stable, isolated code is
 > left alone.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

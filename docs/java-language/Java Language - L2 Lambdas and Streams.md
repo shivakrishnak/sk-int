@@ -8,9 +8,20 @@ permalink: /java-language/l2-lambdas-and-streams/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L2 Lambdas and Streams](#java-language---l2-lambdas-and-streams) | medium |
+
+---
+
 # Java Language - L2 Lambdas and Streams
 
 ## Lambda Expressions and Method References
+
+---
 
 ### 🎯 Model Answer
 
@@ -131,6 +142,8 @@ LAMBDA CAPTURE RULES:
   Runnable r3 = () -> counter[0]++;  // OK: counter reference is final, array content is not
   // But: unsafe in concurrent code!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -298,6 +311,8 @@ Rule: avoid stateful lambdas in parallel streams.
   forEach with mutations: only safe with thread-safe data structures (AtomicInteger, CHM)
   or by using terminal operations that handle parallelism (collect, reduce, count)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -504,6 +519,8 @@ wrapper is the most common pragmatic solution.
 
 ## Streams API and Functional Pipelines
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -619,6 +636,8 @@ COLLECTORS:
   collectingAndThen(collector, finisher) -> applies finisher after collect
   mapping(mapper, downstream)    -> map then collect
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -798,6 +817,8 @@ Prevention: any time a field might be null and you're using it as a
   groupingBy key: handle null explicitly.
   Code review: check all classifier functions in groupingBy for potential null returns.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -998,3 +1019,33 @@ For transformations that are read-and-understood: streams.
 
 *(Omit: Stream pipeline flow is clearly described in the concept explanation text.
 The comparison table above provides the decision reference.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

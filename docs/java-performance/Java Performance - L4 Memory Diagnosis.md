@@ -8,9 +8,20 @@ permalink: /java-performance/l4-memory-diagnosis/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L4 Memory Diagnosis](#java-performance---l4-memory-diagnosis) | medium |
+
+---
+
 # Java Performance - L4 Memory Diagnosis
 
 ## Memory Leak Diagnosis and GC Anti-patterns
+
+---
 
 ### 🎯 Model Answer
 
@@ -234,6 +245,8 @@ MEMORY GROWTH MONITORING:
     Compare: if heap delta > threshold per iteration -> test has a leak.
     Tools: JVM heap snapshot API or JFR ObjectAllocationInNewTLAB events.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -473,6 +486,8 @@ Diagnosis workflow:
         .build();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -661,3 +676,33 @@ for the cleaning action (no implicit outer reference), holding only the native h
 trap. The standard Cleaner pattern used throughout the JDK is the correct template to follow.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

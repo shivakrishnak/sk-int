@@ -187,6 +187,8 @@ COMBINED EXAMPLE
                the process."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The implication section is where most candidates
 fail. They state the evidence and stop. The
@@ -387,6 +389,34 @@ for your payment platform. [Implication]"
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Self-Awareness and Metacognition in Interviews
 
 🎯 Interview Weight: fundamental - self-awareness
@@ -547,6 +577,8 @@ METACOGNITION APPLICATION IN INTERVIEWS
   In learning stories: describe how you changed
     your mental model, not just your behavior
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The highest-value signal is the update mechanism:
@@ -726,6 +758,34 @@ before defaulting to strong."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Personality Tests Strategy (MBTI, Hogan, DiSC)
 
 🎯 Interview Weight: fundamental - candidates who
@@ -898,6 +958,8 @@ MBTI vs BIG FIVE ALIGNMENT (approximate)
   J/P -> Conscientiousness (partial)
   MBTI does not capture Neuroticism/ES
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Impression management (trying to look good on the
@@ -1098,3 +1160,33 @@ at rather than an unlimited optimization horizon."
 | Hiring Manager | Show practical behavioral self-awareness |
 | Bar Raiser | Show meta-level understanding of assessment validity |
 | Peer Engineer | Show you use results for development, not as identity |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

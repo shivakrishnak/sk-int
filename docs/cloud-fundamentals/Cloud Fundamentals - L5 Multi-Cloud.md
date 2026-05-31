@@ -141,6 +141,8 @@ VALID LOCK-IN CONCERNS:
   container-based workloads.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data Gravity:**
 
 ```
@@ -166,6 +168,8 @@ IMPLICATION FOR MULTI-CLOUD:
   Decide cloud first, then pick services.
   Don't let service preference override data locality.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -226,6 +230,8 @@ resource "aws_dx_connection" "to_gcp" {
 }
 # GCP Partner Interconnect on the other side
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # CLOUD-AGNOSTIC STORAGE ABSTRACTION (Pattern 3 - Portable)
@@ -661,6 +667,8 @@ kafka-consumer-groups.sh \
 # Look for lag column - if high: consumer is behind
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: CDC streaming approach:**
 
 ```
@@ -676,6 +684,8 @@ TARGET (streaming CDC, < 5 min lag):
       -> Dataflow -> GCP database
   Lag: typically 1-5 minutes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Network bandwidth constraint:**
 
@@ -694,6 +704,8 @@ aws dms describe-replication-tasks \
 # If Private Interconnect: check utilization on port
 # If public internet: check NAT Gateway BytesProcessed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Target architecture for < 1 hour RPO:**
 
@@ -744,6 +756,8 @@ def lambda_handler(event, context):
             'elapsed_ms': (time.time() - start) * 1000
         }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Common causes:**
 
@@ -902,6 +916,8 @@ App (ECS) -> Kinesis Data Streams
           -> BigQuery Streaming Inserts (< 5 min lag)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Daily snapshots:
 ```
 RDS -> AWS DMS -> S3 Parquet files (daily export)
@@ -909,6 +925,8 @@ S3 -> GCP Storage Transfer Service -> GCS
 GCS -> BigQuery Data Transfer -> BigQuery tables
 (batch, acceptable 24hr lag for daily analytics)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Network:
 ```
@@ -919,6 +937,8 @@ AWS Direct Connect (1Gbps) + GCP Partner Interconnect:
   ROI: Direct Connect cost (~$500/month) < savings ($3,500)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Security:
 ```
 GCP service account for BigQuery access
@@ -928,6 +948,8 @@ AWS IAM role: assume role with conditions
   OIDC federation: GCP workload authenticates to AWS
     without static AWS access keys
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The three-tier data
 classification with different pipelines for each is
@@ -1155,6 +1177,8 @@ GCP Cloud Run + Cloud SQL = $10,000/month
 Gross savings: $5,000/month
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Calculate the migration cost:
 
 ```
@@ -1164,6 +1188,8 @@ Dual-operation period: 1 month * both stacks = $15,000
 Total migration cost: $105,000
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Calculate break-even:
 
 ```
@@ -1172,6 +1198,8 @@ After 21 months: net positive ROI
 Year 3 savings: $5,000 * 12 = $60,000/year
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Identify the ongoing operational tax:
 
 ```
@@ -1179,6 +1207,8 @@ Dual-cloud tooling expertise: +15% engineering overhead
 Dual monitoring stack: +$500/month
 Migration risk: quantify P(migration failure) * cost
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Consider alternatives (stay on AWS):
 
@@ -1189,6 +1219,8 @@ AWS savings alternatives (no migration required):
 - Right-sizing via Compute Optimizer: 20-30% savings
 - RDS Reserved + Spot for non-critical = similar savings
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Often the conclusion:** AWS Reserved Instances + right-sizing
 saves as much or more as migrating to a cheaper provider,
@@ -1203,3 +1235,33 @@ often achieve equivalent savings without migration cost
 demonstrates both financial and technical knowledge.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

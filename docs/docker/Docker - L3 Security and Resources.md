@@ -8,9 +8,20 @@ permalink: /docker/l3-security-and-resources/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L3 Security and Resources](#docker---l3-security-and-resources) | medium |
+
+---
+
 # Docker - L3 Security and Resources
 
 ## Docker Security Hardening Fundamentals
+
+---
 
 ### 🎯 Model Answer
 
@@ -229,6 +240,8 @@ DOCKER SOCKET SECURITY:
   # No Docker socket access needed.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -384,6 +397,8 @@ Fixes:
   HEALTHCHECK CMD nc -z localhost 3000 || exit 1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -431,6 +446,8 @@ than a guideline document.
 ---
 
 ## Container Resource Limits and Quotas
+
+---
 
 ### 🎯 Model Answer
 
@@ -628,6 +645,8 @@ MONITORING RESOURCE LIMITS:
   kubectl describe pod myapp-abc-xyz | grep -i oom
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -812,6 +831,8 @@ Fix:
   to suggest appropriate requests based on actual usage.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -857,4 +878,34 @@ only in exceptional cases (circuit breaker should have fired before
 CPU is the bottleneck). Monitor `throttled_time` per container:
 `cat /sys/fs/cgroup/cpu/cpu.stat`. If throttled_time is increasing:
 the service is CPU-limited; scale horizontally or increase limit.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

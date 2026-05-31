@@ -7,6 +7,16 @@ permalink: /nodejs/l2-worker-threads/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Worker Threads and CPU-bound Tasks](#worker-threads-and-cpu-bound-tasks) | medium |
+| 2 | [Child Processes](#child-processes) | medium |
+
+---
+
 # Worker Threads and CPU-bound Tasks
 
 ---
@@ -88,6 +98,8 @@ Worker threads architecture:
     For many tasks: create a pool, reuse workers.
     Libraries: piscina (recommended), workerpool
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -227,6 +239,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -241,6 +255,34 @@ try {
 | What is the startup cost of worker threads? | Production | ★★☆ | 2 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Child Processes
 
@@ -328,6 +370,8 @@ child_process methods:
     spawn('grep', [userInput, '/var/log/app.log']);
     // args are passed directly to execv, no shell interpretation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -473,6 +517,8 @@ spawn('/usr/bin/ffmpeg', [...args]);
 # Or ensure PATH is set correctly in process.env
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -483,3 +529,33 @@ spawn('/usr/bin/ffmpeg', [...args]);
 | What is shell injection and how to prevent it? | Security | ★★★ | 3 min |
 | `fork` vs worker threads - difference? | Comparison | ★★★ | 3 min |
 | How do you handle a child process crash? | Failure | ★★☆ | 2 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

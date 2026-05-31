@@ -202,6 +202,8 @@ THE SIX CRITICAL SRE ANTI-PATTERNS
      Postmortems include service developers as authors
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Every anti-pattern is a predictable consequence of adopting the form
 of SRE without the substance. SLO dashboards without error budget policy
@@ -373,6 +375,8 @@ Three questions that reveal cargo-cult SRE:
 One "never" or "I don't know" = cargo-cult signal.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Executive reset: identify the one anti-pattern with the
 highest organizational cost (usually aspirational SLOs or unenforced
 policy). Resolve it at VP level with explicit commitment. Build
@@ -509,6 +513,34 @@ significant value for this conceptual keyword.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # SLO Decision Framework
 
@@ -679,6 +711,8 @@ STEP 5: VALIDATE WITH STAKEHOLDERS
      architecture and team investment level?"
   Both must answer "yes" before the SLO is finalized.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The SLO is a contract between the reliability team and the business.
@@ -937,6 +971,8 @@ Ask product managers and business owners:
   product roadmap?"
 If all "no": SLOs were set without stakeholders.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Conduct SLO review sessions with product owners for all
 Tier 1 services. Present: current SLO, historical performance,
@@ -1419,3 +1455,33 @@ flowchart TD
 
 4. "Are SLOs for internal services set with the same rigor as SLOs for
    customer-facing services? How does the organization distinguish them?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

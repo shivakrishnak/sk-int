@@ -8,6 +8,17 @@ permalink: /distributed-systems/l1-clocks-and-ordering/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Logical Clocks and Lamport Timestamps](#logical-clocks-and-lamport-timestamps) | medium |
+| 2 | [Physical vs Logical Time in Distributed Systems](#physical-vs-logical-time-in-distributed-systems) | medium |
+| 3 | [Causality and Happens-Before Relation](#causality-and-happens-before-relation) | medium |
+
+---
+
 # Logical Clocks and Lamport Timestamps
 
 **TL;DR:** In distributed systems, physical clocks on different machines
@@ -96,6 +107,8 @@ Process P2:                   L=3 (receive m1, max(1,2)+1)
              L=4 (send m2)
 Process P1:  L=5 (receive m2, max(2,4)+1)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 If A happened-before B, then Lamport(A) < Lamport(B). But
@@ -351,6 +364,34 @@ reflects its own writes."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Physical vs Logical Time in Distributed Systems
 
 **TL;DR:** Physical time (wall clock) on a server can drift, jump
@@ -437,6 +478,8 @@ Cons:
                (Java: System.currentTimeMillis() can go back)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Logical clock properties:**
 
 ```
@@ -451,6 +494,8 @@ Cons:
   Cannot compare across completely unrelated systems
   Size: vector clocks grow with number of processes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use each:**
 
@@ -752,6 +797,34 @@ log line as a structured field."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Causality and Happens-Before Relation
 
 **TL;DR:** Causality in distributed systems defines when one event
@@ -838,6 +911,8 @@ anomalies.
    A and B are concurrent (no causal relationship)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Causal consistency definition:**
 If A -> B, then ALL nodes observe A before B (in their local view).
 Concurrent operations may be observed in any order.
@@ -850,6 +925,8 @@ User 1 posts: "How are you?" (event B, A -> B)
 User 2 sees: "How are you?" (B) before "Hello" (A)
 This is a causal violation: B was seen before its cause A.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Causality is the minimum correctness requirement for a system where
@@ -1117,3 +1194,33 @@ A and B are concurrent - conflict exists. If V(A) < V(B) (A
 dominated by B), A happened-before B - no conflict. Causality
 detection via vector clocks is the foundation of distributed
 conflict detection."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

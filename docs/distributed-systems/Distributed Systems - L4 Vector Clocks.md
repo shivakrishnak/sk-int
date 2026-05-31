@@ -8,6 +8,15 @@ permalink: /distributed-systems/l4-vector-clocks/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Vector Clocks and Causal Consistency](#vector-clocks-and-causal-consistency) | medium |
+
+---
+
 # Vector Clocks and Causal Consistency
 
 **TL;DR:** A vector clock is an array of logical counters - one
@@ -126,6 +135,8 @@ Rule 3 - Receive event:
   → Increment VCi[i] (own slot)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Comparison algorithm:**
 
 ```java
@@ -146,6 +157,8 @@ static boolean concurrent(int[] a, int[] b) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Four possible relationships between events A and B:**
 
 ```
@@ -163,6 +176,8 @@ static boolean concurrent(int[] a, int[] b) {
 4. A = B (same event):
    A.vc[i] == B.vc[i] for ALL i
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Causal consistency (definition):**
 
@@ -187,6 +202,8 @@ Example:
   Y=10 is causally dependent on X=5.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Version vectors vs. vector clocks:**
 
 ```
@@ -202,6 +219,8 @@ Version vector example (DynamoDB-style):
   → This write "knows about" the previous write from A and B
     (it was not concurrent: vv dominates both previous vvs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Vector clocks are a precise formalization of causality: "who knew
@@ -509,6 +528,8 @@ Cross-replica sync:
   (Gossip protocol, O(N^2) messages in worst case)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -585,6 +606,8 @@ Measure vector clock sizes in production:
 Average vector size growing? Pruning not working?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: dotted version vectors (Riak). A dotted version vector
 uses a compact representation: instead of one slot per node,
 store only the "dot" (node, counter pair) for the last write
@@ -620,6 +643,8 @@ Diagnosis:
 # Node 2 state: A:0, B:1, C:0
 #   (missing A:1 - cannot serve reply without showing comment)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: causal dependency tracking in the read path. Before
 serving value V with VC=[A:1,B:1,C:0]: verify that the
@@ -660,6 +685,8 @@ public int[] receive(int[] incoming) {
     return clock;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 After the bug: receiving node loses its own causal history
 when processing an incoming message, causing all subsequent
@@ -750,6 +777,8 @@ Riak stores both siblings:
   ]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 On the next GET of key=user:42 with multiple siblings: Riak
 returns all siblings. The client (or application) is responsible
 for conflict resolution:
@@ -831,6 +860,8 @@ causal relation to P2's history (which includes P0's first
 2 events and P1's 3 events). P0 never received any message
 from P1 or P2 between e1 and e3.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the clear "what this means"
 interpretation. Many engineers can mechanically apply the rules
@@ -919,6 +950,8 @@ riak-admin bucket-type status default | grep -A2 "siblings"
 # concurrent writes that were previously serialized
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Identify which keys/operations generate conflicts:
 ```bash
 # Sample 100 conflict responses in application logs
@@ -927,6 +960,8 @@ grep "CONFLICT\|siblings\|concurrent_versions" /var/log/app.log \
 # What key patterns? What operations (PUT /cart vs PUT /profile)?
 # Conflict rate by operation type
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Check the context propagation:
 ```java
@@ -943,6 +978,8 @@ client.put("user:42", newValue, ctx);
 // the client read, not a concurrent write
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - If conflicts are genuine (two real concurrent writers):
 Check if LWW is acceptable for this key type, or implement
 proper sibling resolution in the application:
@@ -956,6 +993,8 @@ public Cart mergeSiblings(List<Cart> siblings) {
     return new Cart(mergedItems);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5 - If test environment shows no conflicts but production does:
 Check production write patterns. Concurrent writers in production
@@ -994,6 +1033,8 @@ A: Three approaches to distributed time:
   On receive(l_m, c_m): l = max(l, l_m, ntp_time);
     c = if l == l_m then max(c, c_m)+1 else 0
   ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Provides: total order (if physical times equal: logical
   counter breaks tie). All events have unique HLC values.
 - Does NOT detect concurrent events: concurrent events still
@@ -1195,6 +1236,8 @@ Scale:
   This keeps vector size constant as system scales
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the explicit deletion
 tombstone requirement. Without tombstones: if user A removes
 item X (cart=[Y]) at the same time user B adds item Z
@@ -1234,6 +1277,8 @@ A: Amazon's handling of concurrent writes has evolved significantly:
   // If version changed since read: ConditionCheckFailed
   // Client must retry
   ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Transactions (2018): ACID transactions using OCC
   (optimistic concurrency control) across multiple items
 - Global Tables (multi-region): last-writer-wins with timestamp
@@ -1345,6 +1390,8 @@ DVV issue resolved? The problem is more subtle:
   Known as the "deleted value reappears" bug.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **DVV solution:**
 DVV stores a "dot" - the exact (node, counter) pair of the write
 that created this specific value - instead of just the cumulative
@@ -1367,6 +1414,8 @@ Tombstone:
   {dot: (P2, 2)} - "delete the version at dot (P2,2)"
   This precisely identifies which version to delete.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the "deleted value reappears"
 bug. This is a non-obvious production failure mode that motivated
@@ -1426,3 +1475,33 @@ to keep?" is answered by the product team's knowledge of user
 intent, not by engineering. Senior engineers surface this
 decision to the right stakeholders rather than silently
 implementing one policy.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

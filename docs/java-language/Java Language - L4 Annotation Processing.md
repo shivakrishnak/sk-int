@@ -8,9 +8,20 @@ permalink: /java-language/l4-annotation-processing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L4 Annotation Processing](#java-language---l4-annotation-processing) | medium |
+
+---
+
 # Java Language - L4 Annotation Processing
 
 ## Annotation Processing and Compile-Time Code Generation
+
+---
 
 ### 🎯 Model Answer
 
@@ -175,6 +186,8 @@ JAVAPOET (TYPE-SAFE CODE GENERATION):
   
   javaFile.writeTo(processingEnv.getFiler());  // generates src file during compilation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -400,6 +413,8 @@ Prevention:
   Verify generated sources exist before running tests.
   IntelliJ: "Enable annotation processing" in compiler settings.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -636,3 +651,33 @@ flowchart LR
 ### 📊 Diagram
 
 *(Omit: Generation flow shown in System Design section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

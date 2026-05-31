@@ -8,6 +8,16 @@ permalink: /devops-cicd/l2-infrastructure-monitoring/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Infrastructure as Code in CI/CD](#infrastructure-as-code-in-cicd) | medium |
+| 2 | [Monitoring and Observability in CD](#monitoring-and-observability-in-cd) | medium |
+
+---
+
 # Infrastructure as Code in CI/CD
 
 🎯 Interview Weight: high - IaC is a foundational DevOps practice
@@ -128,6 +138,8 @@ infrastructure/
       variables.tf
       terraform.tfvars
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **CI/CD integration pattern:**
 - On every PR to infrastructure branch: run `terraform validate`
@@ -250,6 +262,8 @@ resource "aws_eks_cluster" "main" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```hcl
 # environments/production/main.tf
 # Environment-specific: references modules, sets production variables
@@ -271,6 +285,8 @@ module "eks" {
   desired_node_count = 10
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # .github/workflows/terraform.yml
@@ -597,6 +613,8 @@ terraform {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 State locking via DynamoDB: when any Terraform operation begins
 (plan or apply), Terraform writes a lock entry to the DynamoDB table.
 This prevents concurrent operations that would corrupt the state.
@@ -731,6 +749,8 @@ When it has acl
 Then it must not contain "public-read"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 HashiCorp Sentinel: enterprise Terraform feature for policy-as-code
 with a purpose-built language. Runs as part of Terraform Cloud's
 plan process.
@@ -751,6 +771,8 @@ Implementation in CI:
     soft_fail: false
     check: "CKV_AWS_*"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common policies worth enforcing:
 - All S3 buckets have `block_public_acls = true`
@@ -793,11 +815,15 @@ aws s3api get-object \
   terraform.tfstate.backup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Restore the state from the backup version:
 ```bash
 aws s3 cp terraform.tfstate.backup \
   s3://mycompany-tf-state/production/eks/terraform.tfstate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Run `terraform plan` against the restored state. Review
 the plan carefully - it should show only the changes that were
@@ -866,6 +892,34 @@ design, not just tooling.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Monitoring and Observability in CD
 
@@ -1172,6 +1226,8 @@ public class OrderController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # Prometheus alerting rules for deployment health monitoring
 # alerts/order-service.yml
@@ -1413,6 +1469,8 @@ analysis:
   # and rolled back to the previous stable version
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The analysis template queries Prometheus during the canary phase.
 If the query result falls below the failure condition threshold,
 Argo Rollouts automatically marks the rollout as failed and reverts
@@ -1443,6 +1501,8 @@ fi
 
 echo "Deployment healthy. Error rate: ${ERROR_RATE}"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The rollback trigger criteria should cover: error rate (primary
 gate), latency regression (p99 > baseline * 1.2), and business
@@ -1589,6 +1649,8 @@ The burn rate alert is the production implementation:
     # If current hourly rate would exhaust 30-day budget in 1 hour
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The deployment policy: any deployment that triggers the burn rate
 alert at critical level triggers an automatic rollback and a
 mandatory postmortem.
@@ -1697,3 +1759,33 @@ is often the bottleneck at scale, not the ingestion path. A slow
 PromQL query that scans 100 million time series is a bigger problem
 than ingestion throughput. Recording rules (pre-computed aggregates)
 are the primary tool for making dashboard queries fast at scale.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

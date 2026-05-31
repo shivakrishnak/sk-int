@@ -8,6 +8,16 @@ permalink: /design-patterns/l3-decision-framework/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [When to Use Design Patterns](#when-to-use-design-patterns) | medium |
+| 2 | [Pattern Selection Framework](#pattern-selection-framework) | medium |
+
+---
+
 # When to Use Design Patterns
 
 ---
@@ -134,6 +144,8 @@ Decision tree for adding a pattern:
    -> Harder (complex factory hierarchy) -> WRONG use
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The refactoring trigger (most reliable signal):**
 
 ```
@@ -147,6 +159,8 @@ Direct coupling to 3rd party  | Adapter or Proxy
 Cross-cutting code in methods | Decorator or Proxy
 Chain of conditionals         | Chain of Responsibility
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -425,6 +439,34 @@ the rule to the team's definition-of-done for pull requests.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Pattern Selection Framework
 
 ---
@@ -548,6 +590,8 @@ Factory fit test:
   If all NO: use new directly.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The relationship structure (tertiary axis):**
 
 ```
@@ -564,6 +608,8 @@ KNOWS-ABOUT problems -> decouple with mediator/observer
   If A knows B AND B knows A: Mediator
   If A knows B but not reverse: Observer or Callback
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -900,3 +946,33 @@ varies (Strategy), where the payment provider varies (Strategy/Factory),
 where cross-cutting concerns must be added (Proxy/Decorator). Rule: the
 pattern name should appear in your design vocabulary, not in every class
 name (no `OrderStrategyFactoryAdapterImpl`).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

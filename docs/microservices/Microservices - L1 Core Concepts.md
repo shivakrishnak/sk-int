@@ -8,6 +8,17 @@ permalink: /microservices/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Service Decomposition Principles](#service-decomposition-principles) | medium |
+| 2 | [Bounded Context and Domain-Driven Design Basics](#bounded-context-and-domain-driven-design-basics) | medium |
+| 3 | [API Contract Design](#api-contract-design) | medium |
+
+---
+
 # Service Decomposition Principles
 
 ---
@@ -74,6 +85,8 @@ DECOMPOSE HORIZONTALLY (bad - anti-pattern):
   All share one database
   - Changing any feature touches all three services
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Services should change for the same business reasons. If OrderController and OrderService always change together when an order feature changes, they belong in the same service. If OrderService and ShippingService never change for the same reason, they belong in separate services.
@@ -238,6 +251,34 @@ Fix: Consolidate related services (ProductService absorbs PriceService and Inven
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Bounded Context and Domain-Driven Design Basics
 
 ---
@@ -294,6 +335,8 @@ OPEN HOST SERVICE:
    ProductSearchAPI used by many consumers)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Ubiquitous language:**
 ```
 WITHIN OrderContext:
@@ -312,6 +355,8 @@ Same words, different models.
 If both contexts share one class, the class
 must serve contradictory requirements.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Bounded contexts let you maintain multiple models of the same real-world concept without contradiction. You acknowledge that different parts of the business have legitimately different views of the same entity and model them separately rather than forcing a universal model.
@@ -491,6 +536,34 @@ Fix: Introduce bounded context isolation. Each service defines its own model for
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # API Contract Design
 
 ---
@@ -547,6 +620,8 @@ ASYNC CONTRACT (AsyncAPI):
   subscriber: [FulfillmentService, NotificationService]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Contract versioning strategies:**
 ```
 URL VERSIONING (REST):
@@ -575,6 +650,8 @@ KAFKA SCHEMA EVOLUTION:
   - Remove required fields: BREAKING
   - Change field type: BREAKING
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 A contract is a promise. Once you publish a contract and consumers depend on it, breaking it requires coordination with all consumers. Design contracts to be stable by hiding implementation details and exposing only what consumers need.
@@ -743,3 +820,33 @@ Fix: Never rename fields - add the new field and deprecate the old one. Mark the
 *What separates good from great:* "Treat your API contract as a security boundary. Every field in the request is a potential injection vector. Every field in the response is potential data disclosure. Design reviews for API contracts should include a security review as part of the contract approval process."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l2-vite/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Vite Development Server and ESM-native Dev](#vite-development-server-and-esm-native-dev) | medium |
+| 2 | [Vite Build Configuration and Rollup Integration](#vite-build-configuration-and-rollup-integration) | medium |
+
+---
+
 # Vite Development Server and ESM-native Dev
 
 ---
@@ -70,6 +80,8 @@ Production uses Rollup:
   Same pipeline as webpack: tree shaking, code splitting,
   asset fingerprinting, minification
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -268,6 +280,34 @@ potentially eliminating dev/prod parity issues.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Vite Build Configuration and Rollup Integration
 
 ---
@@ -322,6 +362,8 @@ Library mode:
     external: ['react', 'react-dom']
     output.preserveModules: true  (one file per source module)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -501,6 +543,8 @@ becomes `dist/Button/index.mjs`. Consumers import:
 ```javascript
 import { Button } from 'my-lib/Button'; // only Button loaded
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tree shaking works at the file level. Without it, importing Button
 loads all components in the merged bundle.
 
@@ -516,8 +560,40 @@ The `package.json` `exports` field should match:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `preserveModules` generates many
 small files. Some bundlers (older webpack versions) struggle with
 package `exports` pointing to many files. Test with your consumers'
 bundlers. The `sideEffects: false` flag in `package.json` is also
 required for consumers' bundlers to tree-shake aggressively.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

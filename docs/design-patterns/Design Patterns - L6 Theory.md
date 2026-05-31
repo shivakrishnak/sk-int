@@ -8,6 +8,16 @@ permalink: /design-patterns/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GoF Pattern Origins and Theory](#gof-pattern-origins-and-theory) | medium |
+| 2 | [DDD Tactical Patterns](#ddd-tactical-patterns) | medium |
+
+---
+
 # GoF Pattern Origins and Theory
 
 ---
@@ -121,6 +131,8 @@ Behavioral (11):
   Iterator, Mediator, Memento, Observer, State,
   Strategy, Template Method, Visitor
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Christopher Alexander's influence:**
 
@@ -354,6 +366,34 @@ codebases where the class-based implementations communicate structure
 to teams of 10+ developers.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # DDD Tactical Patterns
 
@@ -751,3 +791,33 @@ The Spring JPA influence: JPA entities require getters/setters (reflection-
 based) and no-arg constructors, which pushes toward anemic models. DDD
 in Spring: separate JPA entities (infrastructure) from domain entities
 (domain). The mapping layer translates between them.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

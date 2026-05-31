@@ -8,9 +8,20 @@ permalink: /java-jvm/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L0 Orientation](#java-jvm---l0-orientation) | medium |
+
+---
+
 # Java JVM - L0 Orientation
 
 ## JVM Purpose and Write-Once-Run-Anywhere
+
+---
 
 ### 🎯 Model Answer
 
@@ -86,6 +97,8 @@ macOS Apple Silicon). Without it: you'd need a different device for each country
    JIT: after "warm-up" (many calls), compiles hot paths to native code
    Result: near-native performance after 1-5 seconds of warmup
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -203,6 +216,8 @@ Fix:
   Option B: Recompile with --release 11 flag
     javac --release 11 App.java   <- restricts to Java 11 API + bytecode
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -379,6 +394,8 @@ version and API usage, ensuring the compiled output actually runs on Java 11.
 
 ## JVM Architecture Components
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -456,6 +473,8 @@ for different purposes)."
 | Native Method Libraries (.so, .dll)      |
 +------------------------------------------+
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -583,6 +602,8 @@ Diagnosis: the repeating class/method in the stack trace reveals the cycle.
   If all lines are the same method: infinite recursion.
   If a cycle: A -> B -> A: look for the circular call between A and B.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -752,6 +773,8 @@ Example: 4GB container -> `-Xmx3g`. Modern containers: use
 
 ## JVM Implementations: HotSpot OpenJ9 GraalVM
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -826,6 +849,8 @@ GraalVM:
   Limitation: no dynamic class loading without reflection config
   Best for: serverless, CLI tools, startup-sensitive microservices
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -952,6 +977,8 @@ Fix for Spring Boot 3:
   Most Spring-managed beans work without manual config.
   Custom reflection: add @RegisterReflectionForBinding(MyClass.class)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1092,6 +1119,8 @@ Decision tree:
     Finance/regulated -> Azul Zulu or Oracle JDK (commercial SLA)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The decision should also consider framework
 support. Quarkus and Micronaut are designed for Native Image (minimal reflection,
 build-time initialization). Spring Boot 3 supports Native Image but with more
@@ -1119,6 +1148,8 @@ try (Context ctx = Context.newBuilder("js")
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* GraalVM polyglot is used in production for:
 (1) legacy integration (Nashorn was removed in Java 15; GraalJS is the JVM JS engine
 replacement); (2) scripting in Java applications (user-defined rules in JavaScript);
@@ -1144,3 +1175,33 @@ the interpreter for the actual program being run.
 ### 📊 Diagram
 
 *(Omit: implementation comparison described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

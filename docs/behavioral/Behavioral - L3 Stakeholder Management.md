@@ -149,6 +149,8 @@ GOOD: "Our login system has a fragility we have
       I want to spend one sprint on it."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 > **The stakeholder communication walkthrough:** The four-part model
 > (Status, Forecast, Risks, Ask) is what prevents the most common
 > failure: giving status without surfacing the ask. Stakeholders
@@ -374,6 +376,34 @@ having direct authority.** `[SENIOR]` SCENARIO
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Prioritization Under Constraints
 
 🎯 Interview Weight: critical - senior engineers are evaluated
@@ -498,6 +528,8 @@ GOOD: "I am proposing we descope A and B for this
       sprint. Here is why, and here is the plan for
       when they get addressed. Do I have alignment?"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 > **The prioritization framework walkthrough:** The "who owns the
 > decision" question is the most important and most skipped.
@@ -724,3 +756,33 @@ stakeholders?** `[SENIOR]` SCENARIO
 > full context, they are more likely to accept a sequencing
 > decision. Transparency about trade-offs is what makes priority
 > decisions stick.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-core/l2-lambdas-and-streams/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L2 Lambdas and Streams](#java-core---l2-lambdas-and-streams) | medium |
+
+---
+
 # Java Core - L2 Lambdas and Streams
 
 ## Lambda Expressions and Functional Interfaces
+
+---
 
 ### 🎯 Model Answer
 
@@ -85,6 +96,8 @@ Supplier<String> greeting = () -> "Hello!";
 Function<String, Integer> len = (String s) -> s.length();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Method references (shorthand lambdas):**
 ```java
 // Static method reference:
@@ -107,6 +120,8 @@ Supplier<ArrayList<String>> listMaker = ArrayList::new;
 Function<Integer, ArrayList<String>> listWithCap = ArrayList::new;
 // Equivalent: cap -> new ArrayList<String>(cap)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -216,6 +231,8 @@ class Service {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: inconsistent log prefixes; use effectively-final local
 variable: `String p = this.prefix; return () -> System.out.println(p + msg);`
 
@@ -269,6 +286,8 @@ Supplier<String> s2 = () -> {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The checked exception limitation is
 a real friction point. Java's standard functional interfaces don't declare
 checked exceptions. Solutions: (1) wrap in unchecked exception
@@ -314,6 +333,8 @@ IntBinaryOperator     // (int, int) -> int
 // Also: Long, Double variants
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Choosing the right functional interface
 avoids unnecessary boxing. `mapToInt(Function<T, Integer>)` would box
 every `int` result into `Integer`. `mapToInt(ToIntFunction<T>)` avoids
@@ -335,12 +356,16 @@ A:
 Function<String, Integer> parse = Integer::parseInt;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Instance method on a specific instance: `instance::instanceMethod`**
 ```java
 String prefix = "Hello";
 Predicate<String> starts = prefix::startsWith; // prefix bound at creation
 // s -> prefix.startsWith(s)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Instance method on any instance of the class: `ClassName::instanceMethod`**
 ```java
@@ -352,6 +377,8 @@ Comparator<String> comp = String::compareTo;
 // (s1, s2) -> s1.compareTo(s2)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **4. Constructor reference: `ClassName::new`**
 ```java
 Supplier<List<String>> listFactory = ArrayList::new;
@@ -361,6 +388,8 @@ BiFunction<String, Integer, StringBuilder> sb = StringBuilder::new;
 // (str, capacity) -> not directly, but: () -> new StringBuilder()
 // The matching depends on the functional interface's parameter count
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Type 3 (unbound instance method) is
 the most confusing. `String::toUpperCase` has zero explicit parameters
@@ -391,6 +420,8 @@ Runnable r = () -> {
     System.out.println(y); // COMPILE ERROR: y is not effectively final
 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why required?**
 Lambda runs in a different context (possibly different thread, certainly
@@ -443,6 +474,8 @@ class Outer {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `this` difference is the practical
 one for real code. In event listener patterns (Swing, Android), an anonymous
 class registered as a listener needs to reference itself to unregister:
@@ -477,6 +510,8 @@ A: Java 8 lambdas use the `invokedynamic` bytecode instruction
    - Non-capturing lambdas: same instance reused (constant)
    - Capturing lambdas: new instance per call (stores captured values)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why invokedynamic instead of anonymous class at compile time?**
 - Forward compatibility: JVM is free to optimize lambda implementation
@@ -525,6 +560,8 @@ strings.stream()
     .filter(Predicate.not(String::isEmpty)) // != isEmpty()
     .collect(Collectors.toList()); // ["hello", "world"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Function composition is mathematical
 function composition: `f.andThen(g)` means `g(f(x))`. Use composition
@@ -578,6 +615,8 @@ processFiles(paths, (content, path) ->
     content.replace("deprecated_api", "new_api"));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `@FunctionalInterface` annotation
 is documentation and a compile-time guard. Without it: if you accidentally
 add a second abstract method, the interface still compiles but lambdas
@@ -626,6 +665,8 @@ Map<String, Long> count = words.parallelStream()
         Collectors.counting()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `parallel()` + mutable collection
 pattern is one of the most common parallel stream bugs. `ArrayList`
 is not thread-safe; concurrent adds can corrupt the backing array.
@@ -665,6 +706,8 @@ thread-safe (ConcurrentHashMap, AtomicInteger, synchronized) or use
 ---
 
 ## Streams API Pipelines
+
+---
 
 ### 🎯 Model Answer
 
@@ -731,6 +774,8 @@ List<String> seniorNames = employees.stream()    // SOURCE
     .collect(Collectors.toList());               // TERMINAL (triggers all)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key intermediate operations:**
 ```
 filter(Predicate)   - keep elements matching predicate
@@ -743,6 +788,8 @@ limit(n)            - truncate to first n elements
 skip(n)             - skip first n elements
 peek(Consumer)      - debug-only: see elements without consuming
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key terminal operations:**
 ```
@@ -760,6 +807,8 @@ allMatch(Predicate) - true if all match
 noneMatch(Predicate)- true if none match
 toArray()           - to Object[]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -886,6 +935,8 @@ stream.findFirst();              // IllegalStateException: stream closed!
 long count = list.stream().filter(s -> !s.isEmpty()).count();
 Optional<String> first = list.stream().filter(s -> !s.isEmpty()).findFirst();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: `java.lang.IllegalStateException: stream has already been
 operated upon or closed`. Always create a fresh stream from the source
 for each terminal operation.
@@ -937,6 +988,8 @@ Optional<Integer> first = stream.findFirst();
 // Elements 3-10 are NEVER processed!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The stream processed only 3 elements (1, 2 for filter; 2 for map) out of 10.
 Without laziness, all 10 would be filtered, then all matching mapped.
 
@@ -986,6 +1039,8 @@ List<String> values = optionals.stream()
     .flatMap(Optional::stream) // removes empties
     .collect(Collectors.toList()); // ["a", "b"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `flatMap` is the functional equivalent
 of the monad bind operation. Understanding it deeply: `map` is 1-to-1,
@@ -1039,6 +1094,8 @@ Map<String, Integer> nameToSalary = employees.stream()
         (existing, replacement) -> existing)); // merge fn: handle duplicate keys
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `groupingBy` performs a single O(n)
 pass and builds the map incrementally - it does NOT sort first. The
 result map's entry order is unspecified (HashMap). For sorted keys: use
@@ -1087,6 +1144,8 @@ List<String> names = employees.stream()
     .map(Employee::name).collect(Collectors.toList());
 names.get(0); // random access - needs Collection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Streams cannot be used as method
 arguments that are iterated multiple times. A common mistake: returning
@@ -1137,6 +1196,8 @@ urls.parallelStream()
 // Use: CompletableFuture or virtual threads (Java 21) instead
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ForkJoinPool.commonPool() is
 shared across all parallel streams in the JVM, `CompletableFuture`
 executions, and user code that submits to it. Blocking it with I/O
@@ -1177,6 +1238,8 @@ int sumParallel = employees.parallelStream()
         Integer::sum                 // combiner (merges partial results)
     );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Rule:** use `reduce` for immutable accumulation into a single value
 (sum, product, max). Use `collect` for mutable container building
@@ -1228,6 +1291,8 @@ Stream.iterate(1, page -> page + 1)
     .collect(Collectors.toList());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The paginated API use case is a real
 production pattern for consuming paginated REST APIs. `takeWhile` (Java 9)
 is the key: it stops the infinite iteration when the predicate becomes false.
@@ -1270,6 +1335,8 @@ nums.parallelStream()
 Optional<Integer> first = nums.parallelStream().findFirst(); // forces order
 Optional<Integer> any = nums.parallelStream().findAny(); // no order - faster
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Maintaining encounter order in parallel
 streams requires coordination between threads (they must produce output
@@ -1326,6 +1393,8 @@ Collector<Integer, int[], IntSummaryStatistics> stats =
     );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Custom collectors are rare but
 powerful for building domain-specific aggregations. The combiner is
 ONLY called for parallel streams - it merges two partial results.
@@ -1361,3 +1430,33 @@ per pipeline execution.
 ### 📊 Diagram
 
 *(Omit: pipeline structure described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

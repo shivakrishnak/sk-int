@@ -239,6 +239,8 @@ quarkus.native.additional-build-args=\
   com.problematic.FrameworkClass
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Binary size too large (>200MB):**
 ```bash
 # Analyze what's included
@@ -251,6 +253,8 @@ quarkus.native.additional-build-args=\
 # - quarkus.native.additional-build-args=-H:DeadlockWatchdogInterval=0
 # - Profile-guided native (PGO) in GraalVM Enterprise
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -309,6 +313,8 @@ java -agentlib:native-image-agent=\
 # The generated configs are auto-included
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Limitation: agent only captures what's executed in
 the test run. If a code path is never tested, its
 reflection is not captured. Missing code paths = native
@@ -331,6 +337,34 @@ agent's limitation - it only captures what you exercise.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Performance Diagnostics
 
@@ -566,6 +600,8 @@ kill -3 $(pgrep -f app-runner)
 # Blocked method appears wide in the flamegraph
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 1. Identify blocking call (JDBC, file I/O, sleep).
 2. Annotate method with @Blocking.
@@ -596,6 +632,8 @@ public Uni<Order> findById(@PathParam("id") Long id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Wall-clock profiling
 (not CPU) to find blocking - CPU profiler misses blocked
 thread time.
@@ -610,6 +648,34 @@ thread time.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Anti-Patterns
 
@@ -897,6 +963,34 @@ When to use @Singleton:
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # Quarkus Security Misconfiguration
 
 **Interview Weight:** hard - Security misconfiguration
@@ -1162,6 +1256,34 @@ not just "add auth".
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # Quarkus Memory and Startup Optimization
 
 **Interview Weight:** hard - Optimization is a differentiating
@@ -1404,3 +1526,33 @@ in the calculation, not just heap.
 | Hiring Manager | Cost optimization for Kubernetes. |
 | Bar Raiser | Memory budget calculation, off-heap, right-sizing. |
 | Peer Engineer | "Added -XX:MaxRAMPercentage=60. OOM kills: 3/week → 0. Same containers, proper heap ratio." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

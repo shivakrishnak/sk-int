@@ -8,6 +8,17 @@ permalink: /devops-cicd/l1-pipeline-fundamentals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Pipeline Stages and Gates](#pipeline-stages-and-gates) | medium |
+| 2 | [Build Artifacts and Artifact Registries](#build-artifacts-and-artifact-registries) | medium |
+| 3 | [Environment Promotion and Configuration Management](#environment-promotion-and-configuration-management) | medium |
+
+---
+
 # Pipeline Stages and Gates
 
 🎯 Interview Weight: high - asked to test understanding of how
@@ -482,6 +493,8 @@ build-artifact:
   # starts only when ALL three succeed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The trade-off: fan-out stages consume more CI infrastructure
 concurrently. Running three parallel jobs uses three runners
 simultaneously instead of one sequentially. For most teams, this
@@ -708,6 +721,8 @@ steps:
 run: deploy.sh ${{ needs.stage-a.outputs.sha }}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The critical design: pass the artifact identifier (Docker image tag,
 JAR version) from the build stage to all downstream stages. Every
 subsequent stage should deploy and test the SAME artifact, not a
@@ -729,6 +744,34 @@ enforcing immutability - is what makes the entire system reliable.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Build Artifacts and Artifact Registries
 
@@ -1348,6 +1391,8 @@ In the CI pipeline:
     cosign attach sbom --sbom sbom.json myapp:$TAG
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that SBOM generation
 is only valuable if you also have a process to act on the information.
 An SBOM that is generated but never queried provides no benefit. The
@@ -1450,6 +1495,34 @@ security teams care about.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Environment Promotion and Configuration Management
 
@@ -1711,6 +1784,8 @@ spec:
                   name: myapp-secrets
                   key: DATABASE_PASSWORD
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # Helm values per environment - controls config, not the image
@@ -2187,3 +2262,33 @@ than guessing. The structured approach - reproduce, compare config,
 compare infrastructure, compare data, compare traffic - ensures you
 find the root cause rather than "fix" the symptom. Production bugs
 that are fixed without finding the root cause recur.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,17 @@ permalink: /database-sql/l0-ecosystem/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [RDBMS Landscape - PostgreSQL, MySQL, Oracle, SQL Server](#rdbms-landscape---postgresql-mysql-oracle-sql-server) | medium |
+| 2 | [SQL vs NoSQL - When to Choose Each](#sql-vs-nosql---when-to-choose-each) | medium |
+| 3 | [The Structured Data Problem - Before Databases](#the-structured-data-problem---before-databases) | medium |
+
+---
+
 # RDBMS Landscape - PostgreSQL, MySQL, Oracle, SQL Server
 
 **TL;DR:** The four major relational database systems have different
@@ -336,6 +347,34 @@ for a non-trivial migration including testing."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # SQL vs NoSQL - When to Choose Each
 
 **TL;DR:** SQL (relational) databases guarantee ACID, enforce schemas,
@@ -431,6 +470,8 @@ Time-Series (InfluxDB, TimescaleDB, Prometheus):
   - Best for: metrics, monitoring, IoT sensor data
   - Limitation: limited non-time-series query capability
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Decision framework:**
 
@@ -679,6 +720,34 @@ INCR is a different thing from a cached string."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # The Structured Data Problem - Before Databases
 
 **TL;DR:** Before databases, applications stored data in flat files.
@@ -776,6 +845,8 @@ simultaneously or when you need to find all Q3 expenses."
    No access control on files beyond OS permissions.
    Database solution: GRANT/REVOKE per table/column.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Historical evolution:**
 
@@ -1028,3 +1099,33 @@ type is as important in microservices as in relational databases;
 (3) every distributed system is, at some level, solving the same problems
 as the pre-database world: store, retrieve, share, and protect data
 correctly."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

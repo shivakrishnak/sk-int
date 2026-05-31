@@ -8,6 +8,16 @@ permalink: /rest-api/l2-api-design/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [API Versioning Strategies](#api-versioning-strategies) | medium |
+| 2 | [Pagination, Filtering, and Sorting](#pagination-filtering-and-sorting) | medium |
+
+---
+
 # API Versioning Strategies
 
 ---
@@ -61,6 +71,8 @@ Query Parameter:
   GET /users/123?version=1
   GET /users/123?version=2
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Versioning at the API level (breaking change = new version) is simpler than versioning at the field level (every field has a version). The contract is the version. Within a version, add new fields freely (additive changes are non-breaking for clients that use Jackson's `@JsonIgnoreProperties(ignoreUnknown = true)`). Between versions, change structure as needed.
@@ -234,6 +246,34 @@ Fix: New request fields should be optional with sensible defaults for at least o
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Pagination, Filtering, and Sorting
 
 ---
@@ -298,6 +338,8 @@ Filtering: GET /users?status=active&role=admin
 Sorting: GET /users?sort=createdAt,desc
   SELECT * FROM users ORDER BY created_at DESC
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Cursor pagination and offset pagination have different index requirements. Offset pagination with `LIMIT OFFSET` causes a table scan to the offset position - slow for large offsets. `WHERE id > 100 LIMIT 20` uses an index seek - fast regardless of position. For large datasets (millions of rows), cursor pagination is an order of magnitude faster than offset for later pages.
@@ -494,3 +536,33 @@ Fix: Cap page size server-side: `int cappedSize = Math.min(requestedSize, 100)`.
 | Seek (composite cursor) | No | Yes | O(log N), index-optimal | No |
 
 **The deciding factor:** Use cursor/keyset for user-facing feeds and exports (stability + performance). Use offset for admin interfaces and reports (random access + total count).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

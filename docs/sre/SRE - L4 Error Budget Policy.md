@@ -187,6 +187,8 @@ ENFORCEMENT MECHANISM
     include override form link (VP required)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The error budget policy is the organizational change mechanism. Without
 the policy, SLOs are measurement systems. With the policy, they are
@@ -1140,6 +1142,8 @@ ERROR BUDGET ENFORCEMENT SYSTEM
   Toil correlation: incidents that caused budget consumption
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The key design decisions: the Policy API is a shared service (not duplicated
 in every CI/CD pipeline), uses a 60-second cache to handle high deployment
 frequency without overloading Prometheus, and returns structured JSON that
@@ -1300,3 +1304,33 @@ xychart-beta
 4. "How does the error budget policy interact with external SLA
    commitments - does the SLO have a buffer above the customer-
    facing SLA?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

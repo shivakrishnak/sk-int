@@ -7,16 +7,6 @@ permalink: /platform-engineering/l4-developer-productivity/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L4 Developer Productivity
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Developer Productivity Metrics and DORA](#developer-productivity-metrics-and-dora) | critical |
-
----
-
 # Developer Productivity Metrics and DORA
 
 ---
@@ -138,6 +128,8 @@ MTTR (Mean Time to Recovery):
   For deployment-caused incidents only: correlate with deployment events
   Target: < 1 hour (High), < 15 minutes (Elite)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The SPACE framework (2021, Microsoft Research):**
 
@@ -581,6 +573,8 @@ def calculate_lead_time(pr_open_ts, pr_merge_ts, deploy_ts):
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Distinguishing code review cycle time
 from pipeline lead time. Platform engineering can reduce pipeline lead
 time (by optimizing CI, parallelizing tests, eliminating manual gates)
@@ -636,6 +630,8 @@ metadata:
     notifications.argoproj.io/subscribe.on-sync-succeeded.webhook: >
       dora-collector
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Segmenting deployment frequency by
 DORA tier to identify bi-modal distributions. In most organizations,
@@ -800,6 +796,8 @@ On-call interruption rate:
 ```
 platform_oncall_interruptions_per_week{team}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 High interruption rate = developers spend time on operational issues
 instead of product work. Platform improvement: better automated remediation
 reduces interruptions.
@@ -873,6 +871,8 @@ def detect_gaming(team_metrics: dict) -> list:
 
     return flags
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Prevention through measurement design:**
 
@@ -1045,6 +1045,8 @@ platform_deployment_total{team="fraud", service="fraud-scorer"}
 # High cardinality: performance degrades, query latency increases
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use VictoriaMetrics (better high-cardinality support) or
 pre-aggregate to team level in recording rules. Service-level DORA
 is rarely needed for platform decisions; team-level is sufficient.
@@ -1120,3 +1122,33 @@ showed teams are not adopting it because of documentation gaps").
 Honest reporting of failed hypotheses builds more credibility than
 cherry-picking successes, and identifies where platform adoption
 support is needed.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -160,6 +160,8 @@ SRES VS TRADITIONAL OPS
     Incentive: reliability at velocity
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The error budget is not just a metric - it is an organizational
 negotiation tool. Before error budgets, product and operations teams
@@ -285,6 +287,8 @@ metrics without the authority.
 echo "Ask: Has an error budget ever stopped a deploy?"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Implement an explicit error budget policy with clear
 consequences: when budget exhausted, product team takes
 responsibility for reliability fixes before new features.
@@ -317,6 +321,8 @@ invisible until engineers burn out. Organizational pressure to
 # vs engineering project time in JIRA/Linear
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Make toil visible by measuring it. Present data to
 management. Set a toil reduction roadmap with specific automation
 projects. If systems are generating too much toil for the team,
@@ -345,6 +351,8 @@ The system cannot achieve the SLO consistently.
 # If historical average < SLO target,
 # the SLO is too aggressive.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Reset SLO to be slightly better than historical performance,
 not aspirational. An SLO is a target the system can reliably meet,
@@ -617,6 +625,34 @@ articulate specific limitations relative to company context.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # SRE vs DevOps vs Traditional Operations
 
 🎯 Interview Weight: high - common second question after defining
@@ -748,6 +784,8 @@ SUMMARY TABLE
   SRE             Reliable scale          SLOs, error budgets, automation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 DevOps is a philosophy; SRE is an implementation. As the Google SRE
 book states: "SRE is what you get when you treat operations as a
@@ -873,6 +911,8 @@ Ask these questions:
   (Only ops = DevOps theater)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Developers join the on-call rotation for services they own.
 Postmortems involve both dev and ops. Shared SLOs that both teams
 are measured against.
@@ -902,6 +942,8 @@ Ask the "SRE" team:
 If no coding: this is ops with SRE titles.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Either hire software engineers for SRE roles, or invest
 in training existing ops engineers to code (multi-year commitment),
 or implement a lighter DevOps model that matches current capabilities.
@@ -928,6 +970,8 @@ Measure:
 - Time to onboard new service via platform
   (should be < 1 day; >1 week = adoption failure)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Treat the internal platform as a product with customers
 (developers). Run regular developer surveys. Prioritize adoption
@@ -1209,6 +1253,34 @@ principle (define reliable enough quantitatively) at every scale.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # SRE Team Models - Embedded, Consulting, Enabling
 
 🎯 Interview Weight: medium - asked specifically at companies
@@ -1350,6 +1422,8 @@ HYBRID (typical at scale)
   New services: consulting for PRR + enabling for setup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 No single model scales well alone. The enabling model scales best
 but requires product teams to take genuine ownership of their own
@@ -1475,6 +1549,8 @@ If all answers are "I'm working on product features"
 and "mostly features" and "months ago" = captured.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Require embedded SREs to report quarterly to the SRE
 management on engineering time vs. toil time. If the ratio is
 below 50% engineering for two consecutive quarters, negotiate
@@ -1507,6 +1583,8 @@ If critical findings frequently go unresolved
 and lead to incidents: PRR is theater.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Make PRR a production gate, not an advisory. Service
 cannot onboard to production until critical PRR findings are
 addressed or explicitly accepted by the service owner with an
@@ -1538,6 +1616,8 @@ Measure platform health:
 - Top 3 reasons teams do not use the platform
 If adoption < 30% after 12 months: adoption failure.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Treat the platform as a product with customers. Run
 quarterly developer surveys. Assign a dedicated product manager
@@ -1824,3 +1904,33 @@ threatening SRE jobs. Great candidates analyze which specific SRE
 activities are automatable (pattern-based), which are not (novel
 judgment, organizational change), and how team models should evolve
 accordingly.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

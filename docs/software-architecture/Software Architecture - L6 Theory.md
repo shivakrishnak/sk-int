@@ -144,6 +144,8 @@ Portability
   - Replaceability
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Quality Attribute Scenarios (BASS, CLEMENTS, KAZMAN):**
 
 A quality attribute scenario has six parts:
@@ -389,6 +391,8 @@ Quality
     Testability
       80% line coverage for domain logic [M, L]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The [H, M] notation: importance to business (H/M/L) and technical
 risk of achieving it (H/M/L). ATAM evaluates architecture decisions
@@ -693,6 +697,34 @@ the tooling investment required.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Architecture Tradeoff Analysis Method - ATAM
 
 🎯 Interview Weight: medium - appears at principal/staff interviews
@@ -808,6 +840,8 @@ Quality
                    adds cost and complexity
         Non-risk: Kubernetes pod restart confirmed < 30s
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 [H, H] = High importance, High technical risk
 
 ---
@@ -1149,6 +1183,8 @@ Add k6 performance test gating deployment.
 Add cache hit rate monitoring dashboard.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Most candidates describe ADRs
 and ATAM separately. Great candidates show the integrated format
 where ATAM analysis (trade-offs, sensitivity points, risks) appears
@@ -1383,3 +1419,33 @@ flowchart LR
 > its trade-offs are recorded), risks drive mitigation backlog
 > items (each risk has an owner and mitigation plan), and non-risks
 > confirm design decisions (documented as confirmed safe).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

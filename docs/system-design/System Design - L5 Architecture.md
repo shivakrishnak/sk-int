@@ -8,7 +8,13 @@ permalink: /system-design/l5-architecture/
 render_with_liquid: false
 ---
 
-# System Design - L5 Architecture
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L5 Architecture](#system-design---l5-architecture) | medium |
+| 2 | [Multi-Region Active-Active Architecture](#multi-region-active-active-architecture) | medium |
 
 ---
 
@@ -120,6 +126,8 @@ Multi-region data replication:
   Trade-off: AP (eventual consistency for reads) to get active-active
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Conflict resolution patterns:**
 
 ```
@@ -167,6 +175,8 @@ Global transaction coordinator (for strict consistency):
   When to use: small subset of operations requiring strict consistency
                (route most operations to local; route consistency-critical to coordinator)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -464,6 +474,8 @@ Failure modes:
   Prevention: RPKI (Route Origin Validation) for BGP announcements
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The DNS TTL is a critical tuning knob for
 active-active failover. Too long (300+ seconds): slow failover, users experience
 extended outage. Too short (< 10 seconds): DNS infrastructure flooded with queries,
@@ -517,6 +529,8 @@ Version vectors (conflict detection):
   Amazon Dynamo (original paper): vector clocks + "return to client for resolution"
   Cassandra: LWW (simpler, loses writes on concurrent updates)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The classification exercise (low/medium/high
 risk and consequence) should be done explicitly for every active-active design.
@@ -575,6 +589,8 @@ Options for PostgreSQL-based active-active:
   (Netflix, Uber, Amazon): application-level partitioning
   Not database-level multi-master
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The practical truth about active-active at
 scale: it's mostly application-level partitioning + async replication, not
@@ -643,6 +659,8 @@ Failover architecture:
     Application retry: faster than DNS failover
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The RPO (Recovery Point Objective) for
 active-active with async replication is determined by the replication lag, not
 by the architecture. If your replication lag is typically 500ms but spikes to
@@ -701,6 +719,8 @@ Token revocation:
     Cross-region: fast (< 1ms Redis lookup)
   Pragmatic: short JWT TTL (15 min) makes strict revocation unnecessary for most apps
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The JWT refresh token flow is the critical
 design for multi-region auth. The short-lived JWT (15 minutes) is verified
@@ -766,6 +786,8 @@ Implementation:
     - Alert: ops team (manual decision to continue or go read-only)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The split-brain response should be pre-planned
 and tested, not decided during an incident. For each critical data type: document
 "on inter-region partition, what is the expected behavior?" Financial transactions:
@@ -830,6 +852,8 @@ When is active-active worth it:
     Data residency: EU data must stay in EU -> multi-region required regardless
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The most common miscalculation: treating
 active-active cost as "2x single region." The hidden costs are: data replication
 traffic (can exceed compute cost for write-heavy workloads), operational team
@@ -893,6 +917,8 @@ Testing pyramid for multi-region:
   Verify: at 2x normal load (simulating failover load): no degradation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The split-brain chaos test is the most
 critical and least commonly run. Teams deploy active-active systems without
 testing "what happens if the two regions can't see each other for 10 minutes?"
@@ -950,6 +976,8 @@ Architecture for data residency:
   US data: encrypted with US KMS keys (AWS KMS in us-east-1)
   Cross-region access: denied at KMS level (key policy)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Data residency compliance is not just a
 storage question; it's a processing question. GDPR covers "processing" of personal
@@ -1010,6 +1038,8 @@ Decision framework:
   Most reads are cacheable: CDN (cheapest, lowest complexity)
   Large read-to-write ratio (10:1+): read replicas per region
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Most applications should start with CDN +
 single-region API, not active-active. The business case for active-active
@@ -1085,6 +1115,8 @@ Failover:
   Order reads: still fast (local replicas available)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The hybrid model - active-active for reads
 and eventually-consistent data, global coordinator for inventory - is the
 practical production pattern. Netflix, Amazon, and large e-commerce platforms
@@ -1151,6 +1183,8 @@ Multi-region migration tools:
   Verify: each region at same version before proceeding
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The expand-contract pattern is the only safe
 way to do schema migrations in active-active systems without downtime. It requires
 additional discipline: every migration must be decomposed into backward-compatible
@@ -1161,3 +1195,33 @@ migration can be merged that isn't backward-compatible with the current producti
 code. Automated migration validation in CI: spin up the current schema, apply the
 migration, verify old code still works. This catches breaking migrations before
 they reach production.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /react/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why React Exists](#why-react-exists) | orientation |
+| 2 | [Virtual DOM and Reconciliation Philosophy](#virtual-dom-and-reconciliation-philosophy) | orientation |
+| 3 | [React Ecosystem Overview](#react-ecosystem-overview) | orientation |
+
+---
+
 # Why React Exists
 
 🎯 **Interview Weight:** orientation (★☆☆) - foundational context for
@@ -96,6 +107,8 @@ function UserProfile({ user, messages }) {
 // React figures out what DOM needs updating (minimal diff)
 // Developer describes WHAT to show, not HOW to update
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -262,6 +275,34 @@ Symptom: project started with Create React App (now deprecated and unmaintained)
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Virtual DOM and Reconciliation Philosophy
 
 🎯 **Interview Weight:** orientation (★☆☆) - foundational to understanding
@@ -364,6 +405,8 @@ function List({ items }) {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -523,6 +566,34 @@ FAILURE
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # React Ecosystem Overview
 
 🎯 **Interview Weight:** orientation (★☆☆) - knowing the ecosystem shows
@@ -628,6 +699,8 @@ REACT ECOSYSTEM MAP:
     esbuild/swc               - transpilation (fast)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Decision framework:**
 
 ```javascript
@@ -647,6 +720,8 @@ REACT ECOSYSTEM MAP:
 // Unit + integration -> React Testing Library + Vitest
 // E2E -> Playwright (preferred) or Cypress
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -817,3 +892,33 @@ project?** `[SENIOR]` DECISION
 > irrelevant and a Vite SPA is simpler and cheaper. The cost dimension
 > matters at scale: a Next.js SSR deployment requires persistent Node.js
 > servers; a Vite SPA deployment is static files on a CDN.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

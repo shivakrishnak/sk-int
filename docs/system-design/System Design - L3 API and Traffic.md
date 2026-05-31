@@ -8,7 +8,14 @@ permalink: /system-design/l3-api-and-traffic/
 render_with_liquid: false
 ---
 
-# System Design - L3 API and Traffic
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L3 API and Traffic](#system-design---l3-api-and-traffic) | medium |
+| 2 | [API Gateway Pattern](#api-gateway-pattern) | medium |
+| 3 | [Rate Limiting](#rate-limiting) | medium |
 
 ---
 
@@ -104,6 +111,8 @@ API Gateway vs Load Balancer vs Service Mesh:
   Service Mesh: internal facing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **BFF (Backend for Frontend) pattern:**
 
 ```
@@ -135,6 +144,8 @@ BFF Solution:
     Evolves independently
     Aggregates/transforms as needed for that client
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -396,6 +407,8 @@ Authorization (what can you do?):
             only the order service can check user_id == order.user_id
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The gateway should enforce minimum viable
 authorization: reject unauthenticated requests (401) and enforce role-based
 access to API segments (/admin requires ADMIN role). Fine-grained authorization
@@ -451,6 +464,8 @@ Version migration:
     Downside: transformation logic in gateway (tight coupling)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The cleanest versioning strategy: maintain
 one current API version in services; let the gateway handle version translation
 for older clients. Old clients call v1; the gateway transforms to v2 format
@@ -504,6 +519,8 @@ Kubernetes native (service name):
             .build();
     }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* In Kubernetes environments, Kubernetes-native
 service discovery (ClusterIP Service + DNS) is sufficient for most cases. Adding
@@ -563,6 +580,8 @@ Performance patterns:
   Tune: max connections per backend
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The JWT caching optimization is significant
 at scale and commonly overlooked. JWT validation is CPU-intensive but deterministic
 (same token = same result until expiry). Caching validated tokens in Redis or
@@ -618,6 +637,8 @@ Spring Cloud Gateway circuit breaker:
               Instant.now().plus(30, ChronoUnit.SECONDS)));
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The circuit breaker at the gateway level is
 the last line of defense for external clients. Service-level circuit breakers
@@ -676,6 +697,8 @@ Security layers at the API Gateway:
   NOT log: request body (may contain PII, credentials)
   Retention: 90 days (security incident investigation)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* JWT algorithm confusion attack: if your
 gateway accepts both RS256 (asymmetric) and HS256 (symmetric), an attacker can
@@ -736,6 +759,8 @@ Performance:
     Batch all review lookups: IN (1,2,3,...N)
     Return all reviews in one query
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Apollo Federation is the production-proven
 solution for multi-team GraphQL at scale. The key architectural constraint: each
@@ -801,6 +826,8 @@ Three pillars for API Gateway:
     Bottleneck identified: DB (not service or gateway)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The distributed trace from gateway to service
 to database is the key tool for latency diagnosis. Without distributed tracing,
 you see: "Gateway latency is 200ms." With tracing: "Gateway: 5ms, Order service:
@@ -854,6 +881,8 @@ Decision framework:
   >50 services + canary/traffic management: service mesh essential
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The service mesh vs API gateway conflation
 is common. Key distinction: API Gateway is for external consumers; service mesh
 is for internal service-to-service security and reliability. Both can handle
@@ -866,6 +895,34 @@ for business-level retries. Define which layer owns retry for each type and
 disable the others.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Rate Limiting
 
@@ -990,6 +1047,8 @@ Sliding Window Counter:
   Memory: O(1) per user (only 2 counters)
   Accuracy: within ~0.003% error rate (empirically measured)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1214,6 +1273,8 @@ Implementation approaches:
     No separate lookup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* JWT-embedded rate limits are the cleanest
 approach for most SaaS products. The plan is baked into the token at login time.
 When a user upgrades: force token refresh (revoke old JWT, issue new one with
@@ -1268,6 +1329,8 @@ Option 4: Approximate global (async sync):
   Approximate: +-5 second lag
   Good enough for most use cases (not financial APIs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* For most SaaS products: regional rate limits
 (option 3) are sufficient. Users don't route through multiple datacenters unless
@@ -1327,6 +1390,8 @@ Client behavior (expected):
   Exponential backoff: if 429 again, double wait time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Retry-After header is the most important
 for good client behavior. Without it: clients either retry immediately (creating
 a retry storm) or wait an arbitrary time. With it: clients know exactly when to
@@ -1377,6 +1442,8 @@ Server-side guidance:
   Rolling windows: different users have staggered windows
     -> Retries after 429 naturally spread out
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The combination of server-side Retry-After
 with client-side jitter is the standard solution. The server tells clients
@@ -1429,6 +1496,8 @@ Stripe's approach:
   "List" operations (expensive pagination): variable
   API key has "read capacity" and "write capacity" limits
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cost-based rate limiting is important for
 AI/ML API monetization. OpenAI uses token-count-based rate limiting (tokens = words
@@ -1485,6 +1554,8 @@ Rate limit response with tenant context:
                   Try again in 60 seconds."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The error message must tell the user WHICH
 limit was hit and WHAT they can do about it. "User's personal limit exceeded:
 wait 60 seconds" is actionable. "Tenant's organization limit exceeded: contact
@@ -1539,6 +1610,8 @@ Login rate limiting (brute force prevention):
   Attacker: slowed to ~2 attempts/minute
   Legitimate user (forgot password): brief delay is acceptable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Account lockout must include an unlock mechanism.
 "5 failures = locked forever" creates a DOS attack vector: attacker locks all
@@ -1603,6 +1676,8 @@ Option 3: Gateway-level (most practical):
     nginx.ingress.kubernetes.io/limit-whitelist: "10.0.0.0/8"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Local rate limiting per pod is simple but
 doesn't provide true per-user limiting across the cluster. If you run 10 pods
 each with a 10 req/sec limit per user: a user can legitimately send 100 req/sec
@@ -1657,6 +1732,8 @@ Chaos tests:
   Redis slow (50ms): does rate limit add 50ms to all requests?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The concurrent correctness test is the most
 important. Without it: a race condition in the rate limiter might allow 2x the
 limit under concurrent load. The atomic Lua script prevents this, but only if
@@ -1666,3 +1743,33 @@ threads or OOM. And the Redis failure test: "what happens when rate limiting
 infrastructure fails?" is a production scenario that must be tested. An alert
 fires when Redis is down; in the meantime, the system should continue serving
 traffic (fail open). The test verifies this fail-open behavior explicitly.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

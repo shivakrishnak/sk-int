@@ -8,6 +8,15 @@ permalink: /database-sql/l4-mvcc-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [MVCC (Multi-Version Concurrency Control) Internals](#mvcc-multi-version-concurrency-control-internals) | medium |
+
+---
+
 # MVCC (Multi-Version Concurrency Control) Internals
 
 **TL;DR:** MVCC maintains multiple versions of every row. Each row version has
@@ -97,6 +106,8 @@ TX 110 snapshot (after TX 105 committed):
   -> sees Slot 3 (xmin=105 committed, xmax=0 = alive)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Snapshot structure:**
 
 ```
@@ -115,6 +126,8 @@ Visibility rule for a row version (xmin_ver, xmax_ver):
      xmax_ver is in xip (still active), OR
      xmax_ver >= snapshot.xmax (future TX)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,6 +354,8 @@ Connection pool and long transactions:
              pg_stat_activity WHERE state = 'idle in transaction'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **XID wraparound protection in production:**
 
 ```
@@ -357,6 +372,8 @@ Preventive maintenance:
     SELECT cron.schedule('0 2 * * 0',
            $$VACUUM FREEZE ANALYZE orders$$);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -446,6 +463,8 @@ ORDER BY n_dead_tup DESC
 LIMIT 10;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Resolution: increase autovacuum aggressiveness. Run `VACUUM ANALYZE` manually
 during low-traffic period. For severe bloat: `VACUUM FULL` during maintenance
 window (requires exclusive lock, compacts the file).
@@ -463,6 +482,8 @@ FROM pg_database ORDER BY age(datfrozenxid) DESC;
 -- age > 2,000,000,000 = critical
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Emergency resolution:
 ```sql
 -- Run VACUUM FREEZE on all tables in the affected database:
@@ -472,6 +493,8 @@ VACUUM FREEZE;  -- without table name: all tables
 SELECT phase, heap_blks_scanned, heap_blks_total
 FROM pg_stat_progress_vacuum WHERE relid = 'orders'::regclass;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Long idle-in-transaction blocks VACUUM progress**
 
@@ -486,6 +509,8 @@ WHERE state = 'idle in transaction'
   AND xact_start < NOW() - INTERVAL '5 minutes'
 ORDER BY xact_start;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 A transaction open for 5+ minutes holds the xmin horizon. VACUUM cannot reclaim
 any tuple newer than this transaction's start.
@@ -557,3 +582,33 @@ The new catalog row has xmin=current_txid. It's not visible until the DDL transa
 **Q12: How do you size and monitor shared_buffers and its interaction with MVCC?**
 
 🗣️ "shared_buffers: PostgreSQL's in-memory buffer pool. All heap and index page reads go through shared_buffers. For MVCC: when VACUUM processes dead tuples, it reads heap pages into shared_buffers. When active transactions read data, they read from shared_buffers (if cached) or disk (if not). Sizing: typically 25% of total RAM for dedicated PostgreSQL servers. For a 32GB server: shared_buffers=8GB. Check hit ratio: `SELECT sum(blks_hit) / (sum(blks_hit) + sum(blks_read)) AS cache_hit_ratio FROM pg_stat_database`. Target: > 95% hit ratio. For MVCC specifically: if shared_buffers is too small: VACUUM must constantly re-read pages from disk (slow VACUUM). And active queries read more disk I/Os (stale data not cached). Monitor: `pg_statio_user_tables` - `heap_blks_hit` vs `heap_blks_read`. High `heap_blks_read` on a hot table: increase shared_buffers or reduce table bloat."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

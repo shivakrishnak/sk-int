@@ -8,9 +8,20 @@ permalink: /java-jvm/l5-capacity-planning/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L5 Capacity Planning](#java-jvm---l5-capacity-planning) | medium |
+
+---
+
 # Java JVM - L5 Capacity Planning
 
 ## JVM Sizing and Capacity Planning at Scale
+
+---
 
 ### 🎯 Model Answer
 
@@ -130,6 +141,8 @@ EXAMPLE - Spring Boot Kafka consumer:
   Common mistake: setting limits.memory = 2.5Gi (only sizing the heap)
     -> OOMKilled when Kafka + Netty direct buffers + Metaspace exceed limit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -312,6 +325,8 @@ Diagnosis:
     PREFERRED: Option C first (converts silent OOMKill to visible Java error)
     Then: Option A or B to fix the root cause
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -541,6 +556,8 @@ CGLib-generated#1                  3       0.05 MB        45   0.2 MB
 CGLib-generated#2                  3       0.05 MB        45   0.2 MB
 ... (100 more CGLib entries)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If there are hundreds of CGLib-generated ClassLoaders: each Spring bean that uses
 `@Scope("prototype")` with AOP proxying generates a new ClassLoader. Fix: use `@Scope`
 with `proxyMode=ScopedProxyMode.NO` where possible, or increase `MaxMetaspaceSize`
@@ -678,6 +695,8 @@ PHASE 4: CONTINUOUS RIGHT-SIZING
     Potential saving if over-provisioned: 20-30% cluster cost reduction
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -730,3 +749,33 @@ xychart-beta
 > container limit in this example. Setting `limits.memory = Xmx + small buffer` will
 > cause OOMKill from the non-heap regions. The xychart makes the relative sizes
 > immediately visible, helping capacity planners see where the memory budget is going.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

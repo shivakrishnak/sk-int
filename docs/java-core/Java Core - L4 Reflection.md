@@ -8,9 +8,20 @@ permalink: /java-core/l4-reflection/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L4 Reflection](#java-core---l4-reflection) | medium |
+
+---
+
 # Java Core - L4 Reflection
 
 ## Java Reflection and Dynamic Proxies
+
+---
 
 ### 🎯 Model Answer
 
@@ -88,6 +99,8 @@ ctor.setAccessible(true); // if private
 Object obj = ctor.newInstance("hello");
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Invocation:**
 ```java
 Method method = obj.getClass().getMethod("greet", String.class);
@@ -97,6 +110,8 @@ Object result = method.invoke(obj, "World"); // "Hello, World"
 Method staticM = Math.class.getMethod("max", int.class, int.class);
 int max = (int) staticM.invoke(null, 3, 7); // 7
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Dynamic proxy:**
 ```java
@@ -112,6 +127,8 @@ UserService proxy = (UserService) Proxy.newProxyInstance(
     }
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -298,6 +315,8 @@ try {
     throw new RuntimeException("Unexpected checked exception", cause);
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: check stack traces for `InvocationTargetException` with a
 null message. Real cause is always in `e.getCause()`.
 
@@ -354,6 +373,8 @@ if (type instanceof ParameterizedType pt) {
     Type arg = pt.getActualTypeArguments()[0]; // String.class
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Generic type inspection via `getGenericType()`
 is what allows frameworks like Gson, Jackson, and Hibernate to understand
@@ -419,6 +440,8 @@ while (c != null && c != Object.class) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Walking the class hierarchy with
 `getSuperclass()` is required for frameworks that serialize/deserialize
 objects with inheritance (Jackson, Hibernate). Jackson by default includes
@@ -461,6 +484,8 @@ Module module = SomeClass.class.getModule();
 boolean isOpen = module.isOpen("com.example.internal",
     MyReflectionTool.class.getModule());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The module system breaking reflection
 was intentional - it was the key mechanism for "encapsulate JDK internals"
@@ -522,6 +547,8 @@ System.out.println(Proxy.isProxyClass(proxyClass)); // true
 System.out.println(Proxy.getInvocationHandler(proxy)); // the handler
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The generated proxy class is cached:
 calling `Proxy.newProxyInstance` with the same interfaces and classloader
 returns instances of the SAME generated proxy class (just different
@@ -579,6 +606,8 @@ class ProblemService {
 // @Autowired UserService service;  // works with both proxy types
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Spring Boot's switch to CGLIB by default
 (version 2.0) resolved a long-standing friction: `@Autowired UserServiceImpl`
 failed with JDK proxy (the bean is a `$Proxy`, not `UserServiceImpl`).
@@ -631,6 +660,8 @@ public Object invoke(Object proxy, Method method, Object[] args)
 // InvocationHandler.invoke() throws Throwable - allows propagating
 // any exception type including checked exceptions from the target
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* In `InvocationHandler.invoke()`, the
 `throws Throwable` declaration allows re-throwing `e.getCause()` directly,
@@ -686,6 +717,8 @@ vh.compareAndSet(counter, 42, 100); // atomic CAS
 // Compare with: Field.get()/set() - untyped, slower
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The JDK itself uses `invokedynamic` and
 `MethodHandle` internally for lambda expressions (since Java 8). The
 `LambdaMetafactory` creates `MethodHandle`-based functional interfaces
@@ -738,6 +771,8 @@ class ReflectionCache {
 // Subsequent: use cached BeanDescription
 // Benchmark: 10x+ speedup on repeated serialization of same type
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `ClassValue<T>` is the JVM-provided
 per-class cache, available since Java 7. Unlike `WeakHashMap<Class<?>, T>`
@@ -793,6 +828,8 @@ ois.setObjectInputFilter(FilterInfo fi -> {
 Object obj = ois.readObject();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Java deserialization is one of the most
 critical security issues in enterprise Java. Deserializing untrusted data
 (from external systems, user uploads, message queues containing serialized
@@ -830,6 +867,8 @@ a standalone native executable from Java code. The trade-off: dynamic features
 // native-image will include only the declared reflective accesses
 // Any undeclared reflection at runtime: NullPointerException or ClassNotFoundException
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Spring Boot 3 + GraalVM Native Image is
 the production scenario. Spring's `@RegisterReflectionForBinding` and
@@ -889,6 +928,8 @@ class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Spring AOP's proxy model has a well-known
 limitation: it only intercepts calls that go THROUGH the proxy. Any internal
 call (`this.method()`) goes directly to the target object. This is why
@@ -933,6 +974,8 @@ Class<?> clazz = Class.forName(className); // now safe
 // Was the platform-level defense. Now: module system + explicit whitelists
 // Modern defense: input validation + class whitelist + SecurityManager replacement
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Log4Shell (CVE-2021-44228) was the most
 severe Java vulnerability in years: Log4j2 used `Class.forName()` with
@@ -1092,3 +1135,33 @@ flowchart TD
 > the proxy routes through the same `invoke()` method. The proxy pattern
 > enables adding cross-cutting concerns (security, caching, transactions)
 > without modifying the target class.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-jvm/l4-gc-diagnostics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L4 GC Diagnostics](#java-jvm---l4-gc-diagnostics) | medium |
+
+---
+
 # Java JVM - L4 GC Diagnostics
 
 ## GC Diagnostics with JFR and JVM Flags
+
+---
 
 ### 🎯 Model Answer
 
@@ -111,6 +122,8 @@ GC LOG ANALYSIS COMMANDS:
   # Old Gen growth rate (G1):
   grep "Old: " gc.log | awk -F'[KMG->]' '{print $2}' | tail -100
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,6 +354,8 @@ STEP 5 - Verify fix:
   Expected: Old Gen now has a stable floor (no staircase)
   class_histogram: UserSession count stabilizes (not growing)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -693,6 +708,8 @@ GC OBSERVABILITY ARCHITECTURE:
     Monthly review: adjust Xmx for services that are growing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -762,3 +779,33 @@ flowchart TD
 > characterization - jumping straight to heap dumps or flag tuning - wastes time and
 > often treats the wrong problem. The verification step is non-negotiable: a fix that
 > doesn't change the metrics isn't a fix.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

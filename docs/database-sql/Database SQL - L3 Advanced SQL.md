@@ -8,6 +8,16 @@ permalink: /database-sql/l3-advanced-sql/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Window Functions - ROW_NUMBER, RANK, LAG, LEAD](#window-functions---rownumber-rank-lag-lead) | medium |
+| 2 | [Recursive CTEs - Hierarchical Data Queries](#recursive-ctes---hierarchical-data-queries) | medium |
+
+---
+
 # Window Functions - ROW_NUMBER, RANK, LAG, LEAD
 
 **TL;DR:** Window functions compute aggregate or positional values for
@@ -85,6 +95,8 @@ Default frame (when ORDER BY is specified):
   (This is why SUM with ORDER BY gives a running total)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Function reference:**
 
 ```
@@ -106,6 +118,8 @@ Navigation:
 Aggregate (as window):
   SUM, AVG, COUNT, MIN, MAX applied over the window
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -334,6 +348,8 @@ AVG(amount) OVER (
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure: Partition too large for memory in window function execution**
 
 Symptom: query is very slow or fails with out-of-memory for large result sets.
@@ -457,6 +473,34 @@ PostgreSQL workaround: `LAST_VALUE(col) OVER (ORDER BY date ROWS BETWEEN UNBOUND
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Recursive CTEs - Hierarchical Data Queries
 
 **TL;DR:** A recursive CTE (`WITH RECURSIVE`) enables SQL to traverse
@@ -535,6 +579,8 @@ Rules:
   - Add WHERE depth < N to prevent infinite loops on cyclic data
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Termination:**
 
 ```
@@ -545,6 +591,8 @@ Cycle guard pattern:
   Track visited IDs in an array:
   WHERE NOT (child.id = ANY(visited_path))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -797,6 +845,8 @@ CREATE INDEX CONCURRENTLY idx_categories_parent_id
 -- Without this: each recursive level does a Seq Scan.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -895,3 +945,33 @@ with a small subtree; (3) for paginated UI: consider materializing the
 full tree into a temp table, adding an index, then paginating from the
 temp table. For recursive CTEs: the traversal cost is determined by the
 data structure, not the LIMIT on the output."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

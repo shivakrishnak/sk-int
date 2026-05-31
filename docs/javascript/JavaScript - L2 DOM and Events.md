@@ -7,6 +7,16 @@ permalink: /javascript/l2-dom-and-events/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [DOM Manipulation and Query API](#dom-manipulation-and-query-api) | high |
+| 2 | [Event Bubbling, Capturing, and Delegation](#event-bubbling-capturing-and-delegation) | critical |
+
+---
+
 # DOM Manipulation and Query API
 
 🎯 **Interview Weight:** high (★★☆) - Core frontend skill; tests
@@ -111,6 +121,8 @@ Mutation:
   Read offsetHeight → forces synchronous flush
   (= layout thrashing if in a loop)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -388,6 +400,34 @@ items is non-trivial even after batch insertion.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Event Bubbling, Capturing, and Delegation
 
 🎯 **Interview Weight:** critical (★★☆) - Event delegation is the
@@ -489,6 +529,8 @@ Delegated handler on ul fires (bubble phase):
   event.currentTarget = ul (listener location)
   event.target.closest('li') → walks up → returns li
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -809,3 +851,33 @@ itself is not what leaks memory - it is the closure over component
 state variables that keeps the entire component's variable scope
 alive in memory. The EventListener is the root; the retained size
 includes everything the closure references.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

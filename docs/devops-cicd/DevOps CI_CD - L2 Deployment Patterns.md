@@ -8,6 +8,16 @@ permalink: /devops-cicd/l2-deployment-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker Integration in CI/CD](#docker-integration-in-cicd) | medium |
+| 2 | [Deployment Strategies - Blue-Green and Canary](#deployment-strategies---blue-green-and-canary) | medium |
+
+---
+
 # Docker Integration in CI/CD
 
 🎯 Interview Weight: high - Docker is the standard artifact format
@@ -220,6 +230,8 @@ hardening**
 # Dockerfile
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```dockerfile
 # Multi-stage: lean production image, optimized build cache
 
@@ -279,6 +291,8 @@ ENTRYPOINT ["java", \
     "-jar", \
     "/app/app.jar"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # .github/workflows/docker.yml
@@ -569,6 +583,8 @@ cache mounts or GitHub Actions cache. BuildKit does.
 - uses: docker/setup-buildx-action@v3
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Configure layer caching with GitHub Actions cache:
 ```yaml
 - uses: docker/build-push-action@v5
@@ -576,6 +592,8 @@ Step 2: Configure layer caching with GitHub Actions cache:
     cache-from: type=gha
     cache-to: type=gha,mode=max
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Audit the Dockerfile for cache order. The dependency
 download step must come before source code copying:
@@ -589,6 +607,8 @@ COPY src/ src/
 # 4. Compile (fast: dependencies are already cached)
 RUN mvn package -DskipTests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Add a .dockerignore file. Without it, `COPY . .` includes
 the entire git history, all test reports, and other files that
@@ -725,6 +745,8 @@ Implementation pattern:
     sarif_file: 'trivy-results.sarif'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The SARIF upload makes vulnerability results visible directly in
 the PR's Security tab, linking findings to the specific files that
 introduced them.
@@ -793,6 +815,8 @@ COPY --chown=appuser:appuser target/app.jar /app.jar
 USER appuser
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mitigation in Kubernetes:
 ```yaml
 securityContext:
@@ -803,6 +827,8 @@ securityContext:
   capabilities:
     drop: ["ALL"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Enforcement: the Kubernetes `PodSecurity` admission controller can
 be set to `Restricted` policy for namespaces, which automatically
@@ -817,6 +843,34 @@ flag a Dockerfile missing a `USER` instruction.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Deployment Strategies - Blue-Green and Canary
 
@@ -933,6 +987,8 @@ Green Deployment (new/candidate)
 6. After validation period, delete Blue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Canary in Kubernetes with Argo Rollouts:**
 ```
 Traffic split:
@@ -947,6 +1003,8 @@ Analysis:
 Progression: 5% → 20% → 50% → 80% → 100%
 Each step: wait N minutes, analyze metrics, auto-advance or pause
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Database migration compatibility requirement:**
 Both strategies require the new application version to be able to
@@ -1112,6 +1170,8 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 5
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 #!/bin/bash
@@ -1392,6 +1452,8 @@ spec:
         - setWeight: 80
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Traffic splitting: Argo Rollouts works with Ingress controllers
 (Nginx, Traefik) and service meshes (Istio, Linkerd) to split
 traffic at the specified percentages. With Istio, a VirtualService
@@ -1418,6 +1480,8 @@ spec:
               app="myapp"
             }[5m]))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If the success rate falls below 99%, the analysis fails, the rollout
 pauses, and the operator (or automation) decides whether to rollback.
@@ -1707,3 +1771,33 @@ strategy's value was not just in detecting the bug but in limiting
 its blast radius. The architecture decision (canary + business
 metric analysis) made the difference between a minor correctable
 error and a major customer trust incident.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

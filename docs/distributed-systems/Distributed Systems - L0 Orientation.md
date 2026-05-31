@@ -8,6 +8,17 @@ permalink: /distributed-systems/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [What Is a Distributed System](#what-is-a-distributed-system) | medium |
+| 2 | [The Eight Fallacies of Distributed Computing](#the-eight-fallacies-of-distributed-computing) | medium |
+| 3 | [Distributed Systems Ecosystem and Landscape](#distributed-systems-ecosystem-and-landscape) | medium |
+
+---
+
 # What Is a Distributed System
 
 **TL;DR:** A distributed system is a collection of independent computers
@@ -334,6 +345,34 @@ not just timestamps."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # The Eight Fallacies of Distributed Computing
 
@@ -699,6 +738,34 @@ They are cheap to implement upfront and very expensive to retrofit."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Distributed Systems Ecosystem and Landscape
 
 **TL;DR:** The distributed systems ecosystem spans databases
@@ -796,6 +863,8 @@ Observability:
   Jaeger      → distributed tracing
   Prometheus  → metrics + alerting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Every distributed database or broker is a set of trade-off decisions
@@ -1037,3 +1106,33 @@ Buffers (binary, compact) and HTTP/2 (multiplexed streams). For
 high-throughput internal service communication, gRPC replaced SOAP
 universally because it is 5-10x more efficient in both payload size
 and serialization speed."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

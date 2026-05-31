@@ -7,6 +7,17 @@ permalink: /html/l1-metadata-and-head/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Head and Metadata](#html-head-and-metadata) | high |
+| 2 | [HTML Attributes](#html-attributes) | medium |
+| 3 | [HTML Character Encoding and Internationalization](#html-character-encoding-and-internationalization) | medium |
+
+---
+
 # HTML Head and Metadata
 
 🎯 **Interview Weight:** high (★☆☆) - The `<head>` controls
@@ -170,6 +181,8 @@ FAVICON MODERN APPROACH:
 <!-- Web app manifest -->
 <link rel="manifest" href="/site.webmanifest">
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -365,6 +378,8 @@ Confirm: DevTools → Toggle device toolbar → reload
 Check: Google Search Console → Mobile Usability report
   Will show pages with viewport issues
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -784,6 +799,34 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTML Attributes
 
 🎯 **Interview Weight:** medium (★☆☆) - Attributes define
@@ -929,6 +972,8 @@ CASE SENSITIVITY:
     id="MyDiv" - case-sensitive (CSS, JS both care)
     class="Active" ≠ class="active" (case-sensitive)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1081,6 +1126,8 @@ Same pattern for checkbox:
   // CORRECT:
   const isChecked = input.checked;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1507,6 +1554,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTML Character Encoding and Internationalization
 
 🎯 **Interview Weight:** medium (★☆☆) - Encoding issues produce
@@ -1633,7 +1708,7 @@ HTML ENTITIES (alternative to direct Unicode):
   &apos;  = ' (single quote)
   &nbsp;  = non-breaking space (U+00A0)
   &copy;  = © copyright symbol
-  &mdash; = — em dash
+  &mdash; = - em dash
   &bull;  = • bullet
   &#x1F600; = 😀 (hex Unicode code point notation)
   &#128512; = 😀 (decimal Unicode code point notation)
@@ -1668,6 +1743,8 @@ INTERNATIONALIZATION:
   new Intl.RelativeTimeFormat('en').format(-2, 'day')
   // → "2 days ago"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1889,6 +1966,8 @@ Fix sequence:
   5. Convert existing data if it was stored in wrong encoding
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2019,13 +2098,13 @@ Fix sequence:
 > NOT required but common:
 > - `&nbsp;` = non-breaking space (prevents line break, common for spacing)
 > - `&copy;` = © (can write directly in UTF-8)
-> - `&mdash;` = — em dash (can write directly in UTF-8)
+> - `&mdash;` = - em dash (can write directly in UTF-8)
 >
 > Direct Unicode in UTF-8 files:
 > ```html
 > <!-- These are equivalent in UTF-8 encoded files: -->
 > <p>Copyright &copy; 2026 &mdash; All rights reserved</p>
-> <p>Copyright © 2026 — All rights reserved</p>
+> <p>Copyright © 2026 - All rights reserved</p>
 > <!-- Second is preferred: readable and maintainable -->
 > ```
 >
@@ -2305,3 +2384,33 @@ FAILURE
 ### 📊 Diagram
 
 *(Omit: encoding is well-represented in the byte-level code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

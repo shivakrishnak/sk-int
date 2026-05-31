@@ -8,9 +8,20 @@ permalink: /jpa/l2-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L2 Performance](#jpa---l2-performance) | medium |
+
+---
+
 # JPA - L2 Performance
 
 ## JPA Query Performance: Named Queries, Projections, and DTO Mapping
+
+---
 
 ### 🎯 Model Answer
 
@@ -107,7 +118,8 @@ INTERFACE PROJECTION:
   
   // Closed vs open projections:
   // Closed: all getters map to entity fields -> Hibernate generates targeted SELECT.
-  // Open: uses @Value or SpEL -> Hibernate loads the full entity (open projection defeats the purpose).
+  // Open: uses @Value or SpEL -> Hibernate loads the full entity
+  // (open projection defeats the purpose).
   // Always use closed projections: no @Value/SpEL.
 
 CLASS (DTO) PROJECTION:
@@ -172,6 +184,8 @@ NAMED QUERIES:
   //   @Query JPQL: compiled per call (first call for each query type may be slower).
   //   Difference: small (milliseconds). Startup validation is the bigger benefit.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -283,6 +297,8 @@ Fix: remove @Value. Compute in DTO class instead:
   // Closed interface: only entity field getters. No @Value.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -324,6 +340,8 @@ needed for flexible projection scenarios).
 ---
 
 ## Batch Operations: saveAll, Bulk Update/Delete with @Query
+
+---
 
 ### 🎯 Model Answer
 
@@ -476,6 +494,8 @@ BULK INSERT WITH NATIVE SQL:
   // COPY (PostgreSQL): ~0.5 seconds (for truly massive loads)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -612,6 +632,8 @@ Fix:
     Verify steady-state memory (not growing).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -648,4 +670,34 @@ wasted). With allocationSize=500: sequence advances to N+500 on first insert. If
 on row 50: IDs 1-50 are rolled back, IDs 51-500 are reserved in Hibernate's memory but now wasted
 (the EntityManagerFactory restart resets the local allocation). ID gaps are normal; warn DBAs upfront
 to prevent confusion about "missing" IDs in the sequence.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

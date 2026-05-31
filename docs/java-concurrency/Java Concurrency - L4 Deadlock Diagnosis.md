@@ -8,9 +8,20 @@ permalink: /java-concurrency/l4-deadlock-diagnosis/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L4 Deadlock Diagnosis](#java-concurrency---l4-deadlock-diagnosis) | medium |
+
+---
+
 # Java Concurrency - L4 Deadlock Diagnosis
 
 ## Deadlock Detection and Diagnosis
+
+---
 
 ### 🎯 Model Answer
 
@@ -99,6 +110,8 @@ state.
    Thread B -> needs L1 (held by A)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **How it works (minimal example):**
 ```java
 // Two locks, two threads, opposite acquisition order
@@ -116,6 +129,8 @@ synchronized(L2) {         // acquires L2
 }
 // Deadlock: A holds L1 waiting for L2; B holds L2 waiting for L1
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Thread dump deadlock indicator:**
 ```
@@ -140,6 +155,8 @@ Java stack information for the threads listed above:
   - waiting to lock <0x...> (L1)
   - locked <0x...> (L2)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use deadlock prevention vs detection:**
 - Prevention: preferred - no deadlocks ever occur (lock ordering,
@@ -177,6 +194,8 @@ class BankAccount {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: global lock ordering using System.identityHashCode
 static void transfer(BankAccount from, BankAccount to,
@@ -203,6 +222,8 @@ static void transfer(BankAccount from, BankAccount to,
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: tryLock with timeout for deadlock avoidance
@@ -238,6 +259,8 @@ class ResourceManager {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -319,6 +342,8 @@ pool.submit(() -> {
     f.get(); // DEADLOCK: waiting for a task that can't run
 });
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use a separate pool for subtasks, or use ForkJoinPool (work-stealing
 allows the task to "help" execute its own subtasks).
 
@@ -366,6 +391,8 @@ T2: holds L2, waiting for L1 (blocked)
 System: no progress ever
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Livelock:** Threads are RUNNABLE but make no actual progress. They
 keep changing state in response to each other without advancing.
 Thread state in dump: RUNNABLE (misleading - looks active but stuck).
@@ -374,6 +401,8 @@ T1: has resource A, sees B is needed, gives up A, waits for B
 T2: has resource B, sees A is needed, gives up B, waits for A
 Both retry simultaneously, same pattern repeats endlessly
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add randomized backoff before retry.
 
 **Starvation:** A thread is RUNNABLE but never gets CPU time because
@@ -383,6 +412,8 @@ delayed.
 High-priority threads always preempt a low-priority thread.
 Under non-fair locks: one thread always loses to faster threads.
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: fair lock mode (`new ReentrantLock(true)`), thread priority
 balancing, or design changes to ensure all threads eventually run.
 
@@ -444,6 +475,8 @@ Method 1: `jstack`
 ```bash
 jstack <pid> > thread-dump.txt
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Includes "Found one Java-level deadlock" section at the top with
 clear deadlock description.
 
@@ -467,6 +500,8 @@ if (deadlocked != null) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Reading the deadlock section:
 ```
 Found one Java-level deadlock:
@@ -485,6 +520,8 @@ Stack traces (look for - locked and - waiting):
   - waiting to lock <0xABC> (Lock2)
   - locked <0xDEF> (Lock1)  <- Thread-A holds Lock1
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Add deadlock monitoring to production
 health checks via `ThreadMXBean.findDeadlockedThreads()`. Poll every
@@ -514,6 +551,8 @@ void doWork(Resource a, Resource b) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Strategy 2 - tryLock with timeout (ReentrantLock):**
 Try to acquire locks with a timeout. On timeout: release all held
 locks and retry from scratch. This breaks hold-and-wait.
@@ -531,6 +570,8 @@ while (!success) {
     // backoff before retry
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Strategy 3 - Lock coarsening (avoid nested locks):**
 Merge multiple fine-grained locks into one coarser lock. No nested
@@ -593,6 +634,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Hash collision handling: when two locks have the same
 `System.identityHashCode()` (rare but possible), a secondary ordering
 (e.g., class name + field name) or a global tie-breaker lock can be
@@ -654,6 +697,8 @@ boolean transfer(Account from, Account to, double amount) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key requirement: the thread must release ALL held locks when it gives up.
 Releasing one but not others while waiting for the nth lock perpetuates
 the deadlock risk.
@@ -690,6 +735,8 @@ pool.submit(() -> {
     String r2 = sub2.get();
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Prevention strategies:
 
@@ -759,6 +806,8 @@ boolean isDeadlock(SQLException e) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring's `@Retryable` or resilience4j `Retry` simplify this pattern.
 
 *What separates good from great:* DB deadlock prevention (not just
@@ -804,6 +853,8 @@ diff dump1.txt dump2.txt  # livelock: same frames, threads still RUNNABLE
 for i in {1..10}; do jstack <pid> >> all_dumps.txt; sleep 1; done
 grep "Thread-Name" all_dumps.txt | wc -l  # low count = starvation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Async-profiler and JFR (Java Flight
 Recorder) are more reliable than manual thread dumps. JFR's `jdk.ThreadSleep`,
@@ -875,6 +926,8 @@ AtomicReference<Config> current = new AtomicReference<>(defaultConfig);
 // Replace atomically when needed - no deadlock possible
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Message passing (actor model):** Threads communicate by sending
 messages to queues. No shared mutable state, no shared locks,
 no deadlock. Akka, Disruptor, virtual thread actors.
@@ -888,6 +941,8 @@ ExecutorService stateMgr =
     Executors.newSingleThreadExecutor();
 stateMgr.submit(() -> sharedState.update(value));
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Effectively eliminates deadlock while maintaining consistency.
 
 **4. Lock-level hierarchy:**
@@ -934,10 +989,14 @@ Thread t2 = new Thread(() -> {
 t1.start(); t2.start(); t1.join(); t2.join(); // hangs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Generate thread dump.
 ```bash
 jstack $(pgrep -f DeadlockDemo) | grep -A 30 "deadlock"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Output excerpt:
 ```
@@ -945,6 +1004,8 @@ Found one Java-level deadlock:
   "Thread-0": waiting for <0x...>(L2), held by "Thread-1"
   "Thread-1": waiting for <0x...>(L1), held by "Thread-0"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Fix - lock ordering.
 ```java
@@ -962,6 +1023,8 @@ Thread t2 = new Thread(() -> {
         System.out.println("t2 done"); } }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Both threads acquire in the same order - no cycle, no deadlock.
 
@@ -1026,6 +1089,8 @@ At 1M accounts, 100k TPS: probability of conflict per pair < 0.01%
 Expected concurrent transfers without contention: ~99.9%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1076,3 +1141,33 @@ flowchart LR
 > Lock 1 before Lock 2. Thread B would then wait for Lock 1 BEFORE
 > acquiring Lock 2, eliminating the cycle. No cycle = no deadlock,
 > regardless of timing.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

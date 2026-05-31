@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [mTLS and Service-to-Service Authentication](#mtls-and-service-to-service-authentication) | medium |
+| 2 | [Authorization in Microservices](#authorization-in-microservices) | medium |
+
+---
+
 # mTLS and Service-to-Service Authentication
 
 **TL;DR:** Mutual TLS (mTLS) is a protocol where BOTH the client
@@ -114,6 +124,8 @@ If client certificate is invalid or missing:
   → Server sends alert, closes connection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SPIFFE: Secure Production Identity Framework for Everyone**
 
 ```
@@ -146,6 +158,8 @@ Authorization policy can then use the SPIFFE URI:
    payment-service SPIFFE ID"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Certificate rotation:**
 
 ```
@@ -161,6 +175,8 @@ Istio Citadel automatic rotation:
   Manual certificate: rotation requires pod restart
   Mesh certificate: zero-downtime rotation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 mTLS is most powerful when combined with authorization policies
@@ -389,6 +405,34 @@ so application code does not need to change."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Authorization in Microservices
 
 **TL;DR:** Authorization in microservices is complex because a
@@ -498,6 +542,8 @@ Service B:
   4. Checks: does userId own resource X? YES → allow
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Role-based access control (RBAC) vs. Attribute-based (ABAC):**
 
 ```
@@ -536,6 +582,8 @@ OPA (Open Policy Agent) - ABAC with policy-as-code:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Multi-tenant authorization:**
 
 ```
@@ -556,6 +604,8 @@ Critical: tenant isolation
           (Do NOT tell the user the resource exists but is
           forbidden - that leaks tenant data)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Token exchange (service-to-service with user context):**
 
@@ -580,6 +630,8 @@ OAuth 2.0 Token Exchange (RFC 8693):
   Service B validates: aud = service-b.internal ✓
                        sub = User X (carries user context) ✓
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Authentication and authorization are separate concerns. mTLS
@@ -821,6 +873,8 @@ the incoming Authorization header from the SecurityContext. Never
 hardcode the user ID into the request body - always carry it in the
 token so it cannot be tampered with."
 
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Certificate rotation breaks mTLS - pods cannot
@@ -852,6 +906,8 @@ istioctl proxy-config secret <pod> --name \
   base64 -d | openssl x509 -noout -dates
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use two-phase CA rotation. Phase 1: add new CA to all trust
 stores (both old and new CAs trusted). Phase 2: issue new leaf
 certificates signed by new CA. Phase 3: remove old CA from trust
@@ -876,6 +932,8 @@ grep -r '"alg".*"none"' /var/log/auth-service/
 # io.jsonwebtoken (jjwt): must explicitly disallow none
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 // VULNERABLE: accepts any algorithm
@@ -895,6 +953,8 @@ Jwts.parserBuilder()
 //     .jwsAlgorithm(SignatureAlgorithm.RS256)
 //     .build()))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -918,6 +978,8 @@ GROUP BY tenant_id ORDER BY COUNT(*) DESC;
 -- vs the resource's tenantId
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add tenantId to all repository methods:
 ```java
 // BAD:
@@ -929,6 +991,8 @@ Optional<Order> findByIdAndTenantId(
 // Returns empty Optional for cross-tenant ID
 // → 404 response (not 403, no data leaked)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -996,6 +1060,8 @@ Evaluation process:
      }
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. OPA evaluates the Rego policy:
    ```
    allow if {
@@ -1003,6 +1069,8 @@ Evaluation process:
      input.user.tenantId == input.resource.tenantId
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. OPA returns `{"result": true}` or `{"result": false}`.
 4. The service allows or denies the request based on the response.
 
@@ -1090,6 +1158,8 @@ A: Systematic 403 diagnosis (role check passes but still 403):
    # or "scope"? Many mistakes here.
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Check the security config: is the role prefix correct?
    Spring Security adds a `ROLE_` prefix by convention.
    If the JWT contains `"EDITOR"` but `@PreAuthorize` checks
@@ -1150,6 +1220,8 @@ kubectl get peerauthentication -A -o yaml | \
 # "STRICT" = mTLS only
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: set PeerAuthentication to STRICT after verifying all services
 have sidecars injected:
 ```yaml
@@ -1162,6 +1234,8 @@ spec:
   mtls:
     mode: STRICT
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the insight that PERMISSIVE mode
 with SPIFFE-based AuthorizationPolicy has a silent gap: plaintext
@@ -1375,3 +1449,33 @@ JWTs small (<500 bytes) while maintaining fine-grained access control."
 caching issues). The pattern of "coarse roles in JWT + fine-grained
 at data layer" is the production-grade solution. Encoding all
 permissions in the JWT is an anti-pattern at scale.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

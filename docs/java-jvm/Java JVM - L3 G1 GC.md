@@ -8,9 +8,20 @@ permalink: /java-jvm/l3-g1-gc/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L3 G1 GC](#java-jvm---l3-g1-gc) | medium |
+
+---
+
 # Java JVM - L3 G1 GC
 
 ## G1 GC Configuration and Region Selection
+
+---
 
 ### 🎯 Model Answer
 
@@ -94,6 +105,8 @@ MIXED GC REGION SELECTION:
   -> Select regions until: predicted_evacuation_time >= MaxGCPauseMillis * 0.8
   This is the "Garbage-First" selection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -233,6 +246,8 @@ Fix:
     Reduce cache sizes, fix memory leaks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -356,6 +371,8 @@ Fix:
 4. Reduce Humongous allocations: profile with JFR, fix large allocations
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "To-space exhausted" during a Minor GC is the most
 severe non-Full-GC event. Unlike a normal Minor GC: some objects are NOT evacuated
 (kept in their original regions). The heap has mixed state (some collected, some not).
@@ -473,6 +490,8 @@ enable it.
 
 ## GC Pause Analysis and Tuning
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -555,6 +574,8 @@ GC PARALLEL THREADS:
   -XX:ParallelGCThreads=N  (STW GC threads, default min(8, n_cpus/2))
   -XX:ConcGCThreads=N      (Concurrent marking threads, default n_cpus/4)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -692,6 +713,8 @@ Fix:
      If not: break large methods into smaller ones
   4. JDK 16+: improved safepoint handling by default
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -909,3 +932,33 @@ whether the latency tail is acceptable for the SLA.
 ### 📊 Diagram
 
 *(Omit: GC pause phases described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

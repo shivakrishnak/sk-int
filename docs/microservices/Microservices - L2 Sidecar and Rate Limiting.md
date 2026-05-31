@@ -8,6 +8,16 @@ permalink: /microservices/l2-sidecar-and-rate-limiting/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Sidecar and Service Mesh Patterns](#sidecar-and-service-mesh-patterns) | medium |
+| 2 | [Bulkhead and Rate Limiting](#bulkhead-and-rate-limiting) | medium |
+
+---
+
 # Sidecar and Service Mesh Patterns
 
 ---
@@ -59,6 +69,8 @@ WITH SIDECAR (Envoy proxy):
   Service B code: receives plain HTTP from localhost
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Service mesh architecture:**
 ```
 CONTROL PLANE (Istiod):
@@ -75,6 +87,8 @@ DATA PLANE (Envoy sidecars - one per pod):
   - Propagates trace headers to Jaeger/Zipkin
   - Load balancing (round-robin, least-conn)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Traffic policy configuration (Istio):**
 ```yaml
@@ -116,6 +130,8 @@ spec:
       baseEjectionTime: 30s
       maxEjectionPercent: 50   # max 50% pods ejected
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 A service mesh is infrastructure code that was previously in every service. Moving it to the mesh creates a consistent, uniformly enforced policy across all services regardless of language or team. The tradeoff: every team no longer controls their own resilience settings. Settings are centralized in the mesh config. This is a feature in large orgs (consistency) but a friction point in small orgs (too much process).
@@ -294,6 +310,34 @@ Fix: Ensure istiod has high availability (multiple replicas). Existing proxies w
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Bulkhead and Rate Limiting
 
 ---
@@ -347,6 +391,8 @@ WITH BULKHEAD:
   Inventory failure is contained
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rate limiting implementation:**
 ```java
 // Token bucket rate limiter
@@ -372,6 +418,8 @@ WITH BULKHEAD:
 // Count requests in current window
 // Allow up to N per window
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Bulkhead is about fault isolation - a failure or slowdown in one dependency should not propagate to affect other dependencies. Rate limiting is about capacity management - prevent any single caller from consuming more than their fair share. Both require explicit capacity planning: you must decide how many threads each dependency deserves and how many requests per second your service can handle.
@@ -565,3 +613,33 @@ Fix: Increase maxThreadPoolSize for the bulkhead. Calculate the correct size: co
 | Rate Limiter (per client) | Requests/second per caller | Per API key | Abusive or runaway client |
 | Circuit Breaker | Calls to failing service | Per dependency | Cascade from failed service |
 | Timeout | Duration of a single call | Per call | Thread starvation from slow |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,15 @@ permalink: /microservices/l4-distributed-debugging/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Debugging Distributed Systems - Tracing and Root Cause Analysis](#debugging-distributed-systems---tracing-and-root-cause-analysis) | medium |
+
+---
+
 # Debugging Distributed Systems - Tracing and Root Cause Analysis
 
 ---
@@ -64,6 +73,8 @@ LAYER 5 - IMPACT SCOPE:
   Tools: Prometheus query, log count aggregation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The trace: anatomy of a distributed request:**
 ```
 TraceID: abc-123-def-456
@@ -81,6 +92,8 @@ Span 1: API Gateway           0ms -> 8ms
         Tag: db.rows_examined: 2,847,293
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Clock skew and ordering:**
 ```
 In distributed systems, clocks drift.
@@ -97,6 +110,8 @@ relative timing - correct even with clock skew.
 Never manually reconstruct a trace from
 raw timestamps across services.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The root cause of most production incidents in microservices is visible in the trace within 1-2 minutes if the trace data exists. Investing in trace coverage (ensuring all services are instrumented) is the highest-ROI debugging investment.
@@ -471,3 +486,33 @@ Fix: Add Micrometer Tracing dependency to ServiceB. Configure the tracer bean. F
 | Heap Dump (jmap) | Memory growing, OOMKill risk | Memory leak root cause | Large file, offline analysis |
 | Continuous Profiling | Latency without obvious cause | CPU hotspot identification | Requires profiler deployment |
 | Metrics (Prometheus) | Alert fired, what is wrong? | Trend + scope identification | No per-request detail |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

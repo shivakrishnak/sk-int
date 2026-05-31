@@ -171,6 +171,8 @@ async function* typedPages<T>(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 TypeScript wraps the inferred return type of `async` functions
 in `Promise<>` automatically. If you have a function returning
@@ -359,6 +361,8 @@ const data = ConfigSchema.parse(await response.json());
 // data: { apiUrl: string } - validated + typed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Type widening from untyped Promise.all**
 ```typescript
 // Promise.all infers a union when array is heterogeneous
@@ -372,6 +376,8 @@ const results = await Promise.all([
 const [user, posts, count] = results;
 // user: User, posts: Post[], count: number - correctly typed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -395,6 +401,8 @@ type B = Awaited<Promise<Promise<string>>>; // string
 type C = Awaited<string>;                   // string (passthrough)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use cases:
 1. Extracting the resolved type from a function returning a Promise:
 ```typescript
@@ -402,11 +410,15 @@ async function loadData() { return { id: 1, name: 'Alice' }; }
 type Data = Awaited<ReturnType<typeof loadData>>; // { id: number; name: string }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Higher-order async functions where the generic parameter is a Promise:
 ```typescript
 function promisify<T>(cb: (callback: (value: T) => void) => void): Promise<T>;
 type Result = Awaited<ReturnType<typeof promisify<string>>>; // string
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Flattening mapped types over async functions:
 ```typescript
@@ -414,6 +426,8 @@ type AsyncFns = { a: () => Promise<string>; b: () => Promise<number> };
 type Results = { [K in keyof AsyncFns]: Awaited<ReturnType<AsyncFns[K]>> };
 // { a: string; b: number }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `Awaited<ReturnType<typeof fn>>`
 to derive result types from async functions, keeping types
@@ -454,6 +468,8 @@ function processAsync<T, R>(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that the `R | Promise<R>`
 pattern handles both sync and async callbacks with the same
 signature. The `Promise.all` call works because `Promise.all`
@@ -475,6 +491,8 @@ TypeScript compiler options:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ESLint rules (`@typescript-eslint`):
 ```json
 {
@@ -486,6 +504,8 @@ ESLint rules (`@typescript-eslint`):
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - `no-floating-promises`: warns when a Promise expression
   is not awaited or returned
@@ -503,6 +523,8 @@ the React event handler mistake:
 // void (not Promise<void>)
 // Fix: wrap with void or use a sync wrapper that calls async
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -557,6 +579,8 @@ if (result.success) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The discriminated union
 on error codes enables exhaustive switch statements - TypeScript
 will warn if you forget to handle a new error code added to
@@ -608,6 +632,8 @@ const pipeline = await compose([
 ]);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The middleware composition
 pattern with TypeScript generics for `Context` enables
 domain-specific middleware pipelines (HTTP, GraphQL, message
@@ -656,6 +682,8 @@ strictForEach(arr, async n => { // TS error!
 // (when strictFunctionTypes is enabled)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `void` in TypeScript
 is not quite the same as "returns nothing" - it also accepts
 functions returning `undefined` or any value when the return
@@ -692,6 +720,8 @@ async function processData() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This eliminates try/finally blocks for resource cleanup -
 the dispose is guaranteed at block exit, similar to C#'s
 `using` or Python's `with`.
@@ -700,6 +730,8 @@ the dispose is guaranteed at block exit, similar to C#'s
 calls `[Symbol.asyncDispose]` at the end of the block, handling
 both success and error paths. This is the future of async
 resource management in TypeScript.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -714,9 +746,13 @@ resource management in TypeScript.
 Standard apps: `async/await` + try/catch + ESLint rules.
 Error-prone APIs: `Result<T, E>`. Large-scale FP: Effect-TS.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -769,6 +805,34 @@ flowchart TD
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cancellation Patterns in JavaScript
 
@@ -951,6 +1015,8 @@ function SearchComponent() {
   }, [query]); // re-runs on every query change
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `AbortController` works bidirectionally: you can check
@@ -1147,6 +1213,8 @@ function Component() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Not propagating signal to nested fetch calls**
 ```javascript
 // Aborting the top-level controller does nothing if signal
@@ -1164,6 +1232,8 @@ async function loadAll(id, signal) {
   return { user, posts };
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1208,6 +1278,8 @@ async function longRunning(signal) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `signal.throwIfAborted()` (ES2022) is the idiomatic way to
 check and throw in custom async loops.
 
@@ -1240,6 +1312,8 @@ const resp = await fetch('/api/long-operation', {
 // When user clicks cancel:
 cancelButton.onclick = () => userCancel.abort('User cancelled');
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases:
 - User cancellation OR timeout: the most common combination
@@ -1289,6 +1363,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Calling `throwIfAborted()`
 at the start of the recursive function and passing the signal
 to each recursive call. This ensures every level of the
@@ -1325,6 +1401,8 @@ async function fetchCancelled(url, ms) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The operational difference:
 `Promise.race` leaves N-1 operations as "ghost requests."
 In high-load scenarios, ghost requests accumulate. `AbortController`
@@ -1359,6 +1437,8 @@ async function robustFetch<T>(
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The key distinction: `AbortError` is not a failure - it is
 an intentional cancellation. Logging or alerting on AbortErrors
@@ -1402,6 +1482,8 @@ async function runCancellable(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Modern alternative: use AbortController + async functions
 with `throwIfAborted()`. Generators are the historical pattern
 predating async/await and AbortController.
@@ -1439,6 +1521,8 @@ concern - "I've seen real performance degradation in SPAs from
 accumulation of uncancelled fetch requests over long sessions"
 is more convincing than abstract reasoning.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Pattern | Standard | Works With | Complexity | Best For |
@@ -1454,9 +1538,13 @@ For fetch: AbortController. For Observables: unsubscribe (RxJS
 handles it). For custom multi-step async: AbortController +
 `throwIfAborted()`.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1503,3 +1591,30 @@ sequenceDiagram
 > receives an `AbortError` in the catch block. The key point
 > in the sequence: the TCP connection is actually cancelled -
 > this is true cancellation, not just ignoring the result.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

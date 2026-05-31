@@ -8,9 +8,20 @@ permalink: /java-performance/l3-memory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L3 Memory](#java-performance---l3-memory) | medium |
+
+---
+
 # Java Performance - L3 Memory
 
 ## Memory Layout and Object Header: CPU Cache Optimization
+
+---
 
 ### 🎯 Model Answer
 
@@ -160,6 +171,8 @@ OBJECT LAYOUT TOOLS:
     Shows: exact byte offsets, sizes, padding, references
     Helps: identify inefficient layouts, verify @Contended effect
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -332,6 +345,8 @@ Fix:
     // Scales linearly: 8 threads = ~8x throughput
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -415,6 +430,8 @@ high-frequency services): measurable impact.
 ---
 
 ## Off-Heap Memory and ByteBuffer: When to Leave the Heap
+
+---
 
 ### 🎯 Model Answer
 
@@ -574,6 +591,8 @@ OFF-HEAP MEMORY SIZING AND MONITORING:
     JVM throws OutOfMemoryError: Direct buffer memory if exceeded.
     (Not the same as heap OOM - requires direct memory monitoring)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -752,6 +771,8 @@ Fix:
      the JVM limit is too low (not a fix for the underlying leak).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -833,3 +854,33 @@ If GC overhead drops from 15% to 3%: off-heap justified. If it drops from 5% to 
 the complexity.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

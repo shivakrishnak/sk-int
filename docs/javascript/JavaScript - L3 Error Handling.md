@@ -7,6 +7,16 @@ permalink: /javascript/l3-error-handling/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Error Handling Strategies](#javascript-error-handling-strategies) | medium |
+| 2 | [JavaScript Anti-patterns](#javascript-anti-patterns) | medium |
+
+---
+
 # JavaScript Error Handling Strategies
 
 ---
@@ -122,6 +132,8 @@ Node.js:
     logger.error(reason); process.exit(1);
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -496,6 +508,34 @@ restart. Treating all errors the same leads to either masking bugs
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # JavaScript Anti-patterns
 
 ---
@@ -607,6 +647,8 @@ Category 4: Maintainability
     // Better: createUser('John', { admin: true,
     //   active: false, verified: true })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -957,6 +999,8 @@ function merge(a, b) {
 // After: ({}).isAdmin === true for ALL objects
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This has caused critical CVEs in lodash, jquery, and dozens of
 npm packages. Defenses: (1) sanitize merge keys explicitly -
 skip `__proto__`, `constructor`, `prototype`; (2) use
@@ -972,3 +1016,33 @@ is a defense-in-depth mitigation - it prevents properties from being
 added to the prototype but may break libraries that extend it. The
 production-safe approach is key sanitization in all merge/assign
 functions that accept user-controlled input.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

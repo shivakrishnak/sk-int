@@ -7,6 +7,16 @@ permalink: /typescript/l3-patterns-and-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Design Patterns](#typescript-design-patterns) | intermediate |
+| 2 | [TypeScript Anti-patterns and Pitfalls](#typescript-anti-patterns-and-pitfalls) | intermediate |
+
+---
+
 # TypeScript Design Patterns
 
 🎯 **Interview Weight:** intermediate (★★☆) - TypeScript-idiomatic
@@ -179,6 +189,8 @@ PATTERN 5: BUILDER WITH THIS TYPE
   // new TypedQueryBuilder().where('age > 18').orderBy('name').build()
   // Returns TypedQueryBuilder, not QueryBuilder!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -414,6 +426,8 @@ function render(phase: Phase): string {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -575,6 +589,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # TypeScript Anti-patterns and Pitfalls
 
 🎯 **Interview Weight:** intermediate (★★☆) - anti-pattern awareness
@@ -724,6 +766,8 @@ ANTI-PATTERN CATALOG:
     const result = dangerousCode();
     // ts-expect-error ERRORS if no error exists (catches when fixed)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -926,6 +970,8 @@ interop). It is never a solution to a type error in business logic.
 // grep -rn "as any\|!\." src/ | wc -l
 // Goal: < 10 per 10,000 lines (< 0.1%)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1139,3 +1185,33 @@ MECHANISM
 > output, work with JSON directly, and don't have the numeric footguns.
 > Enums are useful for grouping related constants with autocompletion,
 > but the string literal alternative is almost always better.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

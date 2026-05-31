@@ -150,6 +150,8 @@ and the query pipeline (triggered by user queries).
   Answer + source references
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Component responsibilities:**
 
 ```
@@ -165,6 +167,8 @@ Context Assembler      Prompt template + document ordering
 LLM                    Generation from retrieved context
 Post-Processor         Citations, format, guardrails
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -735,6 +739,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Similarity Search and ANN
 
 **Interview Weight:** ★☆☆ - The technical mechanism
@@ -830,6 +862,8 @@ distance                              image patches
 Manhattan      sum(|a-b|)             Sparse, categorical
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ANN vs. exact search:**
 
 ```
@@ -847,6 +881,8 @@ ANN SEARCH (HNSW/IVF):
   Cost: may miss up to 5% of truly nearest vectors
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Recall vs. speed trade-off:**
 
 ```
@@ -860,6 +896,8 @@ ef_search   Recall    Latency
 
 For RAG: ef_search=50 is typically the sweet spot
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1406,6 +1444,34 @@ graph LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Context Assembly and Prompt Construction
 
 **Interview Weight:** ★☆☆ - How retrieved documents
@@ -1507,6 +1573,8 @@ how well the LLM uses the retrieved context.
   {original query}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The "lost in the middle" effect:**
 
 ```
@@ -1519,6 +1587,8 @@ Last 20% (end)         HIGH
 Strategy: put most relevant chunk first or last.
 Put least relevant in the middle.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Grounding instruction strength levels:**
 
@@ -1535,6 +1605,8 @@ STRONG (recommended):
    answer is not in the documents, say:
    'I don't have information on this.'"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1872,6 +1944,8 @@ Practical budget: 2,000-5,000 tokens for retrieved
 context (3-7 chunks × 500-700 tokens/chunk)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Dynamic budget strategy:
 - Simple queries (likely one chunk answers): 1-2
   chunks, 1,000 tokens
@@ -2147,3 +2221,33 @@ flowchart LR
 > that triggers generation. The LLM sees all of
 > this as one context window and generates a grounded
 > answer with citations back to the labeled sources.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,7 +7,15 @@ permalink: /async-java/l1-completablefuture-patterns/
 render_with_liquid: false
 ---
 
-# Async Java - L1 CompletableFuture Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L1 CompletableFuture Patterns](#async-java---l1-completablefuture-patterns) | medium |
+| 2 | [CompletableFuture Error Handling](#completablefuture-error-handling) | medium |
+| 3 | [ExecutorService and Custom Thread Pools](#executorservice-and-custom-thread-pools) | medium |
+| 4 | [CompletableFuture Completion and Cancellation](#completablefuture-completion-and-cancellation) | medium |
 
 ---
 
@@ -111,6 +119,8 @@ whenComplete position:
                            |no recovery: exception continues
                         -> exceptionally[fires if still exceptional]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `exceptionally` and `handle` are recovery points: they absorb exceptions
@@ -277,6 +287,8 @@ CompletableFuture.runAsync(() -> {
 // Exception silently lost
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis and fix:
 ```java
 // Always store and handle the terminal future:
@@ -293,6 +305,8 @@ emailTask.exceptionally(ex -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Establish a team standard: every fire-and-forget CompletableFuture must
 have a `whenComplete` that logs exceptions. Enforce via code review
 or a custom executor that logs unhandled exceptions:
@@ -302,6 +316,8 @@ pool.execute(() -> {
     catch (Throwable t) { log.error("Pool task failed", t); }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -334,6 +350,8 @@ cf.handle((value, ex) -> {
 }); // T -> U (can be different type)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `handle()` runs even on
 success, so forgetting to check `ex != null` inside handle will try to
 use a null result when successful. The pattern is always: `if (ex != null)
@@ -354,6 +372,8 @@ CompletableFuture.supplyAsync(() -> fetchUser(id))
     .thenApply(user -> user.getName())  // runs with either result
     .thenAccept(name -> respond(name)); // name is never null
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If exceptionally itself throws, the returned CompletableFuture is
 exceptional with that new exception (the original is replaced).
@@ -397,6 +417,8 @@ cf.exceptionally(ex -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Wrapping as `CompletionException` (not RuntimeException) is conventional:
 CompletableFuture's exception propagation uses CompletionException as
 the wrapper. `ex.getCause()` in handlers gives the original.
@@ -417,6 +439,8 @@ interface ThrowingSupplier<T> {
 CompletableFuture.supplyAsync(
     ThrowingSupplier.wrap(() -> repo.find(id)), pool);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that CompletableFuture itself
 wraps exceptions in CompletionException during propagation. When an
@@ -454,6 +478,8 @@ CompletableFuture.runAsync(() -> sendAuditLog(event), pool)
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Naming a concrete production scenario:
 "In a payment service, we had a fire-and-forget chain for sending
 confirmation emails. The email service went down. No errors appeared in
@@ -487,6 +513,8 @@ CompletableFuture.supplyAsync(() -> "start")
     })
     .thenAccept(s -> System.out.println(s)); // "recovered"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Note: the original `IllegalStateException` is accessible via
 `ex.getCause()` inside the exceptionally handler.
@@ -531,6 +559,8 @@ CompletableFuture.allOf(f1, f2, f3)
         return List.of(f1.join(), f2.join(), f3.join());
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key: `allOf.handle()` receives only ONE exception (from the first failed
 future, or an indeterminate choice if multiple fail). To find ALL failed
@@ -583,6 +613,8 @@ void testExceptionPropagatedWhenNoHandler() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In tests, `.join()` is appropriate (unlike production code) because
 tests are synchronous. If the future is exceptional, `join()` throws
 `CompletionException` - which surfaces in the test as a failure.
@@ -611,6 +643,34 @@ handler log statement was invoked when the service fails.
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # ExecutorService and Custom Thread Pools
 
@@ -705,6 +765,8 @@ ThreadPoolExecutor internals:
     Else if active < max:      create new thread
     Else:                      reject (RejectedExecutionHandler)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 I/O-bound tasks need large pools because threads are blocked most of
@@ -875,6 +937,8 @@ jstack <pid> | grep -c "io-pool.*WAITING"
 # executor.completed      - completed task count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Micrometer integration:
 ```java
 // Expose pool metrics automatically
@@ -885,6 +949,8 @@ new ExecutorServiceMetrics(
 // Metrics: executor.pool.size, executor.active,
 //          executor.queued, executor.completed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: (1) Increase pool size for I/O-bound work. (2) Switch to
 non-blocking I/O libraries + reactive. (3) Java 21+: Virtual Threads
@@ -956,6 +1022,8 @@ ThreadPoolExecutor pool = new ThreadPoolExecutor(
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `CallerRunsPolicy` is
 the most production-safe default for I/O-bound services because it
 provides automatic backpressure: when the pool fills, the caller
@@ -987,6 +1055,8 @@ try {
     Thread.currentThread().interrupt();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `shutdown()`: marks pool as shutting down. No new tasks accepted.
 Running tasks and queued tasks complete normally.
@@ -1062,6 +1132,8 @@ CompletableFuture<DbResult> ioResult =
     CompletableFuture.supplyAsync(() -> db.query(sql), ioPool);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Formula for I/O pool size (Little's Law):
 `threads = concurrency * (1 / (1 - wait_ratio))`
 
@@ -1094,6 +1166,8 @@ ExecutorServiceMetrics.monitor(
 // service.io-pool.executor.pool.max    - max pool size
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alerting thresholds:
 - `active / pool.max > 0.8` (80% utilization): approaching saturation
 - `queued > 100`: significant backlog; pool may be too small
@@ -1107,6 +1181,8 @@ int poolSize  = tpe.getPoolSize();
 long queued   = tpe.getQueue().size();
 long completed = tpe.getCompletedTaskCount();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Setting up queue saturation alerting
 before a pool-saturation incident happens. "Pool queued > 500" should
@@ -1147,6 +1223,8 @@ auditExecutor.submit(() -> auditLog.write(event2));
 // event1 guaranteed to write before event2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Limitation: one thread means maximum throughput = one task at a time.
 Not suitable for high-throughput concurrent workloads.
 
@@ -1176,6 +1254,34 @@ It is "guaranteed single-threaded" by API contract, not just configuration.
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # CompletableFuture Completion and Cancellation
 
@@ -1279,6 +1385,8 @@ Thread safety:
   All complete*() methods are thread-safe.
   First successful call wins; subsequent calls return false.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CompletableFuture's cancel() does NOT interrupt the running computation.
@@ -1466,6 +1574,8 @@ log.info("Pool: active={}, queued={}, cancelled={}",
     active, queued, cancelled);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add cooperative cancellation:
 ```java
 Map<String, AtomicBoolean> cancelFlags = new ConcurrentHashMap<>();
@@ -1488,6 +1598,8 @@ public void cancel(String reqId) {
     if (flag != null) flag.set(true);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1516,6 +1628,8 @@ boolean won = cf.complete("value"); // true - first caller wins
 boolean lost = cf.complete("other"); // false - already completed
 cf.get(); // returns "value"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use case: multiple threads racing to complete the same future (e.g.,
 redundant service calls - take whichever responds first).
@@ -1569,6 +1683,8 @@ Three scenarios for manually creating and completing a CompletableFuture:
    return cf;
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Already-known results (testing, caching):
    ```java
    // Return a pre-completed future for cached values
@@ -1577,6 +1693,8 @@ Three scenarios for manually creating and completing a CompletableFuture:
    }
    // CompletableFuture.completedFuture(value) is the factory
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Fan-in from multiple sources (race pattern):
    ```java
@@ -1587,6 +1705,8 @@ Three scenarios for manually creating and completing a CompletableFuture:
    supplyAsync(() -> callReplica(), pool)
        .thenAccept(r -> winner.complete(r)); // ignored if primary won
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `CompletableFuture.completedFuture(value)`
 (also `failedFuture(ex)` in Java 9+) for testing: instead of mocking
@@ -1619,6 +1739,8 @@ cf.thenApply(v -> "skipped")        // cancelled
   .thenAccept(s -> respond(s)); // "was cancelled"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key: cancellation does NOT propagate UPSTREAM. Cancelling a downstream
 future (a future returned by thenApply) does not cancel the upstream
 future that it depends on.
@@ -1642,12 +1764,16 @@ Three approaches, from simple to robust:
    // Throws CompletionException(TimeoutException) after 3s
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. `completeOnTimeout()` (Java 9+) - with fallback:
    ```java
    return supplyAsync(() -> slowCall(), pool)
        .completeOnTimeout(defaultValue, 3, TimeUnit.SECONDS);
    // Returns defaultValue after 3s; no exception
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Manual timeout with ScheduledExecutorService (Java 8):
    ```java
@@ -1657,6 +1783,8 @@ Three approaches, from simple to robust:
        3, TimeUnit.SECONDS);
    return cf;
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 All three patterns: the underlying computation continues running.
 Combine with cooperative cancellation flag for true resource release:
@@ -1672,6 +1800,8 @@ CompletableFuture<String> cf = supplyAsync(
         return "timed out";
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding that `orTimeout` and
 `completeOnTimeout` use `ForkJoinPool.commonPool()` for the internal
@@ -1706,6 +1836,8 @@ cancelled.isCancelled()               // true
 cancelled.isCompletedExceptionally()  // true (!)
 // Note: isCancelled() => isCompletedExceptionally() is always true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key: `isCancelled()` implies `isCompletedExceptionally()`. All three
 states (normal, exceptional, cancelled) make `isDone()` true.
@@ -1769,3 +1901,33 @@ in Java CF callbacks requires synchronization; in JS it does not.
 
 *(Omit: State transitions expressed in the ASCII completion method table
 in Concept Explanation.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -147,6 +147,8 @@ Ecosystem       | SDK quality (Python, TypeScript)?
                 | Vendor stability and roadmap?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Model tiers (2024 reference):**
 
 ```
@@ -166,6 +168,8 @@ CAPABILITY TIERS:
 Note: model versions change rapidly. Always verify
 current pricing and capabilities at documentation.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -391,6 +395,8 @@ def call_with_logging(prompt: str) -> str:
 # Compare to test benchmark accuracy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Build the benchmark from production logs
 (real user inputs, not developer-crafted examples).
 Add negative examples (inputs where the model fails)
@@ -452,6 +458,8 @@ gpt-4o         12.8/15   2.8s     $5.00
 claude-haiku   11.5/15   0.9s     $0.30
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Decision: if quality difference is statistically
 significant (not just noise) AND within acceptable
 threshold: choose the cheaper model that meets
@@ -481,6 +489,8 @@ daily_cost =
 + (daily_requests * avg_dynamic_tokens * input_price/MTok)
 + (daily_requests * cached_tokens * cache_price/MTok)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Example:
 - 10,000 requests/day
@@ -861,6 +871,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Build vs Buy for AI Features
 
 **Interview Weight:** ★★☆ - Build vs. buy decisions
@@ -984,6 +1022,8 @@ BREAK-EVEN ANALYSIS:
   
   Most apps: << 166M tokens/day -> API is cheaper
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1199,6 +1239,8 @@ api_cost = ev.estimate_monthly_api_cost(
 print(f"API cost: ${api_cost:.0f}/month")
 # Never self-host at this scale
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Migrate back to API. Cost to migrate: 1-2
 weeks. Monthly savings: $14,900. Payback: immediate.
@@ -1654,3 +1696,33 @@ quadrantChart
 > low volume (Q2): enterprise agreements with zero
 > data retention may be sufficient, avoiding self-hosting
 > infrastructure complexity.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

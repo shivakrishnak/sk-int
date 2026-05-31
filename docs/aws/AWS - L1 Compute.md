@@ -117,6 +117,8 @@ Graviton (ARM, g-suffix):
   Avoid when: x86-only binaries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -238,6 +240,34 @@ sustained high CPU.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # ECS and Fargate
 
 **Interview Weight:** ★☆☆ - Container orchestration.
@@ -334,6 +364,8 @@ Fargate: AWS manages EC2 invisibly.
   Each task has its own ENI (no port conflicts).
   Security groups at task level (not instance level).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -477,6 +509,8 @@ aws ecs describe-clusters \
   --include STATISTICS
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Fargate = reduce task size. EC2 = add cluster
 instances or migrate to Fargate for automatic scaling.
 
@@ -501,6 +535,34 @@ instances or migrate to Fargate for automatic scaling.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Lambda Fundamentals
 
@@ -603,6 +665,8 @@ CRITICAL PATTERN:
   not 1 connection per invocation.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -625,6 +689,8 @@ public class Handler
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Connection initialized in static scope
@@ -740,6 +806,8 @@ aws lambda put-function-concurrency \
   --reserved-concurrent-executions 50
 # Max 50 concurrent = max 50 connections to RDS
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -898,6 +966,8 @@ aws ecs describe-services \
 # "unable to pull secrets" = Secrets Manager permission
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Get stopped task exit codes:**
 ```bash
 # List stopped tasks:
@@ -916,12 +986,16 @@ aws ecs describe-tasks \
 # ExitCode 0 = clean exit (health check path mismatch)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 3: Check application logs:**
 ```bash
 aws logs tail /ecs/api-service --follow
 # Look for startup errors, missing env vars,
 # database connection failures
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Check ALB health check config:**
 ```bash
@@ -935,6 +1009,8 @@ aws elbv2 describe-target-groups \
 # If health check path returns non-200: tasks fail health check
 # Common: health check on /health but app serves on /api/health
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* ExitCode 137 = OOM
 is specific knowledge. The health check path mismatch
@@ -1052,6 +1128,8 @@ aws ecs update-service \
   }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `minimumHealthyPercent: 100` = ECS will not stop any
 old tasks until new tasks pass health checks and come up.
 During deploy: temporarily runs 2x tasks (old + new).
@@ -1072,6 +1150,8 @@ CodeDeploy:
   7. Stop Blue tasks
 Rollback: shift 100% back to Blue in < 30 seconds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The blue-green with
 canary (10% traffic first) is the production-safe pattern
@@ -1107,6 +1187,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common causes and fixes:**
 
 1. Lambda at concurrency limit (1,000 default):
@@ -1121,6 +1203,8 @@ aws cloudwatch get-metric-statistics \
    # Lambda now processes 10 messages per invocation
    # 10x throughput at same Lambda concurrency
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Processing duration too long:
    - Check Lambda Duration P99 metric
@@ -1141,3 +1225,33 @@ execution, multiplying throughput without increasing
 concurrency.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

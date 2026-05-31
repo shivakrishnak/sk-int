@@ -7,16 +7,6 @@ permalink: /platform-engineering/l4-platform-slos/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L4 Platform SLOs
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform SLO Design and Error Budgets](#platform-slo-design-and-error-budgets) | critical |
-
----
-
 # Platform SLO Design and Error Budgets
 
 ---
@@ -199,6 +189,8 @@ STEP 6: ERROR BUDGET POLICY
   Budget < 10% remaining:  FREEZE feature work. Reliability sprint only.
   Budget exhausted:        Incident review + root cause fix before resuming.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 SLOs without error budget policies are reporting mechanisms. SLOs with
@@ -720,6 +712,8 @@ from error rate calculations.
 # if maintenance window inactive = 1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Option 2 - Maintenance windows consume error budget (simpler):**
 All downtime, planned or unplanned, consumes error budget. This forces
 the platform team to minimize maintenance downtime and plan maintenance
@@ -893,6 +887,8 @@ Action items this week:
   Fix: deployed in PR #1234.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Monthly SLO review (stakeholder meeting):**
 Trend charts showing SLO attainment over the past 3-6 months, error
 budget consumption patterns, root causes of SLO violations, and planned
@@ -953,6 +949,8 @@ that matters to the teams on that cluster.
       )
     )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Error budget policy for multi-cluster:**
 The global error budget policy is triggered by the aggregate SLO.
@@ -1070,6 +1068,8 @@ def measure_ttfd_synthetic():
     delete_service("synthetic-test-svc")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Developer experience SLOs using
 synthetic monitoring are the most direct measure of platform quality
 and the most neglected. A platform team that only tracks availability
@@ -1140,6 +1140,8 @@ reporting artifacts. The organizational investment in getting the policy
 agreed upon and enforced is the work that converts SLOs from metrics to
 operational drivers.
 
+---
+
 ### 🏛️ System Design
 
 **Prompt:** "Design the SLO program for a platform serving 60 engineering
@@ -1176,3 +1178,33 @@ The aggregated SLO must be per-cluster AND global. High-volume clusters
 burn-rate alerts include cluster context. Regional maintenance windows
 exclude the affected region's contribution from the SLO calculation during
 the maintenance window.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

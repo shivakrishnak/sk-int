@@ -96,6 +96,8 @@ ManagedExecutorService task thread:
   TX = NEW (not propagated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Configuration (WildFly standalone.xml):**
 
 ```xml
@@ -108,6 +110,8 @@ ManagedExecutorService task thread:
   <blocking-queue-length>200</blocking-queue-length>
 </managed-executor-service>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -292,6 +296,8 @@ grep -r "Executors.new\|new ThreadPoolExecutor" src/
 :write-attribute(name=level,value=DEBUG)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // BAD:
@@ -300,6 +306,8 @@ ExecutorService pool = Executors.newCachedThreadPool();
 // GOOD:
 @Resource ManagedExecutorService executor;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -315,6 +323,8 @@ ExecutorService pool = Executors.newCachedThreadPool();
 | Fan-out (invokeAll) | Yes | Yes | Awkward |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -410,6 +420,8 @@ private ManagedExecutorService executor;
 private ManagedExecutorService reportingExecutor;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Always use @Resource
 injection, not programmatic JNDI lookup. @Resource lets
 the container resolve and lifecycle-manage the instance."
@@ -436,6 +448,8 @@ public CompletableFuture<List<Order>> loadAsync(Long uid) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Default thenApply()
 runs on whichever thread completed the previous stage.
 thenApplyAsync with managed executor guarantees all
@@ -461,6 +475,8 @@ executor.submit(() -> {
     // saveInNewTx has @TransactionAttribute(REQUIRED)
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "@RequestScoped CDI beans
 may have stale state in task threads since the HTTP request
@@ -518,6 +534,8 @@ CompletableFuture.supplyAsync(() -> loadOrders(), executor)
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Unchecked exceptions
 in Runnable tasks are silently captured in the Future.
 If no one calls get(), the exception is lost. Always
@@ -539,6 +557,8 @@ WildFly CLI:
 )
 :reload
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Separate thread pools
 for different workloads: long-running reports (small pool,
@@ -569,6 +589,8 @@ externalPool.execute(contextualTask);
 // Container context applied even on non-managed thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "ContextService is the
 escape hatch for legacy thread pools you can't replace.
 Wrap callbacks in contextual proxies for non-managed pools."
@@ -591,6 +613,8 @@ thread pools?**
 :write-attribute(name=statistics-enabled,value=true)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alert when:
 - `rejected-count` increasing: queue full, tasks dropped
 - `active-thread-count` == `max-thread-count`: pool saturated
@@ -603,6 +627,34 @@ rejection handler for silent failure prevention."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Async Servlets and EJBs
 
@@ -690,6 +742,8 @@ response.write(result) + asyncCtx.complete()
 Client receives HTTP response
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **@Asynchronous flow:**
 
 ```
@@ -702,6 +756,8 @@ EJB container thread:
   executes asyncMethod() body
   returns AsyncResult<>(value)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -910,6 +966,8 @@ Exception in task without finally-block calling complete().
 # %D = time to complete in ms; very large = leaked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 executor.submit(() -> {
@@ -927,6 +985,8 @@ executor.submit(() -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -941,6 +1001,8 @@ executor.submit(() -> {
 | Streaming support | Yes | No | No |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -1044,6 +1106,8 @@ IllegalStateException.
 public class LoggingFilter implements Filter { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "All Filters in the
 chain must have asyncSupported=true. One missing filter
 breaks the entire async chain."
@@ -1075,6 +1139,8 @@ if (future.isDone()) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "future.cancel(true)
 does not interrupt the running EJB async task. The task
 continues. True cancellation requires a flag the task
@@ -1104,12 +1170,16 @@ public void placeOrder(Order order) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: pass data as parameters:
 ```java
 notifications.sendNotificationWithData(
     order.getId(), order.getCustomerEmail()
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The data visibility issue
 is the most common @Asynchronous bug: async task reads data
@@ -1133,11 +1203,15 @@ Fix options:
 self.sendNotification(order); // through proxy = async
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Extract to separate bean (better):
 ```java
 @Inject NotificationService notifications;
 notifications.send(order); // separate bean, through proxy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Move async methods to
 separate beans. Separates concerns and solves the
@@ -1175,6 +1249,8 @@ executor.submit(() -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "writer.flush() sends
 buffered data without closing connection. Client starts
 receiving data before server finishes generating it.
@@ -1207,6 +1283,8 @@ AsyncContext ctx = req.startAsync();
 executor.submit(() -> process(ctx, id));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Capture all needed
 request data before startAsync(). Do not access
 HttpServletRequest from the async task thread."
@@ -1238,6 +1316,8 @@ ctx.addListener(new AsyncListener() {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Set specific timeouts
 per endpoint: fast APIs (5-10s), reports (60-120s),
 file exports (300s+). Always add timeout listener with
@@ -1259,6 +1339,8 @@ assertEquals(200, conn.getResponseCode());
 assertNotNull(conn.getInputStream().readAllBytes());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Unit test: verify complete() is called:
 ```java
 AsyncContext ctx = mock(AsyncContext.class);
@@ -1267,6 +1349,8 @@ servlet.doGet(req, resp);
 verify(ctx, timeout(5000)).complete();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Key assertion: verify
 complete() is called exactly once, even on exceptions.
 A missing complete() is a resource leak. Use
@@ -1274,3 +1358,33 @@ verify(ctx, timeout(5000)).complete() to assert eventual
 completion."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

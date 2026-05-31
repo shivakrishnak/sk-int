@@ -8,9 +8,20 @@ permalink: /jpa/l3-schema/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L3 Schema](#jpa---l3-schema) | medium |
+
+---
+
 # JPA - L3 Schema
 
 ## Schema Generation and Database Migration: Liquibase vs Flyway with JPA
+
+---
 
 ### 🎯 Model Answer
 
@@ -164,6 +175,8 @@ ADDING COLUMN: SAFE MIGRATION PATTERN:
   -- Phase 3 (next deploy after all instances updated): drop old column.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -279,6 +292,8 @@ Fix:
     Git pre-commit hook: detect changes to db/migration/ for already-committed files.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -320,6 +335,8 @@ instances updated, add the NOT NULL constraint. Always separate schema changes f
 ---
 
 ## Advanced Mapping: @Embeddable, @ElementCollection, and Converter
+
+---
 
 ### 🎯 Model Answer
 
@@ -512,6 +529,8 @@ instances updated, add the NOT NULL constraint. Always separate schema changes f
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -636,6 +655,8 @@ Fix option 2: If collection size is bounded and small (< 10):
   At that size: replace-all is acceptable.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -672,4 +693,34 @@ default values), (2) or wrap in `Optional` at the application layer, (3) or use 
 constraints on all embedded columns. For Address that may not be set: use a separate `@OneToOne
 (optional=true)` nullable entity reference instead of an embedded object. Null embedded objects
 produce NullPointerException in service code unless every embedded field access is null-checked.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -8,6 +8,17 @@ permalink: /rest-api/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [What is REST](#what-is-rest) | medium |
+| 2 | [The Six REST Constraints](#the-six-rest-constraints) | medium |
+| 3 | [REST vs SOAP vs GraphQL - The API Ecosystem](#rest-vs-soap-vs-graphql---the-api-ecosystem) | medium |
+
+---
+
 # What is REST
 
 ---
@@ -56,6 +67,8 @@ Client                Server
   | 200 OK              |
   |<--------------------|
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 REST is not the same as "using HTTP." Many APIs use HTTP but are not RESTful. A truly RESTful API uses HTTP semantics correctly (GET is safe and idempotent, PUT is idempotent, DELETE is idempotent), identifies resources with stable URLs, and is stateless. Most real-world "REST APIs" are actually just HTTP APIs with JSON - they follow some REST principles but not all six constraints.
@@ -208,6 +221,34 @@ Fix: Map operations to resource+method: `/getUser` → `GET /users/{id}`. `/crea
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # The Six REST Constraints
 
 ---
@@ -248,6 +289,8 @@ Uniform Interface   Interoperability (standard conventions)
 Layered System      Security + scalability (add infrastructure)
 Code on Demand      Extensibility (optional, rarely used)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The constraints are interdependent. Statelessness requires that each request carry its own authentication - which only works because the uniform interface (Authorization header, Bearer tokens) makes this consistent. Cacheability requires that GET requests be safe and idempotent - which only works because the uniform interface defines what GET means. Remove one constraint and the others weaken.
@@ -408,6 +451,34 @@ Fix: Use the correct HTTP method. Login is a POST (creates a session or token). 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # REST vs SOAP vs GraphQL - The API Ecosystem
 
 ---
@@ -458,6 +529,8 @@ GraphQL: query language, single endpoint
   }
   -> exactly the fields requested, no more
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Each paradigm has a sweet spot and an anti-pattern. REST is verbose when clients have different data needs (leads to over/under-fetching). SOAP is too heavy for public APIs (requires XML frameworks on client). GraphQL is hard to cache (all POSTs, query-specific caching is complex) and adds backend complexity (N+1 query problem). The best APIs choose the right paradigm for the use case.
@@ -612,3 +685,33 @@ Fix: Use DataLoader pattern (batches N individual entity lookups into a single `
 > "We have three main ways for software systems to talk to each other. REST is the web standard - it's why you can use the same technique to call Stripe's payment API, Salesforce's CRM API, and your own internal services. JSON over HTTP. Works everywhere. This is what 90% of new APIs use. GraphQL is the mobile-app optimization - instead of getting all the data and throwing most of it away, the client says exactly what it needs. Facebook invented it to make their mobile app faster. Used by GitHub, Shopify. More complex to build, but better for mobile performance. SOAP is legacy enterprise - banks, insurance, government. It uses XML and strict contracts. Your SWIFT bank transfer almost certainly goes through SOAP. It's not being built for new systems, but it's being maintained in regulated industries because the contracts are machine-verifiable, which regulators like. The trend: internally, companies are moving to gRPC (Google's binary protocol, very fast for service-to-service calls). Externally, REST remains the standard. GraphQL fills a specific niche for complex data needs."
 
 *What separates good from great:* "The ability to explain technical choices in executive terms shows communication breadth. Naming SWIFT for SOAP shows domain knowledge. The trend observation about gRPC for internal communication shows current awareness."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

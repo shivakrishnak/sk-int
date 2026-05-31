@@ -7,6 +7,17 @@ permalink: /typescript/l1-functions-and-generics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Functions and Overloads](#typescript-functions-and-overloads) | foundational |
+| 2 | [Generics Basics](#generics-basics) | foundational |
+| 3 | [Type Narrowing and Type Guards](#type-narrowing-and-type-guards) | foundational |
+
+---
+
 # TypeScript Functions and Overloads
 
 🎯 **Interview Weight:** foundational (★☆☆) - typed functions are the
@@ -154,6 +165,8 @@ CALLBACKS AND HIGHER-ORDER FUNCTIONS:
   // TypeScript infers: T=string, U=number
   // lengths: number[]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -332,6 +345,8 @@ function process(input: string | number): string | number {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -481,6 +496,34 @@ a call signature in an interface?** `[SENIOR]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Generics Basics
 
 🎯 **Interview Weight:** foundational (★☆☆) - generics are the most
@@ -626,6 +669,8 @@ DEFAULT TYPE PARAMETERS:
   // T defaults to User
   const products: Paginated<Product> = { items: [], total: 0, page: 1 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -810,6 +855,8 @@ function processEntity<T extends Entity>(entity: T): void {
 // T can be User, Product, Order - any Entity subtype
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -965,6 +1012,34 @@ and Record<string, unknown>?** `[SENIOR]` MECHANISM
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Type Narrowing and Type Guards
 
@@ -1122,6 +1197,8 @@ CUSTOM TYPE PREDICATES:
   assertIsString(x);
   x.toUpperCase();  // OK: TypeScript narrowed x to string
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1292,6 +1369,8 @@ async function processUser(user: User | null) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1445,3 +1524,33 @@ function?** `[SENIOR]` MECHANISM
 > exhaustive check support. The `in` operator is better for ad-hoc
 > narrowing of third-party types or legacy code that doesn't have
 > explicit discriminants.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

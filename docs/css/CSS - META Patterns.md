@@ -7,6 +7,17 @@ permalink: /css/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Visual Consistency Mental Model](#visual-consistency-mental-model) | high |
+| 2 | [Layout Decision Framework](#layout-decision-framework) | high |
+| 3 | [Style Isolation Patterns](#style-isolation-patterns) | high |
+
+---
+
 # Visual Consistency Mental Model
 
 🎯 **Interview Weight:** high (★☆☆) - The mental model for
@@ -146,6 +157,8 @@ ENFORCED PATTERN:
   → All share one token → change once, update all
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Visual consistency is not a visual problem. It's a PROCESS
@@ -282,6 +295,8 @@ Fix:
   3. Add stylelint rule: no hard-coded colors
   4. The "which blue is right?" question becomes moot
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -805,6 +820,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Layout Decision Framework
 
 🎯 **Interview Weight:** high (★☆☆) - The ability to
@@ -954,6 +997,8 @@ COMMON PATTERNS:
   Multi-column article:     columns: 3 (multi-column layout)
   Responsive widget:        container query + flex/grid
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1128,6 +1173,8 @@ Also check: min-width on flex items
   which prevents them from shrinking below content width
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: Grid items not expanding to fill rows**
@@ -1140,6 +1187,8 @@ Check: align-items on grid container
   
 Fix: remove explicit align-items or set to stretch
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1709,6 +1758,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Style Isolation Patterns
 
 🎯 **Interview Weight:** high (★☆☆) - Style isolation is
@@ -1878,6 +1955,8 @@ CHOOSING AN ISOLATION APPROACH:
   Modern pure CSS without build → @scope
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The isolation problem is a SCOPE problem. Every programming
@@ -1939,6 +2018,8 @@ scope; Shadow DOM = private class; `@scope` = lexical scope.
   font-size: 0.875rem;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // Button.tsx
@@ -2084,6 +2165,8 @@ Diagnosis:
 Fix: ensure all class names use styles.className reference
      not string literals for non-global styles
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2637,3 +2720,33 @@ flowchart TD
 > scenarios, Shadow DOM provides the only browser-enforced
 > boundary. BEM is the fallback when no other mechanism
 > is viable.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /css/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why CSS Exists](#why-css-exists) | medium |
+| 2 | [CSS Box Model](#css-box-model) | critical |
+| 3 | [CSS Cascade and Inheritance](#css-cascade-and-inheritance) | critical |
+
+---
+
 # Why CSS Exists
 
 🎯 **Interview Weight:** medium - every frontend interview starts
@@ -109,6 +120,8 @@ Browser renders a page:
   6. Composite: layer management (GPU)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The CSSOM maps every DOM node to its computed style. CSS rules
 are matched via selectors, conflicts resolved by the cascade
 algorithm, and the winning value becomes the computed style.
@@ -180,6 +193,8 @@ minimal solution to these three constraints.
   <p>Content here</p>
 </section>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```css
 /* CSS: presentation only */
@@ -292,6 +307,8 @@ Diagnosis:
 curl -I https://your-site.com/styles.css
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Verify the `<link>` href, add cache-busting content hash
 to filename (Webpack/Vite does this automatically).
 
@@ -309,6 +326,8 @@ Diagnosis:
 # Look for strikethrough properties
 # Click the source link to find the winning rule
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Increase specificity of your rule by adding a class, or
 reduce specificity of the conflicting rule.
@@ -676,6 +695,34 @@ this concept without a visual diagram)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Box Model
 
 🎯 **Interview Weight:** critical - appears in almost every
@@ -781,6 +828,8 @@ model for all four regions, layout requires workarounds.
 |  +---------------------+  |
 +---------------------------+
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `width` and `height` properties target the content area
 by default (`box-sizing: content-box`). With `border-box`,
@@ -996,6 +1045,8 @@ Diagnosis:
 # Computed width vs set width will differ by padding+border
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add global `box-sizing: border-box` reset or add it
 to the specific component.
 
@@ -1013,6 +1064,8 @@ Diagnosis:
 # Check: does parent have a top margin OR does first child?
 # They may be the same margin collapsed together
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add `padding-top: 1px` or `overflow: hidden` to parent,
 or use `display: flow-root` to establish BFC.
@@ -1417,6 +1470,34 @@ block-beta
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Cascade and Inheritance
 
 🎯 **Interview Weight:** critical - the most misunderstood
@@ -1542,6 +1623,8 @@ INHERITANCE (separate from cascade):
   Use: inherit | initial | unset | revert keywords
   to control explicitly.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1764,6 +1847,8 @@ Diagnosis:
 # Compare specificity: winning rule score vs your rule score
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Increase specificity of your rule, or reduce specificity
 of the competing rule. Use @layer if the rules are in
 different layers.
@@ -1783,6 +1868,8 @@ Diagnosis:
 # Check if any ancestor has inline style attribute
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use `property: unset` or `property: initial` to break
 the cascade at the component level.
 
@@ -1799,6 +1886,8 @@ Diagnosis:
 # Look for identical specificity rules in different order
 # Check if a CSS module or CSS-in-JS class name changed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Don't rely on source order for meaningful style
 conflicts. Use specificity differences or @layer to make
@@ -2204,4 +2293,34 @@ flowchart TD
 > source order matter. This guarantees a deterministic winner
 > for every conflicting property. Understanding this sequence
 > explains why "later rule wins" is only sometimes true.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

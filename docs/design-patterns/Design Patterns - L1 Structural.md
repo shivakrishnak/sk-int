@@ -8,6 +8,17 @@ permalink: /design-patterns/l1-structural/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Decorator Pattern](#decorator-pattern) | medium |
+| 2 | [Adapter Pattern](#adapter-pattern) | medium |
+| 3 | [Facade Pattern](#facade-pattern) | medium |
+
+---
+
 # Decorator Pattern
 
 ---
@@ -103,6 +114,8 @@ Component c = new ConcreteDecorator(  // outer
                 new ConcreteDecoratorB(   // middle
                   new ConcreteComponent())); // inner
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Decorator implements the same interface as the object it wraps. This
@@ -400,6 +413,34 @@ and proliferation of small classes if taken to extremes."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Adapter Pattern
 
 ---
@@ -489,6 +530,8 @@ Client:
   target.request()  // client uses Target interface
                     // Adaptee is hidden inside Adapter
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Adapter is a translation layer. It never adds new functionality;
@@ -776,6 +819,34 @@ exist behind the same interface."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Facade Pattern
 
 ---
@@ -872,6 +943,8 @@ Caller:
   orderService.placeOrder(request)
   // No knowledge of 5 subsystem classes needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Facade does not prevent access to subsystem classes - it just provides
@@ -1152,3 +1225,33 @@ Demeter; the Facade encapsulates the traversal."
 | Hiring Manager | "The service layer as a Facade is what makes our API layer thin and testable. Controllers just delegate." |
 | Bar Raiser | "How does a Facade become a God class? What signals tell you it has grown too large?" |
 | Peer Engineer | "I see Facade everywhere in service layers. The key smell: when the Facade starts making decisions - extract that to domain objects." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

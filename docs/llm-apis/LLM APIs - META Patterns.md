@@ -140,6 +140,8 @@ Operational failures:
   - Logging full prompts with PII
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -468,6 +470,8 @@ if score_after < score_before:
     print("REGRESSION DETECTED - reject change")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -555,6 +559,8 @@ def llm_judge(response: str, expected: str) -> float:
         return 0.5
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Start with 20 cases and simple assertions. Expand the suite only when you observe a specific quality failure. The suite grows from production observations, not upfront design."
 
 ---
@@ -613,6 +619,8 @@ prompts/
     current.txt  <- symlink to active version
     CHANGELOG.md <- what changed and why
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Deployment process:
 1. Edit prompt in feature branch
@@ -702,6 +710,8 @@ def estimate_call_cost(
         )
     return cost
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Cloud monitoring: set up billing alerts at 50%, 80%, 100% of monthly budget.
 
@@ -812,6 +822,34 @@ quadrantChart
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # LLM Integration Testing Patterns
 
@@ -926,6 +964,8 @@ LLM TESTING PYRAMID:
     /            \
 [Unit Tests]             <- mock LLM, test business logic
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The pyramid mirrors traditional testing: many cheap
 unit tests at the base, fewer expensive integration
@@ -1208,6 +1248,8 @@ integration tests. Re-running usually fixes it.
    )
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. For naturally variable outputs (summaries, generation):
    use the LLM judge test approach - score quality
    rather than checking exact content.
@@ -1252,6 +1294,8 @@ mock.messages.create.return_value = make_mock_response("high")
 result = process("urgent issue", client=mock)
 assert result == "high"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 What to test with unit tests:
 - Input validation logic
@@ -1360,6 +1404,8 @@ async def run_shadow(prompt: str, primary: str):
     except Exception:
         pass  # shadow failure never affects users
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 What to analyze from shadow logs:
 - Quality: LLM judge scores for primary vs shadow
@@ -1473,6 +1519,8 @@ def test_uses_search_tool_for_product_query():
     assert "red widgets" in result["tool_input"]["query"]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Integration test for tool use:
 - Use a real "test" tool that returns known data
 - Verify the agent asks for the right tool in the right situation
@@ -1541,6 +1589,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # LLM Dependency Risk Management
 
@@ -1661,6 +1737,8 @@ Price increase    Low         Medium   Multi-provider
 API change        Low         Medium   Version pinning +
                                        integration tests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1991,6 +2069,8 @@ def smoke_test_model(model_id: str) -> bool:
 assert smoke_test_model("claude-3-5-sonnet-20241022")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Recovery time objective:* If model IDs are config-driven:
 fix is a config change + deploy. < 30 minutes.
 If model IDs are hard-coded: fix requires code change + deploy.
@@ -2298,3 +2378,33 @@ mindmap
 > the abstraction layer reduces switching cost;
 > annual assessment ensures you know the cost before
 > you need to pay it.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

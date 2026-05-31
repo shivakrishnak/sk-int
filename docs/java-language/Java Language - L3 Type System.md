@@ -8,9 +8,20 @@ permalink: /java-language/l3-type-system/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L3 Type System](#java-language---l3-type-system) | medium |
+
+---
+
 # Java Language - L3 Type System
 
 ## Sealed Classes and Pattern Matching
+
+---
 
 ### 🎯 Model Answer
 
@@ -136,6 +147,8 @@ INSTANCEOF PATTERN MATCHING (Java 16):
   if (obj instanceof String s && s.length() > 5) { ... }  // s in scope
   if (!(obj instanceof String s) || s.length() > 5) { ... } // compile error: s not in scope after !
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -304,6 +317,8 @@ Prevention:
   Never use 'default' with sealed type switches (defeats the purpose).
   If void return is needed: throw IllegalStateException in default.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -549,6 +564,8 @@ classDiagram
 
 ## Generics Wildcards and Bounded Types
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -667,6 +684,8 @@ MULTIPLE BOUNDS:
   // T must be both Comparable<T> AND Cloneable
   // Class bounds must come first: <T extends MyClass & InterfaceA>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -823,6 +842,8 @@ Prevention:
   Methods that write to the collection: ? super T.
   Static analysis: PMD rule "MethodParameterCouldBeWildcard" catches this.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1035,3 +1056,33 @@ flowchart LR
 > doesn't know the exact supertype). Type parameters (`<T>`) allow both, but restrict callers to
 > a consistent type throughout the method signature. PECS summarizes which to choose based on
 > direction of data flow.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

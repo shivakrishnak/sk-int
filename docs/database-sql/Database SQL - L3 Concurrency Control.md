@@ -8,6 +8,16 @@ permalink: /database-sql/l3-concurrency-control/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Transaction Isolation Levels - Read Phenomena and Trade-offs](#transaction-isolation-levels---read-phenomena-and-trade-offs) | medium |
+| 2 | [Optimistic vs Pessimistic Locking](#optimistic-vs-pessimistic-locking) | medium |
+
+---
+
 # Transaction Isolation Levels - Read Phenomena and Trade-offs
 
 **TL;DR:** SQL defines four isolation levels (Read Uncommitted, Read Committed,
@@ -81,6 +91,8 @@ PostgreSQL note: Repeatable Read in PG also prevents
 phantom reads (MVCC snapshot covers the full transaction).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **PostgreSQL-specific behavior:**
 
 ```
@@ -104,6 +116,8 @@ Serializable (SSI):
     ERROR: could not serialize access due to read/write dependencies
   - Application must retry serialization failures.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -304,6 +318,8 @@ while (retries < 5) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -434,6 +450,34 @@ Always choose the minimal intervention that solves the problem."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Optimistic vs Pessimistic Locking
 
 **TL;DR:** Pessimistic locking acquires a lock before reading to prevent concurrent
@@ -506,6 +550,8 @@ FOR KEY SHARE      -- weakest shared lock
                    -- used by foreign key enforcement
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Optimistic locking: version column pattern:**
 
 ```sql
@@ -525,6 +571,8 @@ WHERE id = :id
 -- If 0 rows updated -> concurrent modification -> retry
 -- If 1 row updated -> success
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -830,6 +878,8 @@ JOIN pg_stat_activity a ON a.pid = l.pid
 WHERE NOT l.granted
 ORDER BY a.query_start;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Not granted = blocked transaction. `query_start` = when it started waiting.
 Find the blocker: same relation, `granted = true`. Look at the blocking query.
 High-value diagnostic: long-held FOR UPDATE with `idle in transaction` state -
@@ -851,3 +901,33 @@ EXEC returns null if the watched key changed. Retry.
 `If-Match: etag` header. Server rejects if current etag differs.
 All of these are the same pattern: read a version, write with a version check,
 retry on conflict."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

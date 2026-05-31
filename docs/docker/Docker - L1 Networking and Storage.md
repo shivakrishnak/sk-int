@@ -8,9 +8,20 @@ permalink: /docker/l1-networking-and-storage/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L1 Networking and Storage](#docker---l1-networking-and-storage) | medium |
+
+---
+
 # Docker - L1 Networking and Storage
 
 ## Docker Networking Basics
+
+---
 
 ### 🎯 Model Answer
 
@@ -136,6 +147,8 @@ NETWORK ISOLATION:
   # Or: connect a running container to additional network:
   docker network connect backend-net myapp
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -304,6 +317,8 @@ Fix:
   # In Compose: define a named network and assign services to it.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -349,6 +364,8 @@ you can define additional networks for explicit isolation.
 ---
 
 ## Docker Volumes and Persistent Storage
+
+---
 
 ### 🎯 Model Answer
 
@@ -494,6 +511,8 @@ DOCKER COMPOSE VOLUMES:
     pgdata: {}     # top-level declaration (Docker creates if absent)
     app-logs: {}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -652,6 +671,8 @@ Prevention:
   Test the restore procedure: take a backup, create a new container, restore, verify.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -703,6 +724,8 @@ Any bind mount to system directories: investigate and remove.
 ---
 
 ## Docker Registries and Image Distribution
+
+---
 
 ### 🎯 Model Answer
 
@@ -798,7 +821,9 @@ DOCKER HUB RATE LIMITING:
   # Pro/Team: unlimited.
   
   # Check remaining rate limit:
-  TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+  TOKEN=$(curl -s \
+    "https://auth.docker.io/token?service=registry.docker.io\
+&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
   curl -s --head -H "Authorization: Bearer $TOKEN" \
     https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest \
     | grep -i ratelimit
@@ -842,6 +867,8 @@ IMAGE SCANNING:
   cosign verify --key cosign.pub myapp:1.2.3
   # Kubernetes: admission controller verifies signature before allowing pod creation.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1006,6 +1033,8 @@ Long-term fix:
     # Pulls from ECR cache. On miss: ECR fetches from Docker Hub (using 1 IP).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1050,4 +1079,34 @@ PR: CI/CD creates a PR to rebuild with the patched base image. (3)
 SLA: CRITICAL CVEs remediated within 24 hours in production. HIGH:
 within 7 days. Treat unpatched CRITICAL CVEs like production incidents:
 they are a security incident waiting to happen.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

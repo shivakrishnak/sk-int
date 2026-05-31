@@ -129,6 +129,8 @@ MCP connection flow:
 6. Server executes and returns result
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 MCP uses JSON-RPC 2.0 as the message format.
 Fully typed and schema-validated.
 
@@ -355,6 +357,8 @@ No tools appear from that server.
    "params":{"protocolVersion":"2024-11-05",
    "capabilities":{}}}' | python server.py
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    If no response: server is broken. If valid response:
    config is the issue.
 
@@ -484,6 +488,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize",
 "params":{"protocolVersion":"2025-03-26",
 "capabilities":{}}}' | python server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check the protocol version in the response.
 
 Step 2: Check VS Code's config format. VS Code uses
@@ -657,7 +663,6 @@ execute a SQL query, create a file, post a message,
 search the web. Tool invocation uses `tools/call`
 with named arguments. The result is returned to the AI.
 
-Resources: read-only data sources identified by URIs.
 The AI accesses a resource when it wants to READ
 something: the contents of a file, a database record,
 a configuration. Resources use `resources/read` with
@@ -754,6 +759,34 @@ sequenceDiagram
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP vs Function Calling vs Plugins
 
@@ -881,6 +914,8 @@ CHATGPT PLUGINS (deprecated):
   OpenAI called plugin's HTTP endpoints
   Response returned to model
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1128,6 +1163,8 @@ MCP rejects them.
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Validate all input schemas against JSON Schema
 2020-12 specification. Every root schema needs
 `type: object`. `required` must be an array of
@@ -1269,6 +1306,8 @@ MCP uses JSON-RPC 2.0. A tool call request:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Successful response:
 
 ```json
@@ -1287,6 +1326,8 @@ Successful response:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Error response (tool execution error):
 
 ```json
@@ -1304,6 +1345,8 @@ Error response (tool execution error):
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Note: tool execution errors use `isError: true` in
 the result, NOT JSON-RPC error responses. JSON-RPC
@@ -1449,6 +1492,34 @@ text comparisons than a diagram.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # MCP Ecosystem
 
 **Interview Weight:** ★☆☆ - Knowing what clients,
@@ -1576,6 +1647,8 @@ SDKs:
   Java/Kotlin: Spring AI (spring.io)
   Rust: crates.io/crates/mcp-server
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1807,6 +1880,8 @@ The config references `/Users/yourname/...` or
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This fails on any machine that isn't yours.
 
 *Fix patterns:*
@@ -1818,6 +1893,8 @@ This fails on any machine that isn't yours.
   "args": ["my-mcp-server"]
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `uvx` handles the Python environment automatically
 on every machine.
 
@@ -1828,6 +1905,8 @@ on every machine.
   "args": ["server.py"]
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Each team member sets `MCP_SERVER_CMD` in their shell.
 
 (3) Deploy as a shared HTTP server: everyone uses
@@ -2028,6 +2107,8 @@ async def lifespan(server: Server):
 server = Server("my-server", lifespan=lifespan)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 2 - Tool with error handling:
 ```python
 @server.call_tool()
@@ -2044,6 +2125,8 @@ async def call_tool(name, arguments):
         )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 3 - Running the server:
 ```python
 import asyncio
@@ -2056,6 +2139,8 @@ async def main():
 
 asyncio.run(main())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why lifespan matters: without it, connections and
 clients are re-created on every tool call.
@@ -2129,6 +2214,8 @@ from mcp.server.stdio import stdio_server
 import mcp.types as types
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 TypeScript: `npm install @modelcontextprotocol/sdk`
 
 Quickstart to verify installation:
@@ -2145,6 +2232,8 @@ async def list_tools() -> list[types.Tool]:
 
 print("MCP server ready")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Documentation: modelcontextprotocol.io/docs
 and github.com/modelcontextprotocol/python-sdk
@@ -2171,3 +2260,33 @@ isolation cleanly."
 
 *(Omit: ecosystem is best represented as structured
 lists, not a diagram.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

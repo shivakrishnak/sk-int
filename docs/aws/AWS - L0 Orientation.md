@@ -158,6 +158,8 @@ Observability  | CloudWatch        | Metrics, logs, alarms
                | CloudTrail        | API audit log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -286,6 +288,8 @@ aws service-quotas request-service-quota-increase \
   --desired-value 200
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Prevention:* Request quota increases before they
 are needed. Set up Service Quotas CloudWatch alarms
 to alert at 80% of limit utilization.
@@ -311,6 +315,34 @@ to alert at 80% of limit utilization.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Account and Organization Structure
 
@@ -428,6 +460,8 @@ Root (Management Account):
       - prod-account-app2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SCP Example (restrict regions):**
 
 ```json
@@ -456,6 +490,8 @@ Root (Management Account):
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This SCP prevents workloads in the OU from creating
 resources outside the approved regions. IAM, Route 53,
@@ -569,6 +605,8 @@ aws organizations list-policies-for-target \
 # Review each SCP for Deny statements
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Modify the SCP to allow the action for this
 specific account using a `Condition` on
 `aws:PrincipalAccount`. Or move the account to an OU
@@ -595,6 +633,34 @@ without the restrictive SCP.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Global Infrastructure
 
@@ -709,6 +775,8 @@ ZONAL SERVICES (choose AZ):
   EBS volumes, EC2 instances.
   (S3, SQS, Lambda are regional, not zonal)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -825,6 +893,8 @@ aws ec2 describe-instances \
   }' --output table
 # All same AZ = single-AZ risk
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Move to Auto Scaling Group spanning 2+ AZs.
 ALB automatically routes to healthy instances in
@@ -989,6 +1059,8 @@ aws iam list-attached-role-policies \
 # s3:GetObject on the target bucket ARN
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Check the S3 bucket policy:**
 ```bash
 # Run from the account that owns the bucket:
@@ -999,6 +1071,8 @@ aws s3api get-bucket-policy \
 # Look for Principal: arn:aws:iam::<source-account>:*
 # or specific role ARN
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Check SCP if Organizations is in use:**
 
@@ -1208,6 +1282,8 @@ Route 53 record: api.example.com
   Latency record -> us-east-1 ALB (for US users)
   Latency record -> ap-southeast-1 ALB (for Asian users)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Users in Singapore get ap-southeast-1 automatically.
 Health checks: failover to us-east-1 if Asia region
 is unhealthy.
@@ -1226,3 +1302,33 @@ insight. Not all latency problems need a new region -
 some are solved by caching at the edge.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-jvm/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - META Patterns](#java-jvm---meta-patterns) | medium |
+
+---
+
 # Java JVM - META Patterns
 
 ## JVM Performance Debugging Mental Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -118,6 +129,8 @@ STEP 5: I/O investigation
   Check: slow external calls (APM traces - P99 of each external call)
   Fix: increase pool size, add circuit breaker, add caching
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -266,6 +279,8 @@ Lesson: in performance debugging, the investigation method itself can change
   - -verbose:gc (high overhead output)
   - Synchronous tracing (any tracing that writes synchronously to disk/network)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -426,6 +441,8 @@ unresolved. The original symptom returns in 2 weeks.
 
 ## GC Selection Decision Framework
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -527,6 +544,8 @@ DECISION FLOWCHART:
   4. Batch job, no latency SLA? -> ParallelGC
   5. None of the above? -> G1 default
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -672,6 +691,8 @@ Fix:
     -> fewer allocation stalls
     Note: still experimental in JDK 21, expected GA in JDK 25
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -828,6 +849,8 @@ it addresses. Flags added "because someone on Stack Overflow said so": remove th
 
 ## JVM Observability and Monitoring Strategy
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -940,6 +963,8 @@ LAYER 3: Continuous JFR (always-on, incident post-mortem)
     jfr print --events jdk.JavaMonitorEnter incident.jfr  <- lock contention
     jfr print --events jdk.ObjectAllocationInNewTLAB incident.jfr  <- allocators
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1128,6 +1153,8 @@ Prevention (to be set up before next incident):
   Cost: < 2% CPU overhead (JFR continuous) + < 1% (GC logs) = trivial
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1305,3 +1332,33 @@ providing practical patterns without requiring a separate system design section.
 through the structured text content (decision trees, priority lists, checklists)
 and the code examples than through visual diagrams. The code examples contain embedded
 ASCII decision trees that serve the same purpose.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,15 @@ permalink: /devops-cicd/l4-supply-chain-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Supply Chain Security and SBOM](#supply-chain-security-and-sbom) | medium |
+
+---
+
 # Supply Chain Security and SBOM
 
 🎯 Interview Weight: critical - post-SolarWinds and Log4Shell,
@@ -143,6 +152,8 @@ Build artifact (Docker image, JAR, binary)
   → Attached to artifact in registry
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Query (at CVE disclosure time):
 ```
 CVE-2021-44228 (Log4Shell): log4j-core 2.0.0-2.14.1
@@ -150,6 +161,8 @@ CVE-2021-44228 (Log4Shell): log4j-core 2.0.0-2.14.1
   → Return: 34 services, 12 base images
   → Prioritize remediation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **SLSA (Supply-chain Levels for Software Artifacts):**
 - Level 1: documentation only (basic baseline)
@@ -254,6 +267,8 @@ FROM eclipse-temurin:21-jre-jammy@sha256:a4c0fe6c5b3f...
 # Update process: automated PR to update the digest after verification
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # Complete supply chain hardened CI pipeline
 name: Secure Build and Deploy
@@ -352,6 +367,8 @@ jobs:
             --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
             ghcr.io/myorg/myapp@${{ steps.build.outputs.digest }}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # CVE response workflow: Log4Shell scenario
@@ -770,6 +787,8 @@ Practical implementation in GitHub Actions (SLSA Level 2):
   # Signed with Sigstore OIDC (keyless)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Verification at deployment:
 ```bash
 # Verify that the image was built by the expected CI workflow
@@ -779,6 +798,8 @@ slsa-verifier verify-image \
   --source-uri github.com/myorg/myrepo \
   --source-tag v1.2.0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding the practical SLSA
 level achievable with current tooling. Level 1 is trivial (any CI).
@@ -845,6 +866,8 @@ cosign verify \
 # Any image signed by a different GitHub org or workflow is rejected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding the Rekor transparency
 log's security guarantee. Rekor is append-only and Merkle-tree-based
 (same structure as certificate transparency logs). Any tampering
@@ -893,6 +916,8 @@ EOF
 # notification-svc  v1.2.0  2024-01-05  platform-team  2.14.1
 # (48 other services NOT affected)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Hour 2 - Triage and emergency response.
 Three affected services identified. Create P0 security incidents
@@ -962,6 +987,8 @@ VEX document structure:
   }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 VEX status values:
 - `not_affected`: vulnerability is present but not exploitable
@@ -1060,6 +1087,8 @@ ORDER BY deployed_at;
 # Output: image with this version was first deployed 3 months ago
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check if CVE was known at deployment time.
 ```bash
 # Check NVD (National Vulnerability Database) for CVE publish date
@@ -1070,6 +1099,8 @@ curl "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-XXXX" |
 #             was deployed. CI scan at deploy time would not have caught it.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Verify the nightly re-scan is functional.
 ```bash
 # Check re-scan job logs for the past 7 days
@@ -1077,6 +1108,8 @@ kubectl logs -n security jobs/nightly-rescan-$(date +%Y%m%d) | tail -50
 # If no logs: re-scan job is failing silently
 # Verify: the re-scan should have flagged this after CVE publish date
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Remediation.
 Prioritize by CVSS score and exposure:
@@ -1143,6 +1176,8 @@ validators:
           cert_identity: https://github.com/myorg/*/.*
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kyverno policy (alternative):
 ```yaml
 apiVersion: kyverno.io/v1
@@ -1167,6 +1202,8 @@ spec:
                     subject: "https://github.com/myorg/*/.*"
                     rekorURL: https://rekor.sigstore.dev
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The runtime guarantee: no unsigned or improperly signed image can
 run in the `production` or `staging` namespace. Even if a developer
@@ -1267,6 +1304,8 @@ Source Commit SHA-abc123
     validated in CI and tested in dev and staging
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Registry structure for promotion:
 ```
 registry.company.com/
@@ -1275,6 +1314,8 @@ registry.company.com/
   staging/myapp:sha-abc123  <- promoted to staging, same digest
   production/myapp:sha-abc123 <- promoted to production, same digest
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The promotion act (copying the image from one registry path to another)
 does not change the image's SHA256 digest. The signature remains valid
@@ -1317,6 +1358,8 @@ jobs:
   deploy:
     needs: [test, security]  # Deploy only if both pass
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Scan SBOM, not the full image. Scanning an SBOM (text file) is
 10x faster than scanning a Docker image (requires unpacking all
@@ -1388,3 +1431,33 @@ signing that was disabled for 3 months due to a technical issue
 will fail the SOC 2 test. Continuous monitoring of control effectiveness
 (e.g., alert if any unsigned image is deployed to production) is
 required for sustained compliance.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

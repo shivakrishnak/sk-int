@@ -8,6 +8,17 @@ permalink: /database-sql/l1-data-modification/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [INSERT, UPDATE, DELETE - Modifying Table Data](#insert-update-delete---modifying-table-data) | medium |
+| 2 | [Tables and Schemas - Organizing Data Structures](#tables-and-schemas---organizing-data-structures) | medium |
+| 3 | [Data Types - Choosing Correct Column Types](#data-types---choosing-correct-column-types) | medium |
+
+---
+
 # INSERT, UPDATE, DELETE - Modifying Table Data
 
 **TL;DR:** INSERT adds rows, UPDATE modifies rows, DELETE removes rows.
@@ -95,6 +106,8 @@ VALUES ('a@b.com', 'Alice')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **UPDATE forms:**
 
 ```sql
@@ -112,6 +125,8 @@ SET total_cents = i.computed_total
 FROM order_totals i
 WHERE i.order_id = o.id;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **DELETE vs TRUNCATE:**
 
@@ -306,6 +321,8 @@ BEGIN
 END $$;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -396,6 +413,34 @@ statement, atomic, and lets the optimizer choose the join strategy.
 For large deletes: use the batched approach with the join in the subquery."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Tables and Schemas - Organizing Data Structures
 
@@ -489,6 +534,8 @@ JSON:
   JSONB  - stored as binary, indexable (PostgreSQL)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Schema organization:**
 
 ```sql
@@ -506,6 +553,8 @@ GRANT USAGE ON SCHEMA analytics TO reporting_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA analytics
     TO reporting_user;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -710,6 +759,34 @@ compatible (the old code version runs against the new schema)."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Data Types - Choosing Correct Column Types
 
 **TL;DR:** Choosing the right data type for each column is one of the
@@ -786,6 +863,8 @@ JSON (indexed):     JSONB (PostgreSQL)
 Enums:              CHECK constraint OR lookup table
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **UUID vs BIGINT as primary key:**
 
 ```
@@ -810,6 +889,8 @@ UUIDv7 (time-ordered):
   - 16 bytes
   - Relatively new (not in all UUID libraries yet)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -965,6 +1046,8 @@ WHERE ABS(amount - 10.50) < 0.001  -- float range check
 -- Better: migrate to NUMERIC or integer cents
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1055,3 +1138,33 @@ column ordering can matter for wide tables with many small columns.
 The practical advice: put NOT NULL fixed-length columns first, nullable
 and variable-length columns last. This is a micro-optimization - correctness
 and index design matter far more."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

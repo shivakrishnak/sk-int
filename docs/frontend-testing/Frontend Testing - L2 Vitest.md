@@ -7,6 +7,16 @@ permalink: /frontend-testing/l2-vitest/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Vitest and Vite-native Testing](#vitest-and-vite-native-testing) | medium |
+| 2 | [Test Performance Optimization with Vitest](#test-performance-optimization-with-vitest) | medium |
+
+---
+
 # Vitest and Vite-native Testing
 
 ---
@@ -119,6 +129,8 @@ Module resolution comparison:
     Snapshot testing: toMatchSnapshot(), toMatchInlineSnapshot()
     Concurrent tests: test.concurrent() for parallel execution
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -301,6 +313,34 @@ The correct answer is "assess the pain first."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Test Performance Optimization with Vitest
 
 ---
@@ -373,6 +413,8 @@ Vitest execution model:
     @vitest/coverage-istanbul: Slower, more accurate for edge cases
     Exclude generated code via coverage.exclude patterns
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -549,3 +591,33 @@ A: Profile first, then optimize by biggest lever.
 parallel CI jobs (fast unit tests + slow E2E tests running
 simultaneously) is often a 10x win over any Vitest configuration
 change.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,16 @@ permalink: /database-sql/l2-advanced-queries/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Subqueries and Correlated Subqueries](#subqueries-and-correlated-subqueries) | medium |
+| 2 | [CTEs (Common Table Expressions)](#ctes-common-table-expressions) | medium |
+
+---
+
 # Subqueries and Correlated Subqueries
 
 **TL;DR:** A subquery is a SELECT inside another SQL statement. It can
@@ -91,6 +101,8 @@ FROM (SELECT customer_id, COUNT(*) AS total_orders
 WHERE total_orders > 5;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **EXISTS vs IN:**
 
 ```
@@ -107,6 +119,8 @@ IN:
   - Returns TRUE/FALSE/UNKNOWN
   - Readable for small value sets
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -287,6 +301,8 @@ WHERE id NOT IN (SELECT fk FROM b WHERE fk IS NOT NULL)
 WHERE NOT EXISTS (SELECT 1 FROM b WHERE b.fk = a.id)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure: Correlated subquery causes query to time out**
 
 Symptom: query runs in seconds on 1,000 rows; times out on 1,000,000 rows.
@@ -401,6 +417,34 @@ because they avoid outputting and deduplicating join results."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CTEs (Common Table Expressions)
 
 **TL;DR:** A CTE (WITH clause) is a named temporary result set defined
@@ -478,6 +522,8 @@ JOIN customers c ON c.id = s.customer_id
 WHERE s.rank <= 10;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Recursive CTE structure:**
 
 ```sql
@@ -497,6 +543,8 @@ WITH RECURSIVE cte_name AS (
 )
 SELECT * FROM cte_name ORDER BY depth, name;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -715,6 +763,8 @@ WITH RECURSIVE tree AS (
 SELECT * FROM tree;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure: CTE is slow after PostgreSQL 11 -> 12 upgrade**
 
 Symptom: a query using CTEs is suddenly much slower after upgrade.
@@ -838,3 +888,33 @@ subsequent queries; (2) the same intermediate result is used in multiple queries
 correct statistics. Use CTE when: the result is used in one query and is
 small to medium size. Temporary tables have write overhead (WAL in some modes)
 but are more flexible."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

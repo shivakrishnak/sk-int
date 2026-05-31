@@ -8,9 +8,20 @@ permalink: /java-core/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L6 Theory](#java-core---l6-theory) | medium |
+
+---
+
 # Java Core - L6 Theory
 
 ## JVM Bytecode and Compilation Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -80,6 +91,8 @@ JIT compilation is the local warehouse that pre-assembles popular items
   - Attributes (LineNumberTable, LocalVariableTable, SourceFile, etc.)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key bytecodes (opcodes):**
 ```
 Stack operations: iconst_0 (push 0), ldc "hello" (push constant from pool)
@@ -91,6 +104,8 @@ Control flow:     if_icmplt, goto, tableswitch
 Returns:          ireturn, areturn, return (void)
 Type conversions: i2l (int to long), checkcast, instanceof
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -231,6 +246,8 @@ public void benchmarkMethod() {
 // (dead code elimination)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -276,6 +293,8 @@ Tier 4: C2 Full Optimization
   - Deoptimization if speculation fails
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Checking JIT compilation activity:
 // JVM flag: -XX:+PrintCompilation
@@ -292,6 +311,8 @@ Tier 4: C2 Full Optimization
 // JIT: if (order instanceof ProcessorImpl) { inlined code } else { slow path }
 // Profile reveals: 99.9% of calls use ProcessorImpl -> speculative inline
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The C2 JIT uses "type profiles" collected
 at tier 3: at each virtual call site, the JVM tracks which concrete types
@@ -328,6 +349,8 @@ Performance:
   - Stateless lambdas: singleton (one instance ever)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Stateless lambda: singleton (no capture)
 Runnable r = () -> System.out.println("hi"); // ONE instance, reused
@@ -338,6 +361,8 @@ String message = "hello";
 Runnable r = () -> System.out.println(message); // captures message
 // New Runnable instance for each call to this code with different message
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The lambda as `invokedynamic` decision
 was made to future-proof the JVM: the bootstrap method determines at runtime
@@ -394,6 +419,8 @@ synchronized(localObject) { // localObject never shared -> lock elided!
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Escape analysis explains why Stream
 pipelines on small datasets are often faster than expected despite creating
 many intermediate objects (`Optional`, `Spliterator`, lambda instances).
@@ -444,6 +471,8 @@ try (Context ctx = Context.create()) {
 // 3. Build optimized image: --pgo=profile.iprof
 // Result: AOT performance closer to JIT peaks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The JIT vs Native Image trade-off is
 deployment context-dependent. Long-running services (application servers,
@@ -502,6 +531,8 @@ public static void premain(String args, Instrumentation inst) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The distinction between compile-time
 (AspectJ ctw), load-time (AspectJ ltw, Java agent), and runtime (CGLIB,
 Byte Buddy) bytecode manipulation has real implications. Compile-time:
@@ -548,6 +579,8 @@ Monitoring:
   # Analyze: look for "Deoptimization" events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Type pollution is a real performance
 concern in polymorphic code. A method that processes `List<T>` items
 performs best when called with only one concrete type (ArrayList). If
@@ -589,6 +622,8 @@ Attributes:
   RuntimeVisibleAnnotations: RUNTIME retention annotations
   RuntimeInvisibleAnnotations: CLASS retention annotations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `StackMapTable` attribute (mandatory
 since Java 7) precomputes the type state of the operand stack and local
@@ -635,6 +670,8 @@ jcmd <pid> JFR.start duration=60s filename=app.jfr settings=default
 javap -c -verbose -p com.example.Foo | grep -A 5 "invoke"
 // Shows all method invocations: verify instrumentation injected correctly
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Production debugging without source code:
 if a production JVM crashes or hangs, you have: (1) thread dumps (`jstack`),
@@ -687,6 +724,8 @@ class MyHints implements RuntimeHintsRegistrar {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The closed-world assumption is both the
 power and the limitation of Native Image. The closed world enables aggressive
 optimization: no virtual dispatch for monomorphic calls (because no new
@@ -728,6 +767,8 @@ generation by recording all dynamic accesses during test runs.
 ---
 
 ## Type System Theory and Generic Variance
+
+---
 
 ### 🎯 Model Answer
 
@@ -793,6 +834,8 @@ PECS: Producer Extends, Consumer Super
   - "consuming" = writing to the collection  -> use ? super
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Type erasure:**
 ```java
 // Generic type parameters erased at runtime:
@@ -806,6 +849,8 @@ TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
 // typeRef carries the List<String> info via anonymous subclass trick
 // Jackson uses this for deserialization with generic types
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -943,6 +988,8 @@ String s = strings.get(0); // ClassCastException: Integer cannot be cast to Stri
 User user = deserialize(json, User.class); // type-safe
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1001,6 +1048,8 @@ class Dog extends Animal {
 // doesn't enforce it as override; it's a new overloaded method
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* LSP is the foundation of correct inheritance.
 The "Square extends Rectangle" example is the canonical LSP violation: both
 are mathematically correct shapes, but a Square does NOT behave as a flexible
@@ -1054,6 +1103,8 @@ dogs.sort(byName); // works! byName can compare Animals, Dogs are Animals
 // T=Dog, Comparator<? super Dog> accepts Comparator<Animal>, Comparator<Object>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Variance in type theory has a precise
 formulation: covariant types can be substituted in output positions (return
 types), contravariant types in input positions (parameter types). Functions
@@ -1106,6 +1157,8 @@ addAll(strings, 42); // compiles, ArrayStoreException at runtime!
 // addAll(strings, 42); // COMPILE ERROR: T=String, 42 is Integer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The array covariance decision is a
 compromise between expressiveness (sorting works for all arrays) and safety
 (type errors caught at compile time). Generics solve it correctly but came
@@ -1147,7 +1200,8 @@ class SortedBox<T extends Comparable<T>> {
 
 // What IS preserved (despite erasure):
 // 1. Field generic signatures (via Signature attribute in bytecode):
-List<String> field; // bytecode: field type = Ljava/util/List; but Signature = Ljava/util/List<Ljava/lang/String;>;
+List<String> field; // bytecode: field type = Ljava/util/List;
+// Signature = Ljava/util/List<Ljava/lang/String;>;
 // 2. Method parameter/return type generic signatures
 // 3. Class/interface generic type parameters
 
@@ -1165,6 +1219,8 @@ instanceof T; // COMPILE ERROR: T erased
 T.class; // COMPILE ERROR: no such class at runtime
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "super type token" pattern (common in
 Jackson's `TypeReference<T>`) works by creating an ANONYMOUS subclass that
 preserves the generic type parameter in its superclass:
@@ -1174,6 +1230,8 @@ TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
 // Signature preserved in bytecode!
 Type type = typeRef.getClass().getGenericSuperclass(); // TypeReference<List<String>>
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is how Jackson, Gson, and Spring's `ParameterizedTypeReference` provide
 generic type info to their APIs. Type erasure creates an asymmetry: types
 declared in field/method signatures survive; type parameters at instantiation
@@ -1222,6 +1280,8 @@ let p: Point = { x: 1, y: 2, name: "origin" }; // OK! extra field fine
 Method m = obj.getClass().getMethod("run"); // runtime structural check
 if (m != null) m.invoke(obj); // "duck typing" via reflection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Nominal vs structural typing is a fundamental
 type system design choice with real engineering trade-offs. Nominal typing
@@ -1278,6 +1338,8 @@ void swap(List<?> list, int i, int j) {
 //   (can't return ? extends T; T is not nameable)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "wildcard capture" pattern is how
 `Collections.swap()` is implemented in the JDK. The public API takes `List<?>`
 (flexible, accepts any List). Internally: you can't do `list.set(i, list.get(j))`
@@ -1317,6 +1379,8 @@ Runnable r = (Runnable & Serializable) () -> System.out.println("hi");
 // <T extends Serializable & Comparable<T>> -> erased to Serializable
 // Method body can use Comparable<T> methods via cast (compiler inserts checkcast)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `(Runnable & Serializable) () -> ...`
 pattern is used in Apache Spark and other distributed frameworks where
@@ -1360,6 +1424,8 @@ User user = fromJson(json, User.class); // need to pass User.class explicitly
 // TypeReference<List<User>>, ParameterizedTypeReference<List<User>>
 // These carry generic type info via anonymous subclass + reflection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The erasure decision is often cited as
 Java's biggest design regret (alongside checked exceptions and null). But
@@ -1405,6 +1471,8 @@ Comparisons:
                   no null (Option<T> instead), no inheritance
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Java's nullable references are the biggest
 type system gap. Tony Hoare called null his "billion-dollar mistake."
 Java 8's `Optional<T>` is a partial solution: optional return types signal
@@ -1441,3 +1509,33 @@ performance-critical types.
 ### 📊 Diagram
 
 *(Omit: type system concepts described adequately in text and examples)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

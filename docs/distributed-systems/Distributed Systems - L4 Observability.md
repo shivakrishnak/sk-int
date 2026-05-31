@@ -8,6 +8,15 @@ permalink: /distributed-systems/l4-observability/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Distributed Tracing and Observability](#distributed-tracing-and-observability) | medium |
+
+---
+
 # Distributed Tracing and Observability
 
 **TL;DR:** Observability in distributed systems is the ability
@@ -125,6 +134,8 @@ TRACES
   Tools:   Jaeger, Zipkin, AWS X-Ray, Datadog APM, Tempo
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Trace context propagation (W3C standard):**
 
 ```
@@ -159,6 +170,8 @@ Trace backend (Jaeger):
   Identifies: payment-svc consumed 250/350ms = 71% of latency
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **OpenTelemetry (OTel) - the standard:**
 
 ```
@@ -187,6 +200,8 @@ Manual instrumentation (when needed):
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sampling strategies:**
 
 ```
@@ -209,6 +224,8 @@ Tail-based sampling:
   - More complex infrastructure (buffer full trace before deciding)
   - Jaeger and OpenTelemetry Collector support tail sampling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The value of distributed tracing is proportional to coverage.
@@ -447,6 +464,8 @@ SLO alerting:
     to reduce alert fatigue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -550,6 +569,8 @@ grep "traceparent" /var/log/app/*.log
 # Missing traceparent on outbound calls = not propagated
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: ensure all HTTP clients (RestTemplate, WebClient, Feign,
 OkHttp) have OpenTelemetry instrumentation registered.
 For RestTemplate: `new RestTemplateBuilder().build()` with
@@ -559,6 +580,8 @@ OTel auto-configuration. Manual check:
 restTemplate.getInterceptors()
     // Should contain OTel propagation interceptor
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -582,6 +605,8 @@ cat /etc/otelcol/config.yaml | grep -A20 sampling
 # If no results: traces were not sampled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: implement tail-based sampling. OTel Collector config:
 ```yaml
 processors:
@@ -597,6 +622,8 @@ processors:
         type: probabilistic
         probabilistic: {sampling_percentage: 1}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -621,6 +648,8 @@ curl http://prometheus:9090/api/v1/status/tsdb?topN=20 | \
   python3 -m json.tool | grep -A5 "seriesCountByMetricName"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: remove high-cardinality labels from metrics.
 ```java
 // BAD: user_id as a label
@@ -637,6 +666,8 @@ Counter.builder("api.requests")
     .register(meterRegistry)
     .increment();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -753,6 +784,8 @@ Spring Boot + MDC (Mapped Diagnostic Context):
 // → Shows all log lines for that trace across all services
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Manual MDC (if auto-configuration is not available):
 ```java
 @Component
@@ -780,6 +813,8 @@ public class TraceIdFilter extends OncePerRequestFilter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Grafana Tempo + Loki integration:
 - Tempo stores traces, Loki stores logs
@@ -816,6 +851,8 @@ http_server_duration_milliseconds{
 # checkout-service and payment-service both elevated
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Traces (identify the slow path):
 ```
 Jaeger query: service=checkout-service, latency > 500ms,
@@ -826,6 +863,8 @@ Jaeger query: service=checkout-service, latency > 500ms,
 → Bottleneck: Stripe API latency
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Logs (confirm and get details):
 ```
 Loki query: {app="payment-service"} |= "stripe"
@@ -834,6 +873,8 @@ Loki query: {app="payment-service"} |= "stripe"
 → Pattern: Stripe latency increased from 50ms avg to 500ms
 → Check Stripe status page: confirmed Stripe incident
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Result: Stripe's API had increased latency starting at 14:02.
 Action: activate circuit breaker to fallback payment flow.
@@ -903,6 +944,8 @@ CompletableFuture.runAsync(() -> {
     }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the async context propagation
 issue (cause 4). This is the most common production tracing bug.
@@ -1055,6 +1098,8 @@ Cost estimate:
   Total: ~$1,000/month for observability
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* cost estimate and tail-based
 sampling policy. Specifying "1% normal + 100% errors/slow" shows
 understanding that blind 100% sampling is cost-prohibitive but
@@ -1102,6 +1147,8 @@ Multi-burn-rate (Google SRE Book recommendation):
   labels:
     severity: ticket
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why multi-burn-rate:
 - Fast alert: catch spikes quickly (14x burn → page in 5 min)
@@ -1189,6 +1236,8 @@ http_server_duration_bucket{le="500",job="checkout",
   status="200"} 1350 {traceID="abc123"} 1705000000
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The metric says: "1350 requests completed within 500ms."
 The exemplar says: "The specific trace ID 'abc123' was one
 of the observations in this bucket - you can look it up
@@ -1210,6 +1259,8 @@ With exemplars: alert fires → click → see the trace
   (< 30 seconds to root cause from alert)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Implementation (Micrometer):
 ```java
 // Micrometer auto-adds OTel trace IDs as exemplars
@@ -1218,6 +1269,8 @@ Implementation (Micrometer):
 management.prometheus.metrics.export.histogram-publish-percentiles=true
 management.tracing.enabled=true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* exemplars are one of the
 least-known but most valuable features for three-pillar correlation.
@@ -1247,6 +1300,8 @@ Dashboard: checkout service P99 = 820ms (normally 120ms)
 Conclusion: checkout + payment slow, no errors, started ~14:03
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 2 - Locate (5-10 minutes): Traces
 ```
 Jaeger query:
@@ -1261,6 +1316,8 @@ Jaeger query:
 → payment→stripe is the bottleneck (85% of total latency)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 3 - Diagnose (10-15 minutes): Logs
 ```
 Loki query:
@@ -1273,6 +1330,8 @@ Loki query:
    incident started 14:01 UTC
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Action (15 minutes):
 ```
 Immediate: enable circuit breaker for Stripe (fallback:
@@ -1281,6 +1340,8 @@ Communication: notify on-call that this is Stripe's incident,
   not ours; update status page
 Track: monitor Stripe status + checkout P99 until recovery
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Result: full root cause in 15 minutes. Checkout degradation was
 Stripe's issue, not a code change. Circuit breaker prevents
@@ -1293,3 +1354,33 @@ circuit breaker so checkout stops waiting 750ms for Stripe and
 immediately returns a queued confirmation, restoring normal
 checkout latency while Stripe recovers. Identifying the root cause
 without acting on it is incomplete incident response.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

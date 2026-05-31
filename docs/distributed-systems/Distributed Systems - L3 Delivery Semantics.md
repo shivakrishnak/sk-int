@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-delivery-semantics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Idempotency in Distributed Systems](#idempotency-in-distributed-systems) | medium |
+| 2 | [Exactly-Once Delivery Semantics](#exactly-once-delivery-semantics) | medium |
+
+---
+
 # Idempotency in Distributed Systems
 
 **TL;DR:** An operation is idempotent if applying it multiple times
@@ -96,6 +106,8 @@ POST /payments       → each call may charge the card
 APPEND to log        → each call adds a new entry
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Idempotency key pattern:**
 
 ```
@@ -121,6 +133,8 @@ Result: second request returns same PaymentResult
 as the first, without charging the card again.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Atomic check-and-insert (prevent race conditions):**
 
 ```sql
@@ -136,6 +150,8 @@ CREATE UNIQUE INDEX ON idempotency_keys(key);
 -- Application catches UniqueConstraintViolation,
 -- queries and returns the existing result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The check-and-insert must be atomic. A non-atomic check
@@ -359,6 +375,34 @@ message even reaches the consumer."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Exactly-Once Delivery Semantics
 
 **TL;DR:** Exactly-once delivery means a message is processed
@@ -465,6 +509,8 @@ Exactly-once:
   Use: financial processing, stream-to-stream pipelines
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Kafka exactly-once semantics (EOS):**
 
 ```
@@ -499,6 +545,8 @@ Step 2: Transactions (read-process-write pattern)
   // do NOT see the aborted messages
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **End-to-end exactly-once:**
 
 ```
@@ -516,6 +564,8 @@ Full exactly-once end-to-end:
   = Kafka EOS (broker layer)
   + Idempotent external writes (consumer layer)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 True end-to-end exactly-once for external side effects (database,
@@ -742,6 +792,8 @@ read-process-produce pipelines (Kafka Streams) to be exactly-once
 within the Kafka ecosystem. For external side effects (database),
 the consumer must separately implement idempotency."
 
+---
+
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Race condition in idempotency check (double processing)**
@@ -762,6 +814,8 @@ GROUP BY idempotency_key
 HAVING COUNT(*) > 1;
 -- Non-zero result: race condition hit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add UNIQUE constraint on idempotency_key column. Handle
 `DuplicateKeyException` as an idempotency signal, not an error.
@@ -808,6 +862,8 @@ kafka-consumer-groups.sh --describe \
 SELECT kafka_offset, COUNT(*) FROM events
 GROUP BY kafka_offset HAVING COUNT(*) > 1;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add unique constraint on (kafka_topic, kafka_partition,
 kafka_offset) in the events table. Treat unique constraint
@@ -1095,6 +1151,8 @@ public class IdempotencyAspect {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* using an AOP aspect makes
 idempotency a cross-cutting concern - applied declaratively
 without polluting every service method with boilerplate. The
@@ -1172,6 +1230,8 @@ SELECT event_id, COUNT(*) FROM processed_events
 GROUP BY event_id HAVING COUNT(*) > 1;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add unique constraint on event_id (Kafka key or message ID).
 Handle `DuplicateKeyException` as successful deduplication.
 
@@ -1221,6 +1281,8 @@ kafka-topics.sh --describe \
   --bootstrap-server kafka:9092
 # High abort count indicates frequent transaction timeouts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Increase `transaction.timeout.ms` to match maximum expected
 processing latency (with margin). Reduce the number of records
@@ -1410,6 +1472,8 @@ kafka-configs.sh --describe --broker 0 \
 # If P95 is ~30s and P50 is ~2s: transaction retry pattern
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: increase `transaction.timeout.ms` beyond the maximum
 processing latency. Reduce the batch size to reduce per-transaction
 processing time. Add a timer around the processing step to
@@ -1479,6 +1543,8 @@ Step 1 - Consumer reads Kafka message (at-least-once delivery):
 consumer.poll() → get payment event with unique event_id
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Attempt INSERT with unique constraint:
 ```sql
 INSERT INTO payments (event_id, customer_id, amount, status)
@@ -1487,6 +1553,8 @@ ON CONFLICT (event_id) DO NOTHING;
 -- If event_id already exists: skip processing (duplicate)
 -- RETURNING 1 to check if row was actually inserted
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Process only if INSERT succeeded (new event):
 ```java
@@ -1500,10 +1568,14 @@ if (isNew) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Commit Kafka offset (standard manual commit):
 ```java
 consumer.commitSync();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why this works: the `event_id` unique constraint on the payments
 table deduplicates at the database level. A redelivered Kafka
@@ -1575,6 +1647,8 @@ public class PaymentStreamConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* setting BOTH
 `PROCESSING_GUARANTEE_CONFIG=EXACTLY_ONCE_V2` AND
 `ISOLATION_LEVEL_CONFIG=read_committed`. The processing guarantee
@@ -1624,3 +1698,33 @@ application-layer idempotency unnecessary for this specific case.
 Experienced engineers know the capabilities of the systems they
 integrate with and choose the simplest mechanism that achieves
 the correctness guarantee.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

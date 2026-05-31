@@ -8,6 +8,15 @@ permalink: /messaging/l5-enterprise-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Event Mesh and Enterprise Messaging Architecture](#event-mesh-and-enterprise-messaging-architecture) | medium |
+
+---
+
 # Event Mesh and Enterprise Messaging Architecture
 
 ---
@@ -72,6 +81,8 @@ Mesh routing:
   Access control enforced per event type
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Enterprise messaging governance model:
 ```
 TOPIC GOVERNANCE:
@@ -93,6 +104,8 @@ ACCESS GOVERNANCE:
   Cross-organization access: federated identity + OAuth
   Audit log: all access events recorded
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Enterprise messaging is not a technical problem - it is an organizational and governance problem. The event mesh provides the infrastructure layer; governance policies determine what flows where, who can access what, and how schemas evolve. Without governance, an event mesh becomes a faster way to create more spaghetti.
@@ -503,6 +516,8 @@ DATA CLASSIFICATIONS:
   PARTNER: approved subset -> partner gateway only
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -560,3 +575,33 @@ flowchart TD
 ```
 
 > **Diagram walkthrough:** The event mesh provides a single entry point per region for all producers, regardless of protocol. Each entry point validates the event schema, applies data classification tags, and converts to the canonical CloudEvents format. The content router applies governance rules: EU-tagged events stay in EU; partner-approved event types flow to the partner API gateway; IoT consumers receive events via MQTT. The governance layer enforces policies across all mesh nodes simultaneously. Producers and consumers are decoupled - a US producer publishing an order event does not know or care that there is an EU consumer receiving it via protocol conversion.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

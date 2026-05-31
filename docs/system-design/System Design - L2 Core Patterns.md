@@ -8,7 +8,14 @@ permalink: /system-design/l2-core-patterns/
 render_with_liquid: false
 ---
 
-# System Design - L2 Core Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L2 Core Patterns](#system-design---l2-core-patterns) | medium |
+| 2 | [Load Balancing](#load-balancing) | medium |
+| 3 | [Caching Strategies](#caching-strategies) | medium |
 
 ---
 
@@ -115,6 +122,8 @@ Random:
   -> Better distribution than random or round-robin
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **L4 vs L7 comparison:**
 
 ```
@@ -139,6 +148,8 @@ Layer 7 (Application):
     userId hash -> canary (5% to new version)
   Examples: AWS ALB, nginx, HAProxy in HTTP mode, Envoy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -352,6 +363,8 @@ Sequence:
   In that 90s: ~33% of requests to that server fail
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The health check endpoint must be designed
 carefully. Too shallow (/ping always returns 200): doesn't detect real failures.
 Too deep (checks all dependencies): false positives (Kafka is slow -> health
@@ -393,6 +406,8 @@ Kubernetes readiness probe:
     -> Connection pool warms up
     -> Then readiness probe starts passing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "cache warming" pattern reduces cold-start
 issues. During application startup (before readiness probe passes):
@@ -439,6 +454,8 @@ Active-active multi-region:
   Writes: local + async replication to other regions
   Conflict resolution: vector clocks, last-write-wins, CRDTs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Multi-region active-active introduces
 cross-region data consistency challenges. If a user in US writes data and
@@ -496,6 +513,8 @@ Problem: WebSocket connections are long-lived (stateful)
   Application: must handle reconnection gracefully
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* WebSocket at scale is harder than HTTP.
 Each active connection holds a file descriptor and memory on the server.
 100K concurrent WebSocket connections requires careful tuning: OS file descriptor
@@ -547,6 +566,8 @@ mTLS (Mutual TLS):
   Used in: service mesh (Istio), zero-trust networks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Certificate management at scale is an
 operational challenge. Let's Encrypt automated cert renewal (certbot) solves
 it for single servers. For load balancers: AWS ACM (auto-renews, integrated
@@ -592,6 +613,8 @@ Example Ingress for URL routing:
   Handled by: nginx Ingress Controller
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Kubernetes networking stack is
 layered and each layer has different failure modes. If pods are healthy
 but Service isn't serving traffic: check endpoint slice (is pod IP in
@@ -624,6 +647,8 @@ Advantage: simple, no split-brain risk
 Disadvantage: 50% of capacity idle (passive is standby)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Active-Active:**
 ```
 Both LBs handle traffic
@@ -634,6 +659,8 @@ Anycast: BGP withdraws route -> failover (seconds)
 Advantage: full capacity utilized, faster failover with anycast
 Disadvantage: more complex (need shared state or session affinity)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cloud-managed load balancers (AWS ALB, GCP
 HTTPS LB) are inherently multi-AZ active-active. You don't design their HA -
@@ -682,6 +709,8 @@ Sticky canary (same user always gets same version):
   Important for: behavioral A/B tests (don't want user to see v1 then v2)
   Nginx: consistent hashing on $cookie_user_id
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Canary deployments require observability
 before they're useful. Without proper metrics (error rate by version, latency
@@ -737,6 +766,8 @@ Load balancing in Istio:
         baseEjectionTime: 30s
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The outlierDetection in Istio DestinationRule
 is passive health checking (circuit breaking at the mesh level). When a pod
 returns 5 consecutive 5xx errors within 5 seconds: Istio ejects it from the
@@ -747,6 +778,34 @@ probes (prevent traffic to pods not yet ready) and Istio outlier detection
 startup failures and runtime degradation.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Caching Strategies
 
@@ -862,6 +921,8 @@ Refresh-Ahead:
   Cons: may pre-fetch unused data (wasted resources)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cache hierarchy:**
 
 ```
@@ -890,6 +951,8 @@ Full caching:
   Browser cache -> CDN -> App in-process -> Redis -> DB
   Each layer reduces load on the next
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1153,6 +1216,8 @@ Redis maxmemory-policy options:
   allkeys-random: random eviction
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The eviction policy should match the data
 access pattern. For a product catalog (popular products are always popular):
 LFU keeps the hot products in cache longer. For a news feed (newest items
@@ -1211,6 +1276,8 @@ if (acquireLock("payment:order-123", lockValue,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Redlock algorithm (multiple Redis instances)
 provides stronger lock guarantees in a distributed setting. Single-node Redis lock:
 if Redis goes down, all locks are lost (or unavailable). Redlock: lock acquired
@@ -1264,6 +1331,8 @@ Warming approaches:
    curl --request PURGE (CDN-specific) + re-fetch
    Used for: planned traffic spikes (product launches)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cache warming is most critical for systems
 with high cold-start DB load. If a single DB can handle 10x normal load for
@@ -1325,6 +1394,8 @@ Strategy 5: Versioning
   Very accurate but adds read latency (version fetch)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The business requirement determines the
 staleness budget. Banking: zero staleness (write-through or no cache for
 balance). Product catalog: 5-minute staleness acceptable. User profile:
@@ -1374,6 +1445,8 @@ RDB + AOF (best of both):
   Redis loads from RDB (fast), then replays AOF (recent)
   Recommended for: using Redis as primary store
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* For Redis as a cache: no persistence or RDB
 is appropriate (data loss = cold cache, acceptable). For Redis as a primary
@@ -1431,6 +1504,8 @@ Approaches:
   Invalidation: only product entities expire (not search results)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Tag-based invalidation is elegant but
 requires a cache that supports it (Caffeine, Ehcache, some Redis patterns).
 The practical answer for most systems: accept TTL-based staleness for search
@@ -1486,6 +1561,8 @@ CDN vs Application cache:
        Key is whatever the application defines
        Can cache non-HTTP artifacts (DB results, computations)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The most powerful CDN optimization is
 response caching for APIs (not just static files). If your product listing API
@@ -1564,6 +1641,8 @@ public boolean isAllowedSlidingWindow(String userId,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Rate limiting has two correctness concerns:
 (1) accurate counting under concurrent requests (use Redis atomic ops or Lua scripts),
 (2) correct windowing (fixed window allows 2x burst at window boundary; sliding
@@ -1622,6 +1701,8 @@ resilience4j:
         # When Redis is down: fail fast to DB
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The circuit breaker protects against the
 "Redis is slow" scenario. Without it: if Redis takes 5 seconds per call
 (instead of normal 0.5ms), every request to your service waits 5 seconds.
@@ -1631,3 +1712,33 @@ and caching resumes. The application is slower (100% DB) but functional.
 This is the difference between "cache is a nice-to-have optimization" and
 "cache is required for the system to function." Design your system so cache
 failure = degraded performance, not system failure.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

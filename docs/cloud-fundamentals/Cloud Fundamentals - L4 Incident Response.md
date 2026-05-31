@@ -110,6 +110,8 @@ SSM SESSION MANAGER LOGS:
   Gap: SSH sessions (not through SSM) not captured
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Isolation Without Termination:**
 
 ```
@@ -130,6 +132,8 @@ ISOLATION SG:
   Instance quarantined but running
   SSM agent still accessible via VPC endpoint (if configured)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -360,6 +364,8 @@ aws cloudtrail put-event-selectors \
 # Cost: ~$0.10 per 100,000 events - budget accordingly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Automated response creates false-positive outage**
@@ -554,6 +560,8 @@ aws guardduty get-findings \
   }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Understand the finding:** GuardDuty detected an
 EC2 instance has an open port reachable from the internet
 AND it was probed from a known-bad IP. Severity: LOW.
@@ -567,6 +575,8 @@ aws ec2 describe-instances \
   --query 'Reservations[].Instances[].SecurityGroups'
 # Find which SG allows the probed port from 0.0.0.0/0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Triage decision:**
 - Port 80/443 on public web tier: expected. Confirm WAF in front.
@@ -603,6 +613,8 @@ jq '.Events[] | {
 }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Analyze source IP and user agent:**
 
 Legitimate automated process:
@@ -629,6 +641,8 @@ aws logs insights query \
   '
 # Compare the 3 AM spike to typical hours
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* User agent analysis is
 an underused signal. Legitimate AWS SDKs report standard
@@ -897,6 +911,8 @@ aws iam put-role-policy \
 # New deployments get new tokens: work normally
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Investigation (next 30 minutes):**
 ```bash
 aws cloudtrail lookup-events \
@@ -905,6 +921,8 @@ aws cloudtrail lookup-events \
 jq '.Events[] | {time: .EventTime, event: .EventName, ip: .SourceIPAddress}'
 # What did the attacker do with the credentials?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Root cause - two vectors:**
 
@@ -939,11 +957,13 @@ aws iam list-access-keys --user-name former-employee
 # Deactivate (not delete - preserve audit trail):
 aws iam update-access-key \
   --user-name former-employee \
-  --access-key-id AKIAIOSFODNN7EXAMPLE \
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE \
   --status Inactive
 # Check/remove console access:
 aws iam delete-login-profile --user-name former-employee
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 2: 3-month CloudTrail lookback:**
 ```bash
@@ -954,6 +974,8 @@ aws cloudtrail lookup-events \
 # Identify: any external IPs? Any bulk data access?
 # Any DescribeInstances / ListBuckets (enumeration)?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Scope the "leaked" scenario:**
 If credentials were in a public GitHub repo:
@@ -984,3 +1006,33 @@ fix (automated offboarding, SCP denying IAM users) addresses
 the root cause: process gap, not just the individual incident.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

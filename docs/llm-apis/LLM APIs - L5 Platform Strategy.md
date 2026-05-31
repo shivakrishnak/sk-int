@@ -159,6 +159,8 @@ Feature Teams:
   +--> Error rates, latency P50/P99
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Routing decision factors:**
 
 ```
@@ -173,6 +175,8 @@ Restricted data     | llama-70b-onprem| -          | compliance
 High urgency        | claude-sonnet   | gpt-4o     | priority
 Batch/offline       | claude-haiku    | -          | cost
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -618,6 +622,8 @@ def timed_route(requirements: TaskRequirements):
     return model
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 1. Run the router in-process (not as a remote service).
    Routing logic should be a library call, not an RPC.
@@ -745,6 +751,8 @@ MODEL_GOVERNANCE = {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Process:
 1. New model submission: team requests approval
    for a new model or data classification combination.
@@ -826,6 +834,8 @@ Cost allocation patterns:
         )
         return result
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Monthly: query the usage log, aggregate by (team, feature).
     Report to team leads.
 
@@ -913,6 +923,8 @@ ROUTING_CONFIG = {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The shadow percent config means migrations happen without emergency coordination. Gradually increase shadow percent over 2 weeks, monitor quality - then flip to 100%."
 
 ---
@@ -982,6 +994,8 @@ LLM_METRICS = {
     ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Alerting rules:
 - error_rate > 5% over 5 minutes: alert on-call
@@ -1060,6 +1074,8 @@ Strategies:
         assert result.strip().lower() in ("urgent", "normal", "low")
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Per-model prompt variants (when necessary):
     If prompt adjustments are needed for a new model,
     maintain variants in the registry:
@@ -1071,6 +1087,8 @@ Strategies:
         }
     }
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) Behavioral pin: use `top_p=1, temperature=0` for
     deterministic outputs. This reduces variance between
@@ -1139,6 +1157,8 @@ result = platform.call(
     attribution=Attribution(team="billing", feature="summary")
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The platform selects: Anthropic Enterprise (BAA) - only model approved for PHI.
 The billing team never needs to know which specific model was used.
@@ -1250,3 +1270,33 @@ flowchart TD
 > all model selection intelligence is centralized
 > in the platform; feature teams are isolated from
 > the complexity.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

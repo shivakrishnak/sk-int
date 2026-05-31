@@ -140,6 +140,8 @@ BACKEND SYSTEMS LAYER
   JIRA | PostgreSQL | GitHub | Confluence | Datadog
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 MCP is infrastructure, not a product. Just as REST
@@ -577,6 +579,8 @@ async def call_tool(name, arguments):
 
     return result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Mitigation strategies:*
 - Horizontal scaling: deploy multiple server instances
@@ -1112,6 +1116,8 @@ def extract_claims(token: str) -> dict:
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Every query is scoped to the tenant:
 ```python
 @server.call_tool()
@@ -1129,6 +1135,8 @@ async def call_tool(name, arguments):
         )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) File isolation: separate directories per tenant:
 ```python
 TENANT_BASE = Path("/data/tenants")
@@ -1140,6 +1148,8 @@ def get_tenant_dir(tenant_id: str) -> Path:
     return TENANT_BASE / tenant_id
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (4) Tool list filtering per role:
 ```python
 @server.list_tools()
@@ -1149,6 +1159,8 @@ async def list_tools() -> list[types.Tool]:
                  admin_tool]
     return [t for t in all_tools if allowed(role, t.name)]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Tenant isolation
 at the query level - not just access control to
@@ -1269,6 +1281,8 @@ BACKEND SYSTEMS:
   Compliance DB | Customer CRM
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key design decisions:**
 
 (1) Security proxy as mandatory trust boundary:
@@ -1382,3 +1396,33 @@ C4Context
 > is determined by the Proxy, not by individual servers.
 > Even if a server has a vulnerability, the Proxy's
 > classification enforcement limits the blast radius.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

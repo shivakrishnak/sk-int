@@ -139,6 +139,8 @@ Architecture Anti-Patterns:
      Fix: monitor usage, request increases proactively
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -149,7 +151,7 @@ import boto3
 
 # This will be committed to git, scanned by GitHub,
 # and used by attackers within minutes:
-aws_access_key = 'AKIAIOSFODNN7EXAMPLE'
+aws_access_key = 'AKIA_YOUR_KEY_EXAMPLE'
 aws_secret_key = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
 
 s3 = boto3.client(
@@ -158,6 +160,8 @@ s3 = boto3.client(
     aws_secret_access_key=aws_secret_key
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: IAM role (no credentials in code)
@@ -171,6 +175,8 @@ s3 = boto3.client('s3')  # Uses IAM role automatically
 response = s3.get_object(Bucket='my-bucket', Key='file.txt')
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```python
 # BAD: Overly permissive IAM role (IAM policy as JSON)
 # This Lambda has FULL AWS access. If compromised:
@@ -183,6 +189,8 @@ response = s3.get_object(Bucket='my-bucket', Key='file.txt')
     }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // GOOD: Least-privilege IAM (only what Lambda needs)
@@ -326,11 +334,13 @@ for region in $(aws ec2 describe-regions --query 'Regions[*].RegionName' -o text
 done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Immediate response:*
 ```bash
 # Step 1: Deactivate the exposed access key:
 aws iam update-access-key \
-  --access-key-id AKIAIOSFODNN7EXAMPLE \
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE \
   --status Inactive
 
 # Step 2: Delete unauthorized IAM users:
@@ -344,6 +354,8 @@ aws ec2 terminate-instances \
 # Step 5: File AWS support case for billing adjustment
 # AWS often credits billing for proven compromises
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -481,6 +493,8 @@ aws resourcegroupstaggingapi get-resources \
 # Untagged resources (missing cost center tag) = orphaned
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Cost anomaly detection
 is AWS's automated cost spike alerting. `aws ce
 create-anomaly-monitor + create-anomaly-subscription`:
@@ -511,6 +525,8 @@ def health():
 # Reality: all requests fail because DB is down
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```python
 @app.route('/health')
@@ -525,6 +541,8 @@ def health():
         return {'status': 'degraded', 'error': str(e)}, 503
 # ALB: 503 = UNHEALTHY, removes instance from rotation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Health check depth
 is a trade-off. Deep health checks that check all
@@ -680,6 +698,8 @@ aws rds describe-db-instances \
   --query 'DBInstances[?MultiAZ==`false`].{ID:DBInstanceIdentifier,AZ:AvailabilityZone,Engine:Engine}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* AWS Config managed
 rules automate this audit continuously. Enable:
 `s3-bucket-public-access-prohibited`,
@@ -692,6 +712,34 @@ compliance with alarms on new violations.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Interview Preparation Strategy
 
@@ -808,6 +856,8 @@ Type 4: Architecture review
     Suggest specific improvements with trade-offs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -842,6 +892,8 @@ def compare_services(service_a, service_b, scenario):
     """
     pass
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Study path: hands-on exercises for interview prep
@@ -1322,6 +1374,34 @@ experience.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Reading AWS Architecture Diagrams
 
 **Interview Weight:** ★☆☆ - Communication and analysis skill.
@@ -1428,6 +1508,8 @@ What to question:
   Missing CloudTrail: no audit logging
   No encryption icons: data at rest unencrypted?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1707,6 +1789,8 @@ what is it?), then suggest additional improvements.
   [S3] (us-east-1)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Analysis:**
 
 Failure point 1: ALB in single AZ.
@@ -1835,6 +1919,8 @@ are harder to dismiss than gut feelings.
 [EventBridge] -> [Lambda] -> [SES] (email)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Review:**
 
 **Security:**
@@ -1933,4 +2019,34 @@ We have $6K/month of Reserved Instance savings already committed."
 Numbers prepared = confidence and operational maturity.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

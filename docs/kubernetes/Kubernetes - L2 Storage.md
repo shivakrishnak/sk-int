@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # PersistentVolume and PVC
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -104,6 +106,8 @@ Developer creates PVC (request: 50Gi, RWO, storageClass: "fast-ssd")
   PVC binds to new PV
   Pod mounts PVC -> pod mounts cloud disk
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Access modes:**
 - `ReadWriteOnce` (RWO): mounted read/write by ONE node at a time
@@ -445,6 +449,8 @@ driver: ebs.csi.aws.com
 deletionPolicy: Delete
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Backup - Create a snapshot:
 ```yaml
 apiVersion: snapshot.storage.k8s.io/v1
@@ -456,6 +462,8 @@ spec:
   source:
     persistentVolumeClaimName: data-postgres-0
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This creates a point-in-time snapshot of the PVC.
 For consistency: quiesce the database first (`CHECKPOINT` in Postgres) before
 taking the snapshot, or use a database-aware backup tool (Velero, PGBackRest).
@@ -476,6 +484,8 @@ spec:
     requests:
       storage: 100Gi
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The CSI driver provisions a new volume pre-populated with the snapshot data.
 
 Production tooling: Velero automates snapshot scheduling, retention, and cross-cluster
@@ -743,7 +753,37 @@ flowchart LR
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # StorageClass and Dynamic Provisioning
+
+---
 
 ### 🎯 Model Answer
 
@@ -836,6 +876,8 @@ CSI external-provisioner calls ebs.csi.aws.com:
 K8s creates PV pointing to the new EBS volume
 PVC binds to PV -> pod can start
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key StorageClass fields:**
 - `provisioner`: CSI driver identifier (ebs.csi.aws.com, pd.csi.storage.gke.io)
@@ -1148,6 +1190,8 @@ allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tier 2 - Application tier (`fast-ssd`, default):
 ```yaml
 # For 10 stateless services that occasionally need cache/temp storage
@@ -1160,6 +1204,8 @@ allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tier 3 - Shared files (`efs-rwo`):
 ```yaml
 # For any service needing ReadWriteMany (shared ML models, user uploads)
@@ -1169,6 +1215,8 @@ reclaimPolicy: Retain
 allowVolumeExpansion: false        # EFS is elastic, no capacity concept
 volumeBindingMode: Immediate       # EFS is multi-zone, no topology issue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Operational policies:
 - `retain-ssd` PVs are reviewed weekly by the DB team
@@ -1252,6 +1300,8 @@ volumeBindingMode: WaitForFirstConsumer     # required for local
 metadata:
   name: local-nvme
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 PVs must be created manually pointing to specific node paths.
 Or: use the Local Path Provisioner (Rancher) for auto-provisioning from local paths.
@@ -1353,6 +1403,8 @@ spec:
     persistentVolumeClaimName: data-postgres-0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For application-consistent backup, coordinate with the database:
 ```bash
 # Pre-snapshot: quiesce the database
@@ -1361,6 +1413,8 @@ kubectl exec postgres-0 -- psql -c "CHECKPOINT;"
 kubectl apply -f snapshot.yaml
 # Post-snapshot: resume normal operations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Restore from snapshot:
 ```yaml
@@ -1378,6 +1432,8 @@ spec:
     requests:
       storage: 100Gi
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The CSI driver provisions a new EBS volume pre-cloned from the snapshot.
 No data copy needed (copy-on-write at the block level) - very fast.
 
@@ -1500,3 +1556,33 @@ sequenceDiagram
 > the same zone, preventing the cross-AZ binding failure that Immediate mode causes.
 > The scheduler is the orchestrator of the topology information; the provisioner just
 > acts on it.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

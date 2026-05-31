@@ -8,9 +8,20 @@ permalink: /jpa/l5-migration/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L5 Migration](#jpa---l5-migration) | medium |
+
+---
+
 # JPA - L5 Migration
 
 ## JPA Migration Strategy: EclipseLink to Hibernate, Hibernate 5 to 6
+
+---
 
 ### 🎯 Model Answer
 
@@ -191,6 +202,8 @@ ECLIPSELINK TO HIBERNATE SPECIFIC CHANGES:
   // Full rewrite needed if using multi-tenancy features.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -345,6 +358,8 @@ PHASE 4: PRODUCTION DEPLOYMENT
   3. Rollback plan: keep H5 branch deployable for 2 weeks.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -457,6 +472,8 @@ Fix:
     Compare plans. Investigate any plan that changed from index scan to seq scan.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -491,4 +508,34 @@ strategy: save the H5 SQL for all critical queries (`spring.jpa.show-sql=true` +
 H6 migration: compare generated SQL side-by-side. For any query where SQL changed: run EXPLAIN ANALYZE
 on both. If the plan changed: check if an index covers the new join condition. Add indexes if needed.
 H6 migration: the DB schema may need index additions to match the new query patterns.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

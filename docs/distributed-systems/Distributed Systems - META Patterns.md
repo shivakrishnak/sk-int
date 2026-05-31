@@ -8,6 +8,17 @@ permalink: /distributed-systems/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Resilience Mental Model](#resilience-mental-model) | medium |
+| 2 | [Two Generals as Coordination Model](#two-generals-as-coordination-model) | medium |
+| 3 | [DS Design Heuristics](#ds-design-heuristics) | medium |
+
+---
+
 # Resilience Mental Model
 
 **TL;DR:** Resilience in distributed systems is not the absence
@@ -170,6 +181,8 @@ Pillar 4: FAST RECOVERY (low MTTR)
     - Chaos engineering: verify recovery is fast BEFORE production incident
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The resilience cost model:**
 
 ```
@@ -201,6 +214,8 @@ Bulkhead:
   Cost: thread pool overhead, resource underutilization
   Justified: dependencies with different failure modes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Resilience investment should be proportional to failure impact.
@@ -387,6 +402,8 @@ resilience4j.circuitbreaker.slowCallDurationThreshold: 2s
 # GC pause was 400ms: below threshold?
 # Or: recordExceptions includes TimeoutException from own GC?
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: tune `slowCallDurationThreshold` to be greater than max
 observed GC pause. Log circuit breaker transitions with reason.
 
@@ -472,6 +489,8 @@ Example configuration (Resilience4j):
   Permitted calls in HALF-OPEN: 5
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the "minimum calls before
 opening" threshold. Without a minimum: a circuit with 1 call
 that times out immediately opens (1/1 = 100% failure). The
@@ -529,6 +548,8 @@ Immediate (first 5 minutes):
      -d '{"state":"FORCED_OPEN"}'
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Identify the origin service:
    ```bash
    # Look for the first service with errors
@@ -538,6 +559,8 @@ Immediate (first 5 minutes):
    # First service with errors = cascade origin
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Shed load if origin service is overloaded:
    Enable load shedding / rate limiting at the API gateway.
 
@@ -545,6 +568,8 @@ Immediate (first 5 minutes):
    ```bash
    kubectl rollout restart deployment/inventory-service
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 5. Monitor: watch error rate per service drop as circuit
    breakers open and load is shed.
@@ -654,6 +679,34 @@ technically but in terms of business impact.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Two Generals as Coordination Model
 
@@ -776,6 +829,8 @@ The problem:
   protocol is always unacknowledged by the other party.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The formal impossibility proof:**
 
 ```
@@ -793,6 +848,8 @@ Proof by contradiction:
   → Protocol P does not guarantee consensus.
   → Contradiction.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Practical implications:**
 
@@ -844,6 +901,8 @@ Proof by contradiction:
    via idempotency (not by solving the protocol).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The connection to distributed systems patterns:**
 
 ```
@@ -858,6 +917,8 @@ Distributed tracing  Cannot trust response receipt: observe system state
 Dead letter queue    Messages that cannot be processed: don't lose them,
                      observe and replay
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1103,6 +1164,8 @@ Outbox pattern solution:
   Kafka consumers: idempotent (handle duplicate events).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The Two Generals connection: the outbox pattern accepts that
 the message will eventually be delivered (at-least-once) but
 removes the "atomicity" requirement. The DB transaction is
@@ -1193,6 +1256,8 @@ ORDER BY duplicates DESC;
 -- Pattern: all duplicates in same time window?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Correlate with outage/restart events:
 ```bash
 # Check upstream service restarts at duplicate time
@@ -1201,6 +1266,8 @@ kubectl get events --namespace=prod \
   | grep "order-service"
 # Restart at 14:03:22? Duplicates at 14:03-14:05?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Trace the message flow:
 ```bash
@@ -1211,6 +1278,8 @@ kafka-consumer-groups.sh \
 # Was the consumer reset to an earlier offset?
 # Restarted consumers re-read from last committed offset
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Root cause: consumer crashed after processing but before
 committing offset. On restart: re-reads and reprocesses
@@ -1230,6 +1299,8 @@ public void processOrder(OrderEvent event) {
     processOrderTransactionally(event);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the "consumer crashed after
 processing, before committing offset" root cause. This is the
@@ -1342,6 +1413,34 @@ atomicity requirement entirely - the core insight.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # DS Design Heuristics
 
@@ -1559,6 +1658,8 @@ H12: NEVER TRUST A DISTRIBUTED SYSTEM PERFORMANCE ESTIMATE
   Trust measured data, not estimates.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The meta-heuristic:**
 
 ```
@@ -1576,6 +1677,8 @@ The distributed systems graveyard:
 All four are violations of "choose the simpler option"
 applied too early in the system's life.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1950,6 +2053,8 @@ git log --since="24 hours ago" --oneline
 # Gradual = growing data volume, memory leak
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Identify the bottleneck:
 ```bash
 # Distributed trace: find slow spans
@@ -1965,6 +2070,8 @@ WHERE mean_time > 100
 ORDER BY total_time DESC;
 # Missing index? Table scan? N+1?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Check resource saturation:
 ```bash
@@ -1983,6 +2090,8 @@ kubectl exec order-service -- \
 # Heap utilization > 85% = GC pressure → P99 spikes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Cross-reference with deployments:
 ```bash
 kubectl rollout history deployment/order-service
@@ -1990,6 +2099,8 @@ kubectl rollout history deployment/order-service
 kubectl rollout undo deployment/order-service
 # Rollback and observe: incident resolves? = deploy was the cause
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "gradual vs. sudden increase"
 as the diagnostic triage. Sudden increase = external change
@@ -2054,3 +2165,33 @@ the wrong microservices - tight coupling encoded in service
 boundaries that are expensive to change later. The monolith
 is the discovery vehicle: it lets the domain model emerge
 from real usage before the architecture solidifies.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

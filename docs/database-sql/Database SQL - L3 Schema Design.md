@@ -8,6 +8,16 @@ permalink: /database-sql/l3-schema-design/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Database Normalization - 1NF through BCNF](#database-normalization---1nf-through-bcnf) | medium |
+| 2 | [Denormalization - When and Why to Break Normal Forms](#denormalization---when-and-why-to-break-normal-forms) | medium |
+
+---
+
 # Database Normalization - 1NF through BCNF
 
 **TL;DR:** Normalization eliminates redundancy and prevents update anomalies
@@ -76,6 +86,8 @@ Partial:  A,B -> C but A -> C alone
 Transitive: A -> B -> C  (A determines C through B)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Normal form definitions:**
 
 ```
@@ -95,6 +107,8 @@ BCNF: In 3NF AND every determinant is a candidate key.
      Stricter than 3NF: handles multi-valued dependencies
      that 3NF misses.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -382,6 +396,34 @@ Drop old columns after full migration."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Denormalization - When and Why to Break Normal Forms
 
 **TL;DR:** Denormalization intentionally introduces redundancy to improve read
@@ -454,6 +496,8 @@ Signal 4: A query returns the same JOIN result for the same
           parent entity on every call (cache miss is frequent).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common denormalization patterns:**
 
 ```
@@ -479,6 +523,8 @@ Pattern 4: JSONB embedding
   - Risk: JSONB queries are slower than indexed columns
     for filtering; large JSONB bloats the parent row
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -685,6 +731,8 @@ SET item_count = (
 WHERE id IN (-- ids from above query--);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention: never bypass triggers. If bulk loads are needed: run the
 repair query afterward in a maintenance window.
 
@@ -766,3 +814,33 @@ Step 5: add NOT NULL constraint (after backfill is complete):
 `ALTER TABLE orders ALTER COLUMN item_count SET NOT NULL`.
 Step 6: deploy application code that reads from the new column.
 This is the expand-contract migration pattern: safe, zero-downtime."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

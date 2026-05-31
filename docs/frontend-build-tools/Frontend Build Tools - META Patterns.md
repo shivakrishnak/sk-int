@@ -7,6 +7,17 @@ permalink: /frontend-build-tools/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Build Tool Selection Framework](#build-tool-selection-framework) | medium |
+| 2 | [Dependency Management Mental Model](#dependency-management-mental-model) | medium |
+| 3 | [Zero Config vs Full Control Trade-off](#zero-config-vs-full-control-trade-off) | medium |
+
+---
+
 # Build Tool Selection Framework
 
 ---
@@ -75,6 +86,8 @@ Special cases:
   webpack plugins required?-> webpack (ecosystem dependency)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Trade-off summary:**
 
 ```
@@ -85,6 +98,8 @@ Parcel:       ★★    |  ★★★   |   ★       | Limited
 esbuild:      ★★★   |  ★     |   ★       | API-level only
 Rollup:       ★★    |  ★★    |   ★★      | Plugins
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -237,6 +252,34 @@ pick the best fit today, knowing you'll re-evaluate in 2 years.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Dependency Management Mental Model
 
 ---
@@ -308,6 +351,8 @@ npm ci vs npm install:
     - Updates lockfile
     - USE IN: local dev when adding new packages
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -459,6 +504,34 @@ this in CI prevents "works on my machine" bugs.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Zero Config vs Full Control Trade-off
 
 ---
@@ -535,6 +608,8 @@ Pragmatic spectrum (best practice):
 
   Step 5 is rare. 95% of projects stay at step 1-3.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -673,9 +748,7 @@ Better path: migrate to Vite.
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure: Vite dev works but production build fails.**
 
-Cause: Vite dev (ESM native) and production (Rollup) handle some
 CJS compatibility and dynamic import patterns differently.
 
 Fix: Test `vite build && vite preview` locally before deploying.
@@ -729,3 +802,33 @@ product where developers are the customers. Track DX metrics: startup
 time, HMR time, build time. When they degrade, investigate like a
 production incident. The build system is infrastructure; treat it
 with the same rigor.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

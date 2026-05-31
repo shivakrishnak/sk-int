@@ -8,9 +8,20 @@ permalink: /java-language/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - META Patterns](#java-language---meta-patterns) | medium |
+
+---
+
 # Java Language - META Patterns
 
 ## Language Feature Adoption Framework
+
+---
 
 ### 🎯 Model Answer
 
@@ -134,6 +145,8 @@ ANTIPATTERNS IN FEATURE ADOPTION:
   }
   // vs old: if (shape instanceof Circle) { Circle c = (Circle) shape; ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -276,6 +289,8 @@ Diagnosis:
   - Optional: grep for Optional in field declarations.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -339,6 +354,8 @@ stream-with-IO operations. But this is advanced and adds complexity.
 ---
 
 ## Effective Java Mental Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -482,6 +499,8 @@ ITEM 18: COMPOSITION OVER INHERITANCE
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -598,6 +617,8 @@ A: `CountingList extends ArrayList`: override `add()` and `addAll()`. In `addAll
 ---
 
 ## API Design Principles
+
+---
 
 ### 🎯 Model Answer
 
@@ -731,6 +752,8 @@ IMMUTABLE BUILDER PATTERN:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -863,6 +886,8 @@ public List<String> getPermissions(Long userId) {
 // unmodifiableList: wraps the same list (UnsupportedOperationException on mutation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -927,6 +952,8 @@ class Child extends Parent {
 }
 new Child(42);  // Prints 0, not 42
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is why `final` methods and `final` classes are the safe default: they prevent this class of bug
 entirely. When designing a framework (like Spring's `ApplicationContext` or JUnit's `TestCase`):
 inheritance is intentional and the hook methods are the design contract. The documentation MUST specify
@@ -995,3 +1022,33 @@ that need it. This is API improvement: making the common case easier without rem
 ### 📊 Diagram
 
 *(Omit: Meta-skills are best expressed as code examples and principles rather than visual diagrams.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

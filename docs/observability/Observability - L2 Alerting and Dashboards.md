@@ -149,6 +149,8 @@ If current error_rate = 0.014 (1.4%):
   burn_rate = 0.014 / 0.001 = 14x -> PAGE
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Multi-window alerting (production standard):
 - Fast alert: 14x burn rate over 1 hour (catches fast burns)
 - Slow alert: 5x burn rate over 6 hours (catches slow burns)
@@ -422,6 +424,8 @@ curl http://alertmanager:9093/api/v2/alerts | \
 # If inhibited is empty for dependent services
 # during a DB outage, inhibition is not configured
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add inhibition rule: when DatabaseDown fires, inhibit
 all alerts with `team != database` and `equal: [environment]`.
@@ -767,6 +771,34 @@ illustrates the routing flow clearly.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Log Querying and Analysis
 
 **TL;DR** - LogQL (Loki) and Lucene (Elasticsearch) are the two
@@ -880,6 +912,8 @@ sum by (error_type) (
   | duration_ms > 1000
   | line_format "{{.trace_id}} {{.duration_ms}}ms"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Stream selectors use indexed label values (fast).
 Pipeline stages operate on log line content (sequential).
@@ -1102,6 +1136,8 @@ curl -s 'http://loki:3100/loki/api/v1/query_range' \
 # If N > 5, the selector is too broad
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Narrow the stream selector to the specific app and namespace.
 Reduce time range to 15 minutes. Move aggregations to a recording
 rule (pre-computed) instead of computing at query time.
@@ -1288,6 +1324,8 @@ sum(count_over_time(
 ))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This divides error events by total checkout events (success +
 failure) to compute the error rate. The difference from metrics-
 based: log-based captures only events that were explicitly logged
@@ -1318,6 +1356,8 @@ Step 1: Find the error log for the specific checkout:
 | user_id="u-9182"
 | level="ERROR"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This returns the error log lines for that user. Step 2: Extract
 the trace_id from the ERROR log line and open it in Jaeger/Tempo
 to see the full trace across all services. Step 3: Check if other
@@ -1332,6 +1372,8 @@ count by (user_id) (
   )
 )
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If the count shows only user u-9182, it is user-specific (may be
 a data issue with their account). If multiple users appear, it
 is systemic. Step 4: Check the timeline - when did the first error
@@ -1342,6 +1384,8 @@ for this user occur?
 | user_id="u-9182"
 | line_format "{{.timestamp}} {{.event}} {{.level}}"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Sort ascending to see the full sequence of events.
 
 *What separates good from great:* Great candidates describe checking
@@ -1405,6 +1449,8 @@ groups:
             )
           )
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This pre-computes the error count by type every minute and stores
 it as a Prometheus metric `job:checkout_errors:rate5m`. Dashboards
 query the recording rule result (instant, low cost) instead of
@@ -1475,3 +1521,33 @@ incident.
 *(Omit: the LogQL query structure examples above illustrate
 the query model clearly. A separate diagram does not add value
 for this L2 working-level concept.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

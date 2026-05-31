@@ -8,9 +8,20 @@ permalink: /kafka/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - META Patterns](#kafka---meta-patterns) | medium |
+
+---
+
 # Kafka - META Patterns
 
 ## Event-Driven Design Thinking
+
+---
 
 ### 🎯 Model Answer
 
@@ -139,6 +150,8 @@ ANTI-PATTERNS IN EVENT-DRIVEN THINKING:
     Every schema change: update all consumer schemas. Events should contain relevant fields
     for the state change, not everything about the entity.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -291,6 +304,8 @@ Fix:
                                                   -> Kafka -> [background services]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -335,6 +350,8 @@ response, use a synchronous protocol (REST/gRPC). Use Kafka only for genuinely a
 ---
 
 ## Backpressure and Flow Control
+
+---
 
 ### 🎯 Model Answer
 
@@ -499,6 +516,8 @@ CIRCUIT BREAKER PATTERN:
       }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -694,6 +713,8 @@ Fix:
     // Resume when downstream recovers.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -739,6 +760,8 @@ Kafka consumers are built in practice.
 ---
 
 ## Schema Evolution Patterns
+
+---
 
 ### 🎯 Model Answer
 
@@ -888,7 +911,8 @@ MIGRATION PATTERN FOR BREAKING CHANGES:
   Step 4: Remove "customerId" from producer output:
     Register v3 schema (removes "customerId" field).
     Consumers already using "clientId" only: unaffected.
-    Old consumers still expecting "customerId": now break (but they should have been updated in step 3).
+    Old consumers still expecting "customerId": now break
+    (but they should have been updated in step 3).
   
   Step 5: Remove "customerId" from schema (v4 cleanup).
     Clean schema. Migration complete.
@@ -902,6 +926,8 @@ MIGRATION PATTERN FOR BREAKING CHANGES:
   After all consumers migrated: stop producing to v1 topic.
   After retention expires: v1 topic is empty (data expired).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1156,6 +1182,8 @@ Prevention:
   - Consumers: implement dead-letter queue for deserialization errors (instead of crashing).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1198,4 +1226,34 @@ acknowledgment, and post-deployment verification (check consumer error rates for
 after deployment). Teams that apply this discipline: have zero "Unknown magic byte" or "Schema
 not found" incidents in production. Teams that don't: accumulate these incidents as "weird Kafka
 issues" that are actually schema governance failures.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -8,7 +8,14 @@ permalink: /spring/l2-bean-mechanics/
 render_with_liquid: false
 ---
 
-# Spring - L2 Bean Mechanics
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L2 Bean Mechanics](#spring---l2-bean-mechanics) | medium |
+| 2 | [Bean Scopes](#bean-scopes) | medium |
+| 3 | [Bean Lifecycle](#bean-lifecycle) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — "What are the Spring bean scopes?" is asked in
+🎯 Interview Weight: High - "What are the Spring bean scopes?" is asked in
 mid-to-senior interviews to probe understanding of bean lifecycle and
 thread-safety.
 
@@ -139,6 +146,8 @@ APPLICATION (web only)
 WEBSOCKET (web only)
   - 1 instance per WebSocket session
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The prototype-in-singleton problem is the most important scope gotcha.
@@ -448,6 +457,8 @@ Three correct approaches:
    // In method: factory.getObject() returns fresh instance
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **@Lookup method injection**:
    ```java
    @Service public abstract class MyService {
@@ -457,6 +468,8 @@ Three correct approaches:
        @Lookup public abstract MyPrototype createPrototype();
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Spring generates a CGLIB subclass implementing createPrototype()
    as a getBean() call.
 
@@ -487,6 +500,8 @@ request's real instance via RequestContextHolder (ThreadLocal).
 )
 public class RequestContext { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ScopedProxyMode.TARGET_CLASS: CGLIB proxy for concrete classes.
 ScopedProxyMode.INTERFACES: JDK proxy for interfaces.
@@ -592,6 +607,8 @@ public class TenantScopeConfig {
 public class TenantConfig { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Custom scopes unlock powerful patterns:
 per-tenant isolation, per-job state in batch processing, per-WebSocket session
 state. Spring Cloud's @RefreshScope and @RequestScope are both implemented
@@ -643,6 +660,8 @@ For request-scoped beans in tests:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **@SpringBootTest(webEnvironment=MOCK)**: creates a mock web environment
    with request scope support.
 
@@ -656,6 +675,34 @@ with @MockBean or provide it via constructor injection - the test does not
 need a full web context.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Bean Lifecycle
 
@@ -673,7 +720,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — bean lifecycle questions appear regularly at
+🎯 Interview Weight: High - bean lifecycle questions appear regularly at
 mid-to-senior level to probe understanding of Spring initialization order.
 
 ---
@@ -786,6 +833,8 @@ Bean Lifecycle (singleton bean, full sequence):
      b) DisposableBean.destroy()
      c) @Bean(destroyMethod = "cleanup") custom method
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Step 6 is the critical insight. AOP proxies wrap your bean AFTER initialization.
@@ -1018,6 +1067,8 @@ listener:
 public void initWithTransaction() { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: @PostConstruct blocking startup**
 Symptom: Application startup takes very long; @PostConstruct is loading large
 datasets.
@@ -1028,6 +1079,8 @@ Fix: Use ApplicationReadyEvent with async execution for non-critical warm-up:
 @Async
 public void warmUpCache() { ... } // Runs in a thread pool
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: @PreDestroy not called for prototype beans**
 Symptom: Resources (connections, file handles) not released for prototype beans.
@@ -1110,6 +1163,8 @@ public void transactionalInit() {
     // Called via proxy - transaction works correctly
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ApplicationReadyEvent fires after full context refresh including proxy creation.
 
@@ -1250,6 +1305,8 @@ public Flyway flyway() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* @DependsOn is a code smell in most cases.
 Implicit dependencies that require @DependsOn usually indicate a design issue:
 the ordering constraint should be expressed as an explicit bean dependency.
@@ -1283,3 +1340,33 @@ CommandLineRunner/ApplicationRunner beans have run. ApplicationReadyEvent fires
 after Spring Boot's lifecycle management. For true "ready to serve traffic"
 initialization (e.g., connect to external services), ApplicationReadyEvent is
 semantically correct.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

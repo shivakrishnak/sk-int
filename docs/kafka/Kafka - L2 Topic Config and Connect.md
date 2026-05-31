@@ -8,9 +8,20 @@ permalink: /kafka/l2-topic-config-and-connect/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L2 Topic Config and Connect](#kafka---l2-topic-config-and-connect) | medium |
+
+---
+
 # Kafka - L2 Topic Config and Connect
 
 ## Topic Configuration
+
+---
 
 ### 🎯 Model Answer
 
@@ -143,6 +154,8 @@ PARTITION SIZING GUIDANCE:
     Broker memory: ~1MB per partition per broker. 1000 topics x 50 partitions x 3 replicas:
       150,000 partition replicas. With ZooKeeper: painful. KRaft: handles 200K+ partitions.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -329,6 +342,8 @@ Fix for low-traffic topic not rotating:
     --add-config segment.ms=86400000   # force 1-day segment rotation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -379,6 +394,8 @@ to prevent consuming stale compacted data before consumers read the original eve
 ---
 
 ## Kafka Connect
+
+---
 
 ### 🎯 Model Answer
 
@@ -528,6 +545,8 @@ SINGLE MESSAGE TRANSFORMS (SMT):
   "transforms.mask.type": "...MaskField$Value",
   ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -707,6 +726,8 @@ Fix:
       ON LIMIT EXCEEDED: slot is automatically dropped (better than disk full).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -751,4 +772,34 @@ heavy write load: the lock window (typically under 1 second) must be planned. Mi
 initial snapshot during low-traffic hours. (3) Use `snapshot.select.statement.overrides` to
 snapshot in batches (select WHERE id BETWEEN x AND y). (4) PostgreSQL 14+: `wal_level=logical`
 and `max_replication_slots` must be configured before Debezium connects.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

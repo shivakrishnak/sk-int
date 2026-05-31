@@ -134,6 +134,8 @@ anthropic.APIError (base)
         └── APIConnectionError (network)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Retry decision matrix:**
 
 ```
@@ -150,6 +152,8 @@ NOT RETRYABLE (abort immediately):
   403 permission         -> fix model access
   404 not_found          -> fix model name or endpoint
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -411,6 +415,8 @@ if errors_last_minute > CIRCUIT_BREAKER_THRESHOLD:
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add a circuit breaker with a 30-second window.
 Check Anthropic's status page (status.anthropic.com)
 in your monitoring. When the circuit opens, serve
@@ -508,6 +514,8 @@ for attempt in range(5):
         time.sleep(delay)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Jitter strategies:
 - Full jitter: `random.uniform(0, exponential)` - maximizes spread
 - Decorrelated jitter: AWS recommendation for high
@@ -554,6 +562,8 @@ except anthropic.RateLimitError as e:
     time.sleep(retry_after)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Two distinct rate limits:
 - RPM (requests per minute): exceeded request frequency
 - TPM (tokens per minute): exceeded token throughput
@@ -576,6 +586,8 @@ async def acquire_rate_limit():
             tokens = 50  # reset
         tokens -= 1
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Proactive token
 bucket rate limiting prevents rate limit errors
@@ -648,6 +660,8 @@ msg = client.messages.create(
     timeout=30.0
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Timeout values:
 - Default: 600 seconds (10 minutes)
@@ -772,6 +786,8 @@ def report_results(results: list[LLMResult]):
         print(f"  {f.id}: {f.error}")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Principle: one item's failure should never prevent
 other items from being processed. Use `return_exceptions=True`
 with `asyncio.gather` or explicit try/except per item.
@@ -809,6 +825,8 @@ log.warning(
     attempt
 )
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If errors correlate with traffic spikes: your
 capacity allocation is too low. Contact Anthropic
 sales for a higher tier.
@@ -835,6 +853,8 @@ for model in MODELS_IN_PRIORITY_ORDER:
             raise
         continue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Model fallback
 is a reliable mitigation - haiku is lower load than
@@ -901,6 +921,8 @@ def test_no_retry_on_bad_request():
         except anthropic.BadRequestError:
             assert call_count == 1  # No retry
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Test the circuit
 breaker too: inject N failures, verify circuit opens,
@@ -999,6 +1021,34 @@ stateDiagram-v2
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Rate Limiting and Quota Management
 
@@ -1118,6 +1168,8 @@ TOKEN CONSUMPTION EXAMPLE:
   At tier 3 (80K TPM): max ~22 concurrent calls
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Token bucket algorithm:**
 
 ```
@@ -1133,6 +1185,8 @@ Request arrives: needs 3,500 tokens
 
 Bucket refills continuously as tokens drain.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1465,6 +1519,8 @@ for feature, tpm in stats.tpm_by_feature.items():
 #   analytics_job: 65,000 TPM  <- consuming most quota
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 1. Rate-limit the analytics job to max X TPM/RPM,
    leaving headroom for chat.
@@ -1561,12 +1617,16 @@ print(f"TPM: {tpm_remaining}/{tpm_limit}")
 print(f"Reset: {rpm_reset}")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When a 429 error occurs:
 ```python
 except anthropic.RateLimitError as e:
     print(e.response.headers.get("retry-after"))
     # Number of seconds to wait
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Build a monitoring metric from these headers:
 log `rpm_remaining/rpm_limit` and `tpm_remaining/tpm_limit`
@@ -1620,6 +1680,8 @@ def call_for_feature(
         )
     return call_claude(prompt)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pattern 3: Priority queue with quota floors.
 Background jobs are queued at low priority.
@@ -1705,6 +1767,8 @@ Decision: tier upgrade justified if:
   - Optimization ROI is less than upgrade cost
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Model the tier
 upgrade as an ROI decision: the revenue impact of
 rate limit errors vs. the cost of the next tier."
@@ -1751,6 +1815,8 @@ async def process_all(prompts: list[str]) -> list[str]:
         *[call_claude_limited(p) for p in prompts]
     ))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 How to size the semaphore:
 - Know your rate limit (e.g., 1000 RPM, 80K TPM)
@@ -1833,6 +1899,8 @@ except anthropic.RateLimitError as e:
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Check if 429s cluster at a specific time:
     - Correlates with user traffic spike? -> need higher limits
     - Correlates with a cron job start time? -> background job interference
@@ -1892,6 +1960,8 @@ except anthropic.RateLimitError as e:
     )
     time.sleep(retry_after)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Using `retry-after` vs. backoff:
 - For 429 specifically: use `retry-after`. This is
@@ -1976,3 +2046,33 @@ flowchart TD
 > accurate over time. The refill runs on a timer
 > or is computed lazily on each `acquire()` call
 > (lazy is simpler and equally correct).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

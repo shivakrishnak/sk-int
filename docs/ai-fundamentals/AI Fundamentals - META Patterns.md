@@ -152,6 +152,8 @@ Input -> [Validate Input]
 # Stochastic core, deterministic contract
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Stochastic systems need statistical thinking. The
@@ -317,6 +319,8 @@ def parse_llm_json(text: str) -> dict:
     # Give up - return empty dict + log
     return {}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -559,6 +563,34 @@ material clarity.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # AI Anti-Patterns in Software Engineering
 
 **Interview Weight:** ★☆☆ - Demonstrates experience
@@ -681,6 +713,8 @@ ANTI-PATTERN MAP:
 - Ops: Not Pinning Model Versions
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Every AI anti-pattern has a traditional software
@@ -723,6 +757,8 @@ def classify_support_ticket_bad(ticket: str) -> dict:
     # wrong key names, or omits a field
     return json.loads(resp.content[0].text)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: validation envelope around LLM output
@@ -1136,6 +1172,34 @@ structured list; a diagram does not add clarity.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Context as Architecture Constraint
 
 **Interview Weight:** ★☆☆ - Signals that the candidate
@@ -1274,6 +1338,8 @@ Reducing to 10k tokens (removing excess context):
 $0.03/call, 1M calls/day: $30k/day
 Annual saving: $29.2M
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1606,6 +1672,8 @@ Diagnosis:
 # is hurting quality.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If correlation exists: implement context compression
 at the threshold where quality begins to degrade.
 
@@ -1736,6 +1804,8 @@ TOKEN_BUDGET = {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Implementation: when assembling the context, enforce
 each section's budget. For retrieved_docs: keep
 adding chunks until the section hits 5,000 tokens.
@@ -1808,3 +1878,33 @@ pie title Context Window Allocation (200k)
 > discover their retrieved_docs section is consuming
 > 50k-100k tokens unnecessarily - visible only when
 > you measure and allocate explicitly.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

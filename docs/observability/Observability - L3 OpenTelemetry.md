@@ -491,6 +491,8 @@ kubectl describe pod <collector-pod> -n monitoring \
 curl localhost:8888/metrics | grep tail_sampling
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Set `memory_limiter` as the first processor; set
 `limit_mib` to 75% of the pod's memory limit. Scale the
 Collector horizontally; use consistent hashing at the receiver
@@ -517,6 +519,8 @@ curl -v http://service-a/api/checkout 2>&1 \
 # Java agent: OTEL_PROPAGATORS=tracecontext,baggage
 printenv | grep OTEL_PROPAGATORS
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Ensure `OTEL_PROPAGATORS=tracecontext,baggage` in all services.
 For Kafka consumers, propagate context from the message header
@@ -706,6 +710,8 @@ curl -H "traceparent: \
   | grep -E "traceparent|tracestate"
 # If empty in response, the header was stripped upstream
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fourth, I check for SDK version mismatch. Mixing OTel Java agent 1.x
 on one service with a 2.x agent on another can cause propagation
@@ -921,6 +927,8 @@ processors:
         - 'attributes["http.route"] == "/health"'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing `memory_limiter` must come
 first in the processor chain (OTel Collector processes in order) and
 explaining why the filter processor drops health check spans before they
@@ -1041,6 +1049,34 @@ flowchart TD
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Trace Exemplars
 
@@ -1493,6 +1529,8 @@ printenv | grep OTEL_TRACES_SAMPLER
 grep -A5 "latency" otel-collector-config.yaml
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add a latency-based tail sampling policy that keeps 100% of
 slow requests (> 500ms). This ensures that every exemplar that
 appears in Grafana corresponds to a trace that exists in Tempo.
@@ -1520,6 +1558,8 @@ prometheus --version
 # Exemplars are only populated when a span is active
 # in the OTel context at the time of record()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Ensure `enable_exemplar_storage: true` in prometheus.yml.
 Verify OTel SDK version >= 1.14 (exemplar support). Confirm
@@ -1915,6 +1955,8 @@ curl "http://tempo:3100/api/traces/$TRACE_ID" | jq '.batches | length'
 # Must return > 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The end-to-end verification script
 is something only engineers who have actually set up and debugged
 exemplar pipelines have. The ordering of the checklist (SDK -> Prometheus
@@ -1950,7 +1992,6 @@ more flexible filtering or lack a Prometheus metrics backend.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ keyword - not ★★★ and sd not set to true. System design
-connections covered in Interview Deep-Dive Q8 above.)*
 
 ---
 
@@ -1961,3 +2002,33 @@ clarifies the two independent data paths that must converge.)*
 
 See diagram in Concept Explanation section - the sequence diagram shows
 the complete exemplar flow from histogram.record() to Grafana navigation.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

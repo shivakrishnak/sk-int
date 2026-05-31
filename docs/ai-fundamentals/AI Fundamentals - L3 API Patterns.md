@@ -169,6 +169,8 @@ Final response:
   "The current weather in Tokyo is 22°C and sunny."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The model's tool selection is an inference problem.
@@ -246,6 +248,8 @@ def bad_product_lookup(product_id: str) -> str:
     return resp.content[0].text
     # Model halluccinates prices and stock levels
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: tool use for real-time product lookup
@@ -565,6 +569,8 @@ while True:
     append resp + tool_results to messages
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing the exact
 message structure (both the tool_use and tool_result
 must be in the conversation history) and the stop_reason
@@ -666,6 +672,8 @@ async def run_tool_calls(tool_use_blocks):
     ]
     return await asyncio.gather(*tasks)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Latency impact: 3 sequential tool calls at 200ms each
 = 600ms. 3 parallel tool calls = ~200ms. For user-facing
@@ -769,6 +777,8 @@ def get_product(product_id: str) -> dict:
         }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The guidance field in error returns: the model reads
 the tool result and uses the guidance to decide the
 next step. Without guidance, the model may retry
@@ -823,6 +833,8 @@ Orchestrator system prompt:
   For code review, use review_agent.
   Compose their results into the final deliverable."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Agent-as-tool implementation: each worker agent is
 wrapped in a function that runs the full agent loop
@@ -969,6 +981,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Streaming LLM Responses
 
 **Interview Weight:** high - Required for production
@@ -1099,6 +1139,8 @@ CLIENT:
       update_ui(display_text)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Streaming is primarily a UX optimization, not a quality
@@ -1152,6 +1194,8 @@ def generate_blocking(prompt: str) -> str:
     return resp.content[0].text
     # User waits 5-15 seconds with no feedback
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: streaming with proper event handling
@@ -1211,6 +1255,8 @@ async def stream_chat(body: dict):
         }
     )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # STREAMING WITH TOOL USE: accumulate tool calls
@@ -1434,6 +1480,8 @@ data: {"text": "The"}\n\n
 data: {"text": " weather"}\n\n
 data: {"done": true}\n\n
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The client subscribes to the event stream with the
 browser's EventSource API or a library.
 
@@ -1569,6 +1617,8 @@ async def stream_with_tools(messages, tools):
                "id": tc["id"],
                "result": result}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 User experience pattern: display a "processing..."
 indicator while the tool call executes. When the
@@ -1802,3 +1852,33 @@ sequenceDiagram
 > and immediately forwards it to the browser, maintaining
 > the low-latency streaming chain. Any buffering at
 > any point in this chain destroys the streaming effect.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

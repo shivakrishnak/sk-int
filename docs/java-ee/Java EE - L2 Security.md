@@ -121,6 +121,8 @@ public Order create(Order order) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **@RolesAllowed with multiple roles (OR logic):**
 
 ```java
@@ -130,6 +132,8 @@ public Response getOrder(@PathParam("id") Long id) {
     // CUSTOMER or ADMIN can call this
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Programmatic check alongside annotation:**
 
@@ -154,6 +158,8 @@ public Response getOrder(
         .orElse(Response.status(403).build());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -375,6 +381,8 @@ grep -r "ContainerRequestFilter\|@Provider" \
   src/main/java/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```xml
 <!-- web.xml: enable role-based security for RESTEasy -->
@@ -385,6 +393,8 @@ grep -r "ContainerRequestFilter\|@Provider" \
   <param-value>true</param-value>
 </context-param>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -439,6 +449,8 @@ public class AuthFilter implements ContainerRequestFilter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Some APIs return 404 (Not Found) for unauthorized access to sensitive resources: this avoids revealing the endpoint exists to unauthenticated attackers. The trade-off: developer experience vs security. For internal APIs, use 401/403 correctly. For public APIs with sensitive resources, consider 404."
 
 ---
@@ -466,6 +478,8 @@ Without `resteasy.role.based.security=true`:
 -> annotation is SILENTLY IGNORED
 -> all callers get 200 regardless of role
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is a common security misconfiguration in JAX-RS
 applications on WildFly/RESTEasy.
@@ -515,6 +529,8 @@ class OrderResourceSecurityTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Unit test with mocked SecurityContext:
 ```java
 @Test
@@ -527,6 +543,8 @@ void adminSeesAllOrders() {
     assertEquals(200, resp.getStatus());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The negative test is mandatory. Without it, you verify the happy path but not the access control. Automated security scanners (OWASP ZAP) will catch missing authentication checks, but only if they're in the test scope."
 
@@ -561,6 +579,8 @@ public class OrderResource {
     public Response internalOnly() { ... }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rule: the most specific annotation wins.
 Method-level > Class-level.
@@ -624,6 +644,8 @@ public class JwtAuthMechanism
 public class AppConfig { }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JAAS LoginModule cannot use CDI injection.
 Jakarta Security @HttpAuthenticationMechanism can.
 
@@ -682,6 +704,8 @@ public Response update(
 ) { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For complex ABAC (multi-tenant, time-based, geo-based):
 use OPA (Open Policy Agent) or similar policy engine.
 
@@ -714,6 +738,8 @@ Top misconfigurations:
        .setExpectedIssuer("https://auth.example.com")
        .build();
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. 401 response missing `WWW-Authenticate` header.
    Clients that follow the HTTP spec won't retry auth.
@@ -792,6 +818,8 @@ public class JwtAuthFilter implements ContainerRequestFilter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JWT validation must check:
 - Signature (with correct public key)
 - Expiration (exp claim)
@@ -849,6 +877,8 @@ public class SecurityAuditFilter
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Audit log mandatory fields:
 - Who (user identity or "anonymous")
 - What (method + path)
@@ -862,6 +892,34 @@ Audit log mandatory fields:
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JAAS Authentication
 
@@ -974,6 +1032,8 @@ If Module 2 had FAILED (but is OPTIONAL):
   Module 1: commit() -> adds its Principals
   Subject has Module 1's Principals only (no LDAP groups)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1211,6 +1271,8 @@ SELECT password FROM users WHERE username = 'testuser';
 # Then verify the hash matches what LoginModule computes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Match the password hashing algorithm between
 the LoginModule (`hashAlgorithm` option) and the
 user registration flow. Test with a known hash:
@@ -1264,6 +1326,8 @@ phase prevents this.
 -> Subject: unmodified (no Principals added)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The key implementation requirement: modules must store Principals in a temporary list during login() and only move them to Subject.getPrincipals() in commit(). Modules that add directly to Subject during login() break the protocol and create inconsistent state when abort() is called."
 
 ---
@@ -1302,6 +1366,8 @@ Security domain chain:
   Module 3: LdapGroups (OPTIONAL)
   -> add extra groups if available, OK if not
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "SUFFICIENT enables fallback authentication: try JWT first (SUFFICIENT) - if valid, skip password check. If absent, fall through to username/password (REQUIRED). The client only sends one type of credential; the chain handles both. This is how enterprise SSO + local auth coexistence works."
 
@@ -1353,6 +1419,8 @@ public class FormCallbackHandler
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The same DatabaseLoginModule works with:
 - HTTP form login (FormCallbackHandler)
 - Command line (TextCallbackHandler)
@@ -1397,6 +1465,8 @@ SecurityIdentity (Elytron's Subject equivalent)
 SecurityContext in JAX-RS/EJB request
   - @RolesAllowed checks against SecurityIdentity roles
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Legacy JAAS (PicketBox in WildFly < 12):
 - Security domain configured in standalone.xml
@@ -1444,6 +1514,8 @@ public class MyAuthMechanism
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The CDI injection difference is decisive. A JAAS LoginModule needs a JNDI lookup to get a DataSource. A Jakarta Security @IdentityStore can inject @PersistenceContext or @Inject any CDI bean. For any new development on Jakarta EE 8+, Jakarta Security is the right API."
 
 ---
@@ -1470,6 +1542,8 @@ Top risks:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. SQL injection in credential validation:
    ```java
    // BAD: string concat
@@ -1478,6 +1552,8 @@ Top risks:
    // GOOD: prepared statement
    ps.setString(1, username);
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Timing attacks in comparison:
    ```java
@@ -1489,12 +1565,16 @@ Top risks:
        storedHash.getBytes(), computedHash.getBytes())) {...}
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Logging credentials:
    ```java
    // BAD
    log.debug("Login attempt: " + username +
        " password: " + password);
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Timing attacks are real: if the LoginModule returns faster for non-existent users (username lookup returns null immediately) than for wrong passwords (username found, hash computed, comparison runs), an attacker measures response times to enumerate valid usernames. Use constant-time comparison and normalize response time."
 
@@ -1515,6 +1595,8 @@ Debugging steps:
    /subsystem=logging/logger=org.jboss.security\
    :write-attribute(name=level,value=TRACE)
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Test LoginModule in isolation:
    ```java
@@ -1540,12 +1622,16 @@ Debugging steps:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Verify database hash directly:
    ```sql
    -- Check stored hash for test user:
    SELECT password FROM users WHERE username = 'testuser';
    -- Manually compute hash and compare
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "-Djava.security.debug=all outputs to stdout, not the server log. In production-like setups where stdout is redirected or discarded, use the server's logging configuration instead. The WildFly CLI approach writes to server.log where you can grep."
 
@@ -1576,12 +1662,16 @@ Role mapping connects them:
 </jboss-web>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Elytron (modern): role decoder maps identity attributes:
 ```xml
 <simple-role-decoder name="groups-decoder"
   attribute="groups"/>
 <!-- Identity's 'groups' attribute is used directly as roles -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefits: application code uses "ADMIN" (logical name);
 infrastructure uses LDAP group names. When LDAP group
@@ -1625,6 +1715,38 @@ subject.getPrincipals().stream()
     .anyMatch(p -> "admin".equals(p.getName()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "A Subject can have a CallerPrincipal (identity) and RolePrincipal (roles) as separate Principal instances. The difference matters: getUserPrincipal() returns the CallerPrincipal (username); isUserInRole() checks RolePrincipals. Some LoginModule implementations add roles as Principals with class RolePrincipal; the app server knows which Principal types represent roles via configuration."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

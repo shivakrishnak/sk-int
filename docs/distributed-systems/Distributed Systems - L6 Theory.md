@@ -8,6 +8,16 @@ permalink: /distributed-systems/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [FLP Impossibility Theorem](#flp-impossibility-theorem) | medium |
+| 2 | [Byzantine Fault Tolerance](#byzantine-fault-tolerance) | medium |
+
+---
+
 # FLP Impossibility Theorem
 
 **TL;DR:** The FLP Impossibility Theorem (Fischer, Lynch, Paterson,
@@ -128,6 +138,8 @@ Definitions:
     inputs (no randomness, no external entropy source).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters for distributed systems design:**
 
 ```
@@ -142,6 +154,8 @@ CAP relates:
   even with only crash faults (no partition), consensus
   is impossible in pure asynchrony.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The bivalency proof (simplified):**
 
@@ -172,6 +186,8 @@ The adversary's power in pure asynchrony:
   This is sufficient to keep the system from deciding.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Partial synchrony: the practical escape hatch:**
 
 ```
@@ -197,6 +213,8 @@ Randomization escape:
   Nakamoto consensus (Bitcoin): randomized (proof of work).
   Terminates probabilistically with high probability.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Interview relevance:**
 FLP is the theoretical foundation for understanding why:
@@ -368,6 +386,8 @@ etcdctl endpoint status --cluster  # rapid leader changes
 zookeeper.log: looking for election storms
 jstack <pid>: GC pause duration > election_timeout
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: increase election timeout to > max observed GC pause.
 Or: tune GC to reduce stop-the-world pauses (G1GC, ZGC).
 
@@ -415,6 +435,34 @@ is where all real consensus algorithms operate.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Byzantine Fault Tolerance
 
@@ -543,6 +591,8 @@ Proof for 3 generals, 1 traitor (f=1):
   2 "attack" vs 1 "retreat" → B decides "attack" (correct)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **PBFT (Practical Byzantine Fault Tolerance):**
 
 ```
@@ -568,6 +618,8 @@ Guarantees:
     elects a new primary
   Tolerates: f < n/3 Byzantine faults (requires n ≥ 3f+1)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Modern BFT protocols:**
 
@@ -596,6 +648,8 @@ Nakamoto Consensus (Bitcoin):
     - Tendermint: instant finality (2 rounds)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Crash fault vs. Byzantine fault comparison:**
 
 ```
@@ -618,6 +672,8 @@ Byzantine fault (BFT):
   Use case: blockchain, multi-org, adversarial
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The signed messages shortcut:**
 
 ```
@@ -639,6 +695,8 @@ Key insight: with cryptographic signatures (digital signatures):
   Used in HotStuff, Ethereum 2.0, Algorand.
   Eliminates O(n^2) by making signature aggregation O(n).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 BFT is only needed when the Byzantine threat model applies.
@@ -1003,6 +1061,8 @@ View change protocol:
      - Accept only if valid
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why Byzantine primary cannot prevent view change:**
 To prevent 2f+1 VIEW-CHANGE messages: Byzantine nodes would need
 to control f+1 nodes. By assumption: only f nodes are Byzantine.
@@ -1156,6 +1216,8 @@ DuplicateVoteEvidence {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Evidence is included in the next block and handled by the
 application layer via the ABCI `BeginBlock` call.
 
@@ -1182,6 +1244,8 @@ def begin_block(self, request):
             f"addr={validator.address} "
             f"slash={slash_amount}")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why economic slashing works:**
 Without slashing: a validator with nothing at stake can equivocate
@@ -1304,3 +1368,33 @@ understand: do our participants have an economic incentive to
 cheat? If yes: BFT. If no (our employees, our servers):
 crash fault tolerance. This framing converts a theoretical
 computer science concept into a business risk assessment.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

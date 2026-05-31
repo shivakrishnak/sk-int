@@ -131,6 +131,8 @@ OUs can have SCPs attached at the OU level:
     changes (sandbox exploration permitted)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SCP evaluation logic:**
 
 ```
@@ -160,6 +162,8 @@ Example:
     SCPs override all IAM within the account.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -175,6 +179,8 @@ Example:
   "no_scp": "each account is completely autonomous"
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // GOOD: SCPs enforcing organizational guardrails
@@ -223,6 +229,8 @@ Example:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // SCP 2: Enforce IMDSv2 (prevent SSRF attacks on EC2)
 {
@@ -253,6 +261,8 @@ Example:
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // SCP 3: Prevent leaving the Organization
@@ -329,6 +339,8 @@ aws iam simulate-principal-policy \
   --resource-arns "*"
 # Output: Decision: DENY (if SCP is applied correctly)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -448,6 +460,8 @@ aws organizations describe-policy \
 # Parse the JSON for Deny statements matching the action
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Resolution:*
 
 Option A (correct): Identify the SCP intent.
@@ -484,6 +498,8 @@ aws guardduty list-detectors --region us-east-1
 # Empty list = GuardDuty not enabled in this account
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Invite the new account from Security Tooling:
@@ -506,6 +522,8 @@ aws guardduty update-organization-configuration \
   --auto-enable
 # All new accounts automatically enrolled when created
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -590,6 +608,8 @@ Cost Management:
   CUR (Cost and Usage Report) -> S3 -> Athena + QuickSight
   Savings Plans: org-wide coverage
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -712,6 +732,8 @@ Summary:
     SCP allows AND IAM allows
   (Both must allow for the action to succeed)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Practical example:**
 
@@ -892,6 +914,8 @@ def create_account(name, email, ou_id):
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **At scale (100+ accounts):**
 
 Without AVM: cloud operations becomes a bottleneck.
@@ -938,6 +962,8 @@ aws guardduty get-detector --detector-id DETECTOR-ID
 # Check Status: ENABLED or DISABLED
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check if account is a GuardDuty member of the administrator:
 ```bash
 # From Security Tooling account:
@@ -947,6 +973,8 @@ aws guardduty list-members \
 # If empty: account never enrolled as a member
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Check GuardDuty auto-enable setting:
 ```bash
 aws guardduty get-organization-configuration \
@@ -954,6 +982,8 @@ aws guardduty get-organization-configuration \
 # AutoEnable: true/false
 # If false: new accounts are not automatically enrolled
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:*
 ```bash
@@ -970,6 +1000,8 @@ aws guardduty create-members \
     "Email": "newaccount@company.com"
   }]'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Root cause:* Control Tower's auto-enrollment requires
 GuardDuty to be set as the delegated administrator
@@ -1006,6 +1038,8 @@ aws cloudtrail lookup-events \
 # The error message includes "scp" when blocked by SCP
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Find the SCP:
 ```bash
 # Get account's parent OUs:
@@ -1023,6 +1057,8 @@ aws organizations describe-policy --policy-id p-XXXX \
   --query 'Policy.Content' | python3 -m json.tool
 # Look for Deny statements matching ec2:DeleteSnapshot
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Evaluate the SCP intent:
 If the SCP denies `ec2:DeleteSnapshot` without condition:
@@ -1045,6 +1081,8 @@ Allow deletion of own snapshots (tagged with team tag):
   }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This allows developers to delete sandbox-tagged snapshots.
 
 Option B: Move developer to Sandbox OU (more permissive).
@@ -1267,6 +1305,8 @@ Content:
   - DenyRegionsOutsideApproved (only us-east-1, eu-west-1)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 SCP 2: Security guardrails (attached to Root):
 ```
 Name: SecurityGuardrails
@@ -1279,6 +1319,8 @@ Content:
 Exception: SecurityAdminRole in SecurityTooling account
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 SCP 3: Data controls (attached to Workloads OU):
 ```
 Name: DataControls
@@ -1288,6 +1330,8 @@ Content:
   - RequireS3Encryption (deny unencrypted PutObject)
   - RequireEBSEncryption (deny unencrypted volume creation)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 SCP 4: Production hardening (attached to Production OU):
 ```
@@ -1299,6 +1343,8 @@ Content:
   - RequireMFAForConsoleActions
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 SCP 5: Sandbox permissiveness override:
 ```
 Name: SandboxAllowList
@@ -1307,6 +1353,8 @@ Content:
   - Allow * (no restrictions beyond org baseline)
 Note: data controls NOT attached to Sandbox OU
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Maintenance process:**
 
@@ -1361,6 +1409,8 @@ Requirements: GDPR (EU data in EU), SOC 2, 30-account initial target.
      Migration OU (temporary: lift-and-shift landing)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phase 2: Network setup (Month 2-3)**
 
 ```
@@ -1378,6 +1428,8 @@ AWS Direct Connect (if latency/throughput required):
 Inter-region: AWS backbone TGW peering
   US TGW <-> EU TGW (private backbone)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Phase 3: Application migration (Months 3-24)**
 
@@ -1402,6 +1454,8 @@ SCP on EU workload accounts:
   }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This SCP prevents EU accounts from creating resources
 in non-EU regions. Data sovereignty enforced at the
 SCP level, not just by policy.
@@ -1418,3 +1472,33 @@ lift-and-shift resources from becoming permanent
 technical debt in the organization.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

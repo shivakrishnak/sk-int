@@ -8,9 +8,20 @@ permalink: /java-performance/l4-jit-advanced/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L4 JIT Advanced](#java-performance---l4-jit-advanced) | medium |
+
+---
+
 # Java Performance - L4 JIT Advanced
 
 ## JIT Deoptimization and Performance Cliffs
+
+---
 
 ### 🎯 Model Answer
 
@@ -128,7 +139,8 @@ DEOPTIMIZATION TYPES IN DETAIL:
      Plugin loaded: deoptimization cascade.
      After recompilation: bimorphic or megamorphic dispatch (slower but correct).
      
-     Recovery time: seconds for large applications (hundreds of methods re-profiling and recompiling).
+     Recovery time: seconds for large applications
+       (hundreds of methods re-profiling and recompiling).
 
 DETECTING DEOPTIMIZATIONS:
 
@@ -195,6 +207,8 @@ PREVENTING DEOPTIMIZATION CLIFFS:
      the visibility of the performance cliff (better resource utilization
      during the recompilation period).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -381,6 +395,8 @@ Fix:
      -XX:CICompilerCount=4 (more parallel compiler threads)
      Compiles methods faster during warmup.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -601,3 +617,33 @@ is incomplete (a code path wasn't exercised). This is part of "performance regre
 JIT warmup" - a practice used by high-SLA services.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

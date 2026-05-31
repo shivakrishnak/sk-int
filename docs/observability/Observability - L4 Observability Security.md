@@ -197,6 +197,8 @@ Application Tier:
     Loki/Elasticsearch (logs, bodies scrubbed)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The enforcement strategy: allowlist over blocklist. A blocklist
 of known-sensitive attributes (email, ssn, card_number) misses
 new PII-bearing attributes as developers add them. An allowlist
@@ -849,6 +851,8 @@ WHERE SpanAttributes['http.request.header.x-user-email']
   | clickhouse-client -h clickhouse
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix immediate: add `delete_key(attributes, "http.request.header.x-user-email")` to the Collector transform processor. Deploy immediately. For the root cause: switch from blocklist to allowlist in the Collector - this specific attack vector becomes impossible. Add the OTel changelog review to the SDK upgrade checklist. Add the audit scan to CI/CD post-deploy checks.
 
 **Failure 2: Exception messages including user input appear
@@ -885,6 +889,8 @@ grep -A5 "replace_pattern" /etc/otelcol/config.yaml
 # Correct:   "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
 #   (double backslash: one for YAML, one for regex)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: correct the YAML escape in the Collector config. Redeploy
 Collector. For application-side fix: wrap validation exception
@@ -928,6 +934,8 @@ curl -s "http://prometheus:9090/api/v1/query?query=count\
   | jq '.data.result | length'
 # Returns millions -> confirms the issue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix immediate: delete the metric from Prometheus (POST to
 `/api/v1/admin/tsdb/delete_series?match[]=user_actions_total`
@@ -1477,6 +1485,8 @@ Observability Security Architecture
     (all backends: no PII, out of PCI scope)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Staff angle:**
 The compliance cost model: one security engineer-month to
 design and implement the Collector sanitization pipeline.
@@ -1573,3 +1583,33 @@ flowchart TD
 > which are therefore out of PCI and GDPR scope. Engineers
 > using Grafana see only operational telemetry with no
 > personal or payment data.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

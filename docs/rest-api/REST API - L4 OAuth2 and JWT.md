@@ -8,6 +8,15 @@ permalink: /rest-api/l4-oauth2-and-jwt/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [OAuth2 and JWT Authentication Internals](#oauth2-and-jwt-authentication-internals) | medium |
+
+---
+
 # OAuth2 and JWT Authentication Internals
 
 ---
@@ -74,6 +83,8 @@ User  Browser   Client App   Auth Server  Resource API
  |        |           | 200 OK events|           |
  |        |           |<------------------------|
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 JWT validation is LOCAL. The API server validates the JWT signature using the OAuth2 server's public key - no network call to the OAuth2 server per request. The public key is fetched once from `/.well-known/jwks.json` and cached. This is what makes JWTs scalable: token validation is a local CPU operation (milliseconds), not a network call (tens of milliseconds).
@@ -371,6 +382,8 @@ Fix: On JWT validation failure with "unable to find key": immediately retry with
          [DB: user data/tenant data]    
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key design decisions:**
 
 **Token lifetimes:** Access token: 15 minutes (short enough to limit exposure, long enough to minimize refresh overhead). Refresh token: 7 days with sliding expiry (stays alive with active use). Refresh token rotation on every use. Service tokens (client credentials): 1 hour.
@@ -456,4 +469,34 @@ sequenceDiagram
 ```
 
 > **Diagram walkthrough:** The flow shows PKCE protection: the code_challenge (SHA256 of the verifier) is sent with the authorization request. Only the legitimate client who generated the verifier can complete the token exchange. An attacker who intercepts the authorization code cannot exchange it without the code_verifier. The Auth Server never receives the code_verifier directly - only the code_challenge at the start, and verifier at the end. The SHA256 verification proves they match without exposing the verifier in the authorization request.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

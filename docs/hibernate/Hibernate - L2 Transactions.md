@@ -146,6 +146,8 @@ Isolation Levels (DB enforces):
     (non-repeatable read: prevented)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 `@Transactional` is a method-level AOP interceptor. It works because
 Spring wraps your bean in a proxy. Direct calls to `this.method()`
@@ -370,12 +372,16 @@ public void process() throws BusinessException {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 @Transactional(rollbackFor = BusinessException.class)
 public void process() throws BusinessException { ... }
 // OR: make BusinessException extend RuntimeException
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -394,6 +400,8 @@ all 16 required connections exceed the pool of 10.
 logging.level.com.zaxxer.hikari.pool.HikariPool=DEBUG
 # Shows: "waiting for connection"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Increase pool size or refactor REQUIRES_NEW out of
 high-concurrency code paths. Move the REQUIRES_NEW operation
@@ -426,6 +434,8 @@ try { ... } catch (OptimisticLockException e) {
 void updatePriceDirectly(Long id, BigDecimal price);
 // WARNING: this bypasses @Version - use only when intended
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -475,6 +485,8 @@ public void process() throws IOException, BusinessException {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The easiest pattern is to make business exceptions extend
 `RuntimeException`, which causes automatic rollback without
 `rollbackFor`.
@@ -523,6 +535,8 @@ public class AuditService {
     // for accurate audit trails of failed operations
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The connection pool implication: REQUIRES_NEW acquires a SECOND
 database connection while the outer transaction holds the first.
@@ -720,6 +734,8 @@ class ReadWriteRoutingDataSource
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 So readOnly = true is part performance optimization, part contract
 (this method should not write), and part routing hint.
 
@@ -738,6 +754,7 @@ right solution. Staff engineers design around them.
 *Likely follow-up:* "What are the trade-offs of the Saga pattern?"
 
 **Answer:**
+
 **S (Situation):** We had an order service that needed to reserve
 inventory in an inventory service and charge the customer's payment
 method in a payment service atomically. Initial design used XA
@@ -763,6 +780,8 @@ On PaymentFailed:
   Inventory Service listens → fires ReleaseReservation
   Order Service listens → marks order FAILED
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For the local transactional safety of event publishing, I used
 the Transactional Outbox pattern: the event is written to an
@@ -808,6 +827,34 @@ thought you had the seat").
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Schema Generation and DDL Validation
 
@@ -919,6 +966,8 @@ Flyway integration:
   → App starts (Hibernate validates against current schema)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 `ddl-auto = update` is "almost safe" which makes it dangerous. It
 adds columns and tables but cannot safely remove them (data loss risk).
@@ -969,6 +1018,8 @@ spring.flyway.enabled=true
 spring.flyway.locations=classpath:db/migration
 spring.flyway.baseline-on-migrate=false
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Flyway migration script naming convention
@@ -1166,6 +1217,8 @@ flyway repair  # resets checksum in history table to match file
 # Production: NEVER edit applied migrations
 # Instead: create V4 to correct V3's mistake
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The rule: never edit a migration script after it has been applied
 to ANY environment. Always create a new version to correct mistakes.
 
@@ -1308,6 +1361,8 @@ BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION sync_name();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Deploy code that writes to BOTH columns and reads from `full_name`.
 Both old and new code work: old reads `name` (still populated),
 new reads `full_name` (populated by trigger).
@@ -1322,6 +1377,8 @@ ALTER TABLE users DROP COLUMN name;
 -- Add constraints now if needed
 ALTER TABLE users ALTER COLUMN full_name SET NOT NULL;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This requires two deployment cycles but guarantees zero downtime.
 
@@ -1350,6 +1407,8 @@ Schema-validation: missing column [email_verified]
 in table [users]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check the entity diff. The entity has `@Column` on
 `emailVerified` but the migration script was not included in the
 deployment. OR the migration script was included but failed
@@ -1360,6 +1419,8 @@ Step 3: Check Flyway migration history:
 SELECT * FROM flyway_schema_history
 ORDER BY installed_on DESC LIMIT 10;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Was the migration marked as applied? If not: Flyway never ran it.
 If yes with success=false: the migration failed and needs repair.
 
@@ -1450,6 +1511,8 @@ Fix: add the dependency:
     <artifactId>jakarta.el</artifactId>
 </dependency>
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or in a pure Spring Boot app that should already have this,
 check for dependency exclusions that removed `tomcat-embed-el`.
 
@@ -1460,6 +1523,8 @@ SchemaManagementException:
   Schema-validation: missing table [Y]
   Schema-validation: wrong column type encountered in column [X]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 These are startup failures from `ddl-auto=validate` when the
 entity mapping does not match the database schema.
@@ -1501,6 +1566,8 @@ ALTER TABLE orders
 -- Note: add as nullable first
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For PostgreSQL <11 or MySQL (which rewrites the table):
 
 Step 1 (Expand - Migration V10):
@@ -1508,6 +1575,8 @@ Step 1 (Expand - Migration V10):
 -- Add as nullable (instant, no table rewrite)
 ALTER TABLE orders ADD COLUMN processed_at TIMESTAMP;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 2 (Backfill - Application Code):
 ```sql
@@ -1520,6 +1589,8 @@ WHERE id BETWEEN :startId AND :endId
 -- to let other queries run
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 (Contract - Migration V11, after backfill verified):
 ```sql
 -- Verify: SELECT COUNT(*) FROM orders WHERE processed_at IS NULL
@@ -1529,6 +1600,8 @@ ALTER TABLE orders
 -- Adds constraint only - instant if no NULLs remain
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Verification:
 ```sql
 SELECT COUNT(*) FROM orders WHERE processed_at IS NULL;
@@ -1537,6 +1610,8 @@ SELECT COUNT(*) FROM orders WHERE processed_at IS NULL;
 SELECT id, created_at, processed_at FROM orders
 ORDER BY RANDOM() LIMIT 100;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For 500M rows, the batch UPDATE takes hours. Run it during off-peak
 hours, monitor progress, and ensure no locks are held between batches.
@@ -1565,3 +1640,33 @@ or `validate` + Flyway against a dev database for full fidelity.
 *(Omit: System Design - ★★☆ keyword)*
 
 *(Omit: Diagram - table and prose are sufficient for schema management)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

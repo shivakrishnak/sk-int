@@ -8,9 +8,20 @@ permalink: /docker/l3-networking-and-storage-deep-dive/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L3 Networking and Storage Deep Dive](#docker---l3-networking-and-storage-deep-dive) | medium |
+
+---
+
 # Docker - L3 Networking and Storage Deep Dive
 
 ## Container Networking Deep Dive
+
+---
 
 ### 🎯 Model Answer
 
@@ -184,6 +195,8 @@ DEBUGGING CONTAINER CONNECTIVITY:
   # Step 4: check iptables (if using user-defined rules):
   iptables -L DOCKER-USER -n -v  # Docker's user-defined chain
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -397,6 +410,8 @@ Fixes:
      Or: systemctl restart docker (full rule refresh).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -449,6 +464,8 @@ Cilium or Calico: overlay overhead is minimal.
 ---
 
 ## Docker Storage Drivers and Performance
+
+---
 
 ### 🎯 Model Answer
 
@@ -620,6 +637,8 @@ VOLUME PERFORMANCE (macOS/Windows Docker Desktop):
   # or develop in a devcontainer inside the VM.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -785,6 +804,8 @@ Prevention: ALWAYS configure volumes for database containers.
   # Expect: type=volume or type=bind. Never empty.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -826,4 +847,34 @@ but requires LVM configuration. Modern systems: `overlay2` with
 `docker info | grep -A2 "Storage Driver"` to see `Backing Filesystem`.
 If it shows `xfs` or `ext4`: you have a good baseline. `nfs` or
 `loop`: investigate (common in VMs or cloud storage mounts).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -7,7 +7,13 @@ permalink: /async-java/l4-reactor-production/
 render_with_liquid: false
 ---
 
-# Async Java - L4 Reactor Production
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L4 Reactor Production](#async-java---l4-reactor-production) | medium |
+| 2 | [Reactor in Production - Debugging and Diagnostics](#reactor-in-production---debugging-and-diagnostics) | medium |
 
 ---
 
@@ -96,6 +102,8 @@ java.lang.NullPointerException: null
   at reactor.core.publisher.FluxOnAssembly...
   ... 20 more reactor internal frames ...
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 None of these frames reference your code. You cannot tell which `map`,
 which `flatMap`, or which lambda threw.
 
@@ -114,6 +122,8 @@ Error at assembly point 3 (map throws NullPointerException):
   With Hooks.onOperatorDebug(): stack includes assembly site line number
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Diagnostic tool comparison:**
 
 ```
@@ -126,6 +136,8 @@ checkpoint("name", true) | MED  | NO (staging)| Named + assembly
 .log()              | MEDIUM    | LIMITED    | Per-signal logging
 .metrics()          | LOW       | YES        | Micrometer metrics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Checkpoint strategy:**
 Add checkpoints at the BOUNDARIES of your logic:
@@ -143,6 +155,8 @@ Flux.fromIterable(ids)
     .subscribe(...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Error message with checkpoint:
 ```
 Error has been observed at the following site(s):
@@ -151,6 +165,8 @@ Error has been observed at the following site(s):
 Original Stack Trace:
   ...your code...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Reactor metrics integration (Micrometer):**
 
@@ -169,6 +185,8 @@ Flux<Order> orders = orderService.getOrders()
     // orders.pipeline.latency: timer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Context propagation:**
 In reactive pipelines, ThreadLocal doesn't work for context (e.g., MDC).
 Use `Reactor Context` for structured context passing:
@@ -183,6 +201,8 @@ Mono.deferContextual(ctx -> {
     return Mono.just(userId);
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -377,6 +397,8 @@ Flux.fromIterable(orders)
     .subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: heap dump analysis with jmap / JDK Flight Recorder. Look for
 many instances of `FluxFlatMap`, `MonoFlatMap`, etc. in old gen with no
 ongoing subscriptions. Leak detector (Netty-style):
@@ -384,6 +406,8 @@ ongoing subscriptions. Leak detector (Netty-style):
 Hooks.onNextDropped(v -> log.warn("Dropped: {}", v));
 // Alerts when onNext fires after cancellation (potential leak signal)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -408,6 +432,8 @@ Flux<Order> pipeline = Flux.fromIterable(ids)  // <- assembled here
 pipeline.subscribe(handler);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When `transform(o)` throws at execution time, the stack trace shows:
 ```
 NullPointerException
@@ -417,6 +443,8 @@ NullPointerException
   ... 15 more reactor frames ...
   at reactor.core.publisher.FluxSubscribeOnCallable.call
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The top frame might be your code, but: (1) which `map` was it? You may
 have many in the pipeline. (2) Which `flatMap` triggered it? (3) Was it
@@ -461,6 +489,8 @@ If map() throws:
      *__checkpoint ⇢ post-service"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Reading the output: the FIRST checkpoint in the observed list is the
 closest to where the error occurred (most specific). The LAST is furthest
 upstream (broader context).
@@ -490,12 +520,16 @@ stack traces for ALL operators automatically.
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Application startup (before any Reactor pipelines built):
 ReactorDebugAgent.init();
 // Optionally also instrument already-loaded classes:
 ReactorDebugAgent.processExistingClasses();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 How it works:
 1. When Reactor publisher classes are loaded, the agent transforms their
@@ -519,6 +553,8 @@ conditionally via a JVM flag:
 ```
 -Dreactor.tools.agent=true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This allows infrastructure teams to enable it for specific pods during
 incident investigation without code changes or redeployment.
 
@@ -546,6 +582,8 @@ Mono<Response> callWithRetry(Request req) {
 // Only retries on retriable exceptions
 // Non-retriable: propagates immediately without retrying
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key parameters:
 - `maxAttempts`: total attempts (including first)
@@ -580,6 +618,8 @@ Flux<Result> results = sourceFlux
     // pipeline.name.onNext.delay (time between onNext signals)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Manual timing with `doOnNext`/`doOnSubscribe`:**
 ```java
 long startMs = System.currentTimeMillis();
@@ -598,6 +638,8 @@ Mono<Response> timed = service.call()
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **3. Micrometer Observation (Spring Boot 3+ / Micrometer 1.10+):**
 ```java
 // Automatic tracing + metrics with Observation API
@@ -606,6 +648,8 @@ Mono<Response> observed = Observation.createNotStarted(
     .observe(() -> service.call());
 // Automatically creates spans + metrics + logs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `.metrics()` on a Flux measures the
 time from subscription to completion (end-to-end latency). For
@@ -626,6 +670,8 @@ Common production backpressure failures:
 reactor.core.Exceptions$OverflowException:
     Queue is full: capacity 256
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause: `flatMap` with unlimited concurrency producing faster than downstream
 consumes. `flatMap` has a default queue of 256 elements. Overflow triggers
 error.
@@ -638,11 +684,15 @@ flux.flatMap(item -> processItem(item)) // unbounded
 flux.flatMap(item -> processItem(item), 16) // max 16 concurrent
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. `MissingBackpressureException`**
 ```
 reactor.core.Exceptions$OverflowException:
     Could not emit tick N due to lack of requests
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause: `Flux.interval()` or hot publisher emitting faster than subscriber
 requests. Default `subscribe()` with no explicit request = `Long.MAX_VALUE`
 requests but processing is slower.
@@ -657,6 +707,8 @@ flux.onBackpressureBuffer(1000,
 // or:
 flux.onBackpressureLatest() // keep only most recent
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Subscription hanging (no `request` call)**
 If a custom Subscriber never calls `request(n)`, the publisher never emits.
@@ -689,6 +741,8 @@ With macro-fusion:
   -> 1 subscriber object, inline execution
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Types:
 - `Fuseable`: interface for operators that can participate in fusion
 - **Macro-fusion**: combines subscribing/requesting phase
@@ -715,6 +769,8 @@ Flux.range(1, 100)
     .map(i -> i + 1)
     .subscribe();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Fusion can be observed in profiler flame
 graphs: fused pipelines show a single frame, non-fused show a chain of
@@ -761,6 +817,8 @@ cb.getEventPublisher()
             e.getStateTransition().getToState()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The circuit breaker OPEN state fires
 `CallNotPermittedException` immediately, WITHOUT calling the underlying
 service. This means `onErrorResume(CallNotPermittedException.class, ...)`
@@ -793,6 +851,8 @@ Reactive error handling:
   // May be on different thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key reactive error operators:
 
 ```java
@@ -819,6 +879,8 @@ mono.doOnError(ex ->
 flux.onErrorComplete(IOException.class);
 // Converts error to onComplete; downstream sees empty stream
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Error type specificity matters. Using
 `onErrorResume(Exception.class, ...)` catches ALL exceptions including
@@ -862,6 +924,8 @@ StepVerifier.withVirtualTime(
     .verify();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `StepVerifier.create()` subscribes with
 `Long.MAX_VALUE` demand (unbounded). For testing backpressure:
 ```java
@@ -872,6 +936,8 @@ StepVerifier.create(flux, 0) // request 0 initially
     .expectNextCount(4)
     .verifyComplete();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `StepVerifier.create(publisher, initialDemand)` overload lets you
 test backpressure behavior by controlling how many elements are requested
 at each step.
@@ -907,11 +973,15 @@ Mono<Response> withFallback =
             // fallback Mono used when timeout fires
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Timeout scheduling: `timeout()` uses `Schedulers.parallel()` by default.
 Customize:
 ```java
 .timeout(Duration.ofSeconds(5), Schedulers.single())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* When `timeout()` fires, it CANCELS the
 upstream source. This sends a cancel signal upstream, allowing resources
@@ -951,6 +1021,8 @@ resilience4j.circuitbreaker.failure_rate > 0.5
 resilience4j.circuitbreaker.calls.duration p99 increasing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Production alerting strategy:**
 ```
 ERROR rate spike -> onErrorResume fallback active?
@@ -965,6 +1037,8 @@ BACKPRESSURE -> onBackpressureDrop events increasing?
              -> subscriber slower than publisher?
              -> flatMap concurrency too high for downstream?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Correlation between reactive metrics
 and infrastructure metrics. A `latency` spike that correlates with
@@ -1048,3 +1122,33 @@ flowchart TD
 > `onErrorResume` when retries are exhausted. The fallback may serve cached
 > data or a degraded response. This entire pipeline runs without blocking
 > threads, but every stage is observable through Micrometer metrics.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

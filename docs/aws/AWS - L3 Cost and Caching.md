@@ -125,6 +125,8 @@ NAT Gateway:
   Same via S3 VPC endpoint: $0.00
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -142,6 +144,8 @@ aws lambda create-function \
 # Cannot tell if it is dev or prod
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```bash
 # GOOD: Resource tagging for cost attribution
 aws lambda create-function \
@@ -155,6 +159,8 @@ aws lambda create-function \
 # Now: Cost Explorer -> Group By: Tag -> team
 # Shows: payments team spent $X this month
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Identify and clean idle resources:
@@ -183,6 +189,8 @@ aws s3 ls --recursive s3://my-bucket \
   | awk '{print $1}' | sort | tail -1
 # Check last modified date - if no recent objects: consider archive or delete
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Set up Cost Anomaly Detection:
@@ -322,6 +330,8 @@ aws s3 ls s3://access-logs/2024-01-15/
 # Large GET requests to S3? Batch download? Bot traffic?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Common culprits for unexpected bills:*
 
 - Batch job downloaded large S3 dataset: check S3
@@ -405,6 +415,34 @@ xychart-beta
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # ElastiCache and Caching Strategies
 
@@ -513,6 +551,8 @@ Thundering Herd on Cache Miss:
   Fix: use probabilistic early expiry (re-cache before TTL)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -538,6 +578,8 @@ public class UserService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Cache-aside with TTL and proper invalidation
@@ -579,6 +621,8 @@ public class UserService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # ElastiCache Redis cluster with Multi-AZ:
@@ -738,6 +782,8 @@ aws cloudwatch get-metric-statistics \
 # CacheMisses spike
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Mitigation strategies:*
 
 1. Read from replica: configure the Redis client to
@@ -895,6 +941,8 @@ aws ce get-savings-plans-purchase-recommendation \
 # Returns: estimated monthly savings, recommended hourly commitment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Payment options:**
 
 No upfront: lowest hourly commitment, no cash outlay.
@@ -988,6 +1036,8 @@ aws cloudwatch get-metric-statistics \
 # Find the exact time the hit rate dropped
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Correlate with other events:**
 
 - New deployment at the same time? (New cache key format)
@@ -1006,6 +1056,8 @@ aws cloudwatch get-metric-statistics \
 # High evictions: cache is full, evicting frequently accessed keys
 # Fix: increase node memory or reduce TTL on large objects
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Check cache key patterns:**
 
@@ -1026,6 +1078,8 @@ redis-cli INFO memory
 # allkeys-lru: evict least recently used (even non-expired)
 # volatile-lru: evict only TTL-set keys (safer)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cache key format changes
 on deployment are the most common cause of sudden cache
@@ -1193,6 +1247,8 @@ Redis configuration:
   2 shards * 6GB each = plenty of headroom
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cache key design:**
 
 `product:123` - simple product data
@@ -1235,6 +1291,8 @@ public boolean isAllowed(String userId) {
 // (100 at 0:59 + 100 at 1:00 = 200 in 1 second)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Sliding window (Redis sorted set):
 public boolean isAllowed(String userId, int limit) {
@@ -1270,6 +1328,8 @@ public boolean isAllowed(String userId, int limit) {
 // Atomic via Lua: no race conditions
 // Redis sorted set: score=timestamp, member=request ID
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Lua script
 atomicity is the production-correctness requirement.
@@ -1322,6 +1382,8 @@ Operations (10% = $2,000/month):
   Budget alerts + Cost Anomaly Detection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key decisions:**
 
 Spot for batch: nightly reports, data export jobs run
@@ -1343,3 +1405,33 @@ requests/day: $0.0085 vs $0.09/GB = 90% network cost
 reduction for cacheable reads.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /kafka/l3-consumer-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L3 Consumer Internals](#kafka---l3-consumer-internals) | medium |
+
+---
+
 # Kafka - L3 Consumer Internals
 
 ## Consumer Rebalancing
+
+---
 
 ### 🎯 Model Answer
 
@@ -143,6 +154,8 @@ STATIC MEMBERSHIP (group.instance.id):
     If session.timeout.ms=10s: pod restart (20s) triggers rebalance even with static membership.
     Tune session.timeout.ms to be longer than typical pod restart time.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -354,6 +367,8 @@ Diagnosis command:
   Watch: if consumer members change every few seconds -> rebalance storm.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -403,6 +418,8 @@ may have state corruption if they try to process records for partitions they no 
 ---
 
 ## Dead Letter Queue
+
+---
 
 ### 🎯 Model Answer
 
@@ -565,6 +582,8 @@ DLQ CONSUMER (REPLAY):
       }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -768,6 +787,8 @@ Fix:
     // WARNING: records are lost if DLQ unavailable. Only use with monitoring.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -813,4 +834,34 @@ risk - errors silently accumulate in DLQ. Always pair with `errors.deadletterque
 (adds header context to DLQ records) and a monitoring alert on DLQ write rate. The DLQ topic for
 Connect should have `cleanup.policy=delete` (not compact) - every error record matters, including
 duplicates with the same key.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

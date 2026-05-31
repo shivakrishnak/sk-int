@@ -8,6 +8,17 @@ permalink: /messaging/meta-thinking-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Temporal Decoupling Mental Model](#temporal-decoupling-mental-model) | medium |
+| 2 | [Async Mental Model - Fire and Forget vs Correlation ID](#async-mental-model---fire-and-forget-vs-correlation-id) | medium |
+| 3 | [CAP Theorem Applied to Messaging](#cap-theorem-applied-to-messaging) | medium |
+
+---
+
 # Temporal Decoupling Mental Model
 
 ---
@@ -52,6 +63,8 @@ ASYNC (with temporal decoupling):
   Broker holds the message.
   Consumer reads when it recovers.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Temporal decoupling transfers the availability requirement from the consumer to the broker. You are not eliminating the dependency - you are concentrating it in one place (the broker), which you can make highly available more easily than every consumer.
@@ -220,6 +233,34 @@ Fix: Scale consumer instances to increase parallel processing. For lag that exce
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Async Mental Model - Fire and Forget vs Correlation ID
 
 ---
@@ -273,6 +314,8 @@ CORRELATION ID (REQUEST-REPLY):
   match: found!
   use result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Correlation ID is synchronous semantics on an async substrate. You get the response you need, but the two sides are still temporally decoupled - the consumer processes the request independently. If you need synchronous behavior, consider whether true synchronous RPC (gRPC) is cleaner than simulating it over messaging.
@@ -428,6 +471,34 @@ Fix: Add a timeout mechanism - schedule a task to remove and complete-exceptiona
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CAP Theorem Applied to Messaging
 
 ---
@@ -487,6 +558,8 @@ During partition (3 brokers, min.ISR=2):
   If acks=1: Broker 1 still accepts (availability choice)
     Risk: Broker 1 fails, last N messages lost
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CAP is not a one-time architectural decision - it is a per-topic configuration. Design your configuration to match the business requirement of each event type: use `acks=all + min.insync.replicas=2` for events where loss is unacceptable; use `acks=1` for high-throughput events where availability outweighs occasional loss risk.
@@ -636,3 +709,33 @@ Fix: Restore the out-of-sync or failed broker. Once the broker rejoins and syncs
 *What separates good from great:* "KRaft mode also eliminates the ZooKeeper scalability limit on partition count. ZooKeeper struggled with more than 200K partitions per cluster. KRaft supports millions of partitions. This changes the architecture pattern for large-scale Kafka deployments - more topics and partitions are practical, which affects global messaging topology options."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

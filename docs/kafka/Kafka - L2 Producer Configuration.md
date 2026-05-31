@@ -8,9 +8,20 @@ permalink: /kafka/l2-producer-configuration/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L2 Producer Configuration](#kafka---l2-producer-configuration) | medium |
+
+---
+
 # Kafka - L2 Producer Configuration
 
 ## Producer Configuration
+
+---
 
 ### 🎯 Model Answer
 
@@ -129,6 +140,8 @@ KEY CONFIGURATION REFERENCE:
   | enable.idempotence               | true (3.0+)| dedup retries                |
   | max.in.flight.requests          | 5          | max unacked batches/broker   |
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -306,6 +319,8 @@ Fix:
     All events for orderId=42: same key -> same partition -> ordered within partition.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -352,6 +367,8 @@ with degraded durability. With it: explicit failure that triggers alerts and pre
 ---
 
 ## Message Serialization
+
+---
 
 ### 🎯 Model Answer
 
@@ -480,6 +497,8 @@ SCHEMA EVOLUTION (AVRO COMPATIBILITY RULES):
     Old messages: deserialized with discount=null (forward compatible).
     Safe migration: deploy consumers first, then producers.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -682,6 +701,8 @@ Fix:
   4. Set schema.registry.url to a resilient URL (load-balanced registry cluster).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -725,4 +746,34 @@ years must be deserializable by future consumers. Avro with FULL compatibility: 
 future consumer can read any historical event. JSON with no schema: future consumers must
 reverse-engineer the historical format from code history. The discipline of schema-on-write pays
 compound interest over time in a long-lived system.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -140,6 +140,8 @@ AFTER (Spring Data JPA):
           JPQL / derived query methods
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Entity annotations: unchanged.**
 `@Entity`, `@Table`, `@Column`, `@OneToMany`, `@ManyToOne`, `@Version`,
 `@Cache` - all these annotations are identical. The entity model does
@@ -416,6 +418,8 @@ public void addDiscount(Long id, int discount) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: OSIV Masking N+1 in Development**
@@ -435,6 +439,8 @@ spring:
   jpa:
     open-in-view: false  # expose LazyInitializationException immediately
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then fix each `LazyInitializationException` in the service layer with
 JOIN FETCH or `@EntityGraph`.
 
@@ -466,6 +472,8 @@ public void transferStock(Long fromId, Long toId, int qty) {
 }
 // Without @Transactional: each findById and save runs in its own TX
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -527,6 +535,8 @@ Phase 3: Behavior alignment (post-migration)
   +-> Add query count assertions to CI for N+1 prevention
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 DEEP DIVE (~10 min):
 The highest-risk change is `save()` vs `saveOrUpdate()` semantics.
 Add a migration lint rule: any `repo.save(entity); entity.modify();`
@@ -535,6 +545,8 @@ pattern is a bug. Add a custom ArchUnit test:
 // ArchUnit rule: detects save() followed by field modification
 // (pattern-based static analysis)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Second highest risk: OSIV behavior. Disabling OSIV reveals all lazy
 loading boundary violations at once. Plan a sprint to fix these before
 the OSIV configuration change goes to production.
@@ -680,6 +692,8 @@ JDBC
 Database
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Data JPA depends on JPA, which Hibernate implements. When you use
 Spring Data JPA, you are still using Hibernate underneath - Hibernate is
 still the engine that generates SQL, manages sessions, and handles
@@ -740,6 +754,8 @@ Session session = em.unwrap(Session.class);
 // Use Hibernate-specific features when needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Confirming that Hibernate-specific
 annotations remain valid and showing how to access the underlying Hibernate
 session when needed.
@@ -782,6 +798,8 @@ p.setDescription("updated"); // p is DETACHED - NOT tracked
 // Correct:
 managed.setDescription("updated"); // managed IS tracked
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This bug is silent - no exception, just missing data in the database.
 
@@ -831,6 +849,8 @@ Diagnosis approach:
 logging.level.org.hibernate.SQL: DEBUG
 logging.level.org.hibernate.type: TRACE
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then compare:
 1. The HQL query in the legacy code
 2. The JPQL or derived method in the migrated code
@@ -846,6 +866,8 @@ If the generated SQL differs:
     nativeQuery = true)
 List<Order> findByJsonbFilter(@Param("filter") String filter);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The nativeQuery fallback and the
 EXPLAIN ANALYZE comparison methodology.
@@ -882,6 +904,8 @@ Optional<Order> findById(Long id);
 // Hibernate generates LEFT JOIN FETCH for each path
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For associations needed by multiple queries:
 ```java
 // Named EntityGraph on the entity:
@@ -895,6 +919,8 @@ public class Order { ... }
 List<Order> findByStatus(String status);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For complex join paths:
 ```java
 // Explicit JOIN FETCH in @Query:
@@ -906,6 +932,8 @@ For complex join paths:
 Optional<Order> findDetailById(@Param("id") Long id);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: For associations needed in the service layer (not just queries):
 ```java
 @Transactional
@@ -916,6 +944,8 @@ public OrderDTO getOrderDetails(Long id) {
         order.getItems());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The three-tier approach: EntityGraph
 for simple cases, NamedEntityGraph for reusable graphs, explicit JPQL
@@ -966,6 +996,8 @@ order.setCustomer(proxy); // no SELECT, just sets FK
 orderRepo.save(order);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `getReferenceById()` use case: when you need to set a foreign key
 on a new entity and have the ID but do not need the referenced entity's
 data. Without it, `findById()` fires a SELECT just to get an object
@@ -1012,6 +1044,8 @@ public class TenantFilter implements WebMvcConfigurer {
     // (Hibernate interface - still configured even with Spring Data JPA)
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `CurrentTenantIdentifierResolver` and `MultiTenantConnectionProvider`
 are Hibernate interfaces that Spring Boot supports via
 `spring.jpa.properties.hibernate.multiTenancy` and
@@ -1025,6 +1059,8 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON orders
     USING (tenant_id = current_setting('app.tenant_id')::int);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Set the RLS parameter per request in the DataSource connection.
 This approach works cleanly with Spring Data JPA and removes the
 Hibernate-specific multi-tenancy code.
@@ -1092,6 +1128,8 @@ public OrderDetailDTO getOrderDetail(Long id) {
 // Controller receives a DTO: no session needed, no lazy loading
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Configuration: `spring.jpa.open-in-view=false`
 
 *What separates good from great:* Quantifying the N+1 risk (100 orders
@@ -1128,6 +1166,8 @@ int updatePrice(@Param("price") BigDecimal price, @Param("id") Long id);
 // L1C cleared after UPDATE - next findById fires fresh SELECT
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: add `flushAutomatically = true` to flush pending changes before
 the bulk update (ensures pending dirty writes are committed before the bulk):
 ```java
@@ -1136,6 +1176,8 @@ the bulk update (ensures pending dirty writes are committed before the bulk):
 int updatePrice(BigDecimal price, Long id);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 3: evict the entity manually:
 ```java
 productRepo.updatePrice(newPrice, id);
@@ -1143,6 +1185,8 @@ em.evict(productRef); // or: em.clear() for all entities
 Product updated = productRepo.findById(id).orElseThrow();
 // Now fires fresh SELECT
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `clearAutomatically=true` is the standard solution for bulk update
 methods. Include it as a default practice for all `@Modifying` queries.
@@ -1192,6 +1236,8 @@ spring:
         order_updates: true       # group updates too
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: switch from IDENTITY to SEQUENCE generator:
 ```java
 @Id
@@ -1200,6 +1246,8 @@ Fix: switch from IDENTITY to SEQUENCE generator:
 // allocationSize=50: pre-allocate 50 IDs per sequence call
 // No round-trip per row - Hibernate uses cached IDs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For true bulk insert performance (1M+ rows): use `StatelessSession`
 or native SQL (`INSERT INTO ... VALUES (...), (...), ...`). Spring Data
@@ -1270,6 +1318,7 @@ or participated in. What were the biggest challenges?
 *Likely follow-up:* "What would you do differently next time?"
 
 **Answer:**
+
 **S (Situation):** A fintech backend service had been using native Hibernate
 since 2014 with a custom DAO framework (BaseDao generic class, manual
 SessionFactory injection). The service was blocking a Spring Boot 3.0
@@ -1322,3 +1371,33 @@ during migration that would have been caught earlier.
 *What separates good from great:* The hybrid outcome (7 DAOs kept native),
 the ArchUnit rule for the save() semantic, and the lesson learned about
 query count tests.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

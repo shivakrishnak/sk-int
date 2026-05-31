@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-consistency-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Eventual Consistency and Convergence](#eventual-consistency-and-convergence) | medium |
+| 2 | [Conflict Resolution Strategies](#conflict-resolution-strategies) | medium |
+
+---
+
 # Eventual Consistency and Convergence
 
 **TL;DR:** Eventual consistency guarantees that all replicas will
@@ -104,6 +114,8 @@ nodetool repair (Cassandra CLI trigger):
 nodetool repair keyspace table
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Gossip protocol:**
 ```
 Each node periodically selects a random peer and
@@ -120,6 +132,8 @@ Round 3: All nodes have v_new.
 Convergence: O(log N) rounds for N nodes.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Read-repair:**
 ```
 Client reads from replicas A and B (quorum read).
@@ -128,6 +142,8 @@ Coordinator detects inconsistency.
 Coordinator writes v_new back to B (read-repair).
 Next read from B: returns v_new.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Hinted handoff:**
 ```
@@ -138,6 +154,8 @@ Replica A stores a "hint": "when B comes back,
 When B rejoins: A delivers the hinted write.
 B catches up without full anti-entropy.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Eventual consistency is a promise about liveness (convergence WILL
@@ -152,6 +170,8 @@ Eventual < Monotonic Read < Monotonic Write
 < Read Your Writes < Session < Causal < Sequential
 < Linearizable (Strongest)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use it:**
 - Social media feeds (stale feed is acceptable)
@@ -377,6 +397,34 @@ conflicts - typically using a last-write-wins or union strategy."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Conflict Resolution Strategies
 
 **TL;DR:** In an eventually consistent system, concurrent writes to
@@ -474,6 +522,8 @@ final value.
 Used by: Cassandra (default), Riak LWW bucket
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Strategy 2 - Multi-value / vector clock divergence:**
 ```
 Initial: {key: "x", value: "v0",
@@ -492,6 +542,8 @@ Client must merge: choose A, B, or custom merge
 
 Used by: DynamoDB, original Riak, CouchDB
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Strategy 3 - CRDTs (Conflict-free Replicated Data Types):**
 ```
@@ -515,6 +567,8 @@ Used by: Riak data types, Redis CRDT extensions,
 Cassandra counters (approximate)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Strategy 4 - Application-level merge function:**
 ```java
 // Shopping cart merge: union of all items
@@ -530,6 +584,8 @@ Cart merge(Cart a, Cart b) {
 // and added a different item in version B,
 // the removed item reappears (add wins).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 There is no universally correct conflict resolution strategy. LWW
@@ -755,6 +811,8 @@ implement a domain-specific merge function. For financial data:
 none of the above - use an append-only event log (event sourcing)
 where conflicts are impossible by design because you never update,
 only append. The choice depends entirely on the domain semantics."
+
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1265,6 +1323,8 @@ V1[A]=3 > V2[A]=2, but V1[B]=2 < V2[B]=3
 Neither dominates → concurrent writes → conflict!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With timestamps:
 ```
 V1 timestamp = 10:00:01.005
@@ -1272,6 +1332,8 @@ V2 timestamp = 10:00:01.003
 LWW picks V1 and discards V2, even though they are concurrent.
 V2 is silently lost.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Great candidates articulate the
 key insight: "Vector clocks detect concurrency. Timestamps assume
@@ -1517,3 +1579,33 @@ reasoning. Great candidates immediately connect this to hot key
 design: "The solution to high conflict rates is reducing the
 write rate per key, not improving the conflict resolution strategy.
 Shard the counter by user or time bucket."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

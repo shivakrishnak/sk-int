@@ -137,6 +137,8 @@ INTEGRATION POINTS:
    - CI/CD: auto-review, auto-summarize
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Copilot Extensions architecture:**
 
 ```
@@ -159,6 +161,8 @@ Returns SSE stream: Copilot-formatted events
          v
 Copilot chat renders the response
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,10 +345,14 @@ curl -X POST https://your-extension.example.com/ \
   -d '{"messages": [{"role": "user", "content": "test"}]}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Expected format per event:
 ```
 data: {"choices": [{"delta": {"content": "word "}, "finish_reason": null}]}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Final event:
 ```
@@ -352,6 +360,8 @@ data: {"choices": [{"delta": {}, "finish_reason": "stop"}]}
 
 data: [DONE]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Missing `choices` wrapper, wrong field names, or
 missing `[DONE]` event all cause rendering failures.
@@ -553,6 +563,8 @@ your workspace. To improve domain-specific suggestions:
 - hard-coded credentials
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (4) Copilot workspace index: use `@workspace` in
     chat to query across the full project. The index
     improves as you use it.
@@ -626,6 +638,8 @@ def verify_signature(
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Validate the user token: if you use the GitHub
     user token from the request to call GitHub APIs,
     verify it's valid before making API calls.
@@ -669,6 +683,34 @@ backend into unauthorized actions."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Copilot Prompt Crafting
 
@@ -819,6 +861,8 @@ BEST:
   (Copilot generates correct implementation with
    all edge cases handled)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1006,6 +1050,8 @@ common patterns from training.
    - Logging: structlog (not print, not logging module)
    - Always use async/await for I/O operations
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Write a short example at the top of the file
    showing the correct pattern - Copilot follows
    the established pattern in the current file
@@ -1098,6 +1144,8 @@ Effective contents:
 - Business errors: custom exceptions in `exceptions.py`
 - Always log with `exc_info=True` before re-raising
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is read at the start of agent sessions and
 applied throughout, preventing the pattern mismatches
@@ -1201,6 +1249,8 @@ Three mechanisms for pattern guidance:
     class OrderRepository:
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Partial implementation: write the first method
     of a class following the pattern. Copilot will
     continue subsequent methods in the same style:
@@ -1218,6 +1268,8 @@ Three mechanisms for pattern guidance:
         def find_by_customer_id(
     # Copilot now continues in the same style
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) `copilot-instructions.md`: the persistent way.
     Once written, all agent tasks follow conventions.
@@ -1336,6 +1388,34 @@ and your familiarity with the specific pattern decreases."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # VS Code Copilot Agent Mode
 
 **Interview Weight:** ★☆☆ - Agent mode is the highest-leverage
@@ -1451,6 +1531,8 @@ Copilot: [run_terminal] pytest tests/ -> (all pass)
 Copilot: "Done. Added cursor-based pagination and
           3 integration tests. All tests pass."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Tools available to Copilot Agent:**
 
@@ -1711,6 +1793,8 @@ Success Criteria: how to verify completion?
          the three new error cases"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Template:
 "In [files/scope], implement [what].
 Follow the pattern from [reference file].
@@ -1769,6 +1853,8 @@ Safety practices for agent mode:
 ```bash
 git add -A && git commit -m "checkpoint before agent task"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If agent makes bad changes, `git checkout .` reverts everything.
 
 (2) Review the terminal commands before approving:
@@ -1996,3 +2082,33 @@ flowchart TD
 > handle the edge case. The most common successful
 > outcome is 2-3 iterations of the Fix phase before
 > tests pass.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

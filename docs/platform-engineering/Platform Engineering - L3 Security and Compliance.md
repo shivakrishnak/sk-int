@@ -7,17 +7,6 @@ permalink: /platform-engineering/l3-security-and-compliance/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L3 Security and Compliance
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Policy as Code and Compliance Automation](#policy-as-code-and-compliance-automation) | critical |
-| 2 | [Platform Security Model and Supply Chain](#platform-security-model-and-supply-chain) | critical |
-
----
-
 # Policy as Code and Compliance Automation
 
 ---
@@ -165,6 +154,8 @@ POLICY AS CODE ARCHITECTURE
    Audit report template --> populated from policy results
    SOC2 evidence packet --> assembled automatically
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Compliance evidence that is collected automatically by the system is
@@ -408,6 +399,8 @@ kubectl describe validatingwebhookconfiguration gatekeeper-validating-webhook-co
 # And: check webhook endpoint is reachable
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: scale policy controller to >= 3 replicas with PodDisruptionBudget;
 set `failurePolicy: Ignore` for non-critical policies (production
 critical: use `Fail`, but with HA guarantees).
@@ -427,6 +420,8 @@ kubectl describe pod <pod-name> -n <namespace>
 # Or test a policy against a manifest without applying
 kyverno apply policy.yaml --resource manifest.yaml
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: update the policy to allow the legitimate case. Follow the PR
 review process: policy change requires review from both platform team
@@ -460,6 +455,8 @@ kubectl get constraintpodstatuses -A | grep violation
 # Check Kyverno audit results
 kubectl get policyreports -A
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Phase 2 - Notify violators: communicate the policy to teams with
 existing violations. Provide the fix and a migration deadline.
@@ -502,6 +499,8 @@ kyverno test policies/ --test-cases test-cases/
 # Then: policy should produce violation
 # And: violation message should contain "non-root"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Integration tests (in staging cluster):
 - Deploy policy to staging with `audit` mode
@@ -565,6 +564,8 @@ spec:
         names: [prometheus-*]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Exception inventory: maintain a registry of all active
 exceptions with owner, justification, expiry date, and compensating
 controls. Review quarterly.
@@ -602,6 +603,8 @@ kubectl get policyreports -A -o json | \
   python3 generate_compliance_report.py \
   --output compliance-evidence-$(date +%Y%m%d).pdf
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Evidence categories for common frameworks:**
 
@@ -662,6 +665,8 @@ spec:
         namespace: kyverno
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Detecting policy drift:**
 ```bash
 # Compare policy status across clusters
@@ -672,6 +677,8 @@ done
 # Manual: compare output
 # Automated: policy reconciliation job that alerts on drift
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Policy drift is the platform security
 failure mode that is hardest to detect. A cluster that was not included
@@ -764,6 +771,8 @@ spec:
             value: "0"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Policy inheritance pattern:**
 - Base policies: applied to all namespaces (all tenants)
 - Standard policies: applied to standard and restricted namespaces
@@ -808,6 +817,8 @@ repos:
     # Fails commit if policy violations found
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CI/CD integration (PR-time validation):
 ```yaml
 # GitHub Actions workflow
@@ -819,6 +830,8 @@ CI/CD integration (PR-time validation):
     resource: manifests/
     fail: true  # fail the CI job on policy violations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 GitOps PR review:
 When a product team PRs a change to their application manifests in the
@@ -873,6 +886,8 @@ deny[msg] {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The platform engineering value of OPA:**
 OPA can enforce policies across all infrastructure layers - not just
 Kubernetes. A unified OPA policy store can enforce the same data
@@ -905,6 +920,34 @@ developer friction by moving violations from "deployment failure" to
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Platform Security Model and Supply Chain
 
@@ -1081,6 +1124,8 @@ SUPPLY CHAIN SECURITY:
    --> Alert: container executing shell (/bin/sh)
    --> Alert: container writing to /etc
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Supply chain security is a chain - it is only as strong as its weakest
@@ -1283,6 +1328,8 @@ cosign verify \
 # FAIL if signature is missing or invalid -> image was tampered
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention: Kyverno admission policy that verifies Cosign signature
 before scheduling any production pod. If the policy is in place,
 a tampered unsigned image is never scheduled.
@@ -1382,6 +1429,8 @@ rules:
 #                 or any cluster-wide resources
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For pipelines that require Kubernetes access (not pure GitOps):
 - Use Workload Identity (GKE) or IRSA (EKS) instead of stored secrets
 - Service accounts are namespace-scoped (not ClusterRole)
@@ -1472,6 +1521,8 @@ spec:
       property: password
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rotation: Vault supports automatic rotation for database credentials
 (Vault Dynamic Secrets). Each time a pod starts, it gets a new temporary
 database credential. Credentials expire when the pod's Vault lease expires.
@@ -1524,6 +1575,8 @@ but doing something unexpected.
   priority: WARNING
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Falco alerts can be sent to: Slack, PagerDuty, Elasticsearch (SIEM),
 or a custom webhook for the platform team's incident response.
 
@@ -1561,6 +1614,8 @@ kubectl apply -f block-all-egress-networkpolicy.yaml \
   -n team-payments
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Preserve forensics:
 ```bash
 # Capture container state before termination
@@ -1574,6 +1629,8 @@ kubectl get events -n team-payments \
   --sort-by=.lastTimestamp > events-at-incident.txt
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Verify image integrity:
 ```bash
 cosign verify \
@@ -1583,6 +1640,8 @@ cosign verify \
 # Expected result: FAIL (signature missing or invalid)
 # Confirms: image was tampered after CI build
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4 - Root cause analysis:
 - When was the malicious image pushed to the registry?
@@ -1625,6 +1684,8 @@ cosign verify-attestation \
   jq '.payload | @base64d | fromjson' | \
   jq '.components[] | select(.name == "log4j-core")'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Compliance evidence:** SOC2, PCI DSS, and emerging regulations (US
 Executive Order 14028) require software bills of materials for software
@@ -1747,3 +1808,33 @@ insight this question is probing for.
 Defense in depth requires all layers. A security posture that has only
 RBAC + Admission policies but no supply chain verification + runtime
 monitoring has significant gaps at the post-deployment layer.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

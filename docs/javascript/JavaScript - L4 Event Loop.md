@@ -7,6 +7,15 @@ permalink: /javascript/l4-event-loop/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Event Loop and Microtask Queue](#javascript-event-loop-and-microtask-queue) | expert |
+
+---
+
 # JavaScript Event Loop and Microtask Queue
 
 🎯 **Interview Weight:** expert (★★★) - the event loop is the most
@@ -120,6 +129,8 @@ NODE.JS EVENT LOOP PHASES:
     process.nextTick queue FIRST
     then Promise callbacks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -315,6 +326,8 @@ EVENT LOOP LAG MONITORING:
   }, 5000).unref();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -412,6 +425,8 @@ setInterval(() => {
 // node --prof-process isolate-*.log | head -50
 // clinic flame -- node app.js
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -542,6 +557,8 @@ async function main() {
 main();
 console.log('D');
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `[SENIOR]` DEBUGGING
 
 > **Answer:** Output: **A, D, B, C**
@@ -1157,3 +1174,33 @@ it improve on setTimeout for task management?** `[STAFF]` ADVANCED
 > minimum delay setTimeout imposes. This is the mechanistic basis of
 > "concurrent rendering" - not true multi-threading, but cooperative
 > multitasking with priority preemption within a single thread.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

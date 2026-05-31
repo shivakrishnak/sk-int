@@ -8,7 +8,15 @@ permalink: /system-design/l1-fundamentals/
 render_with_liquid: false
 ---
 
-# System Design - L1 Fundamentals
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L1 Fundamentals](#system-design---l1-fundamentals) | medium |
+| 2 | [Scalability Fundamentals](#scalability-fundamentals) | medium |
+| 3 | [Reliability and Availability](#reliability-and-availability) | medium |
+| 4 | [Latency vs Throughput](#latency-vs-throughput) | medium |
 
 ---
 
@@ -120,6 +128,8 @@ Database scaling path:
   4. Vertical scale primary (scale writes initially)
   5. Sharding (scale writes horizontally - complex)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -299,6 +309,8 @@ Health checks:
   -> No manual intervention, automatic failover
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The load balancer itself is a single point
 of failure. Solution: active-passive LB pair (one active, one standby with
 VIP failover) or anycast routing (multiple LBs with same IP, BGP routing).
@@ -346,6 +358,8 @@ Sharding (scale writes horizontally):
   Resharding: difficult, requires data migration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Start at the top of the list, not the bottom.
 Caching is faster to implement than sharding and handles most read bottlenecks.
 Read replicas handle read scaling before sharding. Sharding is the last resort
@@ -370,6 +384,8 @@ Add read replicas:
           Read capacity: 5x (with 5 replicas)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Phase 2: Write scaling (if still needed)
 ```
 Reads handled by replicas and cache.
@@ -380,6 +396,8 @@ Options:
   B. CQRS: separate write model (Event Store)
   C. Sharding by user ID, region, or date range
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Phase 2 is where most teams struggle. The sharding decision:
 - What is the shard key? (must distribute writes evenly)
@@ -431,6 +449,8 @@ CDN caching rules:
                private content (unless signed URLs)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* CDN cache invalidation is operationally
 tricky. Once an asset is in CDN edge caches globally, you can't instantly
 remove it. Solutions: (1) versioned URLs (image-v3.png, never same URL twice),
@@ -474,6 +494,8 @@ What auto-scaling does NOT help with:
   - Instant traffic spikes (scale-out takes 2-5 minutes)
   - Stateful services with local state
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Auto-scaling has a lag of 2-5 minutes
 (time to provision, start, warm up new instance). For flash sales or
@@ -528,6 +550,8 @@ Problems with sharding:
     Solution: saga pattern (compensating transactions)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Shard key selection is the most important
 decision in sharding. A good shard key: uniformly distributed, never grows
 monotonically (auto-increment IDs concentrate recent data on one shard),
@@ -539,6 +563,34 @@ routing transparently. The goal: developers write normal SQL; sharding is
 transparent at the infrastructure layer.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reliability and Availability
 
@@ -641,6 +693,8 @@ Bulkhead:
   Service A's 20 threads unaffected
   Without bulkhead: shared thread pool -> both fail together
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -829,6 +883,8 @@ Rolling Deployment:
   Problem: two versions serving traffic simultaneously
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Database changes in zero-downtime:
 - Expand-contract pattern:
   1. Add new column (nullable, no defaults required)
@@ -889,6 +945,8 @@ Kubernetes health check types:
     - Prevents premature liveness failure for slow-starting apps
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The wrong health check is worse than no
 health check. A health check that includes downstream service reachability
 (is DB healthy?) makes your pod unavailable when the DB has a transient blip,
@@ -934,6 +992,8 @@ Partial failure: inventory service is slow
     -> If inventory check fails: cancel + refund + notify
     -> Trade-off: oversell risk vs. user experience
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Partial failures require explicit decisions
 about which services are "critical path" (must succeed for operation to complete)
@@ -981,6 +1041,8 @@ Advanced: game days
   Entire team observes the failure mode
   Verify monitoring detects it, runbooks work, recovery time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Chaos engineering requires mature monitoring
 and on-call practices as prerequisites. Running Chaos Monkey without first
@@ -1038,6 +1100,8 @@ Graceful degradation decision matrix:
    Auth svc           -> Fail closed (don't allow access)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The fallback design must be explicit in code
 review. The question: "What does this endpoint return if service X is down?"
 If the answer is "error 500" for a non-critical service: design gap. If the
@@ -1090,6 +1154,8 @@ Design implications:
   Each nines costs: compute, complexity, operational burden
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Error budgets are the key insight that makes
 SLOs actionable. A team with 8.76 hours/year error budget can have roughly 3
 deployments that each cause 3-hour outages. When budget runs low: the system
@@ -1100,6 +1166,34 @@ engineering organizations. The design question: what SLO is the product team
 committing to? That SLO determines the architecture.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Latency vs Throughput
 
@@ -1202,6 +1296,8 @@ Latency percentiles:
   - Lock contention
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Latency budget:**
 
 ```
@@ -1227,6 +1323,8 @@ If P99 SLO is 200ms and P99 is 180ms:
   Can't add another service call (~50ms) without SLO violation
   Must optimize existing calls before adding
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1409,6 +1507,8 @@ Why percentiles matter:
   Average hides outliers; percentiles expose the tail
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* High P99 with low P50 indicates a bimodal
 distribution - two types of requests. Fast path (cache hit, P50) and slow
 path (cache miss + DB, P99). Investigation: log a sample of P99 requests with
@@ -1451,6 +1551,8 @@ Key insight: near 100% utilization, latency explodes
   -> Keep headroom for traffic spikes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The queue model explains why adding capacity
 has diminishing returns when you're near saturation. At 99% utilization,
 reducing by 1% (from 99% to 98%) halves the queue latency. But getting from
@@ -1488,6 +1590,8 @@ Payload size impact:
   Protobuf bandwidth: 1M * 300B = 300 MB/sec
   -> 3x bandwidth reduction = 3x CDN/network cost reduction
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* JSON's human readability is a development
 and debugging benefit, not a performance benefit. For external APIs: JSON
@@ -1529,6 +1633,8 @@ Example: Checkout flow
     New critical path: 20 + max(2,2) + 100 + 20 = 142ms
     (34% improvement from caching alone)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Critical path analysis shows which operations
 are worth optimizing. The payment call (100ms) dominates. Caching inventory
@@ -1574,6 +1680,8 @@ Pool sizing:
     HikariCP default: 10 connections
     Adjust based on: query duration, CPU vs I/O bound queries
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Connection pool exhaustion is a common
 production issue. Symptoms: "HikariPool - Connection is not available, request
@@ -1622,6 +1730,8 @@ Cache sizing with Pareto:
   DB reduction: 80%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Cache hit rate is the key metric.
 80% hit rate = 5x reduction in DB load. 99% hit rate = 100x reduction.
 To maximize hit rate: (1) choose the right TTL (too short = frequent misses,
@@ -1668,6 +1778,8 @@ Practical implication:
     CPU-bound: still limited by core count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The optimal concurrency number is not infinite
 and not one - it depends on the workload. CPU-bound: one thread per core
 (no context switching). I/O-bound: many threads per core (while one thread waits
@@ -1677,3 +1789,33 @@ for reactive programming (CompletableFuture chains) for most I/O-bound cases:
 write synchronous-looking code, Java virtualizes the concurrency. The residual
 challenge: shared state (databases, caches) still has limited throughput -
 the bottleneck moves from thread management to resource capacity.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

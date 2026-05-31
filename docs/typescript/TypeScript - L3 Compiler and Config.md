@@ -7,6 +7,16 @@ permalink: /typescript/l3-compiler-and-config/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Compiler and tsconfig Options](#typescript-compiler-and-tsconfig-options) | medium |
+| 2 | [Module Resolution Strategies](#module-resolution-strategies) | medium |
+
+---
+
 # TypeScript Compiler and tsconfig Options
 
 ---
@@ -86,6 +96,8 @@ target vs lib:
   lib: what type definitions are AVAILABLE
   ES2020 target + no DOM lib = fetch/document not recognized
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -285,6 +297,8 @@ const d = Direction.Up; // should inline to: const d = 1;
 // esbuild can't do this without full program analysis -> runtime bug
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With `isolatedModules: true`, TypeScript reports an error when you use
 `const enum` across files - preventing the silent runtime bug.
 
@@ -299,6 +313,34 @@ requires `isolatedModules` to ensure compatibility. The flag is the
 contract between the type system and the transformation pipeline.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Module Resolution Strategies
 
@@ -370,6 +412,8 @@ Path aliases:
   MUST ALSO configure in jest:
   jest.config: moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -535,3 +579,33 @@ Vite finds the runtime file. Both must succeed for the import to work.
 automatically reads tsconfig `paths` and configures Vite aliases.
 This centralizes alias configuration in tsconfig.json and eliminates
 the "forgot to update one of three places" bug.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

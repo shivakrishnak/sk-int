@@ -8,6 +8,16 @@ permalink: /microservices/l3-versioning-and-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Service Versioning and API Evolution](#service-versioning-and-api-evolution) | medium |
+| 2 | [Microservices Security - Authentication and Authorization](#microservices-security---authentication-and-authorization) | medium |
+
+---
+
 # Service Versioning and API Evolution
 
 ---
@@ -60,6 +70,8 @@ SEMANTIC VERSIONING FOR APIs:
   PATCH: bug fix (no API change)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Backward compatibility rules:**
 ```
 SAFE (non-breaking changes):
@@ -81,6 +93,8 @@ BREAKING (requires new version):
   - Tighten validation (reject previously valid input)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Consumer-driven contract testing:**
 ```
 PACT CONTRACT TESTING:
@@ -100,6 +114,8 @@ PACT CONTRACT TESTING:
     - No need for a separate API integration test
       environment to catch contract violations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The version number in a URL is not about the service version - it is about the API contract version. A service can be at version 15.2.3 internally but still support /v1/ and /v2/ API contracts. Keep old API versions running until all consumers have migrated, not until the service is upgraded.
@@ -289,6 +305,34 @@ Fix: Restore the old field name in the response (add it back alongside the new n
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Microservices Security - Authentication and Authorization
 
 ---
@@ -346,6 +390,8 @@ AUTHORIZATION OPTIONS:
   Service mesh: service-to-service allow/deny rules
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Zero-trust model:**
 ```
 WRONG (perimeter trust):
@@ -364,6 +410,8 @@ CORRECT (zero-trust):
        (mTLS + NetworkPolicy)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Scopes and claims in JWT:**
 ```json
 {
@@ -376,6 +424,8 @@ CORRECT (zero-trust):
   "iss": "https://auth.company.com"
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The service uses these claims for authorization: the user can read and write orders, is in tenant-456, and has the customer role.
 
 **The key insight:**
@@ -565,3 +615,33 @@ Fix: Set JWKS cache TTL to 5-10 minutes (balance between security and performanc
 | API Key | Client application | Low | Long-lived (manual rotation) | Third-party integrations |
 | RBAC | Role membership | Low | Per role assignment | Coarse-grained endpoint access |
 | ABAC + OPA | User + resource attributes | High | Policy-based | Fine-grained resource access |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

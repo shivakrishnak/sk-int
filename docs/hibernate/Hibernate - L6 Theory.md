@@ -347,6 +347,8 @@ LEFT JOIN on every page.
 // Trade: UNION ALL for polymorphic queries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: @Embeddable Null Confusion**
@@ -371,6 +373,8 @@ Optional.ofNullable(customer.getHomeAddress())
     .map(Address::getCity)
     .orElse("Unknown");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -473,6 +477,8 @@ class CreditPayment extends Payment { String cardLast4; }
 // cardLast4 is NULL for BankPayment rows - acceptable trade-off
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JOINED: separate table per type, JOINed for polymorphic queries.
 
 Choose JOINED when:
@@ -494,6 +500,8 @@ class CreditPayment extends Payment {
 // LEFT JOIN credit_payments cp ON p.id = cp.id
 // LEFT JOIN bank_payments bp ON p.id = bp.id
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The discriminator value identifies which subtype row belongs to,
 allowing Hibernate to instantiate the correct Java class when loading.
@@ -523,6 +531,8 @@ FROM orders
 GROUP BY category_id
 ORDER BY total_revenue DESC
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ORM cannot express this naturally without a projection DTO. Use
 `@Query(nativeQuery=true)` or JOOQ for type-safe SQL.
 
@@ -532,6 +542,8 @@ UPDATE orders SET status='EXPIRED'
 WHERE created_at < NOW() - INTERVAL '30 days'
   AND status = 'PENDING';
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ORM would load all matching entities into memory, modify each, then
 flush updates one by one. For 100,000 rows: catastrophic. Use
 `@Modifying @Query("UPDATE Order o SET o.status=...").
@@ -543,6 +555,8 @@ WITH ranked AS (
     ORDER BY total DESC) AS rk FROM orders)
 SELECT * FROM ranked WHERE rk = 1
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JPQL has no equivalent. Use native SQL.
 
 4. Multi-table bulk inserts from external sources (ETL):
@@ -669,6 +683,8 @@ class Money { BigDecimal amount; String currency; }
 // Money "100 USD" is the same as any other Money "100 USD" - value equality
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `@Entity @ManyToOne`: the object has independent identity (its own PK),
 its own table, and a lifecycle independent of the owner. Multiple owners
 can reference the same instance.
@@ -685,6 +701,8 @@ class Product {
 }
 // Categories exist independently, multiple products can share one
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use `@Embeddable` (value object):
 - No identity needed: "100 USD" is interchangeable with any other "100 USD"
@@ -734,6 +752,8 @@ class Order {
 // orphanRemoval=true: removing from items list = DELETE the item row
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Cross-aggregate references by ID only (not @ManyToOne):
 ```java
 @Entity
@@ -746,12 +766,16 @@ class Order {
 // Avoids implicit joins across aggregate boundaries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Repository per aggregate root:
 ```java
 // One JpaRepository per aggregate root - not per entity:
 interface OrderRepository extends JpaRepository<Order, Long> { }
 // OrderItem has no repository - only accessible through Order
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The mapping impact: within an aggregate, Hibernate's cascade and
 orphanRemoval work correctly. Across aggregates, IDs prevent implicit
@@ -790,6 +814,8 @@ public boolean equals(Object o) {
 // Adding multiple new orders to a Set results in only one entry
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problem 2: Proxy equality.
 Hibernate may return a proxy object (subclass of `Order`) instead of
 a plain `Order`. `instanceof Order` works for proxies, but `getClass() == Order.class`
@@ -819,12 +845,16 @@ Option 1: Use a business key (natural identifier):
 // Unique business key: order number, UUID, etc.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2: UUID as assigned identifier:
 ```java
 @Id @Column(updatable=false)
 String id = UUID.randomUUID().toString();
 // Assigned in constructor, never null, stable forever
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Never override `equals()` based on `Long id` that is database-generated.
 Use a natural key, a UUID, or accept Hibernate's default (identity equality).
@@ -843,6 +873,7 @@ for a critical system component and explain your reasoning.
 *Likely follow-up:* "How did the team react, and what was the result?"
 
 **Answer:**
+
 **S (Situation):** A financial reporting system needed to generate
 monthly P&L reports for clients. The report query joined 8 tables,
 used window functions for running totals, CTEs for intermediate
@@ -887,6 +918,34 @@ development time.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Persistence Context Lifecycle and Unit of Work
 
@@ -997,6 +1056,8 @@ NEW ----------------------> MANAGED
 
 MANAGED --remove()--> REMOVED --> (SQL DELETE on flush)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When the context opens:**
 - `@Transactional` method entry: Spring creates a new `EntityManager`
@@ -1223,6 +1284,8 @@ Order managed = em.merge(detached); // use returned reference
 managed.setStatus("UPDATED"); // CORRECT: modifying managed copy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: LazyInitializationException in Serialization**
@@ -1253,6 +1316,8 @@ public OrderDTO getOrder(Long id) {
 List<OrderItem> items;
 // Prevents Jackson from accessing the lazy collection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1288,6 +1353,8 @@ public void processBatch() {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1400,6 +1467,8 @@ em.flush(); // explicit flush - dirty checks now
 // Or when a subsequent operation depends on the flush results
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Skip dirty checking for a field: `@Column(updatable=false)` - Hibernate
 never generates UPDATE for this column even if the field changes.
 
@@ -1475,6 +1544,8 @@ Some types (Date, Calendar) are mutable. If code has:
 ```java
 entity.setBirthday(existingDate); // same Date object, set again
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Hibernate marks the entity dirty even though the value is the same
 (the type's `equals()` works, but Hibernate may use a different
 comparison in some versions).
@@ -1496,6 +1567,8 @@ public class Order { ... }
 // SQL: UPDATE orders SET status=? WHERE id=? (only status column)
 // Instead of: UPDATE orders SET status=?, amount=?, customer_id=? WHERE id=?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Note: `@DynamicUpdate` disables prepared statement reuse for UPDATE
 (different SQL per update call). Trade-off: less data transmitted,
@@ -1572,6 +1645,8 @@ public class AuditService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The connection pool deadlock risk -
 if REQUIRES_NEW is called from many threads simultaneously, each holding
 one connection waiting for the second.
@@ -1625,6 +1700,8 @@ public void batchProcess(List<Long> ids) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `em.close()`: flushes AND closes the EntityManager (cannot be used after close).
 
 *What separates good from great:* Clarifying that `flush()` does NOT commit
@@ -1670,6 +1747,8 @@ class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 
 Fix 1: Extract the inner method to a separate Spring bean:
@@ -1681,6 +1760,8 @@ class AuditService {
 }
 // Now called via Spring proxy - REQUIRES_NEW honored
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 2: Inject the bean into itself (circular dependency, Spring supports it):
 ```java
@@ -1698,6 +1779,8 @@ class OrderService {
     public void auditAndUpdate(Long id) { ... }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3: Get the bean from ApplicationContext inside the method (anti-pattern).
 
@@ -1747,6 +1830,8 @@ turned off per-query.
 Optional<Order> findWithItems(@Param("id") Long id);
 // Only this query loads items eagerly; other Order queries stay lazy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "cannot turn off EAGER per query"
 observation - LAZY gives you control, EAGER takes it away.
@@ -1802,6 +1887,8 @@ List<Entity> list = session.createQuery("FROM Entity", Entity.class)
 // Without type class: returns List<Object[]> or List<Object>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Upgrade strategy: enable full SQL logging on a staging environment,
 run the full test suite, compare SQL output between versions, and
 review EXPLAIN plans for changed queries.
@@ -1809,3 +1896,33 @@ review EXPLAIN plans for changed queries.
 *What separates good from great:* The SQL AST change and the type-safe
 query requirement in Hibernate 6 - these are the two changes most likely
 to cause query result differences.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

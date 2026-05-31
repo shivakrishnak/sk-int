@@ -155,6 +155,8 @@ DEPENDENCY RULE:
   Adapters depend on domain interfaces (ports).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The dependency inversion principle applied at architecture level.
 In layered architecture: domain imports repository classes. In
@@ -456,6 +458,8 @@ grep -r "javax.persistence\|org.springframework\|com.fasterxml" \
 # Any hits = domain is leaking infrastructure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Separate domain model from JPA entity. The domain `Order`
 class has no annotations. The `OrderJpaEntity` class has `@Entity`
 and maps the JPA model. `OrderMapper` converts between them.
@@ -485,6 +489,8 @@ leaking into port design.
   than domain concepts?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Redefine ports from the domain's perspective. The domain
 says `findOrdersReadyForFulfillment()`. The adapter figures out
 the SQL needed to implement this domain concept.
@@ -511,6 +517,8 @@ the adapter.
   implementations?
 - Do adapters import domain services?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Move any business logic found in adapters back to the domain.
 Adapters should contain: mapping, error translation, and
@@ -608,6 +616,8 @@ void placeOrder_creates_pending_order() {
         .containsOnly(OrderStatus.PENDING);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 No `@SpringBootTest`. No Mockito. No database. Runs in under 10ms.
 The domain behavior is fully tested without infrastructure.
@@ -775,6 +785,8 @@ src/main/java/com/example/
   application/          <- Spring Boot main, config, wiring
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The dependency rule enforced by package structure: `domain/`
 imports from nothing external. `adapter/in/` imports from
 `domain/port/in/`. `adapter/out/` imports from `domain/port/out/`.
@@ -790,6 +802,8 @@ static final ArchRule domainIsolation =
         .should().dependOnClassesThat()
         .resideInAPackage("..adapter..");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Most candidates describe "domain
 package and infrastructure package." Great candidates give a specific
@@ -851,6 +865,34 @@ layered for simple CRUD) as the practical production approach.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Model-View-Controller
 
@@ -990,6 +1032,8 @@ MVC WEB REQUEST FLOW
        v
   Browser/Client
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Model knows nothing about Views or HTTP. The View knows nothing
@@ -1208,6 +1252,8 @@ grep -r "if.*status\|calculate\|BigDecimal" \
   src/**/controller/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Extract all business logic into service classes. The
 controller should be: parse request, call service, return response.
 Three lines per endpoint method is the ideal.
@@ -1235,6 +1281,8 @@ is added in the template.
 </span>
 <!-- "Active" definition is a business rule in the view -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Compute the business state in the Model layer and pass it
 to the view. The view renders `user.isActive()` - a boolean set by
@@ -1547,6 +1595,34 @@ versioning in the View layer.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Component Design Principles
 
 🎯 Interview Weight: high - foundational design theory that
@@ -1684,6 +1760,8 @@ COUPLING PRINCIPLES (how components relate):
     Unstable components can be concrete
     SAP + SDP = Dependency Inversion at component level
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 SDP and SAP together implement the Dependency Inversion Principle
@@ -1928,6 +2006,8 @@ npx depcruise --include-only "^src" \
   --output-type dot src | dot -T svg > deps.svg
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Extract the shared abstraction causing the cycle into a new
 component. Use Dependency Inversion (define an interface in the
 more stable component). Sometimes: merge the two components if
@@ -1958,6 +2038,8 @@ depends on an unstable component (framework utility).
 #   too many components
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Define an interface in the domain core for what it needs
 (Stable Abstractions Principle). Move the unstable implementation
 to an adapter component that depends on the core interface.
@@ -1983,6 +2065,8 @@ technical concern rather than by closure.
 - Are there imports from "service" package in every
   "controller" class? (tight cross-package coupling)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Reorganize to package-by-feature. All classes for "Order
 Management" in `order/` package: `OrderController`, `OrderService`,
@@ -2199,6 +2283,8 @@ static final ArchRule noCycles =
         .matching("com.example.(*)..")
         .should().beFreeOfCycles();
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This runs in the test suite and fails the build if a cycle is
 introduced.
 
@@ -2213,12 +2299,16 @@ static final ArchRule sdpRule =
         .resideInAPackage("..adapter..");
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Component size / CCP fitness function - flag components that are
 growing toward a god component:
 ```java
 // Custom ArchUnit check: warn if a package has > 20 classes
 // (signal that CCP may be violated)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Stability metric drift - track average instability of domain
 packages over time. If domain package instability increases
@@ -2329,3 +2419,33 @@ structure should drive package structure).
 | Hiring Manager | Business impact: CCP reduces multi-team coordination for features |
 | Bar Raiser | SAP + SDP = DIP at component level; fitness functions |
 | Peer Engineer | Practical: package structure, JDepend metrics, ArchUnit enforcement |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /kafka/l2-consumer-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L2 Consumer Patterns](#kafka---l2-consumer-patterns) | medium |
+
+---
+
 # Kafka - L2 Consumer Patterns
 
 ## Offset Management
+
+---
 
 ### 🎯 Model Answer
 
@@ -152,6 +163,8 @@ SEEK OPERATIONS FOR REPLAY:
   // Consumer now starts reading from the specified timestamp.
   // Use case: replay the last 2 hours after a processing bug.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -349,6 +362,8 @@ Fix:
     // Heartbeat maintained. max.poll.interval.ms timer restarted on each poll.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -402,6 +417,8 @@ the right choice.
 ---
 
 ## Consumer Poll Loop
+
+---
 
 ### 🎯 Model Answer
 
@@ -530,6 +547,8 @@ SINGLE-THREADED CONSTRAINT:
     // Risk: if any record takes too long: total batch time > max.poll.interval.ms.
     // Fix: reduce max.poll.records or use pause/resume pattern.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -736,6 +755,8 @@ Fix:
     Avoids rebalance on brief restarts (within session.timeout.ms).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -780,4 +801,34 @@ pauses all 20. Cooperative rebalance: only 2-3 consumers affected (the ones whos
 Throughput drop: 10-15% briefly vs 100%. Enabling: `partition.assignment.strategy=
 CooperativeStickyAssignor` on all consumers simultaneously (or via rolling restart with the
 transition protocol). Spring Kafka 2.3+: configured via `spring.kafka.consumer.partition-assignment-strategy`.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

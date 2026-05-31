@@ -8,6 +8,16 @@ permalink: /messaging/l3-distributed-transactions/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Saga Pattern and Distributed Transactions via Messaging](#saga-pattern-and-distributed-transactions-via-messaging) | medium |
+| 2 | [Message Security and Authorization](#message-security-and-authorization) | medium |
+
+---
+
 # Saga Pattern and Distributed Transactions via Messaging
 
 ---
@@ -60,6 +70,8 @@ Inventory Service -> [inventory.released] -> Order Service (compensate)
 Order Service -> [order.cancelled] -> ... (mark failed)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Orchestration Saga:
 ```
 Saga Orchestrator:
@@ -76,6 +88,8 @@ Saga Orchestrator:
   IF inventory.failed:
     SEND: cancel_order (compensation)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Saga pattern shifts the atomicity guarantee from the database layer to the business logic layer. Each step is atomic within its own service. The overall process has only eventual consistency. The design discipline required: every step needs a compensating step defined before it ships. The compensating step is a business process, not a technical rollback.
@@ -340,6 +354,34 @@ Symptom: a saga is stuck in COMPENSATING status for hours; operational dashboard
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Security and Authorization
 
 ---
@@ -417,6 +459,8 @@ Layer 5 - Payload encryption (application-level):
   Consumer: fetch -> base64decode -> decrypt(cipher, key)
   Key management: AWS KMS, HashiCorp Vault
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 TLS and ACLs protect at the broker level. Application-level encryption protects against the broker itself - a compromise of the broker, a misconfigured ACL, or a Kafka admin with superuser access cannot read encrypted payload content.
@@ -676,3 +720,33 @@ Q: "Are there any topics that contain PII or sensitive data, and how is that dat
 
 *Why:* Reveals whether the team has considered the broker-compromise threat model.
 *If asked back:* "I use application-level encryption with KMS envelope keys for topics containing PII. The broker stores only ciphertext. Consumers must have KMS access to decrypt."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

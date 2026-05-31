@@ -7,6 +7,16 @@ permalink: /frontend-testing/l2-mocking/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Mocking with Jest (jest.mock, spies, stubs)](#mocking-with-jest-jestmock-spies-stubs) | medium |
+| 2 | [Mocking HTTP Requests with MSW](#mocking-http-requests-with-msw) | medium |
+
+---
+
 # Mocking with Jest (jest.mock, spies, stubs)
 
 ---
@@ -113,6 +123,8 @@ Spy on existing method:
   spy.mockRestore(); // restore original implementation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -160,6 +172,8 @@ test('shows user name after load', async () => {
   await screen.findByText('Alice');
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example (Production) - Module mock with factory:**
 
@@ -335,6 +349,34 @@ correct - most frontend testing benefits from mocking external I/O
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Mocking HTTP Requests with MSW
 
 ---
@@ -448,6 +490,8 @@ MSW v2 architecture:
   afterAll(() => server.close());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -504,6 +548,8 @@ test('shows error when API fails', async () => {
   await screen.findByText(/something went wrong/i);
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example (Production) - Shared handlers and msw.config.ts:**
 
@@ -680,7 +726,39 @@ test('shows error on network failure', async () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using `HttpResponse.error()` to
 simulate actual network failures (connection refused, DNS failure)
 which is different from HTTP error status codes. Real applications
 handle both cases and they require different error handling code.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

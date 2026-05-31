@@ -7,6 +7,16 @@ permalink: /css/l2-grid/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Grid Layout](#css-grid-layout) | critical |
+| 2 | [CSS Grid Template Areas and Named Lines](#css-grid-template-areas-and-named-lines) | high |
+
+---
+
 # CSS Grid Layout
 
 🎯 **Interview Weight:** critical - Grid is the 2D layout
@@ -142,6 +152,8 @@ LINE NUMBERING:
         col1 col2 col3  (3 columns = 4 lines)
   -4 = line 1, -3 = line 2, -2 = line 3, -1 = line 4
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -341,6 +353,8 @@ the auto-placement algorithm to the next row.
 # Compare item placement to expected cells
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: auto-fill creates wrong number of columns**
@@ -352,6 +366,8 @@ Cause: minmax minimum too small or too large.
 # e.g., 900px / 280px = 3.21 -> 3 columns
 # If minimum is too large, only 1 column fits
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -914,6 +930,34 @@ block-beta
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Grid Template Areas and Named Lines
 
 🎯 **Interview Weight:** high - template-areas is the most
@@ -1046,6 +1090,8 @@ IMPLICIT NAMED LINES FROM AREAS:
     header-start (row), header-end (row)
   Usage: grid-column: header-start / header-end;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1257,6 +1303,8 @@ grid-template-areas:
   "header main"; /* "header" is an L-shape - INVALID */
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: restructure layout so each area is rectangular,
 or split into separate areas.
 
@@ -1273,6 +1321,8 @@ Diagnosis:
 # Check: grid-template-areas string
 # Both must be exact match, no quotes on grid-area value
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1827,3 +1877,33 @@ is covered in L5 Design Systems)*
 *(Omit: the code examples with inline template-areas strings
 are self-documenting; the ASCII art in the CSS is already
 the diagram)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

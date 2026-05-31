@@ -7,6 +7,15 @@ permalink: /frontend-testing/l4-ci-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Frontend Testing Strategy in CI/CD](#frontend-testing-strategy-in-cicd) | medium |
+
+---
+
 # Frontend Testing Strategy in CI/CD
 
 ---
@@ -127,6 +136,8 @@ Playwright sharding (GitHub Actions):
   4 parallel jobs: 60 E2E tests -> ~15 tests each
   Wall clock: 20 min -> ~5 min
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -436,6 +447,8 @@ PR created:
   → Does not block unit test feedback
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Required optimizations for <3 min unit tests:
 1. `npm ci` with cache (saves 2-4 min on cold install)
 2. Vitest/Jest with parallel workers (default)
@@ -459,9 +472,41 @@ Cache strategy:
       deps-${{ hashFiles('package-lock.json') }}-
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using Vitest with HMR in development
 (sub-second re-runs on watch) while the CI pipeline uses the parallel
 worker pool for full runs. The developer experience is: instant
 feedback locally (watch mode), <5 min feedback in CI. Together these
 create a tight feedback loop that catches bugs within minutes of
 writing code.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

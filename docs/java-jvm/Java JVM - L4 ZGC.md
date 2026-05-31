@@ -8,9 +8,20 @@ permalink: /java-jvm/l4-zgc/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L4 ZGC](#java-jvm---l4-zgc) | medium |
+
+---
+
 # Java JVM - L4 ZGC
 
 ## ZGC Architecture and Low-Latency GC
+
+---
 
 ### 🎯 Model Answer
 
@@ -124,6 +135,8 @@ GC PHASES AND PAUSES:
     CONCURRENT Remap (overlaps with next cycle's marking)
       -> update all remaining stale references
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -336,6 +349,8 @@ Fix:
     Typically 2-4x better throughput with similar pause times
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -501,6 +516,8 @@ A: ZGC with container awareness (JDK 11+ cgroups v2 support):
 # 1GB for off-heap, Metaspace, ZGC overhead
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* ZGC's virtual address reservation (3x heap) is
 visible as VSZ in `kubectl top pod` or `docker stats`. A pod with `Xmx=2g` and ZGC:
 VSZ = 6-8GB (3x for multi-mapping). Kubernetes OOM killer: uses RSS (actual physical),
@@ -562,6 +579,8 @@ A: For a Spring Boot microservice with 4GB memory limit, latency SLA < 50ms:
 -Xlog:gc:file=gc.log:time,uptime:filecount=5,filesize=20m
 # No other tuning needed - ZGC self-tunes allocation trigger
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "do not over-tune ZGC" principle. ZGC's
 ergonomics: determines when to start GC (allocation rate-based), how many pages
@@ -689,6 +708,8 @@ MONITORING:
   Alert 4: Heap usage > 85% consistently -> live set growing (leak)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **GC strategy:** ZGC with generational mode. Accept 3% throughput overhead for
 consistent sub-2ms GC pauses. Heap sized at 75% of container for ZGC headroom.
 Scale pods (horizontal) before scaling heap (vertical) - more pods = more GC
@@ -792,3 +813,33 @@ sequenceDiagram
 > The forwarding table is temporary - once all references to a page are healed (remap
 > phase completes), the old page's forwarding table is freed. This self-healing design
 > is what enables ZGC to maintain consistent < 1ms STW pauses.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

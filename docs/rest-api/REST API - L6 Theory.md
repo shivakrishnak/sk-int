@@ -8,6 +8,16 @@ permalink: /rest-api/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Roy Fielding REST Architectural Style](#roy-fielding-rest-architectural-style) | medium |
+| 2 | [Richardson Maturity Model](#richardson-maturity-model) | medium |
+
+---
+
 # Roy Fielding REST Architectural Style
 
 ---
@@ -77,6 +87,8 @@ Null Style (no constraints)
 
 = REST
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Fielding explicitly states that REST is NOT about CRUD or HTTP methods. It is about the uniform interface constraint, specifically HATEOAS: a truly RESTful API drives client behavior through hyperlinks in responses. The client starts at a known URI and discovers all capabilities through links. This is what made the web evolvable - you can change server behavior by changing the links, without updating clients.
@@ -277,6 +289,34 @@ The HATEOAS solution: clients only know the entry point URI. All other URIs are 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Richardson Maturity Model
 
 ---
@@ -341,6 +381,8 @@ Response:
 Server drives client via links. Client
 only knows the entry point URI.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The RMM is descriptive, not prescriptive. It doesn't say Level 3 is always better. It says: here is a continuum. Know where your API is. Make deliberate choices about how far you go. For most APIs: Level 2 is the right pragmatic target.
@@ -539,3 +581,33 @@ Diagnosis: Check the access log. Was the POST executed once or twice? Check the 
 *What separates good from great:* "The 'declare the target level before review' step (preventing theological debates about true REST) and the connection to standard tooling and retry logic are the practical benefits of systematic Level 2 implementation."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

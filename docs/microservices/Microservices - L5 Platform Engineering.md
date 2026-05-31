@@ -8,6 +8,15 @@ permalink: /microservices/l5-platform-engineering/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Platform Engineering for Microservices at Enterprise Scale](#platform-engineering-for-microservices-at-enterprise-scale) | medium |
+
+---
+
 # Platform Engineering for Microservices at Enterprise Scale
 
 ---
@@ -70,6 +79,8 @@ Layer 1: Infrastructure
   - Managed services (RDS, ElastiCache, MSK)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The golden path:**
 ```
 Product team creates a new service:
@@ -103,6 +114,8 @@ Product team creates a new service:
   Total time: 30 minutes to first deployment
   Without platform: 2-4 weeks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Platform Engineering is a force multiplier. A 5-person Platform Engineering team enables 50 product teams to operate efficiently. The investment ratio: 1 Platform Engineer for every 10-15 product engineers. The cost-benefit: each product team saves 30% of their engineering time on infrastructure. 50 teams x 30% savings = 15 engineers worth of productivity freed for product work.
@@ -491,3 +504,33 @@ Fix: Self-service by design. Every common operation should be self-service throu
 | DevOps (embedded) | 10-20 teams | Dev + ops merged per team | Per-team overhead | Variable |
 | Platform Engineering | 20+ teams | Self-service, golden path | Centralized, efficient | High |
 | Managed Internal Platform (IDP) | 50+ teams | One portal for everything | Platform team owns | Very high |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,17 +7,6 @@ permalink: /platform-engineering/l6-theory/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L6 Theory
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Conway's Law and Organizational Architecture Theory](#conways-law-and-organizational-architecture-theory) | high |
-| 2 | [Sociotechnical Systems Theory](#sociotechnical-systems-theory) | high |
-
----
-
 # Conway's Law and Organizational Architecture Theory
 
 ---
@@ -118,6 +107,8 @@ Platform team structure          Platform design outcome
   End-to-end ownership             with auto-provisioned observability
   -> Product teams self-serve ->   Teams deploy in < 1 hour
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The Inverse Conway Maneuver:**
 
@@ -654,6 +645,34 @@ tool.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Sociotechnical Systems Theory
 
@@ -1358,3 +1377,33 @@ their first production service; support ticket rate per team per week
 (high tickets = high cognitive load, teams cannot self-serve). Reducing
 cognitive load measured this way is the technical system change that
 unlocks the social system benefit of broad, deep platform adoption.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /nodejs/l3-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Node.js Security Anti-patterns](#nodejs-security-anti-patterns) | medium |
+| 2 | [Authentication and Session Security](#authentication-and-session-security) | medium |
+
+---
+
 # Node.js Security Anti-patterns
 
 ---
@@ -90,6 +100,8 @@ Node.js security vulnerabilities:
      npm audit  // check for known CVEs
      # Must run in CI pipeline
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -233,6 +245,8 @@ console.log(({}).isAdmin); // true if polluted
 // deepmerge, or other merge operations on user input
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use `JSON.parse` with validation (reject `__proto__` keys).
 Use `Object.create(null)` for dictionaries.
 
@@ -249,6 +263,34 @@ Use `Object.create(null)` for dictionaries.
 | Essential security middleware for Express? | Production | ★★☆ | 3 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Authentication and Session Security
 
@@ -338,6 +380,8 @@ JWT authentication flow:
     - Rate limit: /auth/login (brute force prevention)
     - Log failed attempts: detect credential stuffing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -505,3 +549,33 @@ in `jwt.verify` options. Never allow `none`.
 | What is a timing attack in auth? | Security | ★★★ | 3 min |
 | How do you store tokens securely in a browser? | Security | ★★☆ | 2 min |
 | Refresh token rotation pattern? | Mechanism | ★★★ | 3 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

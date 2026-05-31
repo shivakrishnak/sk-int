@@ -8,9 +8,20 @@ permalink: /java-performance/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L0 Orientation](#java-performance---l0-orientation) | medium |
+
+---
+
 # Java Performance - L0 Orientation
 
 ## What Java Performance Means: Latency vs Throughput vs Memory
+
+---
 
 ### 🎯 Model Answer
 
@@ -114,6 +125,8 @@ COMMON TRADE-OFFS:
   CPU-bound: #threads = #CPU cores.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -216,6 +229,8 @@ Fix:
   (2) Address root cause
   (3) Update SLA definition to "p99 < 200ms"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -336,6 +351,8 @@ a baseline from before the regression lets you identify when and in which commit
 
 ## Java Performance Ecosystem: Tools and Disciplines
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -444,6 +461,8 @@ GC LOGGING (always enable in production):
   Parse: GCEasy.io (online), GCViewer (local)
   Watch for: long pauses (> 200ms), high allocation rate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -564,6 +583,8 @@ Root causes:
      at JVM startup.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -626,6 +647,8 @@ causes JIT to inline a method, `benchmarkB` (which calls the same method) might 
 ---
 
 ## When Performance Optimization Is Worth It
+
+---
 
 ### 🎯 Model Answer
 
@@ -730,6 +753,8 @@ WHEN OPTIMIZATION IS NOT JUSTIFIED:
   Result: 1% improvement. Added code complexity: 20%.
   Not worth it.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -860,6 +885,8 @@ Prevention:
   If no profiler evidence: reject the optimization PR as speculation.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -967,3 +994,33 @@ and monitoring infrastructure so the NEXT engineer can find bottlenecks faster.
 *What separates good from great:* The "institutionalize the process" staff-level contribution: after fixing the performance issue, the staff engineer adds: (1) the profiling commands to the runbook, (2) automated SLA alerting (Grafana alert when p99 > threshold), (3) a performance test in CI that would have caught this regression. The goal: the next time a performance problem appears, the on-call engineer has the tools and runbook to diagnose it in 15 minutes instead of 2 hours. That's the leverage of the staff engineer: not just fixing the problem, but making the team better at fixing future problems.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

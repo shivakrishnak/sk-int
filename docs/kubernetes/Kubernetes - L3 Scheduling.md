@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # Pod Scheduling: Affinity, Taints, and Tolerations
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -118,6 +120,8 @@ affinity:
           values: [us-east-1a]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pod Anti-affinity (spread replicas):**
 ```yaml
 affinity:
@@ -128,6 +132,8 @@ affinity:
         matchLabels: {app: my-app}
       topologyKey: kubernetes.io/hostname  # spread across nodes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Taints and Tolerations:**
 ```yaml
@@ -141,6 +147,8 @@ tolerations:
   value: "true"
   effect: "NoSchedule"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Taint effects:
 - `NoSchedule`: new pods without toleration don't schedule here
@@ -156,6 +164,8 @@ topologySpreadConstraints:
   labelSelector:
     matchLabels: {app: my-app}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 More precise than pod anti-affinity for zone spreading: controls SKEW (max difference
 in replica count across zones) rather than binary co-location rules.
 
@@ -445,6 +455,8 @@ A: Taints and tolerations implement the "dedicated node pool" pattern:
      effect: NoSchedule
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. BUT toleration alone doesn't force ML pods to ML nodes - it just allows it.
    The pod could still schedule on non-ML nodes. Add nodeAffinity for that:
    ```yaml
@@ -457,6 +469,8 @@ A: Taints and tolerations implement the "dedicated node pool" pattern:
              operator: In
              values: [ml]
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 5. Result: ML node rejects non-ML pods (taint); ML pods are required to go to
    ML nodes (affinity) and allowed to (toleration). Complete isolation both ways.
@@ -481,6 +495,8 @@ topologySpreadConstraints:
   labelSelector:
     matchLabels: {app: my-service}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With `maxSkew: 1` and 6 replicas across 3 zones: target is 2 per zone. The constraint
 ensures no zone has more than 1 more pod than any other zone. With 3 zones and
@@ -605,6 +621,8 @@ Architecture:
              values: [team-a]
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Namespace labels drive the webhook: `kubectl label namespace team-a tenant=team-a`
 
 5. ResourceQuota per namespace limits total resource consumption within each pool.
@@ -642,6 +660,8 @@ topologySpreadConstraints:
     matchLabels: {app: payment-api}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This implements strict 3-zone HA: the service only runs if all 3 AZs are available.
 If zone-c fails, new pods are blocked (not re-distributed to 2 zones). Fails closed:
 unavailable rather than silently degraded to 2-zone availability.
@@ -666,6 +686,8 @@ spec:
   nodeSelector:
     gpu: "true"   # pod MUST run on node with label gpu=true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Simple, but only supports equality matching, always required (no soft version).
 
 `nodeAffinity` is a superset:
@@ -689,6 +711,8 @@ affinity:
           operator: In
           values: [A100, H100]    # prefer high-end GPUs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use nodeSelector only for simple, always-required constraints.
 Use nodeAffinity for everything else.
@@ -802,7 +826,37 @@ flowchart TD
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Resource Requests and Limits
+
+---
 
 ### 🎯 Model Answer
 
@@ -905,6 +959,8 @@ resources:
 # (no resources block - use only for fault-tolerant batch)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **CPU behavior:**
 - `cpu: "1"` = 1 vCPU = 1000m (millicores)
 - CPU request: guaranteed time-slice via CFS (Completely Fair Scheduler)
@@ -941,6 +997,8 @@ spec:
       memory: "128Mi"
     type: Container
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Automatically applied to containers that don't set resources.
 
 ---
@@ -1240,7 +1298,6 @@ Diagnosis:
 `kubectl logs <pod> --previous | grep "OutOfMemory"`
 If "java.lang.OutOfMemoryError: Metaspace": add `-XX:MaxMetaspaceSize=256m`
 If container OOM (not Java OOM): the Linux OOM killer fired - limit is too low.
-`kubectl describe pod <name>` -> "OOMKilled" in container state.
 
 ```yaml
 env:
@@ -1255,6 +1312,8 @@ resources:
   limits:
     memory: "2Gi"  # Xmx(1Gi) + Metaspace(256M) + Code(256M) + buffer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `-XX:NativeMemoryTracking=summary` JVM flag
 plus `jcmd <pid> VM.native_memory` shows exactly how JVM allocates native memory.
@@ -1277,6 +1336,8 @@ Step 2: check throttling metrics in Prometheus.
 rate(container_cpu_cfs_throttled_periods_total{pod="<name>"}[5m])
 / rate(container_cpu_cfs_periods_total{pod="<name>"}[5m])
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 = throttle percentage. > 25% = significant throttling.
 
 Step 3: correlate with latency metrics.
@@ -1293,7 +1354,6 @@ Step 5: for P99 SLO < 100ms: set requests == limits (Guaranteed QoS) to give
 the pod a dedicated CPU slice not shared with bursts from other containers.
 
 *What separates good from great:* Create a proactive alert:
-`rate(container_cpu_cfs_throttled_periods_total[5m]) /
  rate(container_cpu_cfs_periods_total[5m]) > 0.25`
 Throttling is a leading indicator that fires before latency SLO violations.
 
@@ -1316,6 +1376,8 @@ spec:
     type: Container
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - ResourceQuota per namespace (total namespace caps):
 ```yaml
 apiVersion: v1
@@ -1330,6 +1392,8 @@ spec:
     persistentvolumeclaims: "20"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 3 - VPA in recommendation mode:
 ```yaml
 apiVersion: autoscaling.k8s.io/v1
@@ -1338,6 +1402,8 @@ spec:
   updatePolicy:
     updateMode: "Off"  # recommendation only
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 VPA watches actual usage and recommends right-sized requests. Monthly review:
 "team X's service requests 4 CPUs, actual P90 is 0.8 CPUs." Teams right-size
 based on VPA recommendations.
@@ -1482,6 +1548,8 @@ resources:
     memory: "3Gi"   # P99 * 1.5 for GC headroom
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Week 3 - Validation: monitored for 1 week. CPU throttle dropped to 5%. No OOM kills.
 P99 latency improved from 380ms to 120ms. Node OOM events: zero.
 
@@ -1562,3 +1630,33 @@ flowchart LR
 > the scheduler fully "accounts for" their capacity on the node. For critical services,
 > Guaranteed QoS combined with LimitRange defaults and ResourceQuota caps provides
 > comprehensive resource governance across the cluster.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

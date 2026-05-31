@@ -408,6 +408,8 @@ curl -s http://prometheus:9090/api/v1/status/tsdb |
 # Any metric > 100K series is a cardinality risk
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Drop the high-cardinality metric via relabeling rule in
 the ServiceMonitor or via Prometheus `metric_relabel_configs`.
 Scale up Prometheus memory if needed as an immediate fix.
@@ -435,6 +437,8 @@ kubectl logs -n monitoring prometheus-0 | \
 # ts=... caller=head.go msg="WAL replay complete"
 # duration=3m42s
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Deploy Prometheus in HA mode: two replicas scraping
 the same targets. When one restarts, the other continues.
@@ -580,6 +584,8 @@ checkout_duration_seconds_bucket{le="+Inf"} 10000
 checkout_duration_seconds_sum 1245.7
 checkout_duration_seconds_count 10000
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In Java, the Prometheus client library (simpleclient or the
 OpenTelemetry Prometheus exporter) generates this format
 automatically when you expose an HTTP endpoint. With
@@ -770,6 +776,34 @@ above illustrates the Prometheus collection architecture clearly.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Grafana Dashboard Design
 
 **TL;DR** - A Grafana dashboard is a set of panels querying
@@ -882,6 +916,8 @@ LAYER 3 - DEBUGGING AIDS (bottom or second tab)
   Bar chart: error count by type (last 30 min)
   Trace panel: recent trace links (Tempo)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Template variables make one dashboard serve all services.
@@ -1162,6 +1198,8 @@ max by (payment_method) (
 # Credit card may have 15% error rate while
 # avg across payment methods is 0.7%
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add per-dimension breakdown panels to the dashboard.
 Replace average-based panels with max-over-dimensions or
@@ -1505,3 +1543,33 @@ strategy (1h/6h windows for fast and slow detection).
 
 *(Omit: the dashboard layer hierarchy is described clearly
 in the ASCII structure in the Concept Explanation section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

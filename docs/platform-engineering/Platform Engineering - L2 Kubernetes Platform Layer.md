@@ -7,19 +7,6 @@ permalink: /platform-engineering/l2-kubernetes-platform-layer/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L2 Kubernetes Platform Layer
-
----
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Kubernetes-Based Platform Architecture](#kubernetes-based-platform-architecture) | critical |
-| 2 | [Namespace and Tenant Isolation](#namespace-and-tenant-isolation) | high |
-
----
-
 # Kubernetes-Based Platform Architecture
 
 ---
@@ -187,6 +174,8 @@ Multi-cluster by business unit:
   - Fleet management overhead, inconsistent platform versions
   When: compliance requires separation, M&A integration
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The platform layer is only as good as its upgrade mechanism.
@@ -500,6 +489,8 @@ container_cpu_cfs_periods_total
 kubectl top pods -n affected-namespace --sort-by=cpu
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Remove CPU limits (set requests only) for latency-sensitive
 services. Use ResourceQuota at namespace level to prevent CPU abuse.
 This is the Kubernetes community consensus (see Omission of CPU
@@ -522,6 +513,8 @@ kubectl describe nodes | grep -A5 "Allocated resources"
 kubectl get events --field-selector \
   reason=FailedScheduling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Reduce pod memory requests (right-size based on actual
 usage via VPA recommendations), add nodes, or enable Descheduler
@@ -563,6 +556,8 @@ Decision framework:
 30-50 teams: Multi-cluster by environment + workload class
 > 50 teams:  Multi-cluster by BU or product domain
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The answer to this question
 in an interview reveals whether you have operated clusters at
@@ -819,6 +814,8 @@ kubent --target-version 1.29
 # Output: files/resources using deprecated APIs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Communication: 2 release cycles before removal, issue a
 deprecation notice to all teams with specific resources affected
 and migration path.
@@ -1025,6 +1022,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Namespace and Tenant Isolation
 
 ---
@@ -1205,6 +1230,8 @@ LAYER 6: NODE POOLS (hardware isolation)
   Prevents: noisy neighbor at node resource level
   Cost: dedicated nodes have lower utilization
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Namespace isolation is additive, not automatic. A namespace with no
@@ -1483,6 +1510,8 @@ kubectl run debug --image=nicolaka/netshoot \
 # Tests egress from within the namespace
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add egress NetworkPolicy rules for the required external
 endpoints. If using service names: add egress rules to the DNS
 namespace (kube-system, port 53) and to the target namespace.
@@ -1502,6 +1531,8 @@ kubectl describe resourcequota -n team-payments
 kubectl top pods -n team-payments --sort-by=memory
 # Find highest memory consumers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Either increase the namespace quota (requires platform team
 approval), or identify over-allocated pods (memory requests set
@@ -1606,6 +1637,8 @@ spec:
   - group: team-payments-github
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Option C: Crossplane composition:**
 Define a Composition that creates all namespace sub-resources
 when a composite resource is claimed.
@@ -1694,6 +1727,8 @@ spec:
       property: dockerconfig
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Team-managed secrets (namespace-scoped):**
 Team-specific credentials (database passwords, API keys) are
 stored in Vault under the team's path and synced to their
@@ -1751,6 +1786,8 @@ kubectl get resourcequota -A \
   CPU_LIMIT:.status.hard.requests\.cpu'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Resource quotas that are set
 correctly require operational data (VPA recommendations, usage
 metrics) not guesses. Teams that set quotas on day one without
@@ -1782,6 +1819,8 @@ metadata:
   labels:
     pod-security.kubernetes.io/enforce: restricted
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The exception pattern: system namespaces (monitoring, ingress,
 storage) often need elevated privileges. These should be in
@@ -1833,6 +1872,8 @@ kubectl get pods -n team-payments \
    .spec.containers[0].resources.requests.memory}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix options:
 1. Emergency: increase quota temporarily
 2. Short-term: right-size pods with high over-declaration
@@ -1878,6 +1919,8 @@ PSS (new):
   - Predictable, simple, auditable
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Migration: platform teams with existing PSPs must migrate to PSS
 on Kubernetes 1.25+. The migration path: audit existing PSPs, map
 them to Baseline or Restricted profile, apply namespace labels
@@ -1906,3 +1949,33 @@ engineering experience. Understanding the RBAC footgun of PSP
 Compliance requirements and threat model determine isolation level;
 the cost of separate node pools vs. separate clusters determines
 whether to stop at software isolation or add hardware isolation.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

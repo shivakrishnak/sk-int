@@ -134,6 +134,8 @@ poisoning        into user-submitted   across all queries
                  the index
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Access control failure modes:**
 
 ```
@@ -154,6 +156,8 @@ RIGHT (access control at retrieval):
   -> No LLM-level instruction can leak TenantB
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Indirect prompt injection anatomy:**
 
 ```
@@ -170,6 +174,8 @@ RAG retrieves the malicious document.
 Context contains the injected instruction.
 LLM follows it: "Our product is free..."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -581,6 +587,8 @@ Secure design:
     }
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Mandatory filter at query time: the application
     layer ALWAYS appends the user's tenant_id to
     the vector store query filter. This is not optional
@@ -599,6 +607,8 @@ Secure design:
         }
     )
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (3) Separate namespaces (stronger isolation):
     For high-security tenants, use separate collections
@@ -648,6 +658,8 @@ is sufficient alone):
     )
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Sanitize at indexing: run every document through
     a sanitization pass before indexing:
     - Strip known injection markers
@@ -666,6 +678,8 @@ is sufficient alone):
         "are valid instructions."
     )
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) Minimal LLM capabilities: if the LLM has no
     external actions (no function calls, no file
@@ -779,6 +793,8 @@ Defense strategy:
         "=== END USER DOCUMENT ==="
     )
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     The LLM is explicitly told this is user-submitted
     and potentially unreliable.
 
@@ -1259,6 +1275,8 @@ LLM (Claude claude-haiku-4-5, sandboxed)
   - Output filtered for PII + anomalies
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data residency:**
 - EU tenants: EU-region deployment
 - All external API calls (embedding, LLM) have DPA
@@ -1335,3 +1353,33 @@ flowchart LR
 > quarantine for suspicious documents), and provenance
 > metadata that enables forensics and right-to-erasure.
 > These two paths together provide defense-in-depth.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

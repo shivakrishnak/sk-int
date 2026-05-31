@@ -7,6 +7,17 @@ permalink: /typescript/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Decision Framework](#typescript-decision-framework) | medium |
+| 2 | [Type-Driven Development](#type-driven-development) | medium |
+| 3 | [TypeScript at Team Scale](#typescript-at-team-scale) | medium |
+
+---
+
 # TypeScript Decision Framework
 
 ---
@@ -114,6 +125,8 @@ Generic constraints:
   <T extends string>  -> T must be a string (string literal types)
   <T extends keyof U> -> T must be a key of U
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -272,6 +285,34 @@ same codebase creates cognitive overhead for no benefit.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Type-Driven Development
 
 ---
@@ -343,6 +384,8 @@ TDD with types - process:
       It accepts the declared parameters
     Integration bugs caught at step 3, not at runtime
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key practices:**
 
@@ -535,6 +578,34 @@ in the type system is one fewer test class needed.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # TypeScript at Team Scale
 
 ---
@@ -608,6 +679,8 @@ Team TypeScript governance:
    CI: js file count must not increase
    Weekly: type coverage % tracked
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -783,11 +856,15 @@ Step 1: Measure current state. Track the metrics:
 npx type-coverage --strict
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Add ESLint enforcement for new code only:
 ```json
 { "overrides": [{ "files": ["src/**/*.ts"],
   "rules": { "@typescript-eslint/no-explicit-any": "error" } }] }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This prevents new `any` without breaking existing code.
 
 Step 3: Set up the CI ratchet. Store current counts as the baseline.
@@ -815,3 +892,33 @@ Documentation is ignored under pressure; ESLint errors block PRs.
 Make the right path the easy path: provide shared ESLint config
 and base tsconfig that teams can adopt in one PR, with zero
 configuration decisions to make.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

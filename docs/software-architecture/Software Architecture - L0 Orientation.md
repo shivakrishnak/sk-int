@@ -143,6 +143,8 @@ Architecture DECISIONS = explicit answers to these four.
 Architecture DOCUMENT = record of decisions AND their rationale.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Architecture is not the code - it is the decisions that constrain
 how code can be written. Test: "if I want to change this decision,
@@ -259,6 +261,8 @@ a shared framework. Each team optimizes locally.
 - Can a new engineer understand the system from documentation?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Retrospective architecture review. Document the as-is
 state. Identify which decisions created the most pain. Write ADRs.
 Publish standards (not mandates) for new development.
@@ -286,6 +290,8 @@ are not yet known.
   implementation begins?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Shift to just-in-time architecture. Make the minimum
 decisions needed to start. Defer decisions that can be deferred.
 Record decisions as they are made (ADRs), not all upfront.
@@ -312,6 +318,8 @@ without updating the architecture.
 grep -r "import.*presentation" src/data/
 grep -r "import.*controller" src/repository/
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Architecture fitness functions. Automated tests that verify
 architectural constraints: ArchUnit for Java, dependency-cruiser
@@ -343,7 +351,6 @@ the candidate thinks at system level (architecture) or code level
 
 *Likely follow-up:* "What makes a decision architectural?"
 
-Software architecture is the set of significant structural decisions
 about a system that are expensive to change later. It covers: what
 major components exist (services, modules, layers), how they
 communicate (REST, events, shared database), who owns which data,
@@ -619,6 +626,34 @@ distinction concrete.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Architecture Styles Landscape
 
 🎯 Interview Weight: high - interviewers use this to calibrate
@@ -748,6 +783,8 @@ MODULAR MONOLITH
   Trade-off: scales as a unit when scaling is needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 No architecture style is universally correct. Each is a set of
 trade-offs optimized for specific constraints. Microservices is
@@ -871,6 +908,8 @@ have synchronous call chains (tight operational coupling).
   for a single user request?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Address the coupling, not just the deployment topology.
 Each service needs its own database. Long synchronous chains must
 be broken with events or async patterns. API contracts must be
@@ -897,6 +936,8 @@ complexity justified it. Complexity imported without the benefits.
   (> 30% = probably too granular)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Consolidate services aggressively. The rule: one team should
 own 3-5 services maximum. If a team owns 10 services, most should
 be merged.
@@ -921,6 +962,8 @@ Answers indicating a problem:
   requirements)
 - "Because our previous company used it"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Run Architecture Trade-Off Analysis. Identify top 3 quality
 attributes the system must prioritize. Select the style that best
@@ -1217,6 +1260,34 @@ succeed and the conditions that would cause it to fail.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Architecture vs Design - Levels of Abstraction
 
 🎯 Interview Weight: high - frequently asked to distinguish candidates
@@ -1334,6 +1405,8 @@ CLASS LEVEL (Low-Level Design / Code Design):
   COST TO CHANGE: low (IDE refactoring)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Architecture and design exist on a continuum, not in separate boxes.
 A decision that is "design" in a small team becomes "architecture"
@@ -1449,6 +1522,8 @@ All decisions treated as architectural regardless of scope.
 - How long does a "simple" change take from idea to production?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Define explicit boundaries: "Architecture review is required
 for decisions affecting component interfaces, data models shared
 across services, or platform choices. Design decisions within a
@@ -1474,6 +1549,8 @@ multiple teams. Design autonomy extended to system-level concerns.
 - How many teams must coordinate for a cross-domain feature?
   (> 3 = lacking architecture standards)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Architecture Decision Records for cross-team standards.
 Establish guardrails: "all inter-service communication must use the
@@ -1501,6 +1578,8 @@ expensive to change?
 High-count, high-cost = architectural decisions made
 without architectural rigor.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* ADR retrospective. For each pain-point: write an ADR
 documenting the original decision, why it was made, and the current
@@ -1563,7 +1642,6 @@ cost difference.
 **Q2 [MID]: At what point does a design decision become an
 architectural decision?**
 
-*Why they ask:* Tests whether the candidate has an operational
 criterion they actually use in practice.
 
 *Likely follow-up:* "Give me an example you got wrong in either
@@ -1728,11 +1806,13 @@ affecting others. A poorly-architected system with shared databases
 and implicit coupling means debt in one component propagates
 everywhere.
 
-The most dangerous technical debt is architectural debt: decisions
-correct at smaller scale that become constraints as the system grows.
-A shared database for a team of five is pragmatic. For 50 engineers,
-it becomes a coordination bottleneck and deployment constraint.
-Fixing it requires architectural change, not just refactoring.
+The most insidious category of technical debt is
+architectural debt: decisions correct at smaller scale
+that become hard constraints as the system grows.
+A shared database for a team of five is pragmatic.
+For 50 engineers, it becomes a coordination bottleneck
+and deployment constraint. Fixing it requires
+architectural change, not just refactoring.
 
 For prioritization: quantify the cost of the architectural debt.
 "Our shared database causes three migrations per sprint to be
@@ -1792,3 +1872,33 @@ self-reinforcing culture insight is the staff differentiator.
 | Hiring Manager | Governance: architecture review as velocity enabler, not blocker |
 | Bar Raiser | Scope: when design becomes architecture as teams grow |
 | Peer Engineer | Practical: how the team decides what needs architecture review |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

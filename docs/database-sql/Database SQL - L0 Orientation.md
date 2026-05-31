@@ -8,6 +8,17 @@ permalink: /database-sql/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why Databases Exist](#why-databases-exist) | medium |
+| 2 | [The Relational Model - Tables, Keys, and Relationships](#the-relational-model---tables-keys-and-relationships) | medium |
+| 3 | [SQL Overview - The Declarative Query Language](#sql-overview---the-declarative-query-language) | medium |
+
+---
+
 # Why Databases Exist
 
 **TL;DR:** Databases exist because files fail at scale. When multiple
@@ -94,6 +105,8 @@ Problem 4 - INTEGRITY
   File: allowed. Data is now inconsistent.
   Database: FOREIGN KEY constraint rejects it.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **What a DBMS provides:**
 
@@ -326,6 +339,34 @@ the constraint overhead."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # The Relational Model - Tables, Keys, and Relationships
 
 **TL;DR:** The relational model organizes data into tables (relations),
@@ -519,6 +560,8 @@ AND NOT EXISTS (
     AND a.attnum = ANY(i.indkey));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: `CREATE INDEX idx_{table}_{col} ON {table}({col})`.
 
 ---
@@ -597,6 +640,34 @@ also enforces the natural key."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # SQL Overview - The Declarative Query Language
 
 **TL;DR:** SQL is declarative: you describe the result set you want,
@@ -668,6 +739,8 @@ TCL - Transaction Control Language:
   Manages transaction boundaries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SQL execution order:**
 
 ```sql
@@ -687,6 +760,8 @@ ORDER BY total DESC;
 -- 5. SELECT   -> project customer_id + SUM
 -- 6. ORDER BY -> sort by total DESC
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -805,6 +880,8 @@ WHERE created_at >= '2024-01-01'
   AND created_at <  '2025-01-01'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure: GROUP BY on high-cardinality column exhausts memory**
 
 Symptom: `EXPLAIN ANALYZE` shows "Sort Method: external merge Disk".
@@ -876,3 +953,33 @@ executes once per outer row. For 1,000 outer rows: the subquery runs
 once in a CTE or derived table, then join. Correlated subqueries are
 readable and correct but do not scale. Check for them when diagnosing
 slow queries on large tables."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

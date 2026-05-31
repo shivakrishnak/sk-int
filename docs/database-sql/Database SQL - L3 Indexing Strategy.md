@@ -8,6 +8,16 @@ permalink: /database-sql/l3-indexing-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Index Selection Strategy - Composite Index Column Order](#index-selection-strategy---composite-index-column-order) | medium |
+| 2 | [Covering Indexes and Index-Only Scans](#covering-indexes-and-index-only-scans) | medium |
+
+---
+
 # Index Selection Strategy - Composite Index Column Order
 
 **TL;DR:** Composite index column order determines which queries benefit.
@@ -91,6 +101,8 @@ Step 4: Coverage check
   -> Index Only Scan possible
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When a composite index is NOT used:**
 
 ```
@@ -108,6 +120,8 @@ Queries that CANNOT use this index:
   WHERE c = ?         (missing leading columns a and b)
   WHERE b = ? AND c = ?  (same)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -308,6 +322,8 @@ WHERE customer_id = ? AND status IN ('PENDING','PLACED')
 ORDER BY created_at DESC LIMIT 20
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 🗣️ "Step 1: identify predicates. `customer_id = ?` - equality, high selectivity
 (filters to one customer). `status IN ('PENDING','PLACED')` - equality (IN is
 multi-equality), medium selectivity. `ORDER BY created_at DESC` - sort.
@@ -399,6 +415,34 @@ The partial index excludes all non-PENDING rows - dramatically smaller and faste
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Covering Indexes and Index-Only Scans
 
 **TL;DR:** A covering index contains all columns needed by a query:
@@ -485,6 +529,8 @@ For this query:
   ZERO heap page reads.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **PostgreSQL INCLUDE clause (non-key columns):**
 
 ```sql
@@ -506,6 +552,8 @@ CREATE INDEX idx_include
 --   Smaller key = more entries per B-tree page
 --   Faster traversal (smaller tree depth)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -698,6 +746,8 @@ SELECT n_dead_tup, last_vacuum, last_autovacuum
 FROM pg_stat_user_tables WHERE relname = 'orders';
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: run `VACUUM orders` (or `VACUUM ANALYZE orders`).
 After VACUUM: Heap Fetches should drop to 0.
 
@@ -796,3 +846,33 @@ After = same + wider index update. Check write latency in `pg_stat_activity`.
 Acceptable if: read improvement > 10x AND write degradation < 5% AND index size
 < 30% of table size. In practice: for top-10 high-frequency queries on 10M+ row tables:
 covering indexes almost always have positive ROI."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

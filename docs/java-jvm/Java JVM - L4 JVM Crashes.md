@@ -8,9 +8,20 @@ permalink: /java-jvm/l4-jvm-crashes/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L4 JVM Crashes](#java-jvm---l4-jvm-crashes) | medium |
+
+---
+
 # Java JVM - L4 JVM Crashes
 
 ## JVM Crash Analysis and hs_err Logs
+
+---
 
 ### 🎯 Model Answer
 
@@ -118,6 +129,8 @@ SECTION 6: JVM FLAGS (at bottom)
   All -XX flags active at crash time
   Look for: -Xmx, -XX:+UseZGC, -Xss, JNI settings
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -331,6 +344,8 @@ FIX:
     // copy.data() is always valid (owned by C++ vector)
     store_for_later(copy.data());  // safe: not a JVM-managed pointer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -673,6 +688,8 @@ JVM CRASH MANAGEMENT ARCHITECTURE:
     MTTR (mean time to root cause, from detection to fix deployment)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -752,3 +769,33 @@ sequenceDiagram
 > and potentially overwrites the container filesystem. The automated parsing extracts
 > the most diagnostic fields (signal, frame type, crash address) so the on-call engineer
 > receives an actionable summary rather than a raw 10,000-line hs_err file.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

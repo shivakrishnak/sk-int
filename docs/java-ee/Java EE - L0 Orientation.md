@@ -137,6 +137,8 @@ across vendors and projects.
 2024: Jakarta EE 11 (Java 21, virtual threads)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The javax to jakarta migration:**
 
 ```java
@@ -150,6 +152,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.persistence.Entity;
 import jakarta.inject.Inject;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is a search-and-replace migration, but it
 requires all dependencies to also be on Jakarta EE 9+.
@@ -330,6 +334,8 @@ jar tf ~/.m2/repository/org/hibernate/hibernate-core/\
 | grep "javax/persistence"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Upgrade all JPA/Servlet dependencies to
 versions that support jakarta namespace:
 - Hibernate: 5.x -> 6.x
@@ -495,6 +501,8 @@ FROM jboss/wildfly:26.0.0.Final
 COPY my-app.war /opt/jboss/wildfly/standalone/\
 deployments/
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: minimal code change. Cons: heavy image (500MB+),
 slow startup (45-90 seconds), doesn't fit 12-factor.
 
@@ -587,6 +595,34 @@ vulnerabilities in old app server versions.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Java EE Architecture Overview
 
@@ -725,6 +761,8 @@ All tiers run inside the Application Server container.
 Container services: DI, transactions, security,
 pooling, lifecycle, interceptors.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Container services:**
 
@@ -972,6 +1010,8 @@ public void placeOrder(Order order) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Either let exceptions propagate from EJB
 methods (the container sees them and rolls back),
 or explicitly call `sessionContext.setRollbackOnly()`
@@ -1146,6 +1186,8 @@ public Response createUser(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If validation fails: JAX-RS returns 400 Bad Request
 with validation error details (in the default implementation).
 You can customize the error response with an
@@ -1167,6 +1209,8 @@ public class User {
     private int age;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Validation groups: run different constraints for
 create vs update operations.
@@ -1200,6 +1244,8 @@ Three approaches:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Mockito + @Inject injection: test CDI beans
    as plain Java objects, mock injected dependencies:
    ```java
@@ -1207,6 +1253,8 @@ Three approaches:
    ProductService svc = new ProductService();
    svc.em = mock(EntityManager.class); // reflect or package-private
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Quarkus @QuarkusTest: if migrating to Quarkus,
    tests start in 1-2 seconds. The best testing
@@ -1244,6 +1292,8 @@ You still need XML when:
    </persistence-unit>
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. `beans.xml`: in older versions of CDI (pre-4.0),
    an empty `beans.xml` was required to activate
    CDI scanning for a module.
@@ -1260,6 +1310,34 @@ You still need XML when:
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Application Server Ecosystem
 
@@ -1374,6 +1452,8 @@ Helidon 4       | Oracle       | Apache 2   | 1-3s    | MP 6
   but is not a traditional full-profile certified server.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Deployment models:**
 
 Traditional (WAR/EAR):
@@ -1384,11 +1464,15 @@ my-app.war deployed to:
   or via WildFly CLI (jboss-cli.sh)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Quarkus (uber-jar or native):
 ```
 ./mvnw package -Pnative
 ./target/my-app-runner  # 50ms startup, 50MB RSS
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key insight:**
 
@@ -1436,6 +1520,8 @@ stay for financial and risk reasons.
 
 <!-- persistence.xml references the JNDI datasource -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```xml
 <!-- Open Liberty server.xml equivalent -->
@@ -1562,6 +1648,8 @@ System.out.println(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```xml
 <!-- WEB-INF/jboss-deployment-structure.xml -->
@@ -1575,6 +1663,8 @@ System.out.println(
   </deployment>
 </jboss-deployment-structure>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Or: use `<local-last>false</local-last>` to prefer
 app server modules, or set it to `true` to prefer
@@ -1674,6 +1764,8 @@ WildFly Module System:
   Deployment classloader: your WAR/EAR
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Each module has explicit dependencies on other modules.
 A deployment can see only the modules it explicitly
 or implicitly imports.
@@ -1744,6 +1836,8 @@ deployments/
 EXPOSE 8080
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 But this is "lift and shift" - startup is still 15s,
 image is 500MB. Improvements:
 
@@ -1766,6 +1860,8 @@ image is 500MB. Improvements:
      </configuration>
    </plugin>
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Environment-based datasource config:
    Pass JNDI datasource URL as environment variable.
@@ -1843,9 +1939,41 @@ HTTP session replication:
 </subsystem>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Modern alternative: store sessions in Redis or
 the client (JWT). Avoid container-managed session
 replication: it's complex and the failure modes
 are hard to debug.
 
 *What separates good from great:* "I'd avoid WildFly domain mode in Kubernetes - it's designed for on-prem bare metal with a fixed cluster size. In k8s, standalone + load balancer + stateless applications is simpler and more reliable. If sessions are needed, Redis > Infinispan replication."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

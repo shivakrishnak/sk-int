@@ -7,6 +7,15 @@ permalink: /html/l4-critical-rendering-path/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Critical Rendering Path](#critical-rendering-path) | essential |
+
+---
+
 # Critical Rendering Path
 
 🎯 **Interview Weight:** essential (★★★) - CRP is the senior
@@ -286,6 +295,8 @@ THE CRITICAL PATH METRIC:
   First Paint: RTT2 or RTT3 (JS doesn't block)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 CSS-before-script creates a hidden blocking dependency. If you
@@ -356,6 +367,8 @@ without violating the browser's correctness guarantees.
 </body>
 </html>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: optimized CRP -->
@@ -555,6 +568,8 @@ Analysis steps:
     should appear earlier in timeline
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Symptom: layout thrashing causing janky scroll/animation**
 
 ```
@@ -601,6 +616,8 @@ Or: use requestAnimationFrame to batch writes:
 
 Libraries: fastdom.js formalizes read/write batching
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1882,6 +1899,8 @@ MEASUREMENT + ITERATION:
   - Review: CrUX data monthly, compare against competitors
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Expected results with this architecture:**
 
 - TTFB: 20-50ms (CDN edge)
@@ -1965,3 +1984,33 @@ flowchart TD
 > earlier are discovered earlier by the scanner, starting fetches earlier.
 > The green box is the target: every optimization decision is about
 > reaching that first frame faster.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

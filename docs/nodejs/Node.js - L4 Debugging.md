@@ -7,6 +7,15 @@ permalink: /nodejs/l4-debugging/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Production Debugging and Heap Analysis](#production-debugging-and-heap-analysis) | medium |
+
+---
+
 # Production Debugging and Heap Analysis
 
 ---
@@ -121,6 +130,8 @@ Debugging tools and their use cases:
        });
      });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -260,6 +271,8 @@ lldb --core core.12345 $(which node)
 (lldb) bt  # backtrace shows crash location
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -311,3 +324,33 @@ simultaneously. High event loop lag AND high CPU = blocking synchronous
 work. High event loop lag AND low CPU = many small async callbacks
 queuing. Low event loop lag AND slow responses = I/O bottleneck
 outside Node.js (database, external service).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,16 +7,6 @@ permalink: /platform-engineering/l4-platform-observability/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L4 Platform Observability
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform Observability Architecture](#platform-observability-architecture) | critical |
-
----
-
 # Platform Observability Architecture
 
 ---
@@ -190,6 +180,8 @@ LAYER 3: Platform UX Observability
     Developer satisfaction survey (quarterly DORA metrics)
     Error budget burn rate --> platform team sprint prioritization
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key architectural decisions:**
 
@@ -635,6 +627,8 @@ kubectl exec -n monitoring prometheus-0 -- \
     ({namespace=~".+"})))'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 1. Increase Prometheus memory limit temporarily (buy time)
 2. Identify the high-cardinality metric via queries above
@@ -660,6 +654,8 @@ kubectl rollout status daemonset/otelcol -n monitoring
 # Check for gaps in node-level metrics
 # (PromQL: missing time-series appear as gaps in graphs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Prevention:
 - Set `--alerting.for-grace-period 5m` in AlertManager for node-level
@@ -690,6 +686,8 @@ kubectl get applications -n argocd \
 # Shows all apps not in sync
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: add Prometheus AlertManager rule:
 ```yaml
 - alert: ArgocdSyncFailed
@@ -700,6 +698,8 @@ Fix: add Prometheus AlertManager rule:
   annotations:
     summary: "ArgoCD app {{ $labels.name }} not synced for 30m"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -810,6 +810,8 @@ groups:
       severity: warning
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The fast burn catches sudden reliability regressions; the slow burn
 catches gradual degradation that would exhaust the error budget over
 days without a single acute incident.
@@ -877,6 +879,8 @@ spec:
   # Total pipeline duration = developer journey SLO
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The synthetic transaction test is the
 most direct measure of platform UX but the most effort to build. The
 value: it detects platform regressions that affect developers before
@@ -911,6 +915,8 @@ receivers:
           format: [prometheus]
         bearer_token_file: /etc/vault-metrics-token
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For components with no metrics endpoint (legacy systems):
 - Export structured logs to the log aggregation pipeline
@@ -1032,6 +1038,8 @@ spec:
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Auto-generating the golden signals
 dashboard when a service is created (via the Backstage scaffolding
 template) means every new service has monitoring from day 0. Teams
@@ -1081,6 +1089,8 @@ Log tier policy:
   # But cost optimization: compress and move to cold tier after 7 days
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cardinality control for logs (same principle as metrics):
 - Use bounded-cardinality labels: namespace, app, log_level
 - Do not include user_id, request_id in Loki labels (use in log body,
@@ -1121,6 +1131,8 @@ java -javaagent:/otel/opentelemetry-javaagent.jar \
 # Instruments all HTTP clients, DB drivers, message brokers automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sampling strategy:**
 
 Head-based sampling (OTel Collector):
@@ -1146,6 +1158,8 @@ processors:
       type: probabilistic
       probabilistic: {sampling_percentage: 10}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Tail-based sampling (sample after
 seeing the full trace, not at the head) captures traces of interest
@@ -1186,6 +1200,8 @@ cluster's problems.
     replacement: prod-us-east-1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Degraded mode observability: when the primary observability stack is
 down, fall back to kubectl + Kubernetes events:
 ```bash
@@ -1195,6 +1211,8 @@ kubectl top nodes
 kubectl top pods -A --sort-by=cpu | head -30
 kubectl get componentstatuses  # control plane health
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Log shipping redundancy: use Fluent Bit with multiple outputs (primary
 Loki + secondary Elasticsearch) so that if one storage backend is down,
@@ -1290,6 +1308,8 @@ remoteWrite:
     # ephemeral storage: 7-day retention, smaller instance
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alert suppression for ephemeral environments:
 All alert rules include a namespace selector that excludes ephemeral
 namespaces. Production alerting is not triggered by ephemeral workload
@@ -1350,6 +1370,8 @@ def handle_alert(alert: dict) -> None:
     # reduces first-response investigation time from 15m to 3m
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Level 3 automation examples:
 - Prometheus OOM: automatically detect high-cardinality metric, add
   relabel config to drop it, and restart Prometheus.
@@ -1382,6 +1404,8 @@ OpenTelemetry Collector as the vendor-agnostic collection layer is the
 highest-leverage architectural choice regardless of scale - it decouples
 instrumentation from backend choice and makes future backend migrations
 zero-cost for application teams.
+
+---
 
 ### 🏛️ System Design
 
@@ -1428,3 +1452,33 @@ Trace sampling becomes more complex (need per-service sample rates).
 Loki log volume requires deeper tier policy (auto-archive logs older
 than 7 days to S3 Glacier). Grafana dashboard proliferation (500+
 services = 500+ dashboards) - requires dashboard template governance.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-language/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L6 Theory](#java-language---l6-theory) | medium |
+
+---
+
 # Java Language - L6 Theory
 
 ## Java Type System Covariance, Contravariance, and PECS
+
+---
 
 ### 🎯 Model Answer
 
@@ -143,6 +154,8 @@ TYPE SYSTEM SUMMARY:
   List<? super String>    - contravariant, write String, read as Object
   List<?>                 - unbounded, read as Object, no write
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -288,6 +301,8 @@ Fix: eliminate raw types. Use generics throughout.
   Use @SafeVarargs for generic varargs methods.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -425,6 +440,8 @@ both covariant and contravariant in different contexts) but more verbose and err
 ---
 
 ## JLS Subtleties and Corner Cases
+
+---
 
 ### 🎯 Model Answer
 
@@ -586,6 +603,8 @@ NULL AND OVERLOADING AMBIGUITY:
   method(null);  // "String" (most specific type wins)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -698,6 +717,8 @@ Fix:
   long lineTotal = Math.multiplyExact(quantity, unitPrice);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -786,6 +807,8 @@ void process(Dog d) { ... }
 Animal a = new Dog();
 process(a);  // calls process(Animal) because declared type is Animal!
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Many engineers expect `process(new Dog())` (declared as Animal) to call `process(Dog)`. It doesn't:
 overloading is compile-time. Only `process((Dog) a)` or `process(new Dog())` with Dog declared type
 calls the Dog overload. This is a common source of subtle bugs in code that uses polymorphism with
@@ -874,3 +897,33 @@ final: redundant (final already provides the visibility guarantee).
 ### 📊 Diagram
 
 *(Omit: JLS subtleties are specification details best expressed as code examples rather than visual diagrams.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

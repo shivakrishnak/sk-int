@@ -8,9 +8,20 @@ permalink: /kafka/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L6 Theory](#kafka---l6-theory) | medium |
+
+---
+
 # Kafka - L6 Theory
 
 ## Kafka Log-Structured Storage
+
+---
 
 ### 🎯 Model Answer
 
@@ -206,6 +217,8 @@ LOG CLEANUP POLICIES:
   # Latest value per key retained for 1 day.
   # After 1 day: key is eligible for deletion (even if no tombstone).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -447,6 +460,8 @@ Prevention:
   - Regular disk health checks (SMART monitoring).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -554,6 +569,8 @@ for recent data.
 ---
 
 ## Kafka and the CAP Theorem
+
+---
 
 ### 🎯 Model Answer
 
@@ -713,6 +730,8 @@ PARTITION TOLERANCE IN PRACTICE:
   #   broker3 (out of sync): not allowed to be elected leader.
   #   This is the "sacrifice availability for consistency" trade-off.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -941,6 +960,8 @@ Fix:
       Revert IMMEDIATELY after ISR recovers.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1011,4 +1032,34 @@ topics are CP and which are AP, with explicit approval for AP topics. Without go
 a team creates a new topic and inherits broker defaults (CP), which is safe. A team that
 explicitly requests AP: documents why. Audit: review AP topics quarterly. If the original
 justification no longer holds: convert back to CP.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

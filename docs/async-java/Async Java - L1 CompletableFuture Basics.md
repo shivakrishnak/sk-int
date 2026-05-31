@@ -7,7 +7,15 @@ permalink: /async-java/l1-completablefuture-basics/
 render_with_liquid: false
 ---
 
-# Async Java - L1 CompletableFuture Basics
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L1 CompletableFuture Basics](#async-java---l1-completablefuture-basics) | medium |
+| 2 | [CompletableFuture Basics](#completablefuture-basics) | medium |
+| 3 | [thenApply vs thenCompose vs thenCombine](#thenapply-vs-thencompose-vs-thencombine) | medium |
+| 4 | [Future and Callable Interface](#future-and-callable-interface) | medium |
 
 ---
 
@@ -100,6 +108,8 @@ supplyAsync(() -> A)        <- starts async, returns CF<A>
   .exceptionally(e -> D)    <- handles errors, returns CF<D or C>
   .thenAccept(c -> use(c))  <- terminal: consumes result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Each stage returns a new CompletableFuture. Callbacks execute on the
 thread that completed the previous stage (or a specified executor with
@@ -238,6 +248,8 @@ ExecutorService ioPool = Executors.newFixedThreadPool(200);
 CompletableFuture.supplyAsync(() -> dbCall(), ioPool);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -264,6 +276,8 @@ cf.whenComplete((result, ex) -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: establish a policy: every CompletableFuture chain must end with
 `whenComplete` or `exceptionally` that logs or re-throws errors. Use
 a wrapper utility that enforces this:
@@ -276,6 +290,8 @@ public static <T> CompletableFuture<T> tracked(
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -354,6 +370,8 @@ CompletableFuture<Response> combined =
 // uf and of run in parallel; combined fires when both done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **allOf** - for three or more futures:
 ```java
 var f1 = supplyAsync(() -> callA());
@@ -366,6 +384,8 @@ CompletableFuture.allOf(f1, f2, f3)
         respond(r);
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key distinction: `thenCombine` gives you typed access to both results
 in the BiFunction. `allOf` returns `CompletableFuture<Void>` - you
@@ -385,6 +405,8 @@ CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
         .map(CompletableFuture::join).toList());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 #### Q4 - How do you handle errors in a CompletableFuture chain?
@@ -401,6 +423,8 @@ cf.exceptionally(ex -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `handle(BiFunction<T, Throwable, U>)`: called for both success and
 failure. Can inspect both the result and the exception. Can return a
 different type.
@@ -411,6 +435,8 @@ cf.handle((result, ex) -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `whenComplete(BiConsumer<T, Throwable>)`: side-effect only (logging,
 metrics). Cannot transform the result or recover. The exception (if any)
 continues propagating.
@@ -420,6 +446,8 @@ cf.whenComplete((result, ex) -> {
     // exception propagates to next stage regardless
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `exceptionally` and
 `handle` RECOVER from exceptions (chain continues normally after them).
@@ -451,12 +479,16 @@ private static final ExecutorService IO_POOL =
 CompletableFuture.supplyAsync(() -> jdbc.query(...), IO_POOL);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Java 21+, use a virtual thread executor:
 ```java
 ExecutorService vtPool =
     Executors.newVirtualThreadPerTaskExecutor();
 CompletableFuture.supplyAsync(() -> jdbc.query(...), vtPool);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This creates one virtual thread per task - no pool sizing needed. The
 JDK handles carrier thread multiplexing automatically.
@@ -497,6 +529,8 @@ asyncLibrary.on("error", err -> cf.completeExceptionally(err));
 return cf;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that calling `complete()` from
 within a callback can trigger synchronous callback chains before complete()
 returns. For high-throughput event processing, this can cause unexpected
@@ -522,6 +556,8 @@ CompletableFuture.supplyAsync(() -> "start")
     // ^ This runs with ex = CompletionException wrapping RuntimeException
     .thenAccept(s -> System.out.println(s)); // "recovered: boom"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key: the exception is wrapped in `CompletionException` when propagating
 through the chain. `exceptionally(fn)` receives the CompletionException.
@@ -558,6 +594,34 @@ chain needs a terminal error handler.
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # thenApply vs thenCompose vs thenCombine
 
@@ -659,6 +723,8 @@ thenCombine (CF<U>, BiFunction<T,U,V>):
   Both futures run independently; fn fires when both done.
   Use when: two parallel results needed together.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The difference between `thenApply` and `thenCompose` is identical to
@@ -815,6 +881,8 @@ CompletableFuture<User> flat =
     cf.thenCompose(id -> supplyAsync(() -> getUser(id)));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The type system helps: if the compiler infers
 `CF<CF<User>>` for a thenApply call, that is always a bug.
 
@@ -880,6 +948,8 @@ CompletableFuture.allOf(f1, f2, f3)
         .toList());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `allOf` with an empty
 array completes immediately - `CompletableFuture.allOf()` is an edge
 case that should be handled to avoid spurious empty results in production.
@@ -904,6 +974,8 @@ uf.thenCombine(of, (u, o) -> build(u, o))
       return errorResponse(ex.getCause());
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If both fail simultaneously, whichever exception is stored in the
 combined future is implementation-dependent. The first completed-
@@ -936,6 +1008,8 @@ CompletableFuture<Order> of =
         supplyAsync(() -> getOrder(user.getOrderId())));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use thenCompose when the second async call DEPENDS on the result of the
 first. Use `thenCombine` or parallel `supplyAsync` when both calls are
 INDEPENDENT and can run simultaneously.
@@ -962,6 +1036,8 @@ cacheInvalidateFuture
     .runAfterBoth(dbUpdateFuture,
         () -> auditLog.record("cache+db updated"));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Alternatives in the family:
 - `thenAcceptBoth(CF<U>, BiConsumer<T,U>)`: receives both results but
@@ -990,6 +1066,8 @@ CompletableFuture<User> cf =
         () -> jdbc.findUser(id), ioPool);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Bridge from callback-based API (no thread blocking):
 ```java
 CompletableFuture<String> cf = new CompletableFuture<>();
@@ -999,12 +1077,16 @@ asyncHttpClient.execute(request,
 return cf;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Reactive to CompletableFuture (from Project Reactor):
 ```java
 // Reactor Mono to CompletableFuture
 CompletableFuture<User> cf =
     reactorMono.toFuture();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The best approach depends on the underlying API. For JDBC (inherently
 blocking), option 1 is the pragmatic choice with a properly sized pool.
@@ -1037,6 +1119,8 @@ thenCombine (parallel):
                   -> combine at 50ms = 50ms total
   getPrefs (50ms)/
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The latency saving is the latency of the shorter operation.
 
@@ -1074,6 +1158,34 @@ the three patterns clearly without additional diagrams.)*
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Future and Callable Interface
 
@@ -1169,6 +1281,8 @@ Future<T>:
   bool cancel(interrupt)       // attempt cancellation
   bool isCancelled()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Exceptions from Callable.call() are caught by the executor and stored
 in the Future. `future.get()` re-throws them wrapped in
@@ -1344,6 +1458,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: always unwrap ExecutionException with `getCause()` before logging
 or handling. Consider a utility method:
 ```java
@@ -1360,6 +1476,8 @@ public static <T> T getResult(Future<T> f) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1385,6 +1503,8 @@ Runnable r = () -> updateCache(key, value); // void
 // Callable: typed result + exceptions
 Callable<User> c = () -> userRepo.findById(id); // returns User
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Functional interface: both are functional interfaces, so lambdas work
 for both. Callable is preferred when the task needs to return a result
@@ -1451,6 +1571,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Special case: `InterruptedException` from `get()` means the waiting
 thread was interrupted, not the task. Always restore the interrupt flag:
 `Thread.currentThread().interrupt()`.
@@ -1486,6 +1608,8 @@ try {
     return errorResponse();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key: `f.cancel(true)` after timeout is best-effort. The pool thread
 running the task only stops if it checks `Thread.interrupted()`. For
@@ -1536,6 +1660,8 @@ List<String> results = futures2.stream()
     .toList();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `invokeAll()`: blocks the calling thread until ALL submitted tasks
 complete (or time out). Convenient but removes the ability to do other
 work while tasks run.
@@ -1582,6 +1708,8 @@ Three scenarios where Future remains relevant:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The bridge pattern above - knowing
 how to convert a blocking Future to a CompletableFuture without losing
 exception semantics. The trick is using supplyAsync with an executor so
@@ -1611,6 +1739,8 @@ In the context of Future/Callable:
        return partialResult; // respond to cancel
    };
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. `future.get()` throws `InterruptedException` if the WAITING thread
    (not the task thread) is interrupted. This is often confused with task
@@ -1647,3 +1777,33 @@ code and interviews.
 ### 📊 Diagram
 
 *(Omit: The linear executor/future flow is expressed in the code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

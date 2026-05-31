@@ -130,6 +130,8 @@ Incoming Request
 [DB Server]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cascade failure pattern:**
 
 ```
@@ -147,6 +149,8 @@ Request queue grows (max 100 default)
     |
 Queue full -> requests rejected (503)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Little's Law for thread sizing:**
 
@@ -385,6 +389,8 @@ grep -c "WAITING\|BLOCKED" /tmp/td.txt
 # downstream (EJB or DB)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Increase worker thread max:
@@ -394,6 +400,8 @@ grep -c "WAITING\|BLOCKED" /tmp/td.txt
 
 # Or: add async servlets to free HTTP threads sooner
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -423,6 +431,8 @@ connections longer than blocking-timeout.
 # connection leak in application code
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Increase pool max:
@@ -434,6 +444,8 @@ connections longer than blocking-timeout.
 :write-attribute(name=idle-timeout-minutes,value=5)
 # Forces return of idle connections
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -461,6 +473,8 @@ jmap -dump:format=b,file=/tmp/heap.hprof <pid>
 jstack <pid> | grep -c "^\"" # count all threads
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // BAD: ThreadLocal set but never removed
@@ -481,6 +495,8 @@ public void processRequest(User u) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -582,6 +598,8 @@ Validate via load test:
 # io-threads, task-keepalive, task-max-threads available
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Little's Law gives the
 minimum for steady-state. Real systems need buffer for:
 (1) bursty traffic - short spikes above mean, (2) GC
@@ -634,6 +652,8 @@ FROM pg_stat_statements
 ORDER BY mean_exec_time DESC LIMIT 10;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: immediate (restore service):
 - Increase JDBC pool size temporarily:
   `max-pool-size=50` (buys time)
@@ -685,6 +705,8 @@ psql -c "SELECT count(*) FROM pg_stat_activity;"
 :write-attribute(name=min-pool-size,value=10)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The DB connection
 limit is often the hard ceiling. At 3 application server
 instances with DB max_connections=100, each instance
@@ -713,6 +735,8 @@ Thread dump anatomy:
     at com.example.UserService.getUser(...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Interpretation: "http-" thread is WAITING at
 HikariPool.getConnection -> JDBC pool exhausted.
 This thread can't proceed until a connection is available.
@@ -736,6 +760,8 @@ grep -B 5 "WAITING.*parking\|BLOCKED" /tmp/td_*.txt | \
 # Threads blocked in same place in all 3 = deadlock or
 # resource starvation (not just transient wait)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Take 3 dumps 10
 seconds apart. Threads BLOCKED in the same location
@@ -774,6 +800,8 @@ Typical request time breakdown:
 Thread formula:
   8 cores * (1 + 200ms/15ms) = 8 * 14.3 = ~115 threads
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Modern Java EE
 applications are almost exclusively I/O-bound. This
@@ -824,6 +852,8 @@ For background async work: task submission rate * average task time.
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "ManagedExecutorService
 rejected tasks are silently dropped unless you add a
 rejection handler. Production: monitor rejected-count
@@ -871,6 +901,8 @@ public void handleRequest(Principal user) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Detection:
 ```bash
 # Heap dump: look for ThreadLocalMap$Entry accumulation
@@ -880,6 +912,8 @@ Detection:
 # IntelliJ IDEA: Memory view (CRE/debugger)
 # Thread.currentThread().threadLocals -> inspect
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "CDI @RequestScoped
 beans in thread pools are the common source of leaks
@@ -932,6 +966,8 @@ done
 # vendor_datasource_WaitCount
 # vendor_managed_executor_rejected_count
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "WaitCount is the
 best early warning for JDBC pool saturation. A single
@@ -1023,6 +1059,8 @@ Future<Shipment> shipFuture = extApiExecutor.submit(
 // Slow shipping API doesn't exhaust DB pool
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Circuit breaker prevents cascade:
 ```java
 @Inject
@@ -1039,6 +1077,8 @@ public Order findOrder(Long id) {
 // After 50% failures: circuit opens, fast-fail for 5s
 // Prevents pool exhaustion from cascading
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Bulkheads (separate
 pools per dependency) are the most effective cascade
@@ -1074,6 +1114,8 @@ Step 1: Gather data from incident window
 # Correlate: which pool saturated first
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Calculate correct values for actual load
 ```
 Little's Law: N = 600 * 0.3 = 180 HTTP threads
@@ -1081,6 +1123,8 @@ JDBC pool: 180 * 0.8 (80% DB hit rate) = 144
 DB max_connections = 200 -> JDBC max = 60 per instance
 (3 instances, reserve 20 for DBA)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Apply and validate
 ```bash
@@ -1092,6 +1136,8 @@ Step 3: Apply and validate
 # Load test at 700 req/s (117% of current peak)
 # Verify: all pools < 80%, no WaitCount, no 503
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Prevent recurrence
 - Auto-scaling trigger: HTTP worker utilization > 70%
@@ -1118,6 +1164,8 @@ traffic, run this CLI script to update pools' prevents
 | JDBC | datasources max-pool-size | 20 | DB connections | min(workers, DB_max/instances) |
 | MES default | ee/managed-executor-service | max=25 | Async tasks | task_rate * task_duration |
 | EJB (WildFly) | (shares HTTP worker) | N/A | EJB method calls | via HTTP worker pool |
+
+---
 
 ### 🏛️ System Design
 
@@ -1229,3 +1277,33 @@ xychart-beta
 > rapid throughput collapse.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

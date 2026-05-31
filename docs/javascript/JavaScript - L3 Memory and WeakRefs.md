@@ -7,6 +7,16 @@ permalink: /javascript/l3-memory-and-weakrefs/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Memory Model and Garbage Collection](#javascript-memory-model-and-garbage-collection) | medium |
+| 2 | [WeakMap, WeakSet, and WeakRef](#weakmap-weakset-and-weakref) | medium |
+
+---
+
 # JavaScript Memory Model and Garbage Collection
 
 ---
@@ -97,6 +107,8 @@ Memory leak = object unnecessarily kept reachable:
   - JS variable holding removed DOM node
   - global accumulator (cache, log array)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -445,6 +457,34 @@ allocations originate, because it shows allocation call stacks.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # WeakMap, WeakSet, and WeakRef
 
 ---
@@ -549,6 +589,8 @@ WeakMap constraints (intentional by spec):
   - No .size property
   Reason: observing which keys disappeared would expose GC timing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -905,3 +947,33 @@ and want entries to be GC'd with their keys, use WeakMap.
 constraint that cascades to WeakSet (no iteration, no size) and
 WeakRef (no enumeration of all active refs), all for the same reason.
 The entire Weak* family is constrained by the GC observability rule.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

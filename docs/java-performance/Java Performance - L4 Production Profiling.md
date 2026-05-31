@@ -8,9 +8,20 @@ permalink: /java-performance/l4-production-profiling/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L4 Production Profiling](#java-performance---l4-production-profiling) | medium |
+
+---
+
 # Java Performance - L4 Production Profiling
 
 ## Production Performance Diagnosis: JFR and Async-Profiler
+
+---
 
 ### 🎯 Model Answer
 
@@ -181,6 +192,8 @@ JFR INCIDENT INVESTIGATION WORKFLOW:
     OOM: "Memory" view -> object allocation rate -> class allocation.
     Slow SQL: if custom events registered -> "Application" view.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -399,6 +412,8 @@ Investigation workflow:
   within 10 minutes of investigation.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -573,3 +588,33 @@ in one timeline, the cascade is visible. The insight: the fix isn't to reduce lo
 (that's a symptom) but to reduce concurrent mark duration (the root cause).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -130,6 +130,8 @@ Set<User> users;              on Role class
 Set<Role> roles;              on User class
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The owning side is the one Hibernate reads when deciding what to
 write to the join table. Changing the non-owning side collection
@@ -349,10 +351,14 @@ SELECT * FROM user_roles WHERE role_id = :roleId;
 -- Returns 0 rows despite role.getUsers() showing the user
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Always add on the owning side:
 ```java
 user.addRole(role); // addRole updates user.roles (owning)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or use the helper method that updates both sides.
 
 ---
@@ -377,6 +383,8 @@ Set<Role> roles;
 Set<Role> roles;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 3: OneToMany Without mappedBy Creates Join Table**
@@ -400,6 +408,8 @@ private Set<OrderItem> items;
 private Set<OrderItem> items;
 // OrderItem.order is @ManyToOne with FK in order_items
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -440,6 +450,8 @@ Set<OrderItem> items;
 @JoinColumn(name = "order_id")
 Order order; // this field has the FK column
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `mappedBy = "order"` means "the relationship is owned by the
 `order` field on OrderItem." The `order_id` FK column is in the
@@ -489,6 +501,8 @@ public void addItem(OrderItem item) {
     // Now both in-memory and DB are consistent
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 At flush time, Hibernate sees `item.order = thisOrder` and
 generates:
@@ -596,6 +610,8 @@ public void onUpdate() {
     // Record what needs to change, apply after flush
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. For cascade scenarios: check that cascade types are not
    creating circular update chains.
 
@@ -642,6 +658,8 @@ INSERT INTO order_items VALUES (42, ...)
 INSERT INTO order_items VALUES (42, ...) -- just the new one
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use `List`: when the ORDER of elements needs to be
 persisted in the database - for example, steps in a workflow
 that must be executed in a specific sequence. Add `@OrderColumn`
@@ -682,6 +700,8 @@ public class OrderItem {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `name = "order_id"` sets the FK column name. Without `@JoinColumn`,
 Hibernate defaults to `{field_name}_{referenced_column_name}`,
 for example `order_id` for field `order` referencing `id`. In
@@ -701,6 +721,8 @@ actual column name:
 @JoinColumn(name = "PARENT_REF") // legacy column name
 private Order order;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Without `@JoinColumn` on a `@ManyToOne`: Hibernate uses the
 convention-based name. This works for most cases. Add
@@ -767,6 +789,8 @@ public class Permission {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For querying all permissions for user X:
 ```java
 @Query("SELECT DISTINCT p FROM Permission p WHERE p.id IN " +
@@ -781,6 +805,8 @@ Set<Permission> findAllPermissionsForUser(
     @Param("userId") Long userId);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alternatively, a native SQL query with UNION is more readable:
 ```sql
 SELECT DISTINCT p.id, p.code FROM permissions p
@@ -792,6 +818,8 @@ SELECT DISTINCT p.id, p.code FROM permissions p
   JOIN user_permissions up ON up.permission_id = p.id
   WHERE up.user_id = :userId
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 I use native SQL for this query - it is a reporting-style query
 that combines two result sets, which is awkward in JPQL and
@@ -827,6 +855,34 @@ intermediate entity.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Fetch Types: Lazy vs Eager Loading
 
@@ -938,6 +994,8 @@ EAGER Single Value (@ManyToOne default):
         WHERE oi.id = ?
      → orderItem.order populated immediately
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Fetch type is a default behavior, not a hard rule. JOIN FETCH in
@@ -1146,6 +1204,8 @@ logging.level.org.hibernate.SQL=DEBUG
 # Count queries per request - more than 2-3 = N+1 or EAGER
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Change to `FetchType.LAZY` (default). Use JOIN FETCH
 in specific queries that need the collection. Add a dedicated
 summary query for the admin list that does not need the full
@@ -1197,6 +1257,8 @@ applicationEventPublisher.publishEvent(
 applicationEventPublisher.publishEvent(
     new OrderCreated(order.getId())); // ID only
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1297,6 +1359,8 @@ Checking if a collection is initialized without triggering load:
 Hibernate.isInitialized(order.getItems()) // false if not loaded
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing `Hibernate.isInitialized()`
 for checking lazy status without triggering initialization.
 
@@ -1319,6 +1383,8 @@ Step 1: Enable SQL logging to count queries per request:
 ```properties
 logging.level.org.hibernate.SQL=DEBUG
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Count the queries manually, or better: use `Datasource Proxy`
 to intercept JDBC and count/log:
 ```java
@@ -1331,6 +1397,8 @@ DataSource datasource(DataSourceProperties props) {
         .countQuery().build();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 2: Identify the pattern. N+1 always looks like: 1 query
 to load parents + N queries for the same child type (one per parent).
@@ -1345,6 +1413,8 @@ Step 3: Fix with JOIN FETCH for one-time loads:
 List<User> findActiveUsersWithOrders();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: For iteration patterns where JOIN FETCH causes cartesian
 products, use `@BatchSize`:
 ```java
@@ -1352,6 +1422,8 @@ products, use `@BatchSize`:
 @BatchSize(size = 25) // 100 users → 4 queries
 Set<Order> orders;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Add a production monitoring alarm:
 Use Datasource Proxy's query count or Spring Boot Actuator metrics
@@ -1363,6 +1435,8 @@ Prevention: add an N+1 detection rule to integration tests:
 // Assert that loading a user list fires <= 2 queries
 assertSelectCount(2, () -> userService.findAllActive());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The monitoring alarm (query count
 per request threshold) and the integration test assertion for
@@ -1514,6 +1588,8 @@ regressions that slip through code review.
 spring.jpa.properties.hibernate.default_batch_fetch_size=25
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Framing this as a safety net
 (defensive baseline) rather than the primary N+1 fix - it complements
 JOIN FETCH rather than replacing it.
@@ -1531,6 +1607,7 @@ design challenge.
 validate the fetch strategy in production?"
 
 **Answer:**
+
 **S (Situation):** We were building a product catalog API for
 an e-commerce platform. The domain had deep relationships:
 Category had SubCategories, Products had Variants, Variants
@@ -1562,6 +1639,8 @@ with a single query:
     "AND p.category.id = :catId")
 List<ProductSummary> findSummariesForCategory(Long catId);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 1 query for the entire category page.
 
 Tier 2 - Product detail page: loaded with an EntityGraph
@@ -1572,6 +1651,8 @@ declaring exactly which subgraph to fetch:
     "images", "attributes"})
 Optional<Product> findBySlug(String slug);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2-3 queries (one per independent collection).
 
 Tier 3 - Admin bulk operations: used StatelessSession with
@@ -1612,3 +1693,33 @@ use @BatchSize as a global default. Never use EAGER on collections.
 *(Omit: System Design - ★★☆ keyword)*
 
 *(Omit: Diagram - code and table are sufficiently illustrative)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

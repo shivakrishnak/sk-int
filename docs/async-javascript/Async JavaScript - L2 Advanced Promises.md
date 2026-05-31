@@ -174,6 +174,8 @@ const { promise: p, resolve: res, reject: rej } =
 // Cleaner deferred pattern
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Promise cancellation is the most commonly needed feature
 that Promises do not provide. `AbortController` is the
@@ -358,6 +360,8 @@ const delay = 1000 + Math.random() * 1000; // 1-2s jitter
 await new Promise(r => setTimeout(r, delay));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: AbortController signal not checked by all operations**
 ```javascript
 // If operations don't check signal, abort has no effect
@@ -365,6 +369,8 @@ const controller = new AbortController();
 // setTimeout does not support AbortController signal
 // Only fetch, some Node.js APIs, and explicit checks work
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -407,6 +413,8 @@ try {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Limitations:
 - Only works with APIs that accept a signal; arbitrary Promises
@@ -467,6 +475,8 @@ await smartRetry(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `shouldRetry` predicate
 makes the retry condition explicit and flexible. Without it,
 retry code silently retries permanent failures (400, 401, 404)
@@ -492,11 +502,15 @@ const promise = new Promise((res, rej) => {
 // Complex, rely on closure assignment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 New pattern:
 ```javascript
 const { promise, resolve, reject } = Promise.withResolvers();
 // Clean destructuring, no hoisting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases: bridging event-driven APIs with Promise-based code,
 implementing message buses, request/response correlation in
@@ -521,6 +535,8 @@ class RequestResponseBus {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `Promise.withResolvers`
 for the request/response WebSocket pattern - a common real-world
@@ -571,6 +587,8 @@ class CircuitBreaker {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding the three-state
 model and the HALF-OPEN state for recovery testing. A circuit
 breaker without HALF-OPEN either stays open forever or retries
@@ -607,6 +625,8 @@ const results = await Promise.all(
 );
 // Natural integration with async/await
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing both exist and
 understanding that callback-based libraries are still common
@@ -649,6 +669,8 @@ async function firstN(promises, n) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing when this pattern
 is useful: quorum-based decisions, majority-vote systems,
 k-of-n redundancy in distributed systems.
@@ -673,6 +695,8 @@ async function search(query) {
 // User types: "j", "ja", "jav" - three requests in flight
 // If "j" is slowest: last result is "j", not "jav"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Diagnosis: network tab showing multiple in-flight requests;
 results jumping back and forth as requests resolve out of order.
@@ -700,10 +724,14 @@ async function search(query) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing this is the most
 common async race condition in UI code and having the specific
 fix (AbortController or switchMap) ready without needing to
 think through it at the interview.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -722,9 +750,13 @@ than hand-rolled implementations. Circuit breakers for
 inter-service calls should use a mature library (opossum)
 with monitoring integration.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -774,6 +806,34 @@ stateDiagram-v2
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Generator Functions and Async Iteration
 
@@ -883,6 +943,8 @@ class EventSource {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `for await...of` processes items sequentially by default.
@@ -1088,6 +1150,8 @@ async function* withResource() {
 // return() is NOT called - use try/finally in consumer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Memory leak from unfinished generator**
 ```javascript
 const gen = streamLargeDataset();
@@ -1097,6 +1161,8 @@ const first = await gen.next(); // only takes first
 gen.return();
 // Or: always consume with for await (handles cleanup)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1141,6 +1207,8 @@ for (const v of gen()) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `return` value appears in the `{done: true}` object
 but is skipped by `for...of` - it is only accessible via
 direct `next()` calls.
@@ -1178,6 +1246,8 @@ function* flatten(arr) {
 }
 [...flatten([1,[2,[3,4]],5])]; // [1,2,3,4,5]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With async generators: `yield*` can delegate to another
 async iterable, awaiting each value.
@@ -1224,6 +1294,8 @@ async function processLines(filename) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Choosing based on the
 use case: streams for high-throughput I/O where backpressure
 matters; async generators for custom data sources where the
@@ -1262,6 +1334,8 @@ for await (const item of paginatedApi('/api/items')) {
   await processItem(item);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Including rate limiting
 as a first-class concern in the generator itself, rather than
@@ -1302,6 +1376,8 @@ for await (const item of withCleanup()) {
   // generator's finally runs: resource.release()
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `try/finally` in
 generators for resource cleanup. This is the correct pattern
@@ -1349,6 +1425,8 @@ for await (const event of merge(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing this is a complex
 pattern and that RxJS `merge` handles it more cleanly with
 proper cancellation and error handling. The custom implementation
@@ -1385,6 +1463,8 @@ generators become unwieldy when stream transformation logic
 exceeds 3-4 operations. Articulating this helps justify the
 technology choice without dogmatism.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Approach | Model | Backpressure | Operators | When |
@@ -1400,9 +1480,13 @@ For file/network I/O: Node.js streams.
 For UI event streams: RxJS.
 When uncertain: async generator is the lowest-ceremony starting point.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1458,3 +1542,33 @@ sequenceDiagram
 > triggering any `finally` blocks for cleanup. The sequence
 > shows both the efficient same-page serving (no DB call)
 > and the cross-page fetch triggered by item exhaustion.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

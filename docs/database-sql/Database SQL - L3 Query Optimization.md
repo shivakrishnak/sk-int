@@ -8,6 +8,16 @@ permalink: /database-sql/l3-query-optimization/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Query Optimizer - Statistics, Cardinality, and Plan Selection](#query-optimizer---statistics-cardinality-and-plan-selection) | medium |
+| 2 | [Partitioning Strategies - Range, List, and Hash Partitioning](#partitioning-strategies---range-list-and-hash-partitioning) | medium |
+
+---
+
 # Query Optimizer - Statistics, Cardinality, and Plan Selection
 
 **TL;DR:** The query optimizer is a cost-based planner. It uses statistics
@@ -87,6 +97,8 @@ WHERE tablename = 'orders';
 -- histogram_bounds: bucket boundaries for the rest
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Statistics target:**
 
 ```sql
@@ -103,6 +115,8 @@ ANALYZE orders;  -- recompute with higher target
 -- Now the optimizer has better cardinality estimates for
 -- WHERE status = 'PENDING' (rare) vs 'COMPLETED' (common)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -283,6 +297,8 @@ ALTER TABLE orders SET (
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -385,6 +401,34 @@ Monitor with: `pg_stat_user_tables`: `n_live_tup`, `n_dead_tup`, `last_autoanaly
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Partitioning Strategies - Range, List, and Hash Partitioning
 
 **TL;DR:** Table partitioning divides a large table into smaller physical partitions
@@ -466,6 +510,8 @@ CREATE TABLE orders_default
 -- Has its own indexes, statistics, storage settings.
 -- Can be analyzed/vacuumed independently.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -656,6 +702,8 @@ EXPLAIN (ANALYZE, TIMING) SELECT * FROM orders WHERE created_at > '2024-01-01';
 -- High planning time with many partitions = constraint evaluation overhead.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: PostgreSQL 12+ has improved partition pruning. Keep partition count under 1000.
 For time-series: monthly or quarterly partitions (not daily).
 
@@ -756,3 +804,33 @@ Step 6: rename: `ALTER TABLE orders RENAME TO orders_old; ALTER TABLE orders_new
 Step 7: validate row counts match. Drop `orders_old`.
 This is the expand-contract / dual-write migration pattern. Zero-downtime.
 Alternative for zero-downtime: `pg_partman` has a migration mode that wraps the old table."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

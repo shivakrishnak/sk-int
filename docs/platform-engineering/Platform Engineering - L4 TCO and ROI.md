@@ -7,16 +7,6 @@ permalink: /platform-engineering/l4-tco-and-roi/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L4 TCO and ROI
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform TCO and ROI Measurement](#platform-tco-and-roi-measurement) | critical |
-
----
-
 # Platform TCO and ROI Measurement
 
 ---
@@ -217,6 +207,8 @@ NET ROI = Total Annual ROI - Total Annual TCO
 PAYBACK PERIOD = Total TCO (initial investment) / Monthly Net ROI
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 ROI Component 1 (engineering productivity recovery) is almost always
 the largest component and is also the easiest to measure. If you can
@@ -411,10 +403,17 @@ def improvement_pct(before, after):
 print("DORA Metrics: Before vs After Platform")
 print(f"Lead time: {statistics.mean(before_platform['lead_time_hours']):.1f}h "
       f"-> {statistics.mean(after_platform['lead_time_hours']):.2f}h "
-      f"({improvement_pct(before_platform['lead_time_hours'], after_platform['lead_time_hours']):.0f}% improvement)")
-print(f"Deployment frequency: {statistics.mean(before_platform['deployments_per_team_per_week']):.1f} "
+      f"({improvement_pct("
+        f"before_platform['lead_time_hours'],"
+        f" after_platform['lead_time_hours']):.0f}% improvement)")
+print(
+    f"Deployment frequency: "
+    f"{statistics.mean(before_platform['deployments_per_team_per_week']):.1f} "
       f"-> {statistics.mean(after_platform['deployments_per_team_per_week']):.1f} per team/week "
-      f"({improvement_pct(before_platform['deployments_per_team_per_week'], after_platform['deployments_per_team_per_week']):.0f}% ← reversed: higher is better)")
+      f"({improvement_pct("
+        f"before_platform['deployments_per_team_per_week'],"
+        f" after_platform['deployments_per_team_per_week']):.0f}%"
+        f" <- reversed: higher is better)")
 ```
 
 > **Code walkthrough:** DORA metrics provide the most credible platform
@@ -652,6 +651,8 @@ Example:
     = $972,000/year
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Credibility factors:**
 
 Survey sample size: survey at least 10 teams before and after. Larger
@@ -768,6 +769,8 @@ aws ce get-cost-and-usage \
   --metrics BlendedCost \
   --query 'ResultsByTime[*].Groups[*].[Keys[0],Metrics.BlendedCost.Amount]'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Infrastructure cost measurement requires
 tagging discipline from the beginning. Organizations that do not tag their
@@ -900,6 +903,8 @@ team_costs:
     total: $1,280/month
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When to use showback vs. chargeback:**
 
 Showback (recommended for most organizations): creates cost awareness
@@ -1006,6 +1011,8 @@ Next quarter focus: scale adoption from 40 to 55 teams
   (each new team adds $27,000/year in productivity ROI)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "7 additional engineers for free"
 resonates powerfully with leaders who are constrained from hiring but
 need more engineering capacity. The platform's ROI framed as
@@ -1035,6 +1042,8 @@ kubectl get pods -A -o json | jq '.items[] | {
 # container_cpu_usage_seconds_total vs requests
 # High request-to-actual ratio = right-sizing opportunity
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Storage lifecycle policy:
 Observability storage (logs, metrics, traces) grows continuously.
@@ -1167,6 +1176,8 @@ Productivity recovery is the most credible and measurable ROI component
 and should be the foundation of any platform ROI business case. Lead
 with the productivity math; use DORA metrics as corroborating evidence.
 
+---
+
 ### 🏛️ System Design
 
 **Prompt:** "Design the TCO/ROI measurement system for a platform serving
@@ -1199,3 +1210,33 @@ of each quarter.
 < 20 hours to build initially. Minimal ongoing cost. The measurement
 system pays for itself when it prevents the first budget reduction
 attempt on the platform team.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

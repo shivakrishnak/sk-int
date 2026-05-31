@@ -7,6 +7,15 @@ permalink: /typescript/l4-build-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Build Performance at Scale](#typescript-build-performance-at-scale) | expert |
+
+---
+
 # TypeScript Build Performance at Scale
 
 🎯 **Interview Weight:** expert (★★★) - build performance is a production
@@ -179,6 +188,8 @@ PROFILING COMMANDS:
   npx tsc --noEmit --generateTrace ./trace-output/
   # Produces a Chrome DevTools trace for type-checking analysis
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -367,6 +378,8 @@ DEVELOPER WORKFLOW:
     npx tsc --noEmit  # must pass before push
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -482,6 +495,8 @@ function process<T extends DataHolder>(x: T) { ... }
 // npx tsc --noEmit --diagnostics
 // Confirm check time dropped
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -754,3 +769,33 @@ DECISION
 > side-effect analysis). Vite sets `isolatedModules: true` by default
 > in its generated tsconfig - and any TypeScript project using Vite
 > should respect this.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

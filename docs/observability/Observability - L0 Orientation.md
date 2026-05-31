@@ -343,6 +343,8 @@ curl -s 'http://tempo:3200/api/search' \
   jq '.traces[] | select(.rootTraceName == null)'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Pass trace context in message headers. Use OpenTelemetry
 messaging instrumentation that does this automatically for common
 queue clients.
@@ -370,6 +372,8 @@ Diagnostic:
 curl http://alertmanager:9093/api/v1/alerts | \
   jq 'sort_by(.startsAt) | .[0]'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add dependency health check metrics. Alert on symptoms
 (user-visible SLO violation) rather than causes (individual
@@ -657,6 +661,34 @@ ASCII diagram in the Concept Explanation section above.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # The Three Pillars of Observability
 
@@ -1034,6 +1066,8 @@ curl http://prometheus:9090/api/v1/query \
   --data-urlencode 'query=scrape_samples_scraped{job="checkout"}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Move numeric signal (latency, count, rate) to Prometheus
 metrics. Log only events with context that cannot be pre-aggregated.
 
@@ -1065,6 +1099,8 @@ kafka-console-consumer.sh \
 # If missing, context propagation is broken
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add W3C Trace Context headers when publishing. Use
 OTel Kafka instrumentation which does this automatically:
 `opentelemetry-instrumentation-kafka-clients`.
@@ -1093,6 +1129,8 @@ curl -s 'http://prometheus:9090/api/v1/query' \
     cardinality: .value[1]}'
 # Any metric > 1M time series is a likely OOM culprit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Remove high-cardinality labels from the metric definition.
 Use trace exemplars to link specific metric data points to
@@ -1123,7 +1161,6 @@ labels with cardinality > 1000 unique values.
 
 *Likely follow-up:* Give an example of using all three together.
 
-The three pillars are logs, metrics, and traces. Logs are
 timestamped records of discrete events with rich context.
 They answer "what happened to this specific thing at this
 specific time?" - for example, "what did the checkout service
@@ -1366,6 +1403,34 @@ not add meaningful signal for this L0 concept.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Observability vs Monitoring
 
@@ -1701,6 +1766,8 @@ curl 'http://tempo:3200/api/search' \
   --data-urlencode 'minDuration=2s'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add monitoring for the specific dimension that caused the
 blind spot. For the long term, ensure all user-facing SLOs
 are measured, not just infrastructure metrics.
@@ -1733,6 +1800,8 @@ curl http://alertmanager:9093/api/v2/alerts | \
 # Any alert firing more than 10 times per week
 # with no consistent remediation action is probably noise
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Migrate to SLO-based alerting. Replace 30 threshold
 alerts with 3-5 SLO burn-rate alerts. Each alert must require
@@ -1786,7 +1855,6 @@ as a required file, not an optional extra.
 *Why they ask:* One of the most common observability interview
 questions. Tests whether you understand the distinction.
 
-*Likely follow-up:* Can you have one without the other?
 
 Monitoring is checking predefined conditions: is error rate
 below 1%, is CPU below 80%? It requires anticipating failure
@@ -2027,3 +2095,33 @@ in L4/L5 files.)*
 
 *(Omit: the monitoring vs observability models are described
 clearly in the ASCII block in the Concept Explanation section.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

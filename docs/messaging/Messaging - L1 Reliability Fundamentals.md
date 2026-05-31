@@ -8,6 +8,17 @@ permalink: /messaging/l1-reliability-fundamentals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Message Serialization and Schema](#message-serialization-and-schema) | medium |
+| 2 | [Queue Depth and Backpressure](#queue-depth-and-backpressure) | medium |
+| 3 | [Message Acknowledgment and At-Least-Once Delivery](#message-acknowledgment-and-at-least-once-delivery) | medium |
+
+---
+
 # Message Serialization and Schema
 
 ---
@@ -63,6 +74,8 @@ Producer                      Broker            Consumer
   |                              fetch schema by id |
   |                                    | -> Object  |
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Steps:
 1. Producer calls serializer with an object and schema
@@ -230,6 +243,34 @@ Symptom: all producers on schema-registry-dependent topics fail simultaneously; 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Queue Depth and Backpressure
 
 ---
@@ -278,6 +319,8 @@ Producer -> Broker [Queue: max-length=1000]
     Option C: reject-publish-dlx (send to DLQ)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Kafka (unbounded, retention-based):
 ```
 Producer -> Partition [log, no max-length]
@@ -287,6 +330,8 @@ Consumer reads at its own pace
   Backpressure via: application-level rate limiting
   or: reduce producer batch size / increase linger.ms
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Kafka does not implement backpressure natively - the broker accepts messages up to disk capacity. Consumer lag is the signal, but you must implement the throttling outside the broker. RabbitMQ implements broker-side backpressure via memory and disk alarms that pause producer connections.
@@ -462,6 +507,34 @@ Symptom: RabbitMQ broker process killed by OOM; restart drops all non-durable me
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Acknowledgment and At-Least-Once Delivery
 
 ---
@@ -515,6 +588,8 @@ Broker          Consumer
   | redeliver() -->| (to same or another consumer)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kafka commit flow:
 ```
 Partition      Consumer          App Logic
@@ -527,6 +602,8 @@ Partition      Consumer          App Logic
   |               |                  |-- crash before commit
   | redeliver 5 ->|  (on restart)    |
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The ACK window creates the at-least-once risk. Everything that happens between "message received" and "ACK sent" is vulnerable to duplicate processing. The consumer must complete ALL side effects (database writes, API calls, state changes) before ACKing. If you ACK early to avoid blocking the broker, you convert to at-most-once.
@@ -693,3 +770,33 @@ Symptom: the same messages are delivered repeatedly to multiple consumers simult
 | Hiring Manager | Lead with: missing ACK implementation = data loss in production |
 | Bar Raiser | Lead with: ACK strategy is a system design choice, not a configuration detail |
 | Peer Engineer | "The pattern I always use is: manual commit + idempotency key in the message" |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

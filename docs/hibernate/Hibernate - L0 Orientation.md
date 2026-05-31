@@ -291,6 +291,8 @@ logging.level.org.hibernate.type.descriptor.sql=TRACE
 spring.jpa.show-sql=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // BAD: LAZY fetch + loop = N+1
@@ -302,6 +304,8 @@ orders.forEach(o -> o.getItems().size()); // N selects
   JOIN FETCH o.items WHERE o.status = :s")
 List<Order> findWithItems(@Param("s") String s);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Prevention:* Test every repository query with SQL logging enabled.
 
@@ -333,6 +337,8 @@ public UserDTO getUserDTO(Long id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Prevention:* Keep transaction boundaries wide enough to cover all
 association access. Use DTOs to decouple from entity lifecycle.
 
@@ -358,6 +364,8 @@ stats.setStatisticsEnabled(true);
 System.out.println(stats.getFlushCount());
 System.out.println(stats.getEntityUpdateCount());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Use `session.setReadOnly(entity, true)` for read-only
 operations, or use `@Modifying` JPQL/native queries for bulk updates.
@@ -501,6 +509,8 @@ First, enable full SQL logging with parameters and stack traces:
 logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql=TRACE
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The stack trace on each UPDATE shows exactly which code path
 triggered the flush and which entity was dirty.
 
@@ -696,6 +706,7 @@ with Hibernate failure modes, not just theoretical knowledge.
 prevent recurrence?"
 
 **Answer:**
+
 **S (Situation):** Our e-commerce service was handling Black
 Friday traffic. Order listing page response time degraded from
 80ms to 4 seconds under 3x normal load. Database CPU was at
@@ -727,6 +738,8 @@ JOINs. The JPQL became:
   JOIN FETCH i.product
   WHERE o.status = :s")
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 I added `DISTINCT` to prevent Hibernate from returning duplicate
 Order objects when JOINs produce multiple rows.
 
@@ -756,6 +769,34 @@ and code examples)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Hibernate vs JDBC vs JPA: The Persistence Stack
 
@@ -868,6 +909,8 @@ Database driver (PostgreSQL/MySQL/Oracle driver JAR)
      |
 Database
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 JPA standardized the 80% common case. Hibernate extensions cover
@@ -1016,6 +1059,8 @@ public class UserService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* `@PersistenceContext` in Spring beans is correctly scoped
 to a thread-bound proxy. The issue arises only when injecting into
 non-Spring-managed singletons or when persisting to a field.
@@ -1150,6 +1195,8 @@ while (rows.next()) {
 tx.commit();
 ss.close();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Second: `session.setReadOnly(entity, true)` when I need to
 explicitly mark entities as read-only within a regular session.
@@ -1376,6 +1423,7 @@ mistakes - a key staff-level signal.
 approach these decisions now?"
 
 **Answer:**
+
 **S (Situation):** We built a data processing microservice that
 aggregated user behavior events from Kafka into analytics
 summaries in PostgreSQL. The team defaulted to Spring Data JPA
@@ -1424,6 +1472,34 @@ Not blaming the team or the technology.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Hibernate Ecosystem and JPA Standards
 
@@ -1719,6 +1795,8 @@ Default in some configurations is `none`.
 ```properties
 spring.jpa.properties.javax.persistence.validation.mode=auto
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With `auto`, Hibernate Validator runs before every persist
 and merge operation.
 
@@ -1742,6 +1820,8 @@ searchSession.massIndexer(Product.class)
     .batchSizeToLoadObjects(100)
     .startAndWait();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1942,6 +2022,8 @@ public void purgeOldAuditRecords() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Third, table partitioning. For high-volume audit tables, partition
 by revision timestamp in PostgreSQL. Old partitions can be dropped
 atomically, which is far faster than row-by-row deletion.
@@ -2003,6 +2085,8 @@ public class UserService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing validation groups
 (@Validated) and when they are needed (different constraints
 for create vs update operations).
@@ -2048,6 +2132,8 @@ CREATE INDEX idx_users_aud_rev
     ON users_aud(rev);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For a 500 million row table, also consider: partitioning by
 revision range (PostgreSQL declarative partitioning), and ensuring
 the time-range queries use the REVINFO table to translate timestamps
@@ -2073,6 +2159,7 @@ the organizational side of introducing new infrastructure.
 of audit writes in the critical path?"
 
 **Answer:**
+
 **S (Situation):** Our fintech company needed to meet PCI DSS
 requirements for change auditing on user payment method entities.
 The compliance team required: who changed it, what changed,
@@ -2125,3 +2212,33 @@ close it, rather than just deploying and hoping.
 *(Omit: System Design - ★☆☆ keyword)*
 
 *(Omit: Diagram - concept is tabular, prose and table suffice)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /nodejs/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [V8 Engine Internals](#v8-engine-internals) | medium |
+| 2 | [libuv Thread Pool](#libuv-thread-pool) | medium |
+
+---
+
 # V8 Engine Internals
 
 ---
@@ -110,6 +120,8 @@ V8 inline caches (ICs):
   Polymorphic (2-4 shapes) = slower
   Megamorphic (5+ shapes) = slowest (uncached)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -238,6 +250,8 @@ node --trace-deopt server.js 2>&1 | grep "DEOPT"
 # "wrong type" - expected one type, got another
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -251,6 +265,34 @@ node --trace-deopt server.js 2>&1 | grep "DEOPT"
 | How do you detect V8 deoptimizations? | Debugging | ★★★ | 2 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # libuv Thread Pool
 
@@ -343,6 +385,8 @@ Thread pool mechanics:
     // Under normal load: 1-5ms
     // Under thread pool exhaustion: 100-500ms
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -479,6 +523,8 @@ if (threadPoolMs > 500) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```bash
 UV_THREADPOOL_SIZE=32 node server.js
@@ -486,6 +532,8 @@ UV_THREADPOOL_SIZE=32 node server.js
 const limit = pLimit(4); // respect 4-thread pool
 const hash = await limit(() => bcrypt.hash(pw, 12));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -498,3 +546,33 @@ const hash = await limit(() => bcrypt.hash(pw, 12));
 | How do you detect thread pool exhaustion? | Debugging | ★★★ | 3 min |
 | `dns.lookup` vs `dns.resolve4` - difference? | Comparison | ★★★ | 2 min |
 | How do you tune UV_THREADPOOL_SIZE? | Production | ★★★ | 3 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

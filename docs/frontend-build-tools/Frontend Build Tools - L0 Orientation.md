@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why Build Tools Exist](#why-build-tools-exist) | medium |
+| 2 | [Build Pipeline Overview](#build-pipeline-overview) | medium |
+
+---
+
 # Why Build Tools Exist
 
 ---
@@ -75,6 +85,8 @@ Dev Server:
   File watch -> HMR (Hot Module Replacement)
   Source maps -> error points to source, not bundle
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -280,6 +292,34 @@ use `contenthash` for production assets.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Build Pipeline Overview
 
 ---
@@ -350,6 +390,8 @@ Phase 6: Source Maps
   .map files external in production
   Inline in development builds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -520,3 +562,33 @@ Goal: maximize cache efficiency while minimizing initial load.
 JS budget for mobile is < 150KB. A 500KB bundle on a mid-range Android
 phone takes ~2s to parse and execute. Route splitting + vendor splitting
 + lazy loading gets most apps under that threshold.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

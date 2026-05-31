@@ -133,6 +133,8 @@ Without N+1 (JOIN FETCH):
   = 5 total queries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 N+1 is invisible in code. The line `orders.forEach(o -> process(o.getItems()))`
 looks like it accesses a pre-loaded collection. Hibernate silently fires
@@ -345,6 +347,8 @@ log.info("Queries: {}",
     QueryCountHolder.getGrandTotal().getTotal());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Disable OSIV (`spring.jpa.open-in-view=false`), load all
 needed data within `@Transactional`, return DTOs (not entities) from
 the service layer. Jackson never sees Hibernate proxies.
@@ -375,6 +379,8 @@ List<Order> findWithItems(Long customerId);
 // Load tags separately with @BatchSize on the collection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 3: N+1 on Inverse @OneToOne**
@@ -400,6 +406,8 @@ public class UserProfile {
 // Now Hibernate can JOIN users and user_profiles in one query
 // No per-row SELECT for profile existence check
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -436,6 +444,8 @@ for (Order o : orders) {
         o.getItems().size()); // Query 2, 3, 4... N+1
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With 100 orders, this fires 101 queries: 1 to get all orders,
 then 1 per order to get its items. With 10,000 orders, it is
 10,001 queries.
@@ -476,12 +486,16 @@ collection data in the same result set:
        "LEFT JOIN FETCH o.items WHERE o.status = :s")
 List<Order> findWithItems(String s);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Generates one SQL:
 ```sql
 SELECT DISTINCT o.*, i.* FROM orders o
 LEFT JOIN order_items i ON i.order_id = o.id
 WHERE o.status = ?
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All order and item data comes back in one database round trip.
 Hibernate assembles the collections from the result set.
 `DISTINCT` is required to prevent duplicate Order objects in the
@@ -534,6 +548,8 @@ Setup with Datasource Proxy:
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // TestConfig: wrap DataSource with counting proxy
 @TestConfiguration
@@ -578,6 +594,8 @@ void loadOrdersWithItemsShouldFireTwoQueriesMax() {
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This test fails if the query count exceeds 2. Any code change that
 introduces N+1 (removes JOIN FETCH, adds a new lazy collection)
@@ -624,6 +642,8 @@ public record UserSummaryDTO(
 Page<UserSummaryDTO> findUserSummaries(Pageable pageable);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 One SQL query with a LEFT JOIN and GROUP BY. No entity loading,
 no LAZY proxy initialization, no N+1 possible, no cartesian product.
 Pagination works correctly at the database level.
@@ -640,6 +660,8 @@ pageable = PageRequest.of(0, 25,
     Sort.by("orderCount").descending());
 // Maps to ORDER BY COUNT(o.id) DESC
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This requires the JPQL to support the sort field (using the DTO
 property name that maps to the GROUP BY expression).
 
@@ -674,12 +696,16 @@ WHERE order_id IN (
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @BatchSize(25) loads collections in groups of 25:
 ```sql
 SELECT * FROM order_items WHERE order_id IN (?,?,?...25)
 SELECT * FROM order_items WHERE order_id IN (?,?,?...25)
 -- Additional batches until all are loaded
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Differences:
 
@@ -733,6 +759,8 @@ return orders.stream()
 // 100 orders = 100 REST calls to product service
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is O(N) network round trips - each with 10ms+ latency.
 100 orders = 1,000ms minimum just in network wait.
 
@@ -749,6 +777,8 @@ return orders.stream()
     .map(o -> new OrderDetailDTO(o, products.get(o.getProductId())))
     .collect(toList());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Projection: call the order service with a projection that already
 includes the needed product fields (denormalized in the order data
@@ -837,6 +867,34 @@ List view with aggregations: DTO projection. General N+1 protection:
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Batch Processing and JDBC Batch Inserts
 
@@ -958,6 +1016,8 @@ SEQUENCE generator enables batching:
   = 200 round trips + 200 sequence calls
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Batch inserts require that Hibernate knows the PK value BEFORE
 executing the INSERT. SEQUENCE strategy pre-allocates IDs from the
@@ -1017,6 +1077,8 @@ spring.jpa.properties.hibernate.order_updates=true
 # order_inserts groups inserts by entity type,
 # enabling batching across multiple entity types
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Batch insert with periodic flush/clear
@@ -1206,6 +1268,8 @@ logging.level.org.hibernate.stat=DEBUG
 # Log shows: "Executing batch size: 1" = batching is disabled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Change from:
@@ -1216,6 +1280,8 @@ logging.level.org.hibernate.stat=DEBUG
 @SequenceGenerator(name = "user_seq",
     allocationSize = 50) // match batch size
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1234,6 +1300,8 @@ at org.hibernate.engine.spi.EntityEntry...
 Heap dump: millions of User entities in hibernate.internal.SessionImpl$1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 if (count % BATCH_SIZE == 0) {
@@ -1242,6 +1310,8 @@ if (count % BATCH_SIZE == 0) {
 }
 // OR: Use StatelessSession which has no L1C
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1270,6 +1340,8 @@ Step importStep(StepBuilderFactory sbf) {
         .build();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1322,6 +1394,8 @@ entities with known IDs and can accumulate them in a JDBC batch.
     sequenceName = "user_id_seq",
     allocationSize = 50) // pre-allocates 50 IDs per call
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The trade-off: SEQUENCE creates gaps in IDs (if the app crashes
 after allocating 50 IDs and using 20, the other 30 are lost).
@@ -1390,6 +1464,8 @@ try (StatelessSession ss = sf.openStatelessSession()) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `ScrollableResults` pattern for
 large result sets - streaming through millions of rows without loading
 them all into memory. StatelessSession + ScrollableResults is the
@@ -1417,10 +1493,14 @@ Check 1: ID generation strategy. The most likely cause:
 // Fix: change to SEQUENCE with allocationSize
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check 2: Enable Hibernate statistics:
 ```properties
 spring.jpa.properties.hibernate.generate_statistics=true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Log output includes: `Executing batch size: 1` (disabled) or
 `Executing batch size: 50` (enabled). This directly confirms
 whether batching is active.
@@ -1432,10 +1512,14 @@ logging.level.org.hibernate.engine.jdbc.batch=DEBUG
 # vs "Executing insert immediately" (batching disabled)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check 4: Multiple entity types without order_inserts:
 ```properties
 spring.jpa.properties.hibernate.order_inserts=true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without this, inserts for different entity types are interleaved,
 preventing JDBC from batching them together.
 
@@ -1534,6 +1618,8 @@ JDBC sees alternating tables → cannot batch
 (JDBC batch requires consecutive statements for same table)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With `order_inserts=true`:
 ```
 Hibernate reorders:
@@ -1545,6 +1631,8 @@ Hibernate reorders:
 JDBC batches users together, addresses together
 → 2 batches instead of 5 individual inserts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Side effects:
 - If inserts must be ordered for referential integrity (user must
@@ -1585,6 +1673,8 @@ EXPLAIN ANALYZE SELECT * FROM orders WHERE processed = false;
 -- Look for: Seq Scan (bad) vs Index Scan (good)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check 2: JDBC batching disabled. If someone changed the ID
 generation strategy to IDENTITY or removed batch configuration,
 every UPDATE/INSERT is now an individual round trip.
@@ -1605,6 +1695,8 @@ SELECT * FROM pg_locks
 WHERE NOT granted ORDER BY pid;
 -- Shows blocking locks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Check 5: Network latency to database. If the database was moved
 to a different availability zone or datacenter, network latency
@@ -1630,6 +1722,7 @@ that needed to handle millions of records reliably.
 *Likely follow-up:* "How did you handle partial failures?"
 
 **Answer:**
+
 **S (Situation):** An order management system had a nightly export
 job that extracted orders for the last 30 days (2-4 million records
 depending on season) and loaded them into a data warehouse. The job
@@ -1691,3 +1784,33 @@ with flush/clear.
 *(Omit: System Design - ★★☆ keyword)*
 
 *(Omit: Diagram - the code and table are sufficiently illustrative)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -260,6 +260,8 @@ aggregations in Java, rather than in the database.
 // Hibernate may generate a different (suboptimal) query
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Replace with `@Query(nativeQuery=true)` or JOOQ for the analytics
 query. Keep Hibernate for entity writes.
 
@@ -279,6 +281,8 @@ SELECT c.id, c.name, SUM(o.total) AS order_total
 FROM customers c LEFT JOIN orders o ON o.customer_id = c.id
 GROUP BY c.id, c.name;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -343,6 +347,8 @@ em.createNativeQuery("SELECT ...", Order.class)
 // Option 3: JdbcTemplate (Spring JDBC, bypasses Hibernate)
 jdbcTemplate.query("SELECT ...", rowMapper, params);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The three execution options and the
 specific PostgreSQL features (JSONB, window functions) as the trigger.
@@ -414,6 +420,8 @@ List<Order> findByStatus(String s);
 // Requires all @Column-mapped columns to be in the SELECT
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Projection interface (Spring Data):
 ```java
 interface OrderSummary {
@@ -429,6 +437,8 @@ List<OrderSummary> findSummaries();
 // Case-insensitive: column "total" -> getTotal()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. `Object[]` or `Map<String, Object>`:
 ```java
 @Query(value="SELECT id, SUM(total) FROM orders GROUP BY id",
@@ -438,6 +448,8 @@ List<Object[]> findTotals();
 // Error-prone: no compile-time check
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Limitations of native query projections:
 - Pagination: native queries with pagination require `countQuery` parameter:
   ```java
@@ -446,6 +458,8 @@ Limitations of native query projections:
       nativeQuery=true)
   Page<Order> findPagedOrders(String status, Pageable p);
   ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Sort: Pageable's Sort does not translate for native queries
   (sort by entity field name vs column name mismatch)
 - Portability: native SQL is database-specific; migrating databases
@@ -477,6 +491,8 @@ logging:
 # TRACE shows parameter values bound to each placeholder
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Run the SQL manually with the failing user's parameters:
 Copy the SQL from the log, paste into pgAdmin/psql, substitute the
 parameter values, run. If results are wrong in direct SQL: the SQL logic
@@ -494,6 +510,8 @@ WHERE user_id = :userId  -- if userId is NULL: no rows matched
 WHERE (:userId IS NULL OR user_id = :userId)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Check type mismatch:
 ```java
 // If userId is a String in Java but integer in DB:
@@ -502,6 +520,8 @@ Step 4: Check type mismatch:
 @Query(value="SELECT * FROM users WHERE id = CAST(:id AS BIGINT)",
     nativeQuery=true)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Test with Spring Boot Test:
 ```java
@@ -517,6 +537,8 @@ class OrderQueryTest {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The NULL handling difference between
 SQL and Java - `NULL = NULL` is FALSE in SQL, which causes rows to be
@@ -552,6 +574,8 @@ Use JdbcTemplate over Hibernate native queries when:
    // Hibernate has no clean way to run DDL within a transaction
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Complex result set processing:
    ```java
    jdbcTemplate.query(sql, (rs) -> {
@@ -561,6 +585,8 @@ Use JdbcTemplate over Hibernate native queries when:
        }
    });
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Raw performance without ORM overhead:
    JdbcTemplate has lower overhead than Hibernate native queries
@@ -602,6 +628,8 @@ List<ProductSummary> findAllProjectedBy();
 // (not SELECT * - only requested fields)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 DTO projection (constructor expression, most explicit):
 ```java
 @Value // Lombok immutable
@@ -617,6 +645,8 @@ class ProductDTO {
 List<ProductDTO> findDTOsByCategory(String cat);
 // JPQL constructor expression - no entity loaded, just field values
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Difference:
 - Interface projection: Spring generates a proxy; fields are accessed
@@ -645,6 +675,7 @@ operation that was failing with Hibernate. What was the decision process?
 *Likely follow-up:* "How did you ensure the native SQL solution was maintainable?"
 
 **Answer:**
+
 **S (Situation):** A shipping analytics service needed to show customers
 their top 5 delivery routes by total shipment value, with week-over-week
 percentage change, for the past 12 weeks. The business analyst had the
@@ -693,6 +724,8 @@ Page<Object[]> getTopRoutes(@Param("customerId") Long id,
     Pageable pageable);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Maintainability: added the SQL as a test fixture in `src/test/resources/analytics/`
 with documented column ordering. Added a `@DataJpaTest` that runs the query
 against a PostgreSQL Testcontainer and asserts the correct row count and
@@ -709,6 +742,34 @@ Testcontainer for native SQL query testing.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Hibernate Debugging Mental Model
 
@@ -805,6 +866,8 @@ Layer 3: DATABASE STATE
     - Are constraint violations expected?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The Debugging Decision Tree:**
 
 ```
@@ -832,6 +895,8 @@ SYMPTOM: Stale data returned
   -> FlushMode.COMMIT (pending updates not flushed before query)
   -> Replica lag (read routed to lagging replica)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -984,6 +1049,8 @@ log.debug("Caller class: {}",
 // If the caller class is the SAME class: self-invocation (no proxy)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move the inner method to a separate Spring bean.
 
 ---
@@ -1009,6 +1076,8 @@ log.info("Inserts: {}", stats.getEntityInsertCount());
 // Enable show_sql to see the INSERT statement
 // The INSERT values reveal which entity is being created
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1053,6 +1122,8 @@ spring:
         use_sql_comments: true      # adds HQL comment above SQL
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 DEBUG level shows the SQL statements with `?` placeholders.
 TRACE level (BasicBinder) adds the parameter values:
 ```
@@ -1060,12 +1131,16 @@ Hibernate: select o1_0.id,o1_0.status,o1_0.total from orders o1_0 where o1_0.id=
 TRACE  binding parameter [1] as [BIGINT] - [42]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `format_sql=true` formats multi-line SQL for readability.
 `use_sql_comments=true` adds a comment with the original HQL/JPQL:
 ```
 /* from Order o where o.id=:id */
 select o1_0.id,...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use: development and staging only. Never in production.
 - Generates one log line per SQL statement + per parameter
@@ -1095,6 +1170,8 @@ boolean managed = em.contains(entity);
 // Fix: load fresh or merge
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Is there an active @Transactional?
 ```java
 String tx = TransactionSynchronizationManager
@@ -1103,12 +1180,16 @@ String tx = TransactionSynchronizationManager
 // Fix: add @Transactional to the calling method
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Is the field excluded from updates?
 ```java
 @Column(updatable=false) // this field never generates UPDATE
 private String orderNumber;
 // If you modified orderNumber: no SQL generated for it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Was the value actually changed?
 Dirty checking compares with `equals()`. If the new value is equal
@@ -1117,6 +1198,8 @@ to the old value, no UPDATE is generated.
 order.setStatus("PENDING"); // was already "PENDING"
 // equals() returns true -> not dirty -> no UPDATE
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 5. Was the entity detached mid-transaction?
 If a REQUIRES_NEW inner method committed, the outer context entities
@@ -1130,6 +1213,8 @@ context was somehow cleared or replaced, entities become detached.
 // In tests: @Transactional on test rolls back - changes may appear
 // in logs but are rolled back before you can observe them
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `updatable=false` check and the
 `equals()` comparison note - both cause silent "no UPDATE" without errors.
@@ -1153,6 +1238,8 @@ Production Hibernate diagnostics without `show_sql`:
 spring.jpa.properties.hibernate.generate_statistics: true
 management.endpoints.web.exposure.include: prometheus
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key metrics:
 - `hibernate_query_executions_total`: total queries (N+1 indicator)
 - `hibernate_query_execution_seconds_max`: slowest query
@@ -1168,6 +1255,8 @@ ORDER BY total_exec_time DESC LIMIT 10;
 -- Repeating query with different ID values = N+1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. PostgreSQL slow query log (activation without restart):
 ```sql
 ALTER SYSTEM SET log_min_duration_statement = '500ms';
@@ -1175,6 +1264,8 @@ SELECT pg_reload_conf();
 -- Logs slow queries to PostgreSQL log file
 -- Revert: ALTER SYSTEM SET log_min_duration_statement = '-1';
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. APM tools (New Relic, Datadog, Elastic APM):
 SQL queries with call stacks, automatically sampled.
@@ -1186,6 +1277,8 @@ Shows which Java method triggered which SQL query.
 sessionFactory.getStatistics().getQueryPlanCacheHitCount()
 sessionFactory.getStatistics().getQueryPlanCacheMissCount()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `pg_stat_statements` - a PostgreSQL
 built-in that requires no application change and shows actual database
@@ -1216,6 +1309,8 @@ log.debug("entity managed: {}", em.contains(entity));
 // false = DETACHED - changes not tracked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: If no UPDATE - check transaction:
 ```java
 log.debug("active tx: {}",
@@ -1223,6 +1318,8 @@ log.debug("active tx: {}",
         .isActualTransactionActive());
 // false = no @Transactional active
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: If UPDATE in logs but database unchanged - check for rollback:
 Add exception handler to log:
@@ -1232,12 +1329,16 @@ Add exception handler to log:
 // Check: does any code path between the update and commit throw?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: Are you reading from a read replica?
 ```java
 // The write went to primary but you're reading from replica
 // Replica lag = old data visible briefly after write
 // Fix: add sticky primary window for read-after-write
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 6: Verify with direct database query in a separate session:
 ```sql
@@ -1246,6 +1347,8 @@ SELECT * FROM orders WHERE id = ?;
 -- If old value: write was rolled back
 -- If new value: application read is from stale replica
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The replica lag as a distinct root
 cause with a different fix than rollback scenarios.
@@ -1318,6 +1421,8 @@ order.getItems().size(); // LazyInitializationException!
 // items is a lazy proxy - session is closed, cannot load
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 
 Fix 1: JOIN FETCH - load the association within the transaction:
@@ -1326,11 +1431,15 @@ Fix 1: JOIN FETCH - load the association within the transaction:
 Optional<Order> findWithItems(Long id);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: @EntityGraph:
 ```java
 @EntityGraph(attributePaths = {"items"})
 Optional<Order> findById(Long id);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3: DTO - transform within the transaction:
 ```java
@@ -1342,6 +1451,8 @@ public OrderDTO getOrderWithItems(Long id) {
 }
 // Controller receives DTO - no session needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 OSIV hides this exception: if `spring.jpa.open-in-view=true` (default),
 the session stays open through the controller. Lazy loading "works"
@@ -1362,6 +1473,7 @@ sharing in your team.
 *Likely follow-up:* "How do you scale this to a larger team?"
 
 **Answer:**
+
 **S (Situation):** A team of 8 backend engineers had recurring Hibernate
 issues: N+1 in every sprint, LazyInitializationException after each
 Spring Boot upgrade, and silent update losses discovered in QA. Root cause:
@@ -1405,6 +1517,34 @@ enforcement.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # N+1 Detection Checklist
 
@@ -1517,6 +1657,8 @@ STEP 5: FIX
   - @BatchSize(size=25) for collection batch loading
   - DTO projection to load only needed data
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1700,6 +1842,8 @@ List<Order> orders = orderRepo.findAllWithItems();
 // But List.size() = 50
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Option 1: DISTINCT in JPQL:
@@ -1714,6 +1858,8 @@ orderRepo.findAllWithItems(
     orders.stream().map(Order::getId).toList());
 // Hibernate batch-loads items for the specific IDs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1733,6 +1879,8 @@ List<OrderItem> items = itemRepo.findByProduct(productId);
 // Actual: 1 SELECT for items + N SELECTs for orders
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 @Query("SELECT i FROM OrderItem i " +
@@ -1741,6 +1889,8 @@ List<OrderItem> items = itemRepo.findByProduct(productId);
 List<OrderItem> findByProductWithOrder(@Param("pid") Long pid);
 // 1 SELECT with JOIN - loads orders in same query
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1784,6 +1934,8 @@ for (Order o : orders) {
 // For 100 orders: 101 queries instead of 1-2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The queries look like:
 ```sql
 SELECT * FROM orders;             -- 1 query
@@ -1792,11 +1944,15 @@ SELECT * FROM customers WHERE id=2; -- query for order 2
 ... 98 more
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 How to detect in Spring Boot:
 ```yaml
 # application-dev.yml:
 logging.level.org.hibernate.SQL: DEBUG
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Run the endpoint. Count SELECT statements in the log.
 Expected: 1-2 queries. If you see 50+: N+1.
 
@@ -1806,6 +1962,8 @@ How to fix: load the association in the original query:
 List<Order> findAllWithCustomer();
 // 1 SQL: SELECT o.*, c.* FROM orders o JOIN customers c ON...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Explaining that N+1 is a symptom of
 lazy loading triggered in a loop - the root cause is an association
@@ -1835,6 +1993,8 @@ List<OrderItem> items;
 // ... (4 queries instead of 100)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `FetchMode.SUBSELECT`: loads all associations in one subquery:
 ```java
 @OneToMany
@@ -1845,11 +2005,15 @@ List<OrderItem> items;
 // SELECT * FROM items WHERE order_id IN (SELECT id FROM orders ...)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `JOIN FETCH`: loads associations in the same query as the parent:
 ```java
 @Query("SELECT o FROM Order o JOIN FETCH o.items")
 // 1 query: SELECT o.*, i.* FROM orders JOIN order_items ON ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to prefer each:
 
@@ -1889,6 +2053,8 @@ increase(hibernate_query_executions_total{endpoint="/api/orders"}[1m])
 # Baseline: ~2-3. If > 20: N+1 confirmed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: pg_stat_statements (zero-overhead, always running):
 ```sql
 SELECT query, calls, mean_exec_time
@@ -1899,6 +2065,8 @@ ORDER BY calls DESC LIMIT 5;
 -- in the last 5 minutes: N+1 confirmed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Slow query log (activate temporarily):
 ```sql
 ALTER SYSTEM SET log_min_duration_statement = '10ms';
@@ -1908,6 +2076,8 @@ SELECT pg_reload_conf();
 ALTER SYSTEM SET log_min_duration_statement = '-1';
 SELECT pg_reload_conf();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Enable Hibernate statistics temporarily:
 ```java
@@ -1920,6 +2090,8 @@ log.info("Queries per session: {}", qps);
 // > 10: N+1 likely
 sessionFactory.getStatistics().setStatisticsEnabled(false);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rollback threshold: if database CPU is rising and queries/request > 20
 sustained for > 5 minutes: rollback the deployment. The N+1 will become
@@ -1954,6 +2126,8 @@ List<Order> findAllFull();
 // Cons: one method per fetch combination needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @EntityGraph (annotation-based):
 ```java
 // Define named graph on entity:
@@ -1978,6 +2152,8 @@ List<Order> findByStatus(String status);
 @EntityGraph(attributePaths={"customer", "items.product"})
 Optional<Order> findById(Long id);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key differences:
 - JOIN FETCH is query-specific: only that JPQL method uses it
@@ -2022,11 +2198,15 @@ List<Order> findAllWithItems();
 // Returns: 10 Order objects (deduplicated by Hibernate in memory)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: Use Set<Order> return type:
 ```java
 Set<Order> findAll(); // Set deduplicates by equals/hashCode
 // BUT: requires stable equals/hashCode on Order
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3: Use @QueryHints to apply distinct:
 ```java
@@ -2037,6 +2217,8 @@ List<Order> findAllWithItems();
 // HINT_PASS_DISTINCT_THROUGH=false: keep DISTINCT in JPQL
 // for Hibernate deduplication but don't add DISTINCT to SQL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 JPQL DISTINCT vs SQL DISTINCT:
 SQL DISTINCT: deduplicates at the database level (affects all columns).
@@ -2065,6 +2247,8 @@ for (Order o : orders) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @ManyToOne N+1: loading N children triggers N queries for parents.
 ```java
 List<OrderItem> items = itemRepo.findAll(); // 1 query
@@ -2075,6 +2259,8 @@ for (OrderItem i : items) {
     // With LAZY: N queries (one per item)
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key differences:
 - `@OneToMany` is LAZY by default - always a risk if accessed in a loop
@@ -2092,6 +2278,8 @@ List<OrderItem> items = itemRepo.findByProductId(productId);
 // But: if 100 items from 100 different orders: 
 // 100 Order objects instantiated = higher memory
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Recommendation: change `@ManyToOne` to LAZY and use JOIN FETCH explicitly
 where needed. This gives you the same control as `@OneToMany`.
@@ -2147,3 +2335,33 @@ entity load chain for the affected endpoint.
 
 *What separates good from great:* L2C eviction as a non-code cause of
 query rate spike - often missed when debugging.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

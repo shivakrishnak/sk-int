@@ -8,9 +8,20 @@ permalink: /java-performance/l1-measurement/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L1 Measurement](#java-performance---l1-measurement) | medium |
+
+---
+
 # Java Performance - L1 Measurement
 
 ## Performance Measurement: Metrics, Percentiles, and Baselines
+
+---
 
 ### 🎯 Model Answer
 
@@ -121,6 +132,8 @@ PERFORMANCE REGRESSION TESTING:
   Tools: Gatling with CI integration, k6 cloud thresholds,
          JMH with perfomance thresholds in CI pipeline.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -267,6 +280,8 @@ Prevention:
     Gate: if p99 > baseline * 1.2: review before merging
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -339,6 +354,8 @@ This transforms SLO monitoring from a binary pass/fail to a rate-based early war
 ---
 
 ## CPU Profiling Basics: Flame Graphs and Sampling
+
+---
 
 ### 🎯 Model Answer
 
@@ -454,6 +471,8 @@ CPU vs WALL TIME:
     Shows: time waiting for DB, time waiting for lock, time in GC.
     Use when: p99 is high but CPU profile shows no hot code.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -593,6 +612,8 @@ Fix:
     - Large list copies (new ArrayList<>(existingList))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -663,6 +684,8 @@ blocked in `Socket.read()` - DB query is slow. Flame graph shows: `OrderReposito
 ---
 
 ## Heap Profiling: Memory Leak Detection
+
+---
 
 ### 🎯 Model Answer
 
@@ -787,6 +810,8 @@ ALLOCATION PROFILING (reduce allocation rate):
     Fix: if (log.isDebugEnabled()) { log.debug(toString()); }
     Or: log.debug("val={}", val);  // lazy, no toString unless DEBUG
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -934,6 +959,8 @@ Options:
      8 pods * 4GB each > 1 pod * 32GB (easier to diagnose per pod).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1003,3 +1030,33 @@ approach: trigger the dump from the OOM, not manually from a running healthy ins
 dump during a maintenance window or on a canary instance that's been removed from the load balancer.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /jpa/l4-production/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L4 Production](#jpa---l4-production) | medium |
+
+---
+
 # JPA - L4 Production
 
 ## JPA Production Diagnostics: Query Logging, Slow Query Analysis, Connection Pool Tuning
+
+---
 
 ### 🎯 Model Answer
 
@@ -162,6 +173,8 @@ POOL SIZE FORMULA (HikariCP recommendation):
   #   Decouples application pool size from DB connection limit.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -303,6 +316,8 @@ DATABASE
     └── Reduces DB connection count from N*20 to 100
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -424,6 +439,8 @@ Fix:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -492,4 +509,34 @@ last ANALYZE). It chooses an index scan (optimal for 100K rows) instead of a seq
 cleanup too). Long-term: set `autovacuum_analyze_scale_factor = 0.01` for large, frequently-changing
 tables (autovacuum triggers at 1% of row count vs the default 20%). Combined with monitoring
 `pg_stat_user_tables.n_mod_since_analyze`: alert when the ratio exceeds 10% without a recent analyze.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

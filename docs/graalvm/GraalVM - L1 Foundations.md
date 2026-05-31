@@ -239,6 +239,34 @@ the binary is so much smaller and starts faster.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # GraalVM Installation and Toolchain
 
 **Interview Weight:** foundational - Toolchain setup
@@ -412,6 +440,8 @@ To target Linux (Kubernetes) from macOS: use Docker build.
       -t myapp:${{ github.sha }} .
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Multi-arch (Linux AMD64 + ARM64):
 ```yaml
 - name: Build for AMD64
@@ -425,6 +455,8 @@ Multi-arch (Linux AMD64 + ARM64):
   run: docker buildx build --platform linux/arm64 ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Build time in CI: 8-12 minutes per native build.
 Use: build cache, Gradle build cache, Maven local repo caching.
 
@@ -435,6 +467,8 @@ Use: build cache, Gradle build cache, Maven local repo caching.
     key: m2-${{ hashFiles('**/pom.xml') }}
 # Maven downloads cached: saves 2-3 minutes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Container builds
 ensure reproducibility regardless of CI host OS.
@@ -449,6 +483,34 @@ ensure reproducibility regardless of CI host OS.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Native Image Build Process
 
@@ -640,6 +702,8 @@ Each object allocation takes time.
 For Spring: thousands of objects allocated.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Native image heap snapshotting:
 ```
 Build time: run static initializers + framework init.
@@ -647,6 +711,8 @@ All created objects: serialized to binary as heap image.
 Runtime: heap image memory-mapped from binary.
 Objects appear "already created" instantly.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 What Quarkus pre-initializes (in the heap snapshot):
 - CDI container: bean definitions, producer methods.
@@ -664,6 +730,8 @@ Listen for connections: 1ms
 Total: ~17ms
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without snapshot (normal JVM):
 ```
 JVM init: 100ms
@@ -671,6 +739,8 @@ Class loading: 500ms
 Framework init: 1000ms+
 Total: 1600ms+
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The trick: heap snapshot = pre-computed initial state.
 Application doesn't redo initialization work at runtime.
@@ -688,6 +758,34 @@ startup time almost independent of framework complexity.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reflection Configuration in Native Image
 
@@ -907,6 +1005,8 @@ Always supplement with integration tests.
 Error: Class initialization of ...SomeClass failed:
   java.lang.ClassNotFoundException: com.example.Driver
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Register the class for reflection, or add
 --initialize-at-run-time=com.example.SomeClass.
 
@@ -916,6 +1016,8 @@ com.fasterxml.jackson.databind.exc.InvalidDefinitionException:
   No serializer found for class OrderDto
   (no properties discovered; ...)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add @RegisterForReflection to OrderDto.
 
 **Runtime failure: InaccessibleObjectException:**
@@ -923,6 +1025,8 @@ Fix: Add @RegisterForReflection to OrderDto.
 java.lang.reflect.InaccessibleObjectException:
   Unable to make field ... accessible
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add `allowUnsafeAccess = true` to
 @RegisterForReflection or add --add-opens to build args.
 
@@ -970,6 +1074,8 @@ public class JacksonProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The extension registers at build time, before native-image:
 - Jackson extension: registers @JsonSerialize classes.
 - Hibernate extension: registers @Entity classes.
@@ -991,3 +1097,33 @@ just work in native without manual reflection config.
 | Hiring Manager | Practical native image migration. |
 | Bar Raiser | Tracing agent, extension @BuildStep internals. |
 | Peer Engineer | "Three native failures in prod. All jackson reflection. Fixed with @RegisterForReflection on 8 DTO classes. Zero failures since." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

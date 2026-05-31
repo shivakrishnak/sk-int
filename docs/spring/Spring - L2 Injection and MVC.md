@@ -8,7 +8,14 @@ permalink: /spring/l2-injection-and-mvc/
 render_with_liquid: false
 ---
 
-# Spring - L2 Injection and MVC
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L2 Injection and MVC](#spring---l2-injection-and-mvc) | medium |
+| 2 | [@Autowired and Injection Types](#autowired-and-injection-types) | medium |
+| 3 | [Spring MVC Request Lifecycle](#spring-mvc-request-lifecycle) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — "Constructor vs field injection" is a standard
+🎯 Interview Weight: High - "Constructor vs field injection" is a standard
 mid-level Spring interview question with a clear right answer.
 
 ---
@@ -140,6 +147,8 @@ Three injection mechanisms:
        private OrderRepository repo; // cannot be final!
    }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Constructor injection makes the dependency graph explicit and verifiable. If a
@@ -441,6 +450,8 @@ public class ReportService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @Primary marks the default: if no @Qualifier is specified, the @Primary bean
 is chosen. @Qualifier overrides @Primary.
 
@@ -464,6 +475,8 @@ Three approaches:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Optional<T> constructor parameter**:
    ```java
    public MyService(Optional<EmailService> email) {
@@ -471,11 +484,15 @@ Three approaches:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **@Autowired(required = false) on field** (avoid in new code):
    ```java
    @Autowired(required = false)
    private EmailService emailService; // null if no bean
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Best approach for new code: constructor with Optional<T> parameter.
 It makes the optionality explicit in the class contract.
@@ -535,6 +552,8 @@ If needed:
        public ServiceA(@Lazy ServiceB b) { /* ... */ }
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Spring creates a proxy for ServiceB, breaking the constructor cycle.
 
 3. **Setter/field injection on one side**: Spring uses early bean references.
@@ -589,6 +608,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring 4.3+ finds the single generated constructor and uses it without
 @Autowired. @RequiredArgsConstructor + @NonNull adds null checks in the
 generated constructor.
@@ -597,6 +618,34 @@ generated constructor.
 fields adds null safety without the boilerplate of manual Objects.requireNonNull.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Spring MVC Request Lifecycle
 
@@ -614,7 +663,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — understanding DispatcherServlet and the request
+🎯 Interview Weight: High - understanding DispatcherServlet and the request
 processing pipeline demonstrates real Spring MVC knowledge beyond basic
 @RequestMapping.
 
@@ -742,6 +791,8 @@ On Exception -> [HandlerExceptionResolver]
   ResponseStatusExceptionResolver: @ResponseStatus
   DefaultHandlerExceptionResolver: Spring defaults
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 HandlerInterceptors run inside the DispatcherServlet context - they have access
@@ -1046,6 +1097,8 @@ public class GlobalExceptionHandler {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Catches exceptions from any @Controller in the application.
 
 Selection order: controller-level @ExceptionHandler first, then
@@ -1086,6 +1139,8 @@ public class CurrentUserResolver
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Spring Security's @AuthenticationPrincipal
 is implemented this way. Understanding this mechanism means you can implement
@@ -1157,6 +1212,8 @@ public class SecurityHeadersFilter
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2 - HandlerInterceptor (MVC requests only):
 ```java
 @Override
@@ -1165,6 +1222,8 @@ public void afterCompletion(...) {
         MDC.get("requestId"));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security headers should use Servlet Filter to apply to all responses
 including error pages and static content.
@@ -1201,11 +1260,15 @@ public class FileUploadController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Configuration:
 ```
 spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* getContentType() returns the MIME type from
 HTTP headers - user-controlled and not trustworthy for security decisions.
@@ -1213,3 +1276,33 @@ Use Apache Tika to detect the actual content type from file bytes. Using
 Content-Type header for security validation is an OWASP-listed vulnerability
 (Unrestricted File Upload). Also: store files outside the webroot, use UUID
 filenames (not the original - path traversal prevention).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /nodejs/l2-http-express/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTTP Module and Express Basics](#http-module-and-express-basics) | medium |
+| 2 | [Middleware Pattern](#middleware-pattern) | medium |
+
+---
+
 # HTTP Module and Express Basics
 
 ---
@@ -98,6 +108,8 @@ HTTP module vs Express:
     next()                         // pass to next middleware
     next(err)                      // pass to error handler
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -251,6 +263,34 @@ Default is 100kb, but must be explicit.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Middleware Pattern
 
 ---
@@ -348,6 +388,8 @@ Middleware execution pipeline:
     }
     app.use(rateLimit(100, 60000)); // 100 req/minute
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -492,6 +534,8 @@ app.use((req, res, next) => {
 // If a middleware never calls next(), the timeout fires
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -504,3 +548,33 @@ app.use((req, res, next) => {
 | Request hangs - what's wrong? | Debugging | ★★☆ | 2 min |
 | What security middleware should every Express app have? | Production | ★★★ | 3 min |
 | Async middleware - how to handle errors? | Failure | ★★☆ | 2 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

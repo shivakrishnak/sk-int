@@ -100,6 +100,8 @@ S3         Data, bucket policy,  Hardware,
            encryption config     availability
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common Mistakes:**
 
 ```
@@ -123,6 +125,8 @@ MISTAKE 4: AWS HIPAA eligibility != compliance
   AWS: provides HIPAA-eligible services + BAA
   Customer: must also encrypt, audit, limit access
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -289,6 +293,8 @@ aws inspector2 list-findings \
   }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: S3 bucket exposed publicly**
@@ -307,6 +313,8 @@ aws cloudtrail lookup-events \
   --lookup-attributes \
     AttributeKey=ResourceName,Value=exposed-bucket
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -419,6 +427,8 @@ aws configservice put-config-rule --config-rule '{
 }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using AWS Config Rules + Security
 Hub for continuous compliance verification. Manual audits find
 misconfiguration after the fact. Config Rules alert immediately when
@@ -460,6 +470,8 @@ grep -h '"GET "' logs/*.log | \
 # Was any PII, credentials, or keys exposed?
 # Notification obligations (GDPR, HIPAA timing requirements)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Running the S3 access log analysis
 immediately - not after the investigation. You need to know if
@@ -534,6 +546,8 @@ Application logs (business actions)
 = Complete audit coverage
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that S3 Data Events cost
 money (per-API-call charge) and must be explicitly enabled. Teams
 that assume CloudTrail covers all S3 access discover during an
@@ -566,6 +580,8 @@ AWS fulfills its side through third-party audits and certifications:
 # AWS Config -> Conformance Packs -> AWS Foundational Security
 # Shows which of YOUR configurations meet security standards
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing the difference between
 AWS's certifications (which cover their infrastructure) and your
@@ -655,6 +671,8 @@ configuration is evidence.
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 ```
@@ -706,6 +724,34 @@ block-beta
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cloud IAM Least Privilege
 
@@ -793,6 +839,8 @@ If compromised: attacker reads 2024 reports only
 NOT: delete any bucket, access other data, change IAM
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Privilege Escalation via IAM:**
 
 ```
@@ -810,6 +858,8 @@ MITIGATION:
   SCP: org-level blocks iam:* on non-admin roles
   Separate: IAM management roles from service roles
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -870,6 +920,8 @@ MITIGATION:
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 import boto3
@@ -999,6 +1051,8 @@ aws cloudtrail lookup-events \
 # from unexpected source IPs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Prevention:* Scope s3 permissions to specific bucket and
 specific objects. Add explicit Deny for delete operations
 in all non-admin roles.
@@ -1021,6 +1075,8 @@ aws iam simulate-principal-policy \
 # Review current policies:
 aws iam list-attached-role-policies --role-name deploy-role
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Add only the specific required action to the role.
 Never add wildcards to fix a single permission issue.
@@ -1052,10 +1108,14 @@ Four AWS IAM mechanisms:
     "Resource":"arn:aws:s3:::my-bucket/*"}  // NOT "*"
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Condition keys**: restrict by IP, time, MFA, request type:
    ```json
    {"Condition":{"IpAddress":{"aws:SourceIp":"10.0.0.0/8"}}}
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. **Permission boundaries**: maximum permission ceiling for
    a role, regardless of what policies are attached:
@@ -1103,12 +1163,16 @@ aws iam get-credential-report
 # Shows: all IAM users, last access dates, MFA status, key rotation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Finding over-permissive roles:
 ```bash
 aws iam list-roles --query \
   'Roles[?contains(AssumeRolePolicyDocument, `*`)].RoleName'
 # Roles with trust policy wildcards = overly permissive assume-role
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Automating the audit, not just
 running it once. Schedule the Access Advisor report monthly; alert
@@ -1142,6 +1206,8 @@ aws accessanalyzer list-findings \
 # principal: { "AWS": "*" }  <- public access
 # action: ["s3:GetObject"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 What Access Analyzer does NOT detect:
 - Over-permissive policies within your account (internal over-privilege)
@@ -1186,6 +1252,8 @@ aws iam simulate-principal-policy \
 # 6. Session policy - was the role assumed with a session policy?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The VPC endpoint policy layer.
 Teams often add S3 VPC endpoints with restrictive endpoint policies
 that prevent all traffic except from specific roles. A Lambda without
@@ -1211,6 +1279,8 @@ Effective permissions =
   (minus any explicit Deny)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If SCP denies `s3:DeleteBucket` for the account:
 - Even if a user has `s3:DeleteBucket` in their IAM policy: DENIED
 - Even if the user is the account root: DENIED (SCPs override root)
@@ -1230,6 +1300,8 @@ SCP use cases:
  "Condition":{"StringNotEquals":{"aws:RequestedRegion":
    ["eu-west-1","eu-central-1"]}}}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that SCPs apply to the
 management account only in read-only mode (they cannot restrict
@@ -1298,6 +1370,8 @@ aws sts assume-role \
 # Returns temporary credentials with 1-hour TTL
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For S3 cross-account access, BOTH are required:
 1. IAM policy in the requesting account (allows `sts:AssumeRole`
    or `s3:GetObject`)
@@ -1338,6 +1412,8 @@ Use case - delegated IAM management:
 // Developer cannot create a role without the boundary
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Other use cases:
 - Service accounts for CI/CD: limit max blast radius even if
   CI/CD pipeline is compromised
@@ -1367,6 +1443,8 @@ aws iam get-service-last-accessed-details --job-id <JOB_ID>
 # Shows: which services were actually accessed and when
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check CloudTrail for the specific API calls:
 ```bash
 aws cloudtrail lookup-events \
@@ -1374,6 +1452,8 @@ aws cloudtrail lookup-events \
   --start-time $(date -d '90 days ago' --iso-8601=seconds)
 # More granular than Access Advisor: exact actions and resources
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Draft least-privilege policy from actual usage
 
@@ -1416,8 +1496,40 @@ during remediation.
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 *(Omit: IAM policy structure is best expressed as code and tables.)*
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

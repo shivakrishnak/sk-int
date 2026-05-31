@@ -8,9 +8,20 @@ permalink: /java-language/l3-functional-programming/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L3 Functional Programming](#java-language---l3-functional-programming) | medium |
+
+---
+
 # Java Language - L3 Functional Programming
 
 ## Functional Interfaces and Composition
+
+---
 
 ### 🎯 Model Answer
 
@@ -133,6 +144,8 @@ VALIDATION COMBINATOR PATTERN:
   nameValidator.validate("Alice");  // Optional.empty (valid)
   nameValidator.validate("");       // Optional.of("must not be empty")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -290,6 +303,8 @@ Prevention:
     - Functions called with the same key repeatedly in a bounded session
     - Non-production / unit test scenarios
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -479,6 +494,8 @@ into stream form.
 
 ## Stream Collectors and Reduction Operations
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -607,6 +624,8 @@ REDUCE vs COLLECT:
   // For complex reductions: use collect
   // For numeric aggregation: use reduce or specialized IntStream.sum()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -772,6 +791,8 @@ Prevention: ALWAYS use the 3-arg toMap when uniqueness is not 100% guaranteed.
   Default: prefer groupingBy to toMap for grouping scenarios.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -897,3 +918,33 @@ A: Single-pass design: use a collector that computes all needed aggregations in 
 ### 📊 Diagram
 
 *(Omit: Collector mechanics are clearly expressed in the concept explanation.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

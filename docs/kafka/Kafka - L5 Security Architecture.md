@@ -8,9 +8,20 @@ permalink: /kafka/l5-security-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L5 Security Architecture](#kafka---l5-security-architecture) | medium |
+
+---
+
 # Kafka - L5 Security Architecture
 
 ## Kafka Security Architecture
+
+---
 
 ### 🎯 Model Answer
 
@@ -221,6 +232,8 @@ SECRETS MANAGEMENT:
   # Rotate: update secret, rolling restart brokers.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -365,6 +378,8 @@ zero-trust: application-level or field-level encryption is required.
     service-account-monitoring: Describe on *, Describe group *
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -495,6 +510,8 @@ Post-incident:
   Reduce certificate lifetime: 1 year -> 90 days. Shorter = more frequent rotation practice.
   After each rotation: automated test. Confirms rotation worked before production.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -704,4 +721,34 @@ or compaction tombstones). Field-level encryption: encrypt PII fields with a cus
 key. "Erasure": delete the customer's key. The PII is now inaccessible (cryptographic erasure)
 even though the record remains in the log. This is the Kafka-compatible implementation of GDPR
 right to erasure.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

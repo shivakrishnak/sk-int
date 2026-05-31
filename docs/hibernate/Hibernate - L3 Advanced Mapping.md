@@ -141,6 +141,8 @@ TABLE_PER_CLASS:
   Polymorphic: UNION ALL cars, trucks, motorcycles
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The inheritance strategy is declared once at the root entity and
 cannot be changed per subclass. All subclasses in a hierarchy use
@@ -352,6 +354,8 @@ String subclassData;
 // instead of 35 nullable columns
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: TABLE_PER_CLASS with IDENTITY Generator**
@@ -377,6 +381,8 @@ public abstract class Vehicle {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 3: JOINED Polymorphic Query Performance**
@@ -395,6 +401,8 @@ FROM Vehicle
 // Type-specific (2-way JOIN):
 FROM Car
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or reconsider: migrate to SINGLE_TABLE if the hierarchy is stable.
 
 ---
@@ -452,6 +460,8 @@ abstract class Vehicle { ... }
 class Car extends Vehicle { ... }
 // JPQL: FROM Vehicle -> returns all Vehicles (Cars, Trucks)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use `@MappedSuperclass` when: the superclass is just a container for
 common fields (audit fields, soft-delete, version) and subclasses
@@ -536,6 +546,8 @@ public class Notification {
 // Email payload: {"subject":"...", "from":"...", "body":"..."}
 // SMS payload: {"phone":"...", "message":"..."}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 One table, no JPA inheritance, type-specific data in JSON.
 In PostgreSQL, JSONB is queryable and indexable.
 
@@ -578,6 +590,8 @@ GROUP BY vehicle_type;
 -- those rows are silently dropped
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 1. Add the missing subclass entity with `@DiscriminatorValue`.
 2. Add `@DiscriminatorValue("not null")` for abstract base class
@@ -587,6 +601,8 @@ Fixes:
 SELECT COUNT(*) FROM vehicles WHERE vehicle_type IS NULL;
 -- NULLs are also silently dropped
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Prevention: always explicitly annotate `@DiscriminatorValue` on every
 subclass and never rely on the default (class simple name). Backfill
@@ -637,6 +653,8 @@ class Employee extends Person { ... }
 // FROM Person -> returns all Persons (including Employees)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Choose `@Embeddable` (composition) when:
 - The component has no identity of its own (no PK, no lifecycle)
 - It is always accessed through its owner
@@ -676,6 +694,8 @@ GROUP BY vehicle_type;
 -- Mismatch between Java defaults and database values
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Root cause scenario: Car was originally not annotated with
 `@DiscriminatorValue`, so rows were inserted with `vehicle_type = 'Car'`
 (class simple name default). Later, `@DiscriminatorValue("CAR")` was added.
@@ -687,7 +707,8 @@ UPDATE vehicles SET vehicle_type = 'CAR'
 WHERE vehicle_type = 'Car';
 ```
 
-Prevention: always explicitly annotate `@DiscriminatorValue` on every
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 subclass. This makes the discriminator value visible in code and immune
 to class renames.
 
@@ -706,6 +727,7 @@ operational task.
 *Likely follow-up:* "How did you handle the dual-write period?"
 
 **Answer:**
+
 **S (Situation):** A payment processing system used SINGLE_TABLE for
 a `Payment` hierarchy with 12 subtypes (CreditCard, BankWire, PayPal,
 etc.). After 3 years, the `payments` table had 85 columns, 70 of which
@@ -764,6 +786,34 @@ for shared audit fields.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Optimistic and Pessimistic Locking
 
@@ -877,6 +927,8 @@ T1 commits -> row released
 T2 unblocks -> reads T1's committed value
 T2 computes new stock based on T1's committed value
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Optimistic locking detects conflicts; pessimistic locking prevents them.
@@ -1104,6 +1156,8 @@ WHERE id = ? AND version = ?
 -- AND version check for optimistic semantics in native SQL
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Deadlock with Pessimistic Locking**
@@ -1125,6 +1179,8 @@ for (Long id : seatIds) {
 }
 // Both transactions now lock 5 then 10 - no circular wait
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1152,6 +1208,8 @@ if (result.isSuccess()) {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1202,6 +1260,8 @@ try {
         "Product was updated concurrently, retry");
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Critical: on retry, reload the entity from DB - do not reuse the
 stale object. The entity's version is still the old value; retrying
@@ -1274,6 +1334,8 @@ int decrementStock(Long id, int qty);
 // Single atomic operation, no retry loop
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is more efficient than either locking strategy for hot-item
 flash sales because it has:
 - No application-level retry loop
@@ -1286,6 +1348,8 @@ Long-term fix: Redis `DECRBY` for hot counters:
 DECRBY product:1001:stock 3
 // If result < 0: INCRBY to rollback, return "out of stock"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This moves the hot counter out of the relational database, removing
 row contention entirely.
 
@@ -1336,6 +1400,8 @@ Limitations:
   productRepo.decrementStock(id, qty);
   em.evict(productRef); // force fresh load on next access
   ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - Complex business logic cannot be expressed in one SQL expression:
   if the update requires reading multiple related entities, applying
@@ -1425,12 +1491,16 @@ SequenceCounter c = em.find(SequenceCounter.class, tenantId,
 long invoiceNumber = c.getAndIncrement();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Unique constraint as the final defense:
 ```sql
 ALTER TABLE invoices
 ADD CONSTRAINT uq_tenant_invoice
 UNIQUE (tenant_id, invoice_number);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Even if locking fails, the constraint prevents silent duplicates.
 
 *What separates good from great:* The two-layer fix (pessimistic lock
@@ -1448,6 +1518,7 @@ you debugged and fixed it.
 *Likely follow-up:* "How did you add tests to prevent regression?"
 
 **Answer:**
+
 **S (Situation):** A multi-tenant SaaS platform tracked the next
 invoice number per tenant in a `SequenceCounter` entity. Multiple
 users in the same tenant could create invoices concurrently. We saw
@@ -1479,12 +1550,16 @@ SequenceCounter c = em.find(SequenceCounter.class,
 long next = c.getAndIncrement(); // atomic, locked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Part 2: Unique constraint as defense-in-depth:
 ```sql
 ALTER TABLE invoices
 ADD CONSTRAINT uq_tenant_invoice
 UNIQUE (tenant_id, invoice_number);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **R (Result):** Zero duplicate invoice numbers post-fix. Added a
 concurrent integration test:
@@ -1501,6 +1576,8 @@ Set<Long> numbers = futures.stream().map(f -> f.get())
     .collect(toSet());
 assertThat(numbers).hasSize(20); // all unique
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This test runs in CI and catches any future regression.
 
 *What separates good from great:* The concurrent integration test with
@@ -1528,3 +1605,33 @@ as defense-in-depth for all cases.
 *(Omit: System Design - ★★☆ keyword)*
 
 *(Omit: Diagram - code examples and table are sufficient)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

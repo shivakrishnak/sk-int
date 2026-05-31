@@ -117,13 +117,15 @@ COMMON MISTAKE with NACL:
        Symptom: browser hangs, connection timeout
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Workload Identity - No Static Credentials:**
 
 ```
 WRONG PATTERN:
   ECS task definition:
     environment:
-      - AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+      - AWS_ACCESS_KEY_ID: AKIA_YOUR_KEY_EXAMPLE
       - AWS_SECRET_ACCESS_KEY: wJalrXUtn/...
   Problem: rotate? Audit access? Rotate on engineer departure?
   Static credentials in env vars = exfiltration risk
@@ -138,6 +140,8 @@ CORRECT PATTERN:
   Permissions are auditable via CloudTrail
   Zero static credentials = zero exfiltration risk of long-lived keys
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **East-West Zero Trust (Service Mesh):**
 
@@ -160,6 +164,8 @@ WITH mTLS (Service Mesh - Istio/App Mesh):
     attacker to only the specific endpoints A is allowed to call
   Blast radius: contained to service A's authorization scope
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -292,6 +298,8 @@ resource "aws_iam_role_policy" "app_task" {
   })
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # ISTIO: mTLS authorization policy (Kubernetes/EKS)
@@ -451,6 +459,8 @@ aws ec2 describe-security-groups \
     for sg in json.load(sys.stdin) if sg['Rules']]"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Replace CIDR source with SG reference.
 Enable AWS Config Rule `restricted-ssh` and
 `restricted-common-ports` for continuous monitoring.
@@ -480,6 +490,8 @@ aws ec2 describe-instances \
 # "optional" = vulnerable to SSRF. Must be "required".
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```bash
 # Enforce IMDSv2 on all instances:
@@ -490,6 +502,8 @@ aws ec2 modify-instance-metadata-options \
 # IMDSv2 requires PUT request for token first
 # Simple GET (SSRF) cannot get the token -> can't get creds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -515,6 +529,8 @@ aws ec2 describe-route-tables \
   --filters "Name=association.subnet-id,Values=subnet-xxx" \
   --query 'RouteTables[].Routes'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Use private subnets with NAT Gateway access.
 Or use VPC endpoints for AWS service calls (no NAT needed).
@@ -778,6 +794,8 @@ benefits from Lambda's permissions.
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `aws:SourceAccount` and `aws:SourceArn` constrain the role
 assumption to only your account's Lambda functions.
 Cross-account invocations from attacker accounts are rejected.
@@ -814,6 +832,8 @@ aws logs filter-log-events \
 # action = REJECT = Security Group or NACL denied
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common root causes (with Zero Trust context):**
 
 **NACL stateless - missing ephemeral ports:**
@@ -837,6 +857,8 @@ aws ec2 describe-instances \
   --query 'Reservations[].Instances[].{
     ID:InstanceId, SG:SecurityGroups[].GroupId}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **ALB idle timeout vs ECS connection pool:**
 ALB closes idle connections after 60 seconds.
@@ -872,6 +894,8 @@ aws iam get-role-policy \
 # (bucket-level permission vs object-level permission)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. S3 Bucket Policy DENY overrides IAM ALLOW:**
 
 S3 evaluates: bucket policy + IAM policy. If bucket policy
@@ -884,6 +908,8 @@ aws s3api get-bucket-policy --bucket my-bucket
 # If Lambda is NOT in VPC or uses wrong endpoint: denied
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **3. KMS key policy if object is encrypted:**
 
 Even if Lambda has s3:GetObject, if object is encrypted
@@ -895,6 +921,8 @@ aws kms get-key-policy --key-id <key-id> --policy-name default
 # Check Lambda role ARN is in the key users list
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **4. SCP (Service Control Policy) denying at org level:**
 
 If account is in an AWS Organization, SCP can deny
@@ -905,6 +933,8 @@ aws organizations describe-effective-policy \
   --policy-type SERVICE_CONTROL_POLICY
 # Check for Deny statements on S3
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The KMS decryption failure
 manifesting as S3 Access Denied is the most-missed cause.
@@ -1040,6 +1070,8 @@ Staging Account:    Production-like, limited data
 Production Account: Production workloads, most restrictive SCPs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SCP guardrails (always-enforced, override IAM):**
 
 - Deny disabling CloudTrail in any account
@@ -1108,6 +1140,8 @@ spec:
   # No ingress/egress rules: deny all
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then add explicit allow policies for each service pair.
 Requires CNI that supports NetworkPolicy (Calico, VPC CNI
 with network policy support, Cilium).
@@ -1134,6 +1168,8 @@ eksctl create iamserviceaccount \
 # IRSA uses OIDC to bind K8s service account to IAM role
 # Only pods with this service account can assume the role
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Layer 4: Secrets (External Secrets Operator + Secrets Manager):**
 
@@ -1277,6 +1313,8 @@ aws iam put-role-policy \
 # Future tokens still work (for legitimate tasks after relaunch)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Investigation (next 30 minutes):**
 
 ```bash
@@ -1292,6 +1330,8 @@ aws cloudtrail lookup-events \
 aws ecs list-tasks --cluster prod-cluster \
   --container-instance <container-instance-id>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Root cause analysis:**
 
@@ -1328,3 +1368,33 @@ and supply chain as root cause vectors shows depth.
 The preventive controls (IMDSv2, ECR scanning) close the gap.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

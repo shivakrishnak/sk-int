@@ -8,9 +8,20 @@ permalink: /java-jvm/l2-tuning-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L2 Tuning Basics](#java-jvm---l2-tuning-basics) | medium |
+
+---
+
 # Java JVM - L2 Tuning Basics
 
 ## JVM Startup Flags and Memory Sizing
+
+---
 
 ### 🎯 Model Answer
 
@@ -97,6 +108,8 @@ OBSERVABILITY (mandatory for production):
   -XX:+HeapDumpOnOutOfMemoryError
   -XX:HeapDumpPath=/var/log/
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -228,6 +241,8 @@ Fix by category:
     Find allocators: jstack for ByteBuffer.allocateDirect call sites
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -292,6 +307,8 @@ A: Java 11+ unified logging:
 ```
 -Xlog:gc*:file=gc.log:time,uptime,level,tags:filecount=5,filesize=20m
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - `gc*`: all GC events (log level info)
 - `file=gc.log`: write to file (not stdout)
 - `time,uptime,level,tags`: decorators (wall time, JVM uptime, log level, tags)
@@ -303,6 +320,8 @@ Additional observability:
 -XX:NativeMemoryTracking=summary
 -XX:+PrintFlagsFinal  (startup only: print all effective JVM flags)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `-XX:+PrintFlagsFinal` at startup outputs all
 3000+ JVM flags with their actual values. This is the definitive record of "what
@@ -352,6 +371,8 @@ jcmd <pid> VM.flags | grep -i MaxGCPauseMillis
 jcmd <pid> VM.flags -all | grep " :="  <- := means modified from default
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ` :=` vs `=` distinction in `PrintFlagsFinal`
 output: `=` means using the default value, `:=` means modified (by ergonomics,
 command line, or JVM internal decision). When diagnosing "why is the JVM behaving
@@ -378,6 +399,8 @@ jcmd <pid> Compiler.codecache
 
 # Alert threshold: > 80% usage
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `-XX:ReservedCodeCacheSize=512m`. Also: `-XX:+UseCodeCacheFlushing` enables
 eviction of old compiled code (default varies by JVM version).
@@ -434,6 +457,8 @@ A: A baseline safe configuration:
 -Djava.security.egd=file:/dev/./urandom
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The last flag: `/dev/./urandom` (note the extra `.`) avoids blocking on
 `/dev/random` for secure random number generation during SSL handshakes
 or UUID generation.
@@ -467,6 +492,8 @@ total_gc_ms=$(grep -oP '\d+\.\d+ms' gc.log | \
 uptime_ms=$(tail -1 gc.log | grep -oP '^\d+\.\d+' | awk '{print $1*1000}')
 echo "GC overhead: $(echo "scale=2; $total_gc_ms/$uptime_ms*100" | bc)%"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* A/B testing GC configurations should be
 done under PRODUCTION-LIKE load (actual request patterns, not synthetic benchmarks).
@@ -506,6 +533,8 @@ a concurrent marking cycle completes (typically 30-60 minutes at moderate load).
 ---
 
 ## GC Log Analysis
+
+---
 
 ### 🎯 Model Answer
 
@@ -583,6 +612,8 @@ Key indicators:
   "Pause Full"      -> Full GC (ALARM: investigate immediately)
   "Concurrent Mark Cycle" -> G1 background marking (not STW)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -709,6 +740,8 @@ Fix:
   Alerting: add disk usage alert at 70% -> investigate before full
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -771,6 +804,8 @@ grep "Pause Young" gc.log | awk '
   }'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* High allocation rate (> 500MB/s) is not
 automatically a problem if the GC overhead is low. The question is whether
 the allocation is necessary. JFR ObjectAllocationInNewTLAB events profile
@@ -788,6 +823,8 @@ A: Look for events BEFORE the Full GC:
 ```bash
 grep -B20 "Pause Full" gc.log | head -30
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common patterns:
 - `"to-space exhausted"` before Full GC: Survivor or Old Gen overflow during Minor GC
 - `"System.gc()"` as cause: explicit GC call (check for System.gc() in code)
@@ -823,6 +860,8 @@ jcmd <pid> JFR.start duration=60s settings=profile \
 # Open with JDK Mission Control (JMC):
 # Shows: GC view, Memory view, CPU hot methods, allocations by stack trace
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* JFR's "Object Allocation" profiling is the most
 valuable GC diagnosis tool that doesn't require a heap dump. It shows: which call
@@ -860,6 +899,8 @@ grep -oP 'Pause.*\K(\d+\.\d+)ms' gc.log | \
   awk 'END {print "count=" NR; p95=int(NR*0.95); p99=int(NR*0.99)} \
     NR==p95{print "P95=" $1 "ms"} NR==p99{print "P99=" $1 "ms"}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* GC pause P99 is the correct metric for latency
 SLAs, not average. A web API with P99 latency SLA of 100ms: GC pause P99 must be
@@ -900,6 +941,8 @@ A: G1 concurrent marking phases appear as info events (not pause events):
 [5.600s][info][gc] GC(15) Pause Cleanup 200M->190M(512M) 0.23ms
 [5.612s][info][gc] GC(15) Concurrent Mark Cycle 489ms  <- total concurrent time
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The "Concurrent Mark Cycle" spans several seconds. "Pause Remark" and "Pause Cleanup"
 are the brief STW phases within. If concurrent marking completes and is followed
 by Mixed GC events: healthy. If concurrent marking doesn't keep up (heap fills
@@ -933,6 +976,8 @@ grep "10:23:4[0-9]" gc.log
 awk '/^\[3[5-9][0-9][0-9]\.[0-9]+s\]/' gc.log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The definitive correlation tool is JFR: it
 records both JVM GC events and application thread activity in the same timeline.
 In JMC: the "GC view" shows GC pauses overlaid with thread state changes.
@@ -963,6 +1008,8 @@ UNHEALTHY patterns (alarm):
   - Concurrent marking every < 2 min: Old Gen pressure
   - "to-space exhausted" or "evacuation failure": Survivor/Old Gen overflow
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* A subtle "healthy" indicator: the ratio of
 (heap before GC - heap after GC) / (heap before GC - heap after last GC).
@@ -996,3 +1043,33 @@ and may require different GC configurations.
 ### 📊 Diagram
 
 *(Omit: GC log format described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

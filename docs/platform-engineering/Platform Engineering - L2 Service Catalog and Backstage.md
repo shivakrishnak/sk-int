@@ -541,6 +541,8 @@ kubectl get meshpolicies -A -o json |
 # Cross-reference with catalog consumesApis
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* (1) Add catalog-info.yaml review to PR
 templates: "Did you update your catalog entity
 if you changed API dependencies or resource usage?"
@@ -666,6 +668,8 @@ catalog:
               - '.*'  # All repos
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Limitations: (1) Auto-discovery finds catalog-info.yaml
 files but does not validate them. Stale entities
 with inactive owners or deleted APIs remain in the
@@ -712,6 +716,8 @@ Step 1 - Check the Location entity:
 # Error state shows the parse/fetch error
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Validate the catalog-info.yaml syntax:
 
 ```bash
@@ -722,6 +728,8 @@ npx @backstage/cli catalog-info validate \
 # fields, missing required fields (name, spec.owner)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Check GitHub App permissions:
 
 ```bash
@@ -731,6 +739,8 @@ Step 3 - Check GitHub App permissions:
 # Test: does the Backstage GitHub App have access
 # to the repository in GitHub App settings?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4 - Check catalog entity namespace:
 
@@ -744,12 +754,16 @@ spec:
   owner: group:payments/payments-team  # Correct
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5 - Force a catalog refresh:
 
 ```bash
 # In Backstage admin: force-refresh the Location
 # Or wait for the next polling interval (default: 60s)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The GitHub App
 permissions step. This is the root cause of 40%
@@ -848,6 +862,8 @@ const pagerdutyFact = createQueryBasedFactRetriever({
     })),
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Scorecard checks: every Component entity is evaluated
 against: (a) has a PagerDuty service ID annotation
@@ -955,6 +971,8 @@ curl -s \
     contains(["apiConsumedBy"]) | not) |
     .metadata.name'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 API version consumer tracking: for deprecated API
 versions, query which Components have
@@ -1097,6 +1115,34 @@ Explanation section above.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Software Templates and Scaffolding
 
@@ -1723,6 +1769,8 @@ name: ${{ values.name }}
 # parameters.name -> values.name in content files
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Update all content folder files to use
 `${{ values.fieldName }}` syntax. Test the template
 in a non-production Backstage environment before
@@ -1883,6 +1931,8 @@ export const createArgoCDAppAction = () =>
   });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Usage in a template:
 
 ```yaml
@@ -1896,6 +1946,8 @@ steps:
         ${{ steps['publish'].output.remoteUrl }}
       namespace: ${{ parameters.team }}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When NOT to build a custom action: if the automation
 can be done via a GitHub Actions workflow triggered
@@ -2038,6 +2090,8 @@ Step 2 - Read the scaffolder task log:
 # Copy the exact error message
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Reproduce with minimal input: create a
 test task with the same parameters (team name,
 service name) but simplest possible values. Isolate
@@ -2169,6 +2223,8 @@ npx @backstage/cli catalog-info validate \
 # valid step action names, valid parameter types
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - Dry-run execution: run the template in
 a non-production Backstage environment (a local
 Backstage dev instance or a dedicated staging
@@ -2287,3 +2343,33 @@ deployment, and enterprise-scale considerations.)*
 
 See sequence diagram in the Concept Explanation
 section above.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

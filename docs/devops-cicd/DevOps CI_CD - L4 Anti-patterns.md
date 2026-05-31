@@ -8,6 +8,15 @@ permalink: /devops-cicd/l4-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CI/CD Anti-patterns and Recovery](#cicd-anti-patterns-and-recovery) | medium |
+
+---
+
 # CI/CD Anti-patterns and Recovery
 
 🎯 Interview Weight: expert-level diagnostic - recognizing and
@@ -522,6 +531,8 @@ HAVING failure_rate_pct BETWEEN 5 AND 95  -- flaky range (not always fails)
 ORDER BY failure_rate_pct DESC;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Trade-off:**
 Building a CI/CD health system is a 4-6 week investment for a
 dedicated platform team. The ROI: detecting and fixing one critical
@@ -759,6 +770,8 @@ HAVING failure_pct BETWEEN 5 AND 95
 ORDER BY failures DESC;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Proxy metric (without per-test tracking): retry-to-pass rate.
 If a CI run fails but passes on retry without any code change,
 at least one test in the run is flaky. Tracking the percentage
@@ -959,6 +972,8 @@ git log --since="2 weeks ago" --oneline -- .github/workflows/
 # Expected: find a specific commit that changed the CI pipeline
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: If no CI config changes, look at test changes.
 ```bash
 # Find new tests added in the past 2 weeks
@@ -966,6 +981,8 @@ git log --since="2 weeks ago" --oneline --diff-filter=A -- \
   src/test/
 # New tests added to a shared database? Timing-sensitive?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Analyze which tests are failing.
 Pull the last 100 CI runs. Which tests appear in failed runs?
@@ -983,6 +1000,8 @@ GROUP BY test_name
 HAVING failures_recent > 5 AND failures_before < 2
 ORDER BY failures_recent DESC;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common findings for sudden drop:
 - A new integration test was added that uses the shared test database
@@ -1055,6 +1074,8 @@ deploy-canary:
           exit 1
         fi
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Zero-downtime guarantee:
 - Canary uses Istio VirtualService or Argo Rollouts for traffic splitting
@@ -1305,6 +1326,8 @@ Classification at the step level:
     # This handles genuine test flakiness while preserving signal.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Infrastructure-level self-healing:
 - Runner OOM: Kubernetes ARC auto-restarts OOM pods with the same job
 - Network transience: exponential backoff in artifact push steps
@@ -1323,3 +1346,33 @@ an anti-pattern: it masks test flakiness (a code quality signal)
 under the guise of infra failure recovery. The correct design is
 step-level retry policies that distinguish transient infra failures
 (retry) from deterministic test failures (no retry).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

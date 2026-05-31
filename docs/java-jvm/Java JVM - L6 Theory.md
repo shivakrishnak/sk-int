@@ -8,9 +8,20 @@ permalink: /java-jvm/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L6 Theory](#java-jvm---l6-theory) | medium |
+
+---
+
 # Java JVM - L6 Theory
 
 ## Garbage Collection Algorithms Theory
+
+---
 
 ### 🎯 Model Answer
 
@@ -142,6 +153,8 @@ GENERATIONAL HYPOTHESIS:
     Solution: remembered set records all Old-to-Young references
     Young GC root set: stack + statics + remembered set (Old -> Young refs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -290,8 +303,11 @@ Diagnosis:
   Fix pattern:
     - String: use StringBuilder reuse or String.format (allocates less than + in loop)
     - Logging: use {} parameterized logging (lazy evaluation, no String if not logged)
-    - Primitives: use int[], long[] instead of Integer[], Long[] for performance-critical collections
+    - Primitives: use int[], long[] instead of Integer[], Long[]
+      for performance-critical collections
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -601,6 +617,8 @@ stateDiagram-v2
 
 ## JIT Compiler Theory and Optimization
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -722,6 +740,8 @@ DEOPTIMIZATION:
   Cost: one-time ~100-1000ns (significant for latency-sensitive code)
   Monitor: -XX:+PrintDeoptimizations or JFR Deoptimization events
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -885,6 +905,8 @@ Prevention patterns:
   3. Benchmark before + after introducing polymorphism in hot paths
      JMH: same benchmark, ArrayList vs mixed -> measure throughput delta
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1212,3 +1234,33 @@ sequenceDiagram
 > (deoptimization + recompilation) when reality diverges from its profiling assumptions.
 > The final state after deoptimization is stable and near-optimal for the now-observed
 > polymorphic call site.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

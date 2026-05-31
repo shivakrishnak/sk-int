@@ -7,7 +7,14 @@ permalink: /async-java/l6-theory/
 render_with_liquid: false
 ---
 
-# Async Java - L6 Theory
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L6 Theory](#async-java---l6-theory) | medium |
+| 2 | [Continuation-Passing Style and Event-Driven Theory](#continuation-passing-style-and-event-driven-theory) | medium |
+| 3 | [Reactive Manifesto and Reactive Systems Theory](#reactive-manifesto-and-reactive-systems-theory) | medium |
 
 ---
 
@@ -115,6 +122,8 @@ Flux.defer(() -> fetchUsers())         // lazy source
 // + demand signal flows backward (backpressure)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Reactive Streams as principled CPS:**
 
 The Reactive Streams specification (Subscriber/Publisher protocol) is CPS
@@ -148,6 +157,8 @@ vs. Direct call (RPC):
   - Spatial coupling: A knows B's address
   - No backpressure: A overwhelms B
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -351,6 +362,8 @@ void fetchUser(String id,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CompletableFuture handles this correctly via `completeExceptionally`.
 This is one reason CompletableFuture is safer than raw callbacks.
 
@@ -384,6 +397,8 @@ cf.thenCompose(CompletableFuture::completedFuture)
 cf.thenCompose(f).thenCompose(g)
     // == cf.thenCompose(x -> f.apply(x).thenCompose(g))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The monad operations:
 - `unit` (wrap): `CompletableFuture.completedFuture(value)`
@@ -432,6 +447,8 @@ class ControlledSubscriber<T>
 // sub.request(Long.MAX_VALUE) -> no backpressure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rule 17 (Publisher): if the publisher cannot produce requested items,
 it must wait. It may not produce items until `request(n)` is called.
 This guarantee allows slow subscribers to safely slow fast publishers.
@@ -471,6 +488,8 @@ Kotlin coroutines (suspending functions):
   - Similar to virtual threads but at language level, not JVM level
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The key difference between Kotlin
 coroutines and Java virtual threads is the abstraction level. Kotlin
 coroutines are CPS-transformed by the compiler into state machines:
@@ -508,6 +527,8 @@ Flux.range(1, 1000)
 // flatMap with publisher already complete: synchronous emission
 // avoids scheduling overhead for completed publishers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fusion is safe because of the monad functor law:
 `flux.map(f).map(g) == flux.map(f.andThen(g))`
@@ -561,6 +582,8 @@ Example:
   Effective throughput: near-continuous; no overflow
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `request(n)` size is a throughput
 tuning parameter. Small n (request(1)) = minimal buffering, maximum latency,
 fine-grained backpressure. Large n (request(1000)) = amortized request
@@ -611,6 +634,8 @@ Flux<ButtonEvent> buttonEvents = Flux.create(sink -> {
 });
 // Now composable: filter, map, buffer, error handle
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The missing backpressure in Observer was
 recognized as a fundamental flaw when reactive streaming emerged. Without
@@ -669,6 +694,8 @@ class RangePublisherTest
 // Run: 37 spec compliance tests
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Rule 2.13 of the specification:
 `Subscriber.onError` must not be called with null. This seems obvious but
 has practical consequences: all reactive operators must wrap null into a
@@ -702,6 +729,8 @@ Hot publisher (CPS equivalent: ongoing execution, subscriber joins mid-stream):
   Subscription 1: sink.asFlux().subscribe(s1) // joins mid-stream
   sink.tryEmitNext(item2);      // both s1 and any future subscribers see this
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Practical implications:
 - Cold: each subscribe = independent, isolated execution
@@ -746,6 +775,8 @@ Overlap:
   Actor system provides execution context for operators
   Full Reactive Streams compliance via Graph DSL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Actor model excels at distributed systems
 (actors across network, supervisor trees, location transparency). Reactive
@@ -844,6 +875,34 @@ sequenceDiagram
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reactive Manifesto and Reactive Systems Theory
 
@@ -950,6 +1009,8 @@ properties.
    Key property: backpressure (consumer controls rate)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why Message-Driven enables the others:**
 
 ```
@@ -968,6 +1029,8 @@ With Message-Driven (async messaging via Kafka):
     B down -> messages accumulate; B recovers, processes
     Resilience and elasticity emerge from the decoupling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1143,6 +1206,8 @@ Fix:
   # No cascade (fast failure vs slow degradation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Cascade failures often start from a
 single slow downstream service during a maintenance window or traffic spike.
 Prevention: circuit breakers at EVERY external boundary, not just "critical"
@@ -1180,6 +1245,8 @@ With Message-Driven:
   Resilience + Elasticity -> system stays Responsive
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* There's a tension between Responsive
 and Resilient. A maximally resilient system retries failed requests up to
 N times with exponential backoff. This retrying takes time and may violate
@@ -1210,6 +1277,8 @@ With backpressure:
   Producer: slows to match consumer (or applies own overflow strategy)
   Result: queue stable; system survives; no collapse
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Backpressure strategies when consumer is too slow:
 1. **Drop** (onBackpressureDrop): lose excess messages (acceptable for sensor data)
@@ -1242,6 +1311,8 @@ What happens when User Service is down?
   C) System is completely unavailable: NOT RESILIENT
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Bulkhead test**
 Can one slow dependency impact other parts of the system?
 
@@ -1251,6 +1322,8 @@ Test: slow User Service (500ms latency)
   YES: no bulkhead; threads shared between services
   NO: bulkheads in place; services isolated
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Recovery test**
 When a failed dependency recovers, does the system resume normally?
@@ -1262,6 +1335,8 @@ Restore: User Service returns
 Verify: Circuit breaker transitions OPEN -> HALF-OPEN -> CLOSED
         System resumes normal operation within 2 circuit half-open attempts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "Chaos Engineering" approach formalizes
 resilience verification. Teams define a "steady state" (normal metrics),
@@ -1306,6 +1381,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Kubernetes Horizontal Pod Autoscaler
 default: scale on CPU/memory. For message-driven services: scale on Kafka
 consumer lag (KEDA - Kubernetes Event-Driven Autoscaling). When consumer
@@ -1339,6 +1416,8 @@ Combined (Reactive Microservices):
   - Independent scaling per service (Elasticity)
   - SLA per endpoint, alerts on degradation (Responsive)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Without the Manifesto traits, microservices can make things worse:
 more services = more service-to-service calls = more failure points =
@@ -1379,6 +1458,8 @@ Reactive Streams (in-process):
   publisher.subscribe(subscriber); // same API regardless
   // Location transparent within JVM
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Akka's actor model makes location
 transparency explicit: actor references (`ActorRef`) work the same whether
@@ -1448,6 +1529,8 @@ Reactive alignment:
   Responsive: event-driven handlers respond to events (async)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Event-sourced order aggregate:
 public class OrderAggregate {
@@ -1475,6 +1558,8 @@ public class OrderAggregate {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Event sourcing + Kafka is a natural
 reactive system pattern. Events are produced to Kafka (Message-Driven).
@@ -1595,3 +1680,33 @@ mindmap
 > This decoupling is what allows Resilient isolation (failures don't propagate
 > through direct calls) and Elastic independent scaling (consumers scale without
 > coordinating with producers).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

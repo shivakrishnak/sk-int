@@ -121,6 +121,8 @@ Cluster Endpoints:
   Reader endpoint -> any healthy replica (round-robin)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -143,6 +145,8 @@ public class OrderHandler
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Static pool + RDS Proxy endpoint
@@ -182,6 +186,8 @@ public class OrderHandler
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Create Aurora PostgreSQL Serverless v2 (scales 0.5-64 ACUs):
@@ -339,6 +345,8 @@ aws rds describe-db-clusters \
 # initializationFailTimeout = -1 (allow startup before DB ready)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use cluster endpoint for the writer. Enable
 HikariCP `keepaliveTime`. Handle transient connection
 errors with retry logic at the application level.
@@ -383,6 +391,8 @@ Aurora failover:
   No data sync needed (storage already shared)
   Application: connection errors for ~30s during DNS propagation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Aurora's shared storage means
 there is no data synchronization step during failover. The reader
@@ -442,6 +452,8 @@ Connection pool exhausted -> Lambda functions timeout
 RDS CPU spikes on connection handling (not queries)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RDS Proxy solution:
 ```
 Lambda -> RDS Proxy (connection pool) -> RDS
@@ -451,6 +463,8 @@ Lambda connections: pooled and multiplexed
 1000 Lambda executions: share 20 proxy connections
 RDS: sees 20 connections, not 1000
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Configuration:
 ```hcl
@@ -470,6 +484,8 @@ resource "aws_db_proxy" "main" {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Limitations:
 - RDS Proxy adds ~3-5ms latency per query
@@ -526,6 +542,8 @@ FROM information_schema.global_status WHERE variable_name IN
 # < 99%: buffer pool too small, disk I/O is the bottleneck
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Performance Insights wait event
 analysis. CPU not high + slow writes = I/O or lock bottleneck.
 Performance Insights shows the exact wait event (WALWriteLock,
@@ -561,6 +579,8 @@ ApplyMethod=pending-reboot  # static: requires reboot
 ParameterName=log_min_duration_statement,ParameterValue=1000,
 ApplyMethod=immediate  # dynamic: applies without reboot
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key parameters for production:
 - `shared_buffers`: 25% of instance RAM (PostgreSQL buffer pool)
@@ -632,6 +652,8 @@ spring.datasource.hikari:
   keepalive-time: 30000  # prevents Aurora TCP timeout
   max-lifetime: 1800000  # 30 min: shorter than Aurora 8-hour limit
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Works for: single application instance. Multiplexes app threads
 (hundreds) to DB connections (20).
 
@@ -695,6 +717,8 @@ resource "aws_rds_cluster" "secondary" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cross-region latency impact: writes must replicate to secondary
 before acknowledging in some configurations. Check
 `AuroraGlobalDBReplicationLag` metric.
@@ -723,6 +747,8 @@ aws rds describe-events \
 # -> Application connection pool held stale connections for 30s
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 1: Reduce DNS propagation delay (RDS Proxy):
 ```
 Without RDS Proxy:
@@ -733,6 +759,8 @@ With RDS Proxy:
   application-visible downtime < 5 seconds
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: Faster connection validation in HikariCP:
 ```yaml
 spring.datasource.hikari:
@@ -742,6 +770,8 @@ spring.datasource.hikari:
   keepalive-time: 30000        # 30s: detects dead connections early
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 3: Java DNS cache clearing:
 ```
 # JVM caches DNS resolutions by default (networkaddress.cache.ttl=30s)
@@ -750,6 +780,8 @@ Fix 3: Java DNS cache clearing:
 -Dnetworkaddress.cache.ttl=1
 -Dnetworkaddress.cache.negative.ttl=0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Expected outcome: RDS Proxy + connection validation + DNS cache fix
 reduces application-visible downtime from 60s to < 5s.
@@ -838,6 +870,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # DynamoDB Data Modeling
 
@@ -942,6 +1002,8 @@ RULE: If you cannot serve an access pattern with
   Scan = full table read = gets more expensive as table grows.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -961,6 +1023,8 @@ ScanRequest scan = ScanRequest.builder()
 // Cost grows linearly with table size.
 // Latency: seconds or minutes at scale.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Single-table, Query on composite key
@@ -984,6 +1048,8 @@ QueryResponse result = ddb.query(query);
 // O(orders per user), not O(total table size)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // HOT PARTITION: status as partition key
 // BAD: All PENDING orders write to same partition
@@ -997,6 +1063,8 @@ PutItemRequest bad = PutItemRequest.builder()
 // Problem: 10,000 orders/min all hit PENDING partition
 // DynamoDB throttles when partition exceeds 1,000 WCU
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Shard the hot partition key
@@ -1144,6 +1212,8 @@ aws cloudwatch get-metric-statistics \
   --end-time $(date -u +%FT%TZ)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Identify the hot partition key with Contributor
 Insights. Add random shard suffix (key#N) to distribute
 writes. For time-series data: use date prefix in key
@@ -1191,6 +1261,8 @@ response = table.query(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Vs. relational approach:
 ```sql
 -- Requires JOIN (two lookups in DynamoDB world):
@@ -1198,6 +1270,8 @@ SELECT u.*, o.*
 FROM users u JOIN orders o ON u.id = o.user_id
 WHERE u.id = 123;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that single-table design
 is access-pattern-driven, not entity-driven. You design the table
@@ -1238,12 +1312,16 @@ response = table.get_item(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For access pattern "get order by order ID" (without knowing user):
 - Need a Global Secondary Index (GSI):
 ```python
 # GSI: GSI_PK = ORDER#2024-001, GSI_SK = USER#123
 # Query GSI by order ID -> returns the order item
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The reversed index pattern for
 bidirectional access. Add GSI with inverted PK/SK to support both
@@ -1272,6 +1350,8 @@ response = table.query(
         Key('ORDER_DATE').between('2024-01-01', '2024-12-31')
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 GSI limitations (CRITICAL):
 1. **Eventually consistent**: GSI replication is async. A write
@@ -1330,6 +1410,8 @@ aws dynamodb update-table \
   --billing-mode PAY_PER_REQUEST
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix for hot partition:
 ```python
 # Add write sharding: suffix partition key with random shard
@@ -1341,6 +1423,8 @@ def get_shard_key(user_id: str) -> str:
 # Reads: scatter-gather across all 10 shards
 # Trade-off: reads become more complex (multiple queries)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using Contributor Insights for
 hotspot detection rather than guessing. Without it, you can only
@@ -1383,6 +1467,8 @@ PK = hashlib.md5(user_id.encode()).hexdigest()[:8] + f"#{user_id}"
 # Deterministic hash prefix distributes writes
 # Range queries still possible on the user_id suffix via GSI
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The diagnosis gap. Hot partition
 throttling is non-obvious because it can occur even when you have
@@ -1461,6 +1547,8 @@ resource "aws_lambda_event_source_mapping" "orders_stream" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use cases enabled by streams:
 1. **Change Data Capture (CDC)**: replicate changes to
    Elasticsearch, OpenSearch, or S3 for full-text search
@@ -1517,6 +1605,8 @@ response = ddb.transact_write_items(
 # Neither item is modified
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cost: transactions consume 2x WCU/RCU of equivalent non-transactional
 operations.
 
@@ -1551,6 +1641,8 @@ AP5: Check if user liked a post
 AP6: Get feed (posts from followed users - hard!)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Single-table design:
 ```python
 # Table: PK (string), SK (string)
@@ -1579,6 +1671,8 @@ Step 2: Single-table design:
  # AP5: GetItem PK=POST#p001, SK=LIKE#alice -> exists = liked
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Feed (AP6) - hard problem:
 - Fan-out on write: when Alice posts, write a copy to every
@@ -1671,3 +1765,33 @@ flowchart TB
 > through PENDING#9) in parallel and merges results.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

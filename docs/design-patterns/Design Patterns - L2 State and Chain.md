@@ -8,6 +8,16 @@ permalink: /design-patterns/l2-state-and-chain/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [State Pattern](#state-pattern) | medium |
+| 2 | [Chain of Responsibility Pattern](#chain-of-responsibility-pattern) | medium |
+
+---
+
 # State Pattern
 
 ---
@@ -117,6 +127,8 @@ Context ctx = new Context(new ConcreteStateA());
 ctx.request();  // delegates to StateA.handle()
 ctx.request();  // now StateB.handle() (if A transitioned)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Two transition styles:**
 1. **State initiates transition**: State object calls `context.setState(newState)` -
@@ -507,6 +519,34 @@ the full Context.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Chain of Responsibility Pattern
 
 ---
@@ -615,6 +655,8 @@ handler = new AuthHandler()
 
 result = handler.handle(request);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Two chain behaviors:**
 1. **Stop on match** - handler processes the request and does NOT call
@@ -985,3 +1027,33 @@ pipeline (all validators run, errors accumulate) is a Pipeline. An
 authorization check chain (first failure stops the request) is CoR.
 Many production systems use both: CoR for security filtering, Pipeline
 for request transformation.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

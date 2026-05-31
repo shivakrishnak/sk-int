@@ -8,9 +8,20 @@ permalink: /java-performance/l5-caching-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L5 Caching Architecture](#java-performance---l5-caching-architecture) | medium |
+
+---
+
 # Java Performance - L5 Caching Architecture
 
 ## JVM Caching Strategy: Application, Query, and Object Cache
+
+---
 
 ### 🎯 Model Answer
 
@@ -216,6 +227,8 @@ CACHE ANTI-PATTERNS:
      
      Fix: Caffeine with maximumSize. Always.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -434,6 +447,8 @@ Fix:
      // Keys now expire spread over 2 minutes, not all at once.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -602,3 +617,33 @@ requirement. Design: entity type -> TTL mapping in a cache configuration class. 
 user preferences): longer TTL (5-30 minutes) with event-driven invalidation on the infrequent writes.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

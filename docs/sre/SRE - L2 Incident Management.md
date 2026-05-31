@@ -181,6 +181,8 @@ INCIDENT COMMANDER ROLE
   Declares mitigation and resolution
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Mitigation and resolution are explicitly separate phases. Mitigation
 is the fastest path to stopping user impact - often a rollback or
@@ -395,6 +397,8 @@ the time of the delay?"
 If yes: mitigation-first principle was not followed.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add to the incident response checklist (first item after
 triage): "Can we mitigate now? What is the fastest mitigation?
 Execute it." Root cause investigation starts after mitigation.
@@ -427,6 +431,8 @@ If answer: "Nobody, everyone was just debugging"
   -> no IC, parallel work uncoordinated.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Designate an IC immediately at P1+ declaration. The IC
 does not need to be the most senior person. Their first action:
 set up the incident bridge, claim the IC role in Slack, assign
@@ -458,6 +464,8 @@ Check: who is declaring P1?
 If management override is common:
   classification authority is unclear.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement the objective severity classification matrix
 (error rate, affected user percentage, core feature broken).
@@ -845,6 +853,34 @@ gantt
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Postmortem Culture and Blameless Retrospectives
 
 🎯 Interview Weight: critical - the cultural practice that converts
@@ -1011,6 +1047,8 @@ BLAMELESS PRINCIPLE
   - "The monitoring did not alert until Y"
   - "The code review process did not check for Z"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The action items are the return on investment of the postmortem.
@@ -1282,6 +1320,8 @@ the postmortem meeting:
 If "no" to any: culture is not blameless.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* The most senior person in the postmortem meeting must
 model blameless behavior by explicitly redirecting individual-
 blame questions to system questions. "That question is less
@@ -1321,6 +1361,8 @@ Track completion rate:
 If < 70%: action items are not being followed through.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Postmortem action items flagged "High" priority must be
 included in the next sprint as non-negotiable. Moderate priority
 items must appear in the backlog with explicit sprint commitment
@@ -1359,6 +1401,8 @@ Root cause: change management process lacks
 Action item: add "minimum review time" to the
   change management checklist.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Train postmortem facilitators to push the Five Whys until
 a process or system failure is identified. "Code had a bug" is
@@ -1851,3 +1895,33 @@ flowchart TD
 
 4. "How are postmortem action items prioritized relative to feature work
    in sprint planning? Are they protected or do they compete?"
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

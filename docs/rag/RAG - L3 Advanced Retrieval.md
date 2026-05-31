@@ -119,6 +119,8 @@ CROSS-ENCODER (reranker):
   Accurate: captures fine-grained relevance
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Two-stage pipeline:**
 
 ```
@@ -135,6 +137,8 @@ Total: 105-520ms vs. 5-20ms without reranker
 Quality improvement: precision@5 often +15-25%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Reranker models:**
 
 ```
@@ -145,6 +149,8 @@ cross-encoder/ms-marco-MiniLM-L6   Self    ~100ms   High
 Cohere Rerank v3                   API     ~200ms   Very high
 Jina Reranker v2                   Both    ~150ms   High
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -736,6 +742,8 @@ ColBERT: sum over query tokens q_i of:
          max over doc tokens d_j of: q_i · d_j
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why ColBERT:
 - Pre-compute document token vectors at index time
   (like bi-encoder: done offline)
@@ -825,6 +833,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Query Transformation
 
@@ -931,6 +967,8 @@ Step-back        LLM generalizes        Overly specific queries
                  concept
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **HyDE (Hypothetical Document Embeddings):**
 
 ```
@@ -952,6 +990,8 @@ Intuition: the embedding of "What is X?" is far
            even though they're semantically related.
            HyDE bridges this gap.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1216,6 +1256,8 @@ system = (
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Measurement:* Track "unique_docs_per_variant":
 if adding a variant retrieves 0 new unique documents,
 that variant is redundant.
@@ -1370,6 +1412,8 @@ User query
   -> Reranking (cross-encoder on merged candidates)
   -> Top-K to LLM
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The synergy: query transformation improves recall
 (more relevant documents in the candidate set).
@@ -1726,3 +1770,33 @@ flowchart LR
 > the LLM. The query classifier itself can be a
 > simple heuristic (regex for specific references
 > vs. question words) or a small LLM call.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

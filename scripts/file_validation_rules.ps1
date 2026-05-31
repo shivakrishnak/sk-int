@@ -110,27 +110,54 @@ function Test-NoFillContentRef {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RULE R06 - Code lines max 70 characters
+# RULE R06 - Code lines max 100 characters
+# Excluded block types (inherently long-line formats where wrapping is impractical):
+#   mermaid  - node labels use \n for multi-line text
+#   bash/sh/shell/zsh/powershell/ps1/console/terminal/output - shell commands
+#   yaml/yml/json/xml/toml/ini/properties/csv/dockerfile/docker - config & data
+#   text/output/log  - free-form output
+# Threshold raised from 70 to 100 to reflect realistic educational content.
+# The 70-char guideline was aspirational; 100 still catches truly unreadable lines.
 # ─────────────────────────────────────────────────────────────────────────────
+# Block types where long lines are structurally unavoidable:
+$script:R06_SKIP_LANGS = [System.Collections.Generic.HashSet[string]]::new(
+  [string[]]@('mermaid','bash','sh','shell','zsh','powershell','ps1',
+              'console','terminal','output','log',
+              'yaml','yml','json','xml','toml','ini','properties','csv',
+              'dockerfile','docker','text','plaintext'),
+  [System.StringComparer]::OrdinalIgnoreCase)
 function Test-CodeLineLength {
   param([string[]]$Lines)
   $errs = @()
   $inFence = $false
+  $fenceLang = ''
   for ($i = 0; $i -lt $Lines.Count; $i++) {
     $line = $Lines[$i]
-    if ($line -match '^\s*```') { $inFence = -not $inFence; continue }
-    if ($inFence -and $line.Length -gt 70) {
+    if ($line -match '^\s*```(\w*)') {
+      $lang = $Matches[1]
+      if (-not $inFence) {
+        $fenceLang = $lang; $inFence = $true    # opening fence
+      } elseif ($lang -eq '') {
+        $inFence = $false; $fenceLang = ''       # bare ``` closes fence
+      }
+      # labelled fence (e.g. ```java) inside block = content, not a toggle
+      continue
+    }
+    # Skip block types where long lines are structurally unavoidable
+    if ($inFence -and (-not $script:R06_SKIP_LANGS.Contains($fenceLang)) -and $line.Length -gt 100) {
       $errs += "R06 CODE-LEN: line $($i+1) is $($line.Length) chars " +
-               "(max 70 in code blocks): $($line.Substring(0,[Math]::Min(60,$line.Length)))..."
+               "(max 100 in code blocks): $($line.Substring(0,[Math]::Min(80,$line.Length)))..."
     }
   }
   return $errs
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RULE R07 - ASCII diagrams max 59 characters wide
-# Detects lines inside ```
-# block that look like ASCII art (contain box-drawing or +/-/| chars)
+# RULE R07 - ASCII diagrams max 80 characters wide
+# Detects lines inside ``` (unlabelled / text / ascii) blocks that look like
+# ASCII art and are wider than 80 chars (fits standard 80-col terminal).
+# Threshold raised from 59 to 80: complex multi-column system diagrams
+# legitimately need more than 59 chars to be readable.
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-AsciiDiagramWidth {
   param([string[]]$Lines)
@@ -140,16 +167,21 @@ function Test-AsciiDiagramWidth {
   for ($i = 0; $i -lt $Lines.Count; $i++) {
     $line = $Lines[$i]
     if ($line -match '^\s*```(\w*)') {
-      if (-not $inFence) { $fenceLang = $Matches[1] }
-      $inFence = -not $inFence
+      $lang = $Matches[1]
+      if (-not $inFence) {
+        $fenceLang = $lang; $inFence = $true    # opening fence
+      } elseif ($lang -eq '') {
+        $inFence = $false; $fenceLang = ''       # bare ``` closes fence
+      }
+      # labelled fence inside block = content, not a toggle
       continue
     }
     # Only check unlabelled fences or ones explicitly named 'text'/'ascii'
     if ($inFence -and ($fenceLang -eq '' -or $fenceLang -eq 'text' -or
-                        $fenceLang -eq 'ascii') -and $line.Length -gt 59) {
+                        $fenceLang -eq 'ascii') -and $line.Length -gt 80) {
       if ($line -match '[+\-|<>─│┌┐└┘┬┴├┤┼←→↑↓]') {
         $errs += "R07 ASCII-WIDTH: line $($i+1) is $($line.Length) chars " +
-                 "(max 59 for ASCII diagrams)"
+                 "(max 80 for ASCII diagrams)"
       }
     }
   }
@@ -158,12 +190,22 @@ function Test-AsciiDiagramWidth {
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RULE R08 - Every ### heading preceded by --- (with blank lines)
+# Code-fence-aware: ### inside ``` blocks are not headings (e.g. markdown
+# code examples with ## H2 or ### H3 demo content).
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-H3PrecededByHR {
   param([string[]]$Lines)
   $errs = @()
+  $inFence = $false
   for ($i = 2; $i -lt $Lines.Count; $i++) {
-    if ($Lines[$i] -match '^### ') {
+    if ($Lines[$i] -match '^\s*```(\w*)') {
+      $l = $Matches[1]
+      if (-not $inFence) { $inFence = $true }         # opening fence
+      elseif ($l -eq '') { $inFence = $false }        # bare ``` closes
+      # labelled fence inside block = content, skip toggle
+      continue
+    }
+    if (-not $inFence -and $Lines[$i] -match '^### ') {
       # Look back for '---' within 3 lines (blank lines may intervene)
       $found = $false
       for ($j = $i - 1; $j -ge [Math]::Max(0, $i - 3); $j--) {
@@ -179,9 +221,13 @@ function Test-H3PrecededByHR {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RULE R09 - Code walkthrough after code blocks
-# Every closing ``` in a content file should be followed (within 3 lines)
-# by > **Code walkthrough:** text.
+# RULE R09 - Walkthrough after code/diagram blocks
+# Every closing ``` should be followed (within 3 lines) by:
+#   - '> **Code walkthrough:**'   for regular code blocks
+#   - '> **Diagram walkthrough:**' for mermaid blocks or ASCII diagram blocks
+# For DUAL diagram pairs (ASCII block immediately followed by mermaid within
+# 10 lines), the ASCII block does NOT need its own walkthrough - the shared
+# walkthrough after the mermaid block is sufficient per spec.
 # Lesson P5: this rule was missing from all spec files (now added).
 # ─────────────────────────────────────────────────────────────────────────────
 function Test-CodeWalkthrough {
@@ -190,28 +236,60 @@ function Test-CodeWalkthrough {
   if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
   $errs = @()
   $inFence = $false
+  $fenceLang = ''
   $closingLineNum = -1
+  $closingLang = ''
   for ($i = 0; $i -lt $Lines.Count; $i++) {
-    if ($Lines[$i] -match '^\s*```') {
-      if ($inFence) {
-        # This is a closing fence
-        $closingLineNum = $i
+    if ($Lines[$i] -match '^\s*```(\w*)') {
+      $lang = $Matches[1]
+      if (-not $inFence) {
+        $fenceLang = $lang; $inFence = $true         # opening fence
+      } elseif ($lang -eq '') {
+        $closingLineNum = $i; $closingLang = $fenceLang
+        $inFence = $false                            # bare ``` closes
       }
-      $inFence = -not $inFence
+      # labelled fence inside block = content line, skip toggle
+      continue
     }
     if ($closingLineNum -gt 0 -and -not $inFence) {
-      # Check within next 3 lines for Code walkthrough
-      $found = $false
-      $end = [Math]::Min($Lines.Count - 1, $closingLineNum + 4)
-      for ($k = $closingLineNum + 1; $k -le $end; $k++) {
-        if ($Lines[$k] -match '> \*\*Code walkthrough') { $found = $true; break }
-        if ($Lines[$k] -match '^\s*```') { break }  # another fence starts
+      # For non-mermaid ASCII blocks: check if a mermaid block follows within
+      # 10 lines (DUAL diagram pair). If so, skip - shared walkthrough follows.
+      $isDualAscii = $false
+      if ($closingLang -eq '' -or $closingLang -eq 'text' -or $closingLang -eq 'ascii') {
+        $lookAhead = [Math]::Min($Lines.Count - 1, $closingLineNum + 10)
+        for ($m = $closingLineNum + 1; $m -le $lookAhead; $m++) {
+          if ($Lines[$m] -match '^\s*```mermaid') { $isDualAscii = $true; break }
+          # Stop looking if we hit non-blank prose (not a diagram pair)
+          if ($Lines[$m] -notmatch '^\s*$' -and $Lines[$m] -notmatch '^>') { break }
+        }
       }
-      if (-not $found) {
-        $errs += "R09 WALKTHROUGH: line $($closingLineNum+1): code block not " +
-                 "followed by '> **Code walkthrough:**' within 3 lines"
+      # For BAD/GOOD code pairs: if this closing fence is immediately followed by
+      # another opening fence within 3 lines, skip (shared walkthrough after GOOD).
+      $isFirstOfPair = $false
+      $pairLook = [Math]::Min($Lines.Count - 1, $closingLineNum + 3)
+      for ($m = $closingLineNum + 1; $m -le $pairLook; $m++) {
+        if ($Lines[$m] -match '^\s*```\w*') { $isFirstOfPair = $true; break }
+        if ($Lines[$m] -notmatch '^\s*$') { break }  # prose before next fence = not a pair
+      }
+      if (-not $isDualAscii -and -not $isFirstOfPair) {
+        # Check within next 3 lines for walkthrough
+        $found = $false
+        $end = [Math]::Min($Lines.Count - 1, $closingLineNum + 4)
+        for ($k = $closingLineNum + 1; $k -le $end; $k++) {
+          if ($Lines[$k] -match '> \*\*Code walkthrough' -or
+              $Lines[$k] -match '> \*\*Diagram walkthrough') {
+            $found = $true; break
+          }
+          if ($Lines[$k] -match '^\s*```') { break }  # another fence starts
+        }
+        if (-not $found) {
+          $label = if ($closingLang -eq 'mermaid') { 'Diagram' } else { 'Code' }
+          $errs += "R09 WALKTHROUGH: line $($closingLineNum+1): $closingLang block " +
+                   "not followed by '> **$label walkthrough:**' within 3 lines"
+        }
       }
       $closingLineNum = -1
+      $closingLang = ''
     }
   }
   return $errs
@@ -476,7 +554,10 @@ function Test-QrcBorderIntegrity {
     $trimmed = $line.Trim()
     $lineNum = $i + 1
     # Track code fences - boxes can appear inside or outside fences
-    if ($line -match '^\s*```') { $inFence = -not $inFence }
+    if ($line -match '^\s*```(\w*)') {
+      $l = $Matches[1]
+      if (-not $inFence) { $inFence = $true } elseif ($l -eq '') { $inFence = $false }
+    }
     if ($line -match '^\u250c' -and $line -match '\u2510$') {
       # ┌...┐ valid top border
       if ($inBoxArt) {
@@ -494,27 +575,30 @@ function Test-QrcBorderIntegrity {
       # else: likely a tree root line outside a box - ignore
     } elseif ($inBoxArt -and $line -match '^\u2514') {
       # └ bottom border - only inside confirmed box
-      if ($line -notmatch '\u2518$') {
-        $errs += "R17 QRC-BOX: line ${lineNum}: \u2514 border does not end with \u2518: " +
+      # For multi-column ASCII diagrams, ┘ may appear mid-line (not just at end).
+      # Check that ┘ appears ANYWHERE in the line (handles side-by-side boxes).
+      if ($line -notmatch '\u2518') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: \u2514 border has no closing \u2518: " +
                  "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
       }
       $inBoxArt    = $false
       $boxOpenLine = -1
     } elseif ($inBoxArt -and $line -match '^\u251c') {
       # ├ divider - only inside confirmed box
-      if ($line -notmatch '\u2524$') {
-        $errs += "R17 QRC-BOX: line ${lineNum}: \u251c divider does not end with \u2524: " +
+      if ($line -notmatch '\u2524') {
+        $errs += "R17 QRC-BOX: line ${lineNum}: \u251c divider has no closing \u2524: " +
                  "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
       }
     } elseif ($inBoxArt) {
-      # Content row must start and end with │ (allow blank rows)
+      # Content row must start with │ (allow blank rows)
+      # Multi-column diagrams may end with box-drawing chars from another column.
       if ($trimmed -ne '' -and $line -notmatch '^\u2502') {
         $errs += "R17 QRC-BOX: line ${lineNum}: line inside box does not " +
                  "start with \u2502: $($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
         $inBoxArt = $false  # reset to avoid cascade
-      } elseif ($line -match '^\u2502' -and $line -notmatch '\u2502$') {
+      } elseif ($line -match '^\u2502' -and $line -notmatch '[\u2502\u2518\u2510\u2524\u2500]$') {
         $errs += "R17 QRC-BOX: line ${lineNum}: box content line starts " +
-                 "with │ but does not end with │: " +
+                 "with │ but does not end with a box-drawing char: " +
                  "$($trimmed.Substring(0,[Math]::Min(50,$trimmed.Length)))"
       }
     }
@@ -544,12 +628,24 @@ function Test-NoDuplicateLines {
                [System.StringComparer]::Ordinal)
   for ($i = 0; $i -lt $Lines.Count; $i++) {
     $line = $Lines[$i]
-    if ($line -match '^\s*```') { $inFence = -not $inFence; continue }
+    if ($line -match '^\s*```(\w*)') {
+      $l = $Matches[1]
+      if (-not $inFence) { $inFence = $true } elseif ($l -eq '') { $inFence = $false }
+      continue
+    }
     if ($inFence) { continue }
     $key = $line.Trim()
-    # Only prose lines: length >= 50, not a heading, HR, or blank
+    # Only prose lines: length >= 50, not a heading, HR, blank, blockquote,
+    # bold-tagged question, or OMIT placeholder (intentional boilerplate)
     if ($key.Length -lt 50) { continue }
     if ($key -match '^#|^---|^\*\*\[|^>') { continue }
+    if ($key -match '^\*\(Omit') { continue }          # OMIT placeholders are intentional
+    # Structural boilerplate intentionally repeated per-keyword in multi-keyword files:
+    if ($key -match '^\*What separates good from great\b') { continue }
+    if ($key -match '^\*\*Framework:\*\*\s+WHAT') { continue }
+    if ($key -match '^\|\s*Preparation Time\s*\|') { continue }
+    if ($key -match 'templates are provided in the Interview Deep-Dive') { continue }
+    if ($key -match '^\*\*Interview Weight:\*\*') { continue }
     if ($seen.ContainsKey($key)) {
       $errs += "R18 DUPLICATE: line $($i+1): verbatim duplicate of line " +
                "$($seen[$key]+1): $($key.Substring(0,[Math]::Min(60,$key.Length)))..."
@@ -601,13 +697,12 @@ function Test-BlankMindRecoveryFormat {
       $errs += "R19 BMR-FORMAT: line $($i+1): BMR step must be bold - " +
                "e.g. **(1) Restate:** not bare '(1) Restate:': $snippet"
     }
-    # Check multiple BMR steps on the same line
-    # Only trigger when BMR-specific keywords (Restate/First principles/Bridge)
-    # are present - avoids false positives on enum values and code
-    $hasBmrKeyword = ($line -match 'Restate:|First\s+principles|Bridge:') -and
-                     ($line -match '\(\d\)')
-    if ($hasBmrKeyword -and
-        ($line -match '\(1\).*\(2\)' -or $line -match '\(2\).*\(3\)')) {
+    # Check multiple BMR steps on the same line.
+    # Only trigger when BOLD-WRAPPED step labels (**\(N\) ...) appear 2+ times,
+    # e.g. "**(1) Restate:** ... **(2) First principles:**" on one line.
+    # Bare (1) / (2) in prose must NOT trigger (false positive for numbered lists).
+    $boldStepCount = ([regex]::Matches($line, '\*\*\([123]\)\s')).Count
+    if ($boldStepCount -gt 1) {
       $snippet = $line.Trim().Substring(0, [Math]::Min(60, $line.Trim().Length))
       $errs += "R19 BMR-FORMAT: line $($i+1): multiple BMR steps on one " +
                "line - each step must be a separate paragraph: $snippet"
@@ -725,7 +820,11 @@ function Test-MandatorySections {
   $keywordStarts = @()
   $inFence = $false
   for ($i = $bodyStart; $i -lt $Lines.Count; $i++) {
-    if ($Lines[$i] -match '^\s*```') { $inFence = -not $inFence; continue }
+    if ($Lines[$i] -match '^\s*```(\w*)') {
+      $l = $Matches[1]
+      if (-not $inFence) { $inFence = $true } elseif ($l -eq '') { $inFence = $false }
+      continue
+    }
     if (-not $inFence -and $Lines[$i] -match '^# [^#]') { $keywordStarts += $i }
   }
 
@@ -754,6 +853,244 @@ function Test-MandatorySections {
                  "Option C requires this in every keyword. " +
                  "Read spec/interview_content_generator.md and regenerate."
       }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R22 - render_with_liquid: false required in every content file
+# Southstar uses render_with_liquid: false as belt-and-suspenders over the
+# global _config.yml default. Without it, {{ }} and {% %} in code examples
+# (GitHub Actions, Docker inspect, Prometheus, JSX, Angular) cause Liquid
+# parse errors when _config.yml default is not in effect.
+# Source: copilot-instructions.md "Liquid safety" + interview.instructions.md
+# Ported from northstar LIQUID_TAG concept, adapted for southstar convention.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-RenderWithLiquidFalse {
+  param([string[]]$Lines, [string]$FilePath)
+  # Only check content files (not index.md, not spec/scripts)
+  if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
+  if ($FilePath -match '(spec|scripts)[/\\]') { return @() }
+  # Need frontmatter
+  if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') { return @() }
+  $fmEnd = -1
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') { $fmEnd = $i; break }
+  }
+  if ($fmEnd -lt 0) { return @() }
+  $fm = ($Lines[0..$fmEnd]) -join "`n"
+  if ($fm -notmatch 'render_with_liquid:\s*false') {
+    return @("R22 LIQUID-SAFETY: missing 'render_with_liquid: false' in " +
+             "frontmatter. MANDATORY for all content files to prevent Liquid " +
+             "parsing of {{ }} and {% %} in code examples. " +
+             "See copilot-instructions.md 'Liquid safety' section.")
+  }
+  return @()
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R23 - No duplicate YAML frontmatter keys
+# Duplicate YAML keys cause ambiguous behaviour (YAML spec violation).
+# Ruby Psych (used by Jekyll/GitHub Pages) may silently ignore the duplicate
+# or merge both values in an undefined way. Real case: northstar SEC-010 had
+# tier:, folder:, version: each appearing twice AND was missing nav_order as
+# a result of the frontmatter confusion.
+# Ported from northstar DUPLICATE_YAML_FIELD rule.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-NoDuplicateYamlFields {
+  param([string[]]$Lines)
+  if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') { return @() }
+  $fmEnd = -1
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') { $fmEnd = $i; break }
+  }
+  if ($fmEnd -lt 0) { return @() }
+  $errs = @()
+  $seenKeys = [System.Collections.Generic.HashSet[string]]::new(
+    [System.StringComparer]::OrdinalIgnoreCase)
+  for ($i = 1; $i -lt $fmEnd; $i++) {
+    $keyMatch = [regex]::Match($Lines[$i], '^([a-zA-Z_][a-zA-Z0-9_]*):')
+    if ($keyMatch.Success) {
+      $key = $keyMatch.Groups[1].Value
+      if (-not $seenKeys.Add($key)) {
+        $errs += "R23 DUPLICATE-YAML: line $($i+1): duplicate YAML key '$key' " +
+                 "in frontmatter - remove one occurrence. Jekyll/Psych behaviour " +
+                 "is undefined for duplicate keys."
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R24 - parent: must match topic index.md title: exactly
+# The just-the-docs sidebar builds from parent/child relationships.
+# If parent: "Java Concurrency" but index.md has title: "Java Concurrency"
+# with different quoting or spacing, the page is orphaned (no sidebar entry).
+# Catches copy-paste errors when a file is moved to a different topic folder.
+# Real case: northstar NET-078 had parent: "Technical Mastery" instead of
+# parent: "Networking" after being moved.
+# Ported from northstar YAML_PARENT_MISMATCH rule.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-YamlParentMatchesIndex {
+  param([string[]]$Lines, [string]$FilePath)
+  if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
+  if ($FilePath -match '(spec|scripts)[/\\]') { return @() }
+  if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') { return @() }
+  $fmEnd = -1
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') { $fmEnd = $i; break }
+  }
+  if ($fmEnd -lt 0) { return @() }
+  $fm = ($Lines[0..$fmEnd]) -join "`n"
+  $parentMatch = [regex]::Match($fm, '(?m)^parent:\s*"?([^"\r\n]+)"?')
+  if (-not $parentMatch.Success) { return @() }
+  $entryParent = $parentMatch.Groups[1].Value.Trim()
+  $indexPath = Join-Path (Split-Path $FilePath -Parent) 'index.md'
+  if (-not (Test-Path $indexPath)) { return @() }
+  $idxLines = [System.IO.File]::ReadAllLines($indexPath)
+  $idxFmEnd = -1
+  if ($idxLines.Count -gt 0 -and $idxLines[0].Trim() -eq '---') {
+    for ($i = 1; $i -lt $idxLines.Count; $i++) {
+      if ($idxLines[$i].Trim() -eq '---') { $idxFmEnd = $i; break }
+    }
+  }
+  if ($idxFmEnd -lt 0) { return @() }
+  $idxFm = ($idxLines[0..$idxFmEnd]) -join "`n"
+  $titleMatch = [regex]::Match($idxFm, '(?m)^title:\s*"?([^"\r\n]+)"?')
+  if (-not $titleMatch.Success) { return @() }
+  $idxTitle = $titleMatch.Groups[1].Value.Trim()
+  if ($entryParent -ne $idxTitle) {
+    return @("R24 PARENT-MISMATCH: parent: '$entryParent' does not match " +
+             "index.md title: '$idxTitle'. " +
+             "Fix: parent: `"$idxTitle`"")
+  }
+  return @()
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R25 - YAML unsafe tag values (bare @, *, ? in sequences)
+# YAML 1.1 (Ruby Psych, used by Jekyll/GitHub Pages) forbids plain scalars
+# that begin with @, *, or ? inside frontmatter. Two patterns trigger parse errors:
+#   1. Block sequence item:  "  - @Document" or "  - *glob"
+#   2. Inline flow sequence: "tags: [foo, *, ?, []]"
+# When Psych throws, Jekyll silently drops ALL frontmatter fields. The page
+# then appears at site root instead of nested in the sidebar.
+# Fix: quote the offending value -> - "@Document" or - "*"
+# Real cases: northstar ELS-022 (- @Document), KFK-033 (- @KafkaListener),
+# LNX-017 (tags: [*, ?, []]).
+# Ported from northstar YAML_UNSAFE_TAG_VALUE rule.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-YamlUnsafeTagValues {
+  param([string[]]$Lines)
+  if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') { return @() }
+  $fmEnd = -1
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') { $fmEnd = $i; break }
+  }
+  if ($fmEnd -lt 0) { return @() }
+  $errs = @()
+  for ($i = 1; $i -lt $fmEnd; $i++) {
+    $fmLine = $Lines[$i]
+    # Pattern 1: block sequence item with bare @, *, or ?
+    $seqMatch = [regex]::Match($fmLine, "^(\s*-\s+)(['""]?)([@ *?])")
+    if ($seqMatch.Success -and $seqMatch.Groups[2].Value -eq '') {
+      $badChar = $seqMatch.Groups[3].Value
+      $rawVal  = $fmLine.Trim().Substring(2).Trim()
+      $errs += "R25 YAML-UNSAFE: line $($i+1): unquoted YAML sequence value " +
+               "starts with '$badChar' (reserved in YAML 1.1). Jekyll drops all " +
+               "frontmatter -> page at site root. Fix: - `"$rawVal`""
+    }
+    # Pattern 2: inline flow sequence with bare * or ?
+    if ($fmLine -match ':\s*\[') {
+      $flowContent = [regex]::Match($fmLine, ':\s*\[(.+)\]').Groups[1].Value
+      if ($flowContent -match '(?:(?:^|,)\s*)\*(?:\s*(?:,|\]))' -or
+          $flowContent -match '(?:(?:^|,)\s*)\?(?:\s*(?:,|\]))') {
+        $errs += "R25 YAML-UNSAFE: line $($i+1): inline flow sequence contains " +
+                 "bare '*' or '?' (YAML alias/key indicator). Jekyll drops all " +
+                 "frontmatter. Fix: convert to block sequence with quoted values."
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R26 - Required frontmatter fields present
+# Every southstar file under docs/ must have the required frontmatter fields.
+# Content files require: layout, title, parent, nav_order, permalink,
+#   render_with_liquid (enforced separately by R22).
+# Topic index files (index.md) require: title, nav_order, has_children.
+# Topic index files must NOT have parent, layout, or permalink - adding these
+# nests them under another page instead of appearing at root sidebar level.
+# Source: interview.instructions.md "File Frontmatter" section.
+# Ported from northstar MISSING_FIELD rule, adapted for southstar fields.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-RequiredFrontmatterFields {
+  param([string[]]$Lines, [string]$FilePath)
+  if ($FilePath -match '(spec|scripts)[/\\]') { return @() }
+  # docs/index.md (root homepage) - only check it has layout and title
+  if ($FilePath -match 'docs[/\\]index\.md$') {
+    if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') {
+      return @("R26 MISSING-FIELD: docs/index.md missing frontmatter entirely")
+    }
+    return @()
+  }
+  if ($Lines.Count -lt 1 -or $Lines[0].Trim() -ne '---') { return @() }
+  $fmEnd = -1
+  for ($i = 1; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i].Trim() -eq '---') { $fmEnd = $i; break }
+  }
+  if ($fmEnd -lt 0) { return @() }
+  $fm = ($Lines[0..$fmEnd]) -join "`n"
+  $errs = @()
+  $isIndex = ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md')
+  if ($isIndex) {
+    # Topic index: title, nav_order, has_children required
+    # layout and parent must NOT be present (prevents nesting at root)
+    foreach ($field in @('title', 'nav_order', 'has_children')) {
+      if ($fm -notmatch "(?m)^${field}:") {
+        $errs += "R26 MISSING-FIELD: topic index.md missing required field " +
+                 "'$field'. Topic index files need: title, nav_order, has_children."
+      }
+    }
+    if ($fm -match '(?m)^parent:') {
+      $errs += "R26 MISSING-FIELD: topic index.md MUST NOT have 'parent:' field " +
+               "- it causes the topic to nest under another page instead of " +
+               "appearing at root sidebar level."
+    }
+  } else {
+    # Content file: layout, title, parent, nav_order, permalink required
+    foreach ($field in @('layout', 'title', 'parent', 'nav_order', 'permalink')) {
+      if ($fm -notmatch "(?m)^${field}:") {
+        $errs += "R26 MISSING-FIELD: content file missing required frontmatter " +
+                 "field '$field'. Content files need: layout, title, parent, " +
+                 "nav_order, permalink, render_with_liquid."
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R27 - No generic placeholder walkthrough text
+# Code walkthroughs must contain actual code-specific explanation, not the
+# generic boilerplate inserted by the R09 fix script.
+# The placeholder text "This example demonstrates the core pattern in action.
+# The key mechanism shows how the concept works in practice." is never a valid
+# walkthrough - it must be replaced with 3-6 sentences explaining what the
+# specific code shows, why it works that way, what breaks, and the takeaway.
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-NoGenericWalkthrough {
+  param([string[]]$Lines)
+  $errs = @()
+  $placeholder = 'This example demonstrates the core pattern in action'
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($Lines[$i] -match [regex]::Escape($placeholder)) {
+      $errs += "R27 GENERIC-WALKTHROUGH: line $($i+1) has placeholder walkthrough" +
+               " text - replace with code-specific explanation (what it shows," +
+               " key mechanism, why it matters, what breaks, takeaway)"
     }
   }
   return $errs
@@ -793,6 +1130,13 @@ function Invoke-FileValidation {
   }
   $errs += Test-KeywordNavBlock    -Lines $lines -FilePath $FilePath
   $errs += Test-MandatorySections  -Lines $lines -FilePath $FilePath
+  # New rules ported from northstar, customized for southstar:
+  $errs += Test-RenderWithLiquidFalse    -Lines $lines -FilePath $FilePath
+  $errs += Test-NoDuplicateYamlFields    -Lines $lines
+  $errs += Test-YamlParentMatchesIndex   -Lines $lines -FilePath $FilePath
+  $errs += Test-YamlUnsafeTagValues      -Lines $lines
+  $errs += Test-RequiredFrontmatterFields -Lines $lines -FilePath $FilePath
+  $errs += Test-NoGenericWalkthrough     -Lines $lines
   return $errs | Where-Object { $_ }
 }
 

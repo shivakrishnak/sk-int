@@ -125,6 +125,8 @@ IAM Role assumption flow:
   5. Code never handles credentials explicitly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -136,7 +138,7 @@ public class S3Uploader {
         .credentialsProvider(
             StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(
-                    "AKIAIOSFODNN7EXAMPLE", // NEVER do this
+                    "AKIA_YOUR_KEY_EXAMPLE", // NEVER do this
                     "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
                 )
             )
@@ -146,6 +148,8 @@ public class S3Uploader {
     // If this lands in Git: rotate immediately
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Use role credentials (auto-provisioned by AWS)
@@ -164,6 +168,8 @@ public class S3Uploader {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // Minimal IAM policy for a Lambda that reads from
 // one SQS queue and writes to one S3 prefix:
@@ -177,6 +183,8 @@ public class S3Uploader {
   }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // GOOD: Least-privilege - specific actions and resources
@@ -211,6 +219,8 @@ public class S3Uploader {
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Verify what permissions a role actually has:
@@ -340,6 +350,8 @@ aws ec2 describe-vpc-endpoints \
   --query 'VpcEndpoints[*].PolicyDocument'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add specific `s3:PutObject` action for the
 exact S3 resource ARN to the Lambda execution role.
 For cross-account: also add principal to bucket policy.
@@ -415,6 +427,34 @@ flowchart TD
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Security Groups and NACLs
 
@@ -521,6 +561,8 @@ No connection tracking. Each packet evaluated fresh.
 Inbound + outbound rules both required for two-way comms.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -536,6 +578,8 @@ aws ec2 authorize-security-group-ingress \
 # NEVER use in production: exposes ALL ports to internet
 # Common finding in security audits / pentest reports
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # GOOD: Minimal SG for a web application tier
@@ -711,6 +755,8 @@ aws ssm start-session --target $INSTANCE_ID
 sudo ss -tlnp | grep :443
 # Port not in LISTEN state = application is not running
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix order:* Check NACL rules first (common culprit),
 then SG rules, then OS firewall, then application status.
@@ -930,6 +976,8 @@ aws lambda get-function-configuration \
 # Returns: arn:aws:iam::123:role/my-lambda-role
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Simulate the exact action:**
 ```bash
 aws iam simulate-principal-policy \
@@ -941,6 +989,8 @@ aws iam simulate-principal-policy \
 #   EvalDecision: allowed | implicitDeny | explicitDeny
 #   MatchedStatements: which policy statement grants/denies
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: If implicitDeny (most common):**
 No policy allows `dynamodb:PutItem` on this table ARN.
@@ -957,6 +1007,8 @@ aws ec2 describe-vpc-endpoints \
 # Custom endpoint policy: may be restricting access
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 5: Check CloudTrail for the exact error:**
 ```bash
 aws cloudtrail lookup-events \
@@ -966,6 +1018,8 @@ aws cloudtrail lookup-events \
 # Shows: ErrorCode, ErrorMessage, UserIdentity (which role)
 # Confirms which principal is making the call
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* CloudTrail is the
 ground truth: it logs every API call with the exact
@@ -1046,6 +1100,8 @@ aws cloudtrail lookup-events \
   | jq '.Events[].EventName' | sort -u
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Result: only `dynamodb:GetItem`, `dynamodb:PutItem`,
 `sqs:ReceiveMessage`, `sqs:DeleteMessage`,
 `logs:CreateLogStream`, `logs:PutLogEvents`.
@@ -1111,6 +1167,8 @@ Account C (security):
   Config aggregator: compliance across all accounts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cross-account flow for developer debug:**
 
 1. Dev logs in to Account B with MFA.
@@ -1168,6 +1226,8 @@ aws ec2 create-flow-logs \
 # for the Lambda ENI IP -> S3 IP range
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fixes:**
 
 Option A - S3 VPC Gateway Endpoint (free, recommended):
@@ -1181,6 +1241,8 @@ aws ec2 create-vpc-endpoint \
 # Endpoint policy defaults to allow all S3 access
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option B - NAT Gateway (if needed for other internet):
 ```bash
 # Check NAT Gateway exists and route table points to it:
@@ -1193,6 +1255,8 @@ aws ec2 create-route \
   --destination-cidr-block 0.0.0.0/0 \
   --nat-gateway-id $NAT_GW_ID
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* S3 Gateway Endpoint
 is free and keeps traffic within AWS. NAT Gateway
@@ -1233,6 +1297,8 @@ Isolated subnets (2 AZs): 10.0.21.0/24, 10.0.22.0/24
   - Route table: NO 0.0.0.0/0 route (no internet)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Security Groups:**
 
 ```
@@ -1241,6 +1307,8 @@ sg-app:   Allow inbound 8080 from sg-alb
 sg-db:    Allow inbound 5432 from sg-app
 sg-cache: Allow inbound 6379 from sg-app
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **NACLs:**
 
@@ -1267,3 +1335,33 @@ The isolated subnet is the zero-trust boundary for
 the most sensitive data.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

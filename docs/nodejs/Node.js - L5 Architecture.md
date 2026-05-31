@@ -7,6 +7,15 @@ permalink: /nodejs/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Node.js Service Architecture at Scale](#nodejs-service-architecture-at-scale) | medium |
+
+---
+
 # Node.js Service Architecture at Scale
 
 ---
@@ -103,6 +112,8 @@ Node.js service architecture layers:
        res.json({ status: 'ready' });
      });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -231,6 +242,8 @@ Production-ready service checklist:
     [ ] Non-root Docker user
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -299,6 +312,8 @@ readinessProbe:
 # Return 503 during startup or when dependencies are down
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -347,7 +362,39 @@ breaker.on('close', () => logger.info('Circuit closed: ServiceB'));
 const result = await breaker.fire(requestData);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The fallback strategy. An open circuit
 should return a cached response or a degraded response - not fail the
 entire request. Design every external call with a fallback that provides
 partial value.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

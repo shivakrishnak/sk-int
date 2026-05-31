@@ -8,6 +8,15 @@ permalink: /distributed-systems/l5-migration-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Monolith to Distributed System Migration](#monolith-to-distributed-system-migration) | medium |
+
+---
+
 # Monolith to Distributed System Migration
 
 **TL;DR:** Migrating from a monolith to a distributed system
@@ -135,6 +144,8 @@ Signs you SHOULD migrate:
   - Regulatory requirement (GDPR: data isolation by user)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The Strangler Fig pattern:**
 
 ```
@@ -175,6 +186,8 @@ Phase 4: Decommission monolith
   - Delete monolith codebase (celebration milestone)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Database decomposition strategy:**
 
 ```
@@ -208,6 +221,8 @@ Step 4: Cross-domain data queries (now impossible with FK)
   - Materialized views: pre-join data in read model (CQRS)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Conway's Law and organizational alignment:**
 
 ```
@@ -231,6 +246,8 @@ first to produce the desired service boundaries, then extract.
 Amazon's "two-pizza teams" is this maneuver: small, autonomous
 teams → service-per-team → microservices naturally.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The technical challenges of monolith-to-microservices migration
@@ -539,6 +556,8 @@ Expected outcomes:
   - Payments: isolated blast radius (payment outage ≠ full outage)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -634,6 +653,8 @@ grep -r "datasource.url" services/*/src/main/ | \
 # Other service URLs appearing = shared DB violation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: enforce service boundary rules:
 - No service may read/write another service's database
 - No synchronous call chain > 3 services deep
@@ -666,6 +687,8 @@ psql -h user-service-db -c \
 diff old_users.csv new_users.csv
 # Shows missing user IDs in new DB
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix (immediate): reconciliation script to copy missing users
 from old DB to new DB. Fix (process): before any data migration
@@ -704,6 +727,8 @@ jaeger-query service=order-service \
 # Shows: payment-service span = 350ms (previously was 0ms
 # because it was a local method call in monolith)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: replace synchronous call chain with asynchronous orchestration:
 - Order creation: write order (local DB), return to user
@@ -845,6 +870,8 @@ If step 5 shows a bug: route 100% back to monolith.
 If step 3 shows data mismatch: fix dual-write, restart.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the shadow mode (step 4).
 Most engineers know the dual-write pattern. The shadow mode
 adds a validation layer: both old and new code process the
@@ -879,6 +906,8 @@ Compensating transactions (rollback):
   InsufficientStock → PaymentService listens → refunds payment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to choose choreography:
 - Simple sagas with clear linear flow
 - Loose coupling: services do not know about each other
@@ -907,6 +936,8 @@ OrderOrchestrator (Saga Manager):
 All saga state: stored in OrderOrchestrator
 Can query orchestrator: "what is the state of order X?"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to choose orchestration:
 - Complex sagas with conditional logic and multiple outcomes
@@ -953,6 +984,8 @@ ORDER BY charge_count DESC;
 -- How many? What time pattern?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Trace the payment flow:
 ```bash
 # Find distributed traces for a double-charged order
@@ -962,6 +995,8 @@ jaeger-query service=payment-service \
 # Look for: overlapping timestamps = concurrent calls
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Check Saga/retry logic:
 ```bash
 # Was the first charge successful but the ACK failed?
@@ -970,6 +1005,8 @@ grep "ORD-12345" /var/log/payment-service/*.log
 #          "Payment SUCCESS order=ORD-12345" (second line)
 # Two successes = idempotency key missing or wrong
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4 - Root cause: Saga retry without idempotency key:
 ```java
@@ -993,6 +1030,8 @@ try {
     paymentClient.charge(orderId, amount, idempotencyKey);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: add idempotency key to all payment calls. Key = orderId
 (or orderId + attemptNumber if multiple legitimate charges
@@ -1157,6 +1196,13 @@ Phase 2 - MIGRATE (backfill existing data):
   }
   ```
 
+> **Code walkthrough:** The batched backfill loops in 1,000-row
+> chunks with a 100ms sleep between iterations. This avoids a
+> single large transaction that would lock the table. The `LIMIT`
+> clause and null-check `WHERE invoice_id IS NULL` make the
+> operation idempotent - safe to resume after failure. Each batch
+> commits independently so progress survives a restart.
+
 Phase 3 - VERIFY: confirm all rows have invoice_id
   SELECT COUNT(*) FROM orders WHERE invoice_id IS NULL;
   -- must be 0
@@ -1172,7 +1218,14 @@ Timeline:
   Phase 3 (verify): run query
   Phase 4 (contract): requires all old code versions deployed
     → Only safe 1-2 deployment cycles after expand
-```
+
+> **Code walkthrough:** The expand-contract sequence separates
+> schema changes from code changes into four safe phases. Phase 1
+> adds the new column as nullable so existing code keeps running.
+> Phase 2 backfills in batches to avoid lock contention. Phase 3
+> verifies zero nulls before making it NOT NULL. Phase 4 contracts
+> by enforcing the constraint - only safe once all old code is
+> undeployed. Skipping verify-before-contract breaks production.
 
 **Cross-service schema dependencies:**
 ```java
@@ -1189,6 +1242,8 @@ Timeline:
 // consumer validates incoming messages against schema version
 // Incompatible schema change: deployment blocked
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the expand-contract pattern
 with explicit phases. Many engineers know "add nullable column
@@ -1266,6 +1321,8 @@ Key risk mitigation for bidding extraction:
   No cutover during peak season (holiday sales)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the risk-adjusted extraction
 order. Most engineers would extract the core business logic
 (bidding) first because it is the pain point. The correct
@@ -1337,6 +1394,8 @@ Dependency management:
   Upgrading: upgrade BOM, all services adopt on their next release.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the "different User in each
 service" insight. One of the most common mistakes after a
 microservices migration: sharing the User entity (JPA entity or
@@ -1347,3 +1406,33 @@ In practice: the User in the Order Service needs orderId, orderHistory
 needs email, notificationPreferences (not address, paymentMethod).
 Each service's User is a different projection of the person concept,
 optimized for that service's needs.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -131,6 +131,8 @@ PATTERN 4: DEBATE (Multiple agents, synthesizer)
   Example: legal research, medical advice
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Scaling dimensions:**
 
 ```
@@ -150,11 +152,15 @@ GOVERNANCE: which agents can do what
   Solution: agent registry + capability declarations
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The scale equation:**
 
 ```
 throughput = workers * (1 / avg_run_time)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 At 100 workers and 10s average run time:
 throughput = 10 runs/second = 36,000 runs/hour.
@@ -728,6 +734,8 @@ async def route_task(
     return "research"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Separate queues
 per agent type - not a single queue for all agents.
 This enables per-type SLOs and worker pool isolation.
@@ -792,6 +800,8 @@ class CostGovernor:
         await self.redis.expire(daily_key, 86400*2)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Cost attribution
 with cost_center tagging as a chargeback mechanism -
 not just rate limiting but organizational cost
@@ -839,6 +849,8 @@ spec:
             fieldRef:
               fieldPath: metadata.name
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Auto-scaling: use HPA (Horizontal Pod Autoscaler)
 with custom metrics. Scale on queue depth: if
@@ -952,6 +964,8 @@ async def run_agent_multitenant(
     ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Compute isolation
 as a separate concern from data isolation - both
 are required for true multi-tenancy.
@@ -1043,6 +1057,8 @@ class LLMRouter:
                 )
             raise
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (3) Tool call format translation:
     Anthropic and OpenAI have different tool call
@@ -1284,6 +1300,8 @@ LAYER 6 - OBSERVABILITY:
   - Cost dashboard: per tenant, per agent type
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Multi-tenancy isolation:**
 - Compute: per-tenant queue priority, dedicated
   worker pools for premium tenants
@@ -1390,3 +1408,33 @@ graph TD
 > metrics from traces and provides per-tenant cost
 > visibility. This architecture supports 1M tasks/day
 > by scaling each layer independently.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

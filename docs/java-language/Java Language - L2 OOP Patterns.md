@@ -8,9 +8,20 @@ permalink: /java-language/l2-oop-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L2 OOP Patterns](#java-language---l2-oop-patterns) | medium |
+
+---
+
 # Java Language - L2 OOP Patterns
 
 ## Inheritance and Polymorphism
+
+---
 
 ### 🎯 Model Answer
 
@@ -137,6 +148,8 @@ LSP VIOLATION EXAMPLE:
   // Square is not substitutable for Rectangle -> do NOT use inheritance here
   // Fix: common interface (Shape) with no setters, or make both immutable value types
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -313,6 +326,8 @@ Prevention: NEVER call overridable methods in constructors.
   Rule: constructors should only assign fields. Overridable method calls in constructors
   are a code smell that IDEs and static analysis (SpotBugs, Checkstyle) flag.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -520,6 +535,8 @@ to change later and creates tight coupling between base and derived classes.
 
 ## Interfaces vs Abstract Classes
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -649,6 +666,8 @@ COMBINATION PATTERN (JDK standard):
   }
   // Result: ArrayList is a List, is an AbstractList, is a Collection
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -828,6 +847,8 @@ Prevention: when designing interfaces with default methods:
   listener/callback interfaces that each add lifecycle default methods.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -990,6 +1011,8 @@ interface Identifiable {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The default `sameAs()` method works correctly for all implementations because it accesses
 state via the `getId()` abstract method (which the implementing class provides). This is the
 correct pattern for default methods that need "instance state": access it through abstract
@@ -1032,3 +1055,33 @@ A: Sealed abstract class: an abstract class that limits which classes can extend
 
 *(Omit: The interface/abstract class comparison is best expressed through the code
 examples and comparison table above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

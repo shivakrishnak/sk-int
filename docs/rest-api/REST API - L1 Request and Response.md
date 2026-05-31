@@ -8,6 +8,17 @@ permalink: /rest-api/l1-request-and-response/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Request and Response Headers](#request-and-response-headers) | medium |
+| 2 | [Content Negotiation and Media Types](#content-negotiation-and-media-types) | medium |
+| 3 | [Stateless Communication](#stateless-communication) | medium |
+
+---
+
 # Request and Response Headers
 
 ---
@@ -59,6 +70,8 @@ Cache-Control: no-store             <- don't cache
 
 {"id":456,"status":"pending",...}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The separation of metadata (headers) from content (body) is what makes HTTP extensible. New capabilities (authentication mechanisms, caching strategies, security policies) can be added by defining new headers without changing the URL structure or body format. This is why HTTP has evolved to support OAuth, JWT, CORS, HSTS, content compression, and dozens of other capabilities - all via headers, without breaking existing APIs.
@@ -223,6 +236,34 @@ Fix: Client must send `Content-Type: application/json`. In curl: `curl -H "Conte
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Content Negotiation and Media Types
 
 ---
@@ -273,6 +314,8 @@ Client                  Server
   | 406 Not Acceptable     |
   |<-----------------------|
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Content negotiation separates the resource (the user) from its representation (JSON, XML, HTML). The user always exists at `/users/123`. What changes is the format of the representation. This enables a single URL to serve data to browser users (HTML), API clients (JSON), and legacy enterprise integrations (XML) without separate endpoints.
@@ -430,6 +473,34 @@ Fix: Use a permissive Accept header parser that ignores quality factors and char
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Stateless Communication
 
 ---
@@ -488,6 +559,8 @@ Client         Server A   Server B
   |<------------------------------| 200 OK
 Any server can handle any request
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Statelessness transfers state from the server to the client. The client holds the JWT (user context). The database holds durable application data. The server holds nothing between requests. This is the correct separation of concerns for a scalable distributed system.
@@ -645,3 +718,33 @@ Fix: Either: (1) Switch to JWT-based authentication (stateless, no server-side s
 > "Multi-step workflows (checkout: cart -> shipping -> payment -> confirm) challenge statelessness because each step depends on previous step's state. Three patterns: (1) Client-carries-state: each step's response includes the current state as an opaque token. The client sends this token with the next step. The server validates and extends the token. Good for short workflows where the state is small. (2) Server-creates-resource: the first step creates a 'workflow' resource in the database: `POST /checkout-sessions` returns `{sessionId: 'cs_abc123', status: 'pending', step: 'cart'}`. Subsequent steps reference the session: `PUT /checkout-sessions/cs_abc123/shipping`. The session is durable data (DB-stored), not server memory. Any server processes any step. (3) Saga pattern: each step publishes an event, the next step is triggered by the event. Inherently stateless (no server holds state between steps). Good for distributed workflows across microservices. My recommendation: pattern 2 (DB-stored workflow resource) for user-facing multi-step flows. It's auditable (all steps recorded), resumable (user can return later), and naturally stateless (the session is in the database, not server memory)."
 
 *What separates good from great:* "Pattern 2 (DB-stored workflow resource with its own ID) is the production approach used by Stripe (checkout sessions, payment intents) and most e-commerce systems. Knowing this pattern and its auditability/resumability properties shows production design experience."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

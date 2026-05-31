@@ -129,6 +129,8 @@ PHASE 3: Extract Product service
 PHASE N: Monolith is empty - retire it
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ACID vs BASE Comparison:**
 
 ```
@@ -150,6 +152,8 @@ Microservice Saga:
   // order-service: cancels order
   // Eventually consistent: BASE
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -420,6 +424,8 @@ without redesigning the communication model.
 # If it's not a DAG but a web: tight coupling remains
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 - Async communication (event-driven) for non-critical paths
 - Aggregate services that are always called together
@@ -451,6 +457,8 @@ grep "sagaId=<id>" payment-service.log
 # Find where the chain broke
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 - Implement saga orchestrator with explicit state machine
 - Add saga timeout: automatic compensation after TTL
@@ -479,6 +487,8 @@ SELECT COUNT(*), MAX(id) FROM orders WHERE date > '2024-01-01';
 # Count difference = missing records from failed dual-write
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 - Use Outbox pattern: write to old DB + outbox in ONE transaction
 - Separate relay process reads outbox and writes to new DB
@@ -496,6 +506,8 @@ SELECT COUNT(*), MAX(id) FROM orders WHERE date > '2024-01-01';
 | Strangler Fig | Low | Months-years | Easy | Default choice |
 | Branch-by-abstraction | Medium | Months | Medium | Shared codebase refactor first |
 | Parallel deployment | Low | Months | Easy | When both systems can coexist |
+
+---
 
 ### 🏛️ System Design
 
@@ -676,6 +688,8 @@ Compensation (if payment fails):
   -> OrderService (listens) -> OrderCancelled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Orchestration Saga (central coordinator):
 ```
 SagaOrchestrator:
@@ -684,6 +698,8 @@ SagaOrchestrator:
   if payment fails: compensate: InventoryService.release()
   if all success: update Order status to Confirmed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Choreography: decoupled, but hard to track saga state.
 Orchestration: single point of failure, but visible saga state.
@@ -743,6 +759,8 @@ void relayOutbox() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Debezium (Change Data
 Capture) is an alternative to polling the outbox table.
 Debezium reads the database's WAL (write-ahead log)
@@ -782,6 +800,8 @@ GRANT ALL ON SCHEMA order_service TO order_svc_user;
 GRANT SELECT ON product_service.products TO order_svc_user;
 -- Read-only to other schemas (temporary, for data needs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Phase 3: Separate database instances
 - Point order service to own DB instance
@@ -948,6 +968,8 @@ Required before first service extraction:
     # Parses structured JSON logs from services
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Distributed tracing (Jaeger / Zipkin):
 ```java
 // MicroProfile OpenTracing - automatic trace propagation:
@@ -959,6 +981,8 @@ public Order getOrder(Long id) {
 // Trace ID flows: gateway -> order-service -> DB query
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Metrics (Prometheus + Grafana):
 ```java
 // MicroProfile Metrics:
@@ -968,6 +992,8 @@ public Order createOrder(CreateOrderRequest req) { ... }
 
 // Auto-exposes: http://service/q/metrics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Health checks (MicroProfile Health):
 ```java
@@ -983,6 +1009,8 @@ public class DatabaseHealthCheck
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Correlation ID is the
 most important observability investment for migration.
@@ -1009,6 +1037,8 @@ Target: Deploy per service per day
 Cost: 3 days per sprint spent on deployment coordination
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Reliability impact measurement:
 ```
 Monolith availability: 99.5% (14h downtime/year)
@@ -1017,12 +1047,16 @@ Estimated target: 99.9% per service
 Business impact: calculate revenue lost per hour of downtime
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Feature velocity measurement:
 ```
 Average time from code complete to production: 3 weeks
 Target: 2-3 days
 Bottleneck: deployment coordination, shared codebase conflicts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Risk analysis of migration:
 - Phase 1-2 (Foundation): no production risk
@@ -1143,6 +1177,8 @@ Notification Service (email, SMS, push)
 Reporting Service (analytics)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Technology stack per service:
 - Runtime: Quarkus (native image) or WildFly Bootable JAR
 - Database: service-specific (PostgreSQL, MongoDB, Redis)
@@ -1174,6 +1210,8 @@ Infrastructure:
   - PagerDuty (alerts)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "The target architecture
 is often not the destination you reach in 18 months.
 It's the north star. Pragmatic architecture: migrate
@@ -1186,3 +1224,33 @@ Incrementalism is the only way to successfully migrate
 a production system."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

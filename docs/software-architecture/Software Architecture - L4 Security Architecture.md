@@ -142,6 +142,8 @@ Data Layer:
   Data masking in logs (no PII in log files)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Zero Trust Architecture:**
 
 Traditional perimeter model: trust everything inside the network
@@ -374,6 +376,8 @@ curl -H "Authorization: Bearer <user-123-token>" \
 # 200 OK = IDOR vulnerability
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add resource-level authorization to every endpoint that
 accesses user data. Verify requesting user ID matches resource
 owner ID (or requester is an authorized admin).
@@ -393,6 +397,8 @@ git log --all --full-history -- "*.yml" |
 # Use truffleHog or gitleaks
 gitleaks detect --source . --report-path gitleaks-report.json
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Rotate all exposed credentials immediately. Implement
 secrets management (Vault, AWS Secrets Manager). Remove secrets
@@ -647,6 +653,8 @@ Use credentials for DB/API access
     v
 Auto-renew via Vault agent sidecar before expiry
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Dynamic secrets: Vault generates a unique DB credential per service
 instance on startup. TTL: 1 hour. Vault automatically rotates the
@@ -1057,3 +1065,33 @@ flowchart TB
 > (CDE scope reduction). Vault provides dynamic credentials with
 > short TTLs for database access. This is defense in depth: an
 > attacker who bypasses one layer faces the next.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -197,9 +197,21 @@ Comparison Table when applicable). Conditional section decisions:
 **Critical rules - apply for every keyword:**
 
 - Every `###` preceded by `---` with blank lines
-- ASCII diagrams max 59 chars; code lines max 70 chars
-- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph
-- BAD pattern always before GOOD pattern
+- Code lines: max 70 chars. Always specify language after opening triple backtick.
+- BAD pattern always before GOOD pattern.
+- Every code block MUST be followed by `> **Code walkthrough:**` (3-6 sentences:
+  (1) WHAT IT SHOWS, (2) KEY MECHANISM step-by-step, (3) WHY IT MATTERS in
+  production, (4) WHAT BREAKS when misapplied, (5) TAKEAWAY rule to internalise).
+  A bare code block without this walkthrough is a spec violation.
+- ASCII diagrams: max 59 chars wide (escape hatch: up to 79 chars only if adjacent
+  prose description exists AND genuinely clearer; >79 → split or Mermaid-only).
+- Every ASCII or Mermaid diagram MUST be followed by `> **Diagram walkthrough:**`
+  (3-5 sentences: (1) WHAT IT DEPICTS, (2) HOW TO READ IT naming each node,
+  (3) KEY RELATIONSHIP, (4) EDGE CASE on failure path, (5) INSIGHT senior notices).
+- Every Mermaid block MUST also be preceded by a 1-2 sentence prose description.
+- Diagrams: DUAL format (ASCII first, then Mermaid below). One shared walkthrough
+  AFTER Mermaid for DUAL pairs. Types: flowchart, sequenceDiagram, stateDiagram-v2,
+  classDiagram, erDiagram, mindmap, timeline, xychart-beta, gantt, gitGraph.
 - Bold-label lines (`**LABEL:** value`) separated by blank lines
 - No em dashes - use hyphens
 - Interview Deep-Dive: question count by difficulty (7/9/12 min)

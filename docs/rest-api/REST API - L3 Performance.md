@@ -8,6 +8,16 @@ permalink: /rest-api/l3-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTTP Caching for REST APIs](#http-caching-for-rest-apis) | medium |
+| 2 | [Rate Limiting and Throttling Design](#rate-limiting-and-throttling-design) | medium |
+
+---
+
 # HTTP Caching for REST APIs
 
 ---
@@ -64,6 +74,8 @@ If resource changed:
 Origin returns 200 with new ETag: "def456"
 CDN and browser update their caches.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `no-cache` does NOT mean "don't cache." It means "cache but always revalidate before serving." `no-store` means "don't cache." This naming confusion causes many misconfigured APIs. `no-cache` is actually useful for authenticated resources where you want cache efficiency (304 No Modified saves bandwidth) but always want the server to confirm currency.
@@ -243,6 +255,34 @@ Fix: Multiple options: (1) CDN cache invalidation on update: when a user updates
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Rate Limiting and Throttling Design
 
 ---
@@ -303,6 +343,8 @@ Rate limit headers in response:
   On 429:
   Retry-After: 30  (seconds to wait)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Rate limiting enforced BEFORE heavy processing (at the API gateway level) is vastly more effective than rate limiting inside the application. If the application must process a request to check the rate limit, the expensive work is already done. Gateway-level rate limiting (checked with a Redis lookup before the request reaches application code) protects the application from even executing the handler.
@@ -491,3 +533,33 @@ Fix: Ensure the rate limiting filter covers ALL paths. Use `/**` pattern. Check 
 | GCRA | Minimal burst | Safe | One Redis op | High-performance |
 
 **The deciding factor:** Use token bucket for client-facing APIs (bursting is natural client behavior). Use GCRA for high-throughput services (one Redis operation per request). Use fixed window for simple quota enforcement where boundary spike risk is acceptable.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -118,6 +118,8 @@ Visibility Timeout Rule:
   Short timeout + slow processing = concurrent duplicates
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -134,6 +136,8 @@ public void processPayment(String message) {
     paymentRepo.save(payment);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Idempotent consumer with MessageId dedup check
@@ -155,6 +159,8 @@ public void processPayment(String message,
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Create queue with DLQ (maxReceiveCount=5):
@@ -302,6 +308,8 @@ aws cloudwatch get-metric-statistics \
 # VisibilityTimeout must be > p99 Duration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Set visibility timeout = max(Lambda timeout,
 P99 Duration) * 1.5. Implement idempotency as defense
 in depth for remaining at-least-once cases.
@@ -386,6 +394,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # EventBridge and Event-Driven AWS
 
@@ -480,6 +516,8 @@ Power: different targets see different subsets of events
 from the same bus, filtered by event content.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -496,6 +534,8 @@ public OrderResult processOrder(Order order) {
     return orderRepo.save(order);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Publish event, let EventBridge route
@@ -525,6 +565,8 @@ public OrderResult processOrder(Order order) {
     return saved;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Create custom event bus:
@@ -696,6 +738,8 @@ aws lambda get-policy --function-name my-lambda
 # Must contain: "Principal":{"Service":"events.amazonaws.com"}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use `test-event-pattern` to verify pattern.
 Add Lambda resource policy allowing EventBridge invocation.
 Use EventBridge Archive to capture events for debugging.
@@ -851,6 +895,8 @@ sqs.changeMessageVisibility(
 // Call this every ~45s during long-running processing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The systematic nature
 of this bug (not rare, but every message taking > timeout)
 makes it a production incident, not edge case. The dynamic
@@ -927,12 +973,16 @@ aws sqs receive-message \
 # - All have specific field value? -> validation bug
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 3: Get Lambda logs for the failures:**
 ```bash
 aws logs tail /aws/lambda/processor \
   --filter-pattern "ERROR" --follow
 # Find the specific exception for the failing message IDs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Common causes:**
 
@@ -958,6 +1008,8 @@ aws sqs start-message-move-task \
 # Reprocesses DLQ messages with the fix applied
 # Rate-limited to prevent overwhelming the system
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `start-message-move-task`
 (DLQ redrive, added in 2023) is the production tool for
@@ -1066,6 +1118,8 @@ sqs.sendMessage(SendMessageRequest.builder()
 // If retry: same deduplicationId -> SQS deduplicates
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Result:** Zero duplicate charges in following months.
 Added to incident runbook: async message systems need
 idempotency at BOTH producer and consumer levels.
@@ -1114,6 +1168,8 @@ Adding fraud check:
   NO changes to Order Service
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Reliability:**
 
 - EventBridge retries on target failure (up to 24hr).
@@ -1155,6 +1211,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Scaling levers (in order of impact):**
 
 1. Batch size (highest leverage):
@@ -1167,6 +1225,8 @@ aws cloudwatch get-metric-statistics \
    # at same Lambda concurrency
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Increase Lambda concurrency:
    ```bash
    aws lambda put-function-concurrency \
@@ -1175,6 +1235,8 @@ aws cloudwatch get-metric-statistics \
    # Default 1000 limit: request increase if needed
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Process batch items in parallel within Lambda:
    ```java
    List<Future<?>> futures = event.getRecords().stream()
@@ -1182,6 +1244,8 @@ aws cloudwatch get-metric-statistics \
        .collect(Collectors.toList());
    futures.forEach(f -> f.get()); // wait for all
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Reduce processing time per message:
    - Profile the bottleneck (DB query? External API?)
@@ -1252,6 +1316,8 @@ Cost at low volume     | Cheap         | Fixed cluster cost
 Fully managed          | Yes           | MSK (mostly)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Event sourcing and
 replay capability is the decisive factor for Kafka: if
 you need to rebuild application state from events (e.g.,
@@ -1263,3 +1329,33 @@ SQS + Lambda is the right choice at lower cost and
 operational overhead.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

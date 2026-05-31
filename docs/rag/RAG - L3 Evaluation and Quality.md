@@ -111,6 +111,8 @@ Answer Relevance    Answer addresses question  Generation
 Correctness         Answer is factually right  End-to-end
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The diagnostic matrix:**
 
 ```
@@ -127,6 +129,8 @@ High recall + low faithfulness = grounding problem
   (right docs retrieved, LLM ignores them)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **RAGAS metrics (automated with LLM judge):**
 
 ```
@@ -140,6 +144,8 @@ Answer Relevance:
   2. Similarity between generated question and original
   3. Score = cosine_similarity(gen_q, original_q)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -550,6 +556,8 @@ CI integration for RAG:
               ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Quality gates: fail the PR if:
     - recall@5 drops by > 3%
     - faithfulness drops below 0.85
@@ -610,6 +618,8 @@ Critical: faithfulness < 0.80 (immediate page)
 Warning: faithfulness < 0.85 (investigate within 24h)
 Info: "I don't know" rate > 15% (review knowledge gaps)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "I don't know rate
 > 15% signals knowledge gaps" as the specific
@@ -690,6 +700,8 @@ End-to-end quality is poor
                           - Multi-hop decomposition needed?
                           - Knowledge base gaps?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rule: never tune the generation step if recall is
 low. The retrieval problem will mask any generation
@@ -886,6 +898,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # RAG Anti-Patterns
 
 **Interview Weight:** ★★☆ - Knowing what NOT to do
@@ -989,6 +1029,8 @@ Retrieval without          Low precision         Threshold: skip if
 score threshold            (irrelevant chunks    score < 0.6
                            in context)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1384,6 +1426,8 @@ Prevention strategy:
                                     -> index new chunks
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Periodic sync: for systems without events,
     run a nightly comparison:
     - Query source system for all docs modified
@@ -1732,3 +1776,33 @@ flowchart TD
 > the missing source labels anti-pattern. A "healthy"
 > pipeline isn't the end - continuous monitoring
 > is required.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

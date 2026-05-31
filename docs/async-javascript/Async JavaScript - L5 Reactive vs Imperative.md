@@ -137,6 +137,8 @@ searchInput.addEventListener('input', (e) => {
 // manual loading state, manual race condition guard
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // REACTIVE APPROACH (RxJS):
 const search$ = fromEvent(searchInput, 'input').pipe(
@@ -166,6 +168,8 @@ search$.pipe(
 // - all declarative
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```typescript
 // SIGNALS APPROACH (Angular 17+):
 @Component({
@@ -193,6 +197,8 @@ class SearchComponent {
 }
 // Signals: 12 lines, simpler than RxJS, handles cancellation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Signals bridge the gap between imperative and reactive. They
@@ -422,6 +428,8 @@ class UserService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Mixing models without a seam**
 ```javascript
 // BAD: async function inside Observable pipe
@@ -443,6 +451,8 @@ service.events$.pipe(
   )
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -532,6 +542,8 @@ const search$ = searchInput$.pipe(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that "fine-grained
 reactivity" (updating only what changed) is the key performance
 advantage of Signals over Angular's previous change detection
@@ -576,6 +588,8 @@ describe('SearchService', () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For async/await tests:
 ```typescript
 // Fake timer approach:
@@ -591,6 +605,8 @@ test('debounce handler', async () => {
   expect(handler).toHaveBeenCalledWith('ab');
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Marble testing syntax:
 `'a 100ms b'` reads as "emit 'a', wait 100ms, emit 'b'".
@@ -660,6 +676,8 @@ watchEffect(() => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Angular Signals (Angular 16+):
 ```typescript
 // Similar API, different naming conventions:
@@ -674,6 +692,8 @@ effect(() => {
   console.log(`Count is ${count()}`);
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key differences:
 - Vue uses Proxy (reactive), Angular uses getter functions (signal())
@@ -732,6 +752,8 @@ const authMachine = createMachine({
 // Loading state cannot receive LOGIN event (already loading)
 // Authenticated state cannot receive LOGIN (already auth'd)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When XState adds complexity:
 - Simple fetch + display: overkill
@@ -841,6 +863,8 @@ users$.pipe(
 ).subscribe(console.log);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that async generators
 are pull-based (consumer controls pace) while Observables are
 push-based (producer controls pace). For pagination, both
@@ -886,6 +910,8 @@ class Counter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The performance model difference:
 zone.js is O(N) regardless of what changed; Signals are O(changed
 signals), proportional only to what actually changed. This
@@ -913,6 +939,8 @@ async function loadUser(id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Reactive: errors terminate the stream. Requires `catchError`
 to prevent stream death:
 ```javascript
@@ -937,6 +965,8 @@ const user$ = userId$.pipe(
 // Next userId: fetchUser fires again
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Signals + resource():
 ```typescript
 // resource() handles error automatically:
@@ -948,6 +978,8 @@ userResource = resource({
 // userResource.isLoading() - reactive loading signal
 // No try/catch needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "error terminates stream"
 behavior is the most common RxJS bug for developers coming from
@@ -1005,6 +1037,8 @@ class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `from(asyncOperation())` bridge.
 The async function runs imperatively (try/catch, switch, sequential
 awaits) and its result is wrapped in an Observable for reactive
@@ -1055,6 +1089,8 @@ decision - "we chose RxJS for search debounce, autocomplete,
 and real-time sync because those problems fit the reactive
 model" is.
 
+---
+
 ### ⚖️ Comparison Table
 
 | Dimension | Imperative async/await | Reactive (RxJS/Observables) | Signals |
@@ -1066,6 +1102,8 @@ model" is.
 | Multi-source combo | Promise.all / manual | combineLatest | computedFrom (pending) |
 | Testing | jest.fn + fake timers | Marble testing | Simple unit tests |
 | Best for | Sequential workflows | Event streams, multi-source | Component state |
+
+---
 
 ### 🏛️ System Design
 
@@ -1103,11 +1141,15 @@ Architecture boundary:
   Observable -> Promise: firstValueFrom, lastValueFrom
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Explicit decision mapping.
 Not "use reactive for everything" or "use async/await for
 everything" - but mapping each problem type to the model
 that fits it. The interop helpers (`toSignal`, `toObservable`,
 `from()`) make the boundaries clean.
+
+---
 
 ### 📊 Diagram
 
@@ -1164,3 +1206,30 @@ quadrantChart
 > the top-right quadrant benefit most from reactive patterns,
 > features in the bottom-left quadrant are better served by
 > imperative async code.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

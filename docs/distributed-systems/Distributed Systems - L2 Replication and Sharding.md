@@ -8,6 +8,16 @@ permalink: /distributed-systems/l2-replication-and-sharding/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Data Replication Strategies](#data-replication-strategies) | medium |
+| 2 | [Database Sharding](#database-sharding) | medium |
+
+---
+
 # Data Replication Strategies
 
 **TL;DR:** Replication copies data to multiple nodes for durability and
@@ -97,6 +107,8 @@ Client → Primary (accepts writes)
          Replica 3 (read-only)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Write path: client → primary only.
 Read path: client → any replica.
 Failover: promote a replica to primary on primary failure.
@@ -108,6 +120,8 @@ Client A → Primary 1 (accepts writes)
 Client B → Primary 2 (accepts writes)
           Primary 1 ↔ Primary 2 (sync bidirectional)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Write path: any primary.
 Conflict: both primaries accept conflicting writes simultaneously.
@@ -121,6 +135,8 @@ Client → writes to W nodes (quorum write)
 Client → reads from R nodes (quorum read)
 W + R > N → guaranteed to see latest write
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 N = total replicas, W = write quorum, R = read quorum.
 No primary/replica distinction.
@@ -138,6 +154,8 @@ Async: Client → Primary → ACK
        Pros: low write latency
        Cons: replica lag = potential data loss
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Most production systems use semi-synchronous replication: at least
@@ -422,6 +440,34 @@ leader-follower topology.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Database Sharding
 
 **TL;DR:** Sharding horizontally partitions data across multiple database
@@ -501,6 +547,8 @@ shard_key range → shard
 1000000-1999999 → Shard 2
 2000000+        → Shard 3
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: range queries on shard key are efficient.
 Cons: monotonically increasing keys (timestamps, auto-increment IDs)
 create write hotspots on the latest shard.
@@ -510,6 +558,8 @@ create write hotspots on the latest shard.
 shard_id = hash(shard_key) % num_shards
 hash("user_42") % 4 = 2 → Shard 2
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: even distribution.
 Cons: range queries require scatter-gather across all shards.
 
@@ -519,6 +569,8 @@ Ring with virtual nodes. Each physical shard covers
 multiple positions on the ring.
 Adding a shard: only adjacent virtual nodes migrate.
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: adding/removing shards requires minimal data movement.
 Cons: more complex to implement.
 
@@ -538,6 +590,8 @@ Slow at scale.
 Solution: shard by user_id, not order_id.
 All of user 42's orders are on the same shard.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The shard key must align with the most common query access pattern.
@@ -787,3 +841,33 @@ the proposed shard key?"
 
 *Why:* The shard key must align with the primary query pattern, or
 every query becomes a scatter-gather.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

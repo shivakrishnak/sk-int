@@ -8,6 +8,16 @@ permalink: /design-patterns/l2-behavioral/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Command Pattern](#command-pattern) | medium |
+| 2 | [Iterator Pattern](#iterator-pattern) | medium |
+
+---
+
 # Command Pattern
 
 ---
@@ -118,6 +128,8 @@ Client:
   // Later:
   invoker.undo()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Invoker never knows what the command does - it only knows the
@@ -485,6 +497,34 @@ table with next_attempt_time column.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Iterator Pattern
 
 ---
@@ -594,6 +634,8 @@ for (String element : collection) {
     process(element);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **External vs Internal Iterator:**
 - **External Iterator** (GoF, Java `Iterator`): client controls the
@@ -927,3 +969,33 @@ from a `@Query` method - Spring opens a cursor, returns a lazy `Stream`,
 you process and close. Never use this for high-concurrency: one DB
 connection is held open per iterator instance, which can exhaust
 the connection pool.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

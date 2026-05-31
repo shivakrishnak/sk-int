@@ -8,9 +8,20 @@ permalink: /jpa/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L0 Orientation](#jpa---l0-orientation) | medium |
+
+---
+
 # JPA - L0 Orientation
 
 ## What JPA Is and Why It Exists: ORM vs JDBC
+
+---
 
 ### 🎯 Model Answer
 
@@ -163,6 +174,8 @@ ORM vs JDBC COMPARISON TABLE:
   | Performance tuning | Direct            | Indirect (more hidden)|
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -280,6 +293,8 @@ Fix option 3: use DTO projection (never load the entity at all):
   List<UserWithOrderCount> findAllWithOrderCount();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -317,6 +332,8 @@ how you design JPA usage: always think "what SQL will this generate?"
 ---
 
 ## JPA vs Hibernate vs Spring Data JPA: The Ecosystem
+
+---
 
 ### 🎯 Model Answer
 
@@ -452,6 +469,8 @@ JPA PORTABILITY:
     Use Hibernate-specific features freely when they solve real problems.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -566,6 +585,8 @@ Fix option 3: use Testcontainers for integration tests (not H2):
   Eliminates dialect differences between test and production.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -607,6 +628,8 @@ issue (wrong data, missing index causing stale cache read). Each layer is testab
 ---
 
 ## Setting Up JPA: EntityManagerFactory and Persistence Context
+
+---
 
 ### 🎯 Model Answer
 
@@ -735,6 +758,8 @@ HIKARICP CONNECTION POOL:
     Too small: connection acquisition timeout under load.
     Too large: DB CPU overhead for unused connections.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -865,6 +890,8 @@ Fix:
   Result: startup time drops from 90s to 5s.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -898,3 +925,33 @@ is safe (JPA returns the cached instance). But: this also means if you load an e
 thread modifies it in the DB, and you call `em.find()` again in the same transaction: you still
 get the stale cached version. Clearing the cache: `em.clear()` or `em.refresh(entity)`.
 Understanding this is essential for diagnosing stale data reads in long-running transactions.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

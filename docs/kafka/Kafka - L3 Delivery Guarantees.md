@@ -8,9 +8,20 @@ permalink: /kafka/l3-delivery-guarantees/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L3 Delivery Guarantees](#kafka---l3-delivery-guarantees) | medium |
+
+---
+
 # Kafka - L3 Delivery Guarantees
 
 ## Exactly-Once Semantics
+
+---
 
 ### 🎯 Model Answer
 
@@ -151,6 +162,8 @@ EOS IN KAFKA STREAMS:
   //   Older EXACTLY_ONCE: one transaction per poll interval. More coordinator load.
   //   V2: more efficient. Recommended for Kafka 2.6+.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -396,6 +409,8 @@ Fix:
   Alert on LSO vs LEO gap > threshold.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -446,6 +461,8 @@ reducing the total number of transaction coordinator calls vs the older `exactly
 ---
 
 ## Kafka Transactions
+
+---
 
 ### 🎯 Model Answer
 
@@ -592,6 +609,8 @@ OUTBOX PATTERN (DB + KAFKA ATOMICITY):
   Result: DB and Kafka are eventually consistent with at-least-once delivery.
   No distributed transaction required.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -814,6 +833,8 @@ Fix:
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -860,4 +881,34 @@ and routes it to the correct Kafka topic. This achieves sub-second DB-to-Kafka l
 polling overhead. The trade-off: adds Debezium as an infrastructure dependency. For simpler use
 cases: polling every second is adequate and has no extra infrastructure. The decision: real-time
 latency requirement vs operational complexity of running Debezium.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

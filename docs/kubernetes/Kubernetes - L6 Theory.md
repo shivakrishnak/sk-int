@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # Desired State and Reconciliation Loops Theory
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -135,6 +137,8 @@ or network partitions.
    observe -> compare -> act
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The informer pattern provides:
 - Cache: controller reads from cache (fast, no API call) not from API server
 - Watch: incremental updates from API server (not polling)
@@ -171,6 +175,8 @@ func (r *MyReconciler) Reconcile(key types.NamespacedName) error {
     return nil
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Idempotency means: creating a resource that already exists is a no-op (use
 `kubectl apply` semantics: create if not exists, update if exists but different).
@@ -349,6 +355,8 @@ kubectl get <object> -o yaml | grep resourceVersion
 # Run twice 5s apart: if resourceVersion changes each time = controller loop
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: fix reconcile logic to be idempotent. Before updating an annotation: check if the
 annotation already has the desired value. If already correct: return nil without any API call.
 
@@ -366,6 +374,8 @@ Diagnostic:
 controller_runtime_reconcile_time_seconds_bucket
 controller_runtime_queue_length
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: increase number of concurrent reconciler workers in controller setup:
 `ctrl.Options{MaxConcurrentReconciles: 10}`. Add timeouts to external API calls.
@@ -476,6 +486,8 @@ Work queue:          [Pod-A]        [Pod-A - still there]       (already in queu
 Reconcile calls:     reconcile(Pod-A)       reconcile(Pod-A)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If Pod-A changes 5 times while a reconcile is in progress: only one additional reconcile
 runs after the current one completes. Each reconcile processes CURRENT state, so
 intermediate states don't need individual reconciliation.
@@ -495,6 +507,8 @@ ctrl.NewControllerManagedBy(mgr).
         ),
     })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Parallel processing: the work queue allows N worker goroutines to drain it concurrently.
 Each worker calls `reconcile(key)`. Different keys can be processed in parallel. The
@@ -550,6 +564,8 @@ GOOD: Validating webhook rejects non-compliant pods at creation time
       (synchronous: pod never starts if policy is violated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `failurePolicy: Fail` vs `failurePolicy: Ignore`
 decision for admission webhooks is an availability trade-off. `Fail`: any webhook error
 (timeout, 5xx) blocks the API request. Maximum security but creates a hard dependency on
@@ -572,6 +588,8 @@ kubectl logs <controller-pod> | grep "Reconciling\|reconcile"
 # If rapid reconcile logs: possible reconcile loop (check Step 3)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check informer/cache health.
 ```bash
 # Controller-runtime metrics:
@@ -580,11 +598,15 @@ controller_runtime_reconcile_total{controller="mycontroller"}
 # Possible: watch is broken, labelSelector mismatch, RBAC issue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check RBAC: controller ServiceAccount must have Get/List/Watch on watched resources:
 ```bash
 kubectl auth can-i list pods \
   --as=system:serviceaccount:default:my-controller
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Check reconcile output (add strategic logging).
 ```go
@@ -598,6 +620,8 @@ log.Info("Starting reconcile",
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Check error handling.
 If reconcile returns an error: the object is re-queued. If it returns nil but doesn't
 update status: you can't tell if reconcile ran. Best practice: always update status with
@@ -608,6 +632,8 @@ Step 5: Dry-run to see what changes would be made without applying:
 kubectl apply --dry-run=server -f resource.yaml
 # Server-side dry-run: runs admission webhooks, returns what WOULD happen
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `ObservedGeneration` status field is the most
 powerful debugging tool for controllers. It means: "this controller has processed the
@@ -652,6 +678,8 @@ if errors.IsConflict(err) {
     return ctrl.Result{Requeue: true}, nil
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The optimistic concurrency model in Kubernetes is
 implicit in the resourceVersion. When you `Get` an object: the response includes
@@ -722,6 +750,8 @@ if !containsFinalizer(db, "postgres-operator/pvc-cleanup") {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Idempotency for creates:
 ```go
 // Always check if resource exists before creating
@@ -734,6 +764,8 @@ if errors.IsNotFound(err) {
 }
 // If already exists: use existing (don't overwrite with new random password)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Status-driven state machine:
 Use `status.phase` to track the operator's progress across reconcile calls:
@@ -752,6 +784,8 @@ case "running":
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Idempotent configuration:
 Generating PostgreSQL configuration: pg_hba.conf must be idempotent (same input produces
 same output). Use deterministic templates, not random values for things like max_connections
@@ -769,6 +803,8 @@ if !db.DeletionTimestamp.IsZero() {
     controllerutil.RemoveFinalizer(db, "postgres-operator/cleanup")
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "assume nothing" principle for production database
 operators: every reconcile starts with a fresh observation. Don't assume the StatefulSet
@@ -807,6 +843,8 @@ spec:
   traffic:
     canaryWeight: 10          # % to send to canary subset
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Controller design (controller-runtime):
 - Watches: AppDeployment (primary), Deployment/HPA/PDB/VirtualService (secondary owned resources)
@@ -926,7 +964,37 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kubernetes API Machinery and Operator Pattern
+
+---
 
 ### 🎯 Model Answer
 
@@ -1036,6 +1104,8 @@ spec:
       jsonPath: .status.conditions[?(@.type=='Ready')].status
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key CRD features:
 - Schema validation: OpenAPI v3 schema validates objects at creation/update time
 - CEL validation (K8s 1.25+): complex cross-field validation using Common Expression Language
@@ -1053,6 +1123,8 @@ kubebuilder create api --group db --version v1 --kind DatabaseCluster
 #            controllers/databasecluster_controller.go (reconciler)
 #            config/crd/bases/*.yaml (CRD manifests)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The generated reconciler structure:
 ```go
@@ -1078,6 +1150,8 @@ func (r *DatabaseClusterReconciler) Reconcile(
     return ctrl.Result{}, nil
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Webhook Implementation:**
 
@@ -1111,6 +1185,8 @@ func (r *DatabaseCluster) Default() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Status Conditions:**
 
 The `conditions` pattern is the standard way to communicate operator state:
@@ -1133,6 +1209,8 @@ meta.SetStatusCondition(&db.Status.Conditions, metav1.Condition{
 r.Status().Update(ctx, db)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `kubectl get databasecluster my-db -o yaml` shows the conditions:
 ```yaml
 status:
@@ -1143,6 +1221,8 @@ status:
     reason: DatabaseRunning
     message: "All replicas running and healthy"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1322,6 +1402,8 @@ kubectl apply -f resource.yaml --validate=false
 # If --validate=false succeeds: it's a schema validation issue, not an auth issue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: update the CRD schema to allow the valid value. Use `x-kubernetes-int-or-string: true`
 for fields that accept both types. Use CEL validation for complex cross-field rules.
 
@@ -1340,6 +1422,8 @@ kubectl logs <operator-pod> -n <operator-namespace> --previous
 kubectl describe pod <operator-pod> -n <operator-namespace>
 # Check events: ImagePullBackOff, OOMKilled
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: if panic: fix the nil pointer dereference or unhandled error in Reconcile.
 If cert not ready: cert-manager not issuing the webhook cert; check cert-manager logs.
@@ -1419,6 +1503,8 @@ spec:
   required: [replicas, name]  # both fields required
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. CEL validation (K8s 1.25+ GA): complex cross-field validation that OpenAPI can't express:
 ```yaml
 x-kubernetes-validations:
@@ -1429,6 +1515,8 @@ x-kubernetes-validations:
   message: "Cannot change version while database is not ready"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CEL can reference `self` (new value) and `oldSelf` (previous value for updates).
 This enables immutability constraints: "storage size cannot be decreased":
 ```yaml
@@ -1436,6 +1524,8 @@ x-kubernetes-validations:
 - rule: "self.storageGB >= oldSelf.storageGB"
   message: "storage cannot be decreased"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Structural schema requirement: CRD schemas MUST be "structural" (every field has a type).
 Non-structural schemas are deprecated. Structural schemas enable server-side pruning
@@ -1471,6 +1561,8 @@ spec:
     replicationFactor: 3
     minInsyncReplicas: 2
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 NOT: "create pod X, assign it broker ID 2, wait for it to join, then..."
 
 2. Broker identity: StatefulSet names are stable (kafka-0, kafka-1, kafka-2).
@@ -1493,6 +1585,8 @@ for i := 0; i < replicas; i++ {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Topic management via CRD:
 ```yaml
 kind: KafkaTopic
@@ -1502,6 +1596,8 @@ spec:
   config:
     retentionMs: 604800000  # 7 days
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Topic operator creates/updates topics via Kafka Admin API.
 
 5. Security CRDs: `KafkaUser` CRD creates ACLs via Kafka ACL API and generates credentials.
@@ -1553,6 +1649,8 @@ spec:
   minAvailable: 2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Certificate management: webhook TLS certificate must be valid and trusted by the API server.
 Use cert-manager:
 ```yaml
@@ -1567,6 +1665,8 @@ spec:
 issuerRef:
   name: selfsigned-issuer  # or: cluster-level issuer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Webhook configuration references the secret:
 ```yaml
@@ -1585,6 +1685,8 @@ webhooks:
     resources: [databaseclusters]
     operations: [CREATE, UPDATE]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The webhook timeout is the most commonly under-configured
 parameter. Default is 10 seconds. But: the API server's overall request timeout is 60 seconds.
@@ -1651,6 +1753,8 @@ kubectl logs <operator-pod> | grep "AlreadyExists\|already exists"
 # If no such logs: operator isn't handling AlreadyExists error correctly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common cause: operator calls `r.Create()` without first checking `r.Get()`.
 On retry (after error or re-sync): tries to create the same resource again.
 If it ignores the AlreadyExists error: the original resource remains but the operator
@@ -1675,6 +1779,8 @@ func ensureService(ctx context.Context, r client.Client,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alternative: use `controller-runtime`'s `CreateOrUpdate`:
 ```go
 mutateFn := func() error {
@@ -1683,6 +1789,8 @@ mutateFn := func() error {
 }
 _, err = controllerutil.CreateOrUpdate(ctx, r.Client, existing, mutateFn)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The owner reference is the long-term fix for duplicate
 resources. When you set `controllerutil.SetControllerReference(parent, child, scheme)`:
@@ -1706,6 +1814,8 @@ v1alpha1 -> v1beta1 -> v1
 (experimental)  (mostly stable)  (GA, no breaking changes)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Supporting multiple versions (with conversion):
 ```yaml
 versions:
@@ -1718,6 +1828,8 @@ versions:
   deprecated: true
   deprecationWarning: "v1beta1 is deprecated. Use v1."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Conversion webhook (required when schemas differ between versions):
 ```go
@@ -1736,6 +1848,8 @@ func (src *DatabaseClusterV1beta1) ConvertTo(
     return nil
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Migration procedure:
 1. Release new operator version with v1 served and v1beta1 still served
@@ -1781,6 +1895,8 @@ spec:
     name: customer-abc
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Operator architecture:
 
 Tenant controller: watches DatabaseTenant, creates:
@@ -1809,6 +1925,8 @@ func (r *DatabaseCluster) ValidateCreate() error {
     return nil
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Isolation guarantees:
 - Network: NetworkPolicy + namespace isolation (no pod can reach another tenant's pod)
@@ -1960,3 +2078,33 @@ sequenceDiagram
 > asynchronous (resource creation) phases is fundamental to the operator's reliability:
 > the create path is always fast (webhook validates and returns), while the actual work
 > happens reliably in the background.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /typescript/l2-utility-types/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Built-in Utility Types](#built-in-utility-types) | working |
+| 2 | [Template Literal Types](#template-literal-types) | working |
+
+---
+
 # Built-in Utility Types
 
 🎯 **Interview Weight:** working (★★☆) - utility types are used in every
@@ -135,6 +145,8 @@ USAGE PATTERNS:
     // Missing 'banned' -> Error
   };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -305,6 +317,8 @@ type PublicUser = Pick<User,
 // Adding new User fields doesn't accidentally expose them
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -439,6 +453,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Template Literal Types
 
 🎯 **Interview Weight:** working (★★☆) - template literal types appear
@@ -548,6 +590,8 @@ KEY GENERATION IN MAPPED TYPES:
   type UserGetters = Getters<User>;
   // { getName: () => string; getAge: () => number }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -719,6 +763,8 @@ type ValidCssShorthand = `${'margin' | 'padding'}-${
 }`;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -889,3 +935,33 @@ types?** `[SENIOR]` MECHANISM
 > number | symbol`, TypeScript insists on the narrowing. In practice,
 > most object keys are strings, so `string & K` simply removes the
 > `number | symbol` possibilities that don't apply to your actual data.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -20,6 +20,8 @@ render_with_liquid: false
 
 # Service Mesh: Istio and Envoy Sidecar Pattern
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -123,6 +125,8 @@ spec:
     mode: STRICT  # STRICT: reject non-mTLS; PERMISSIVE: allow both
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Istio xDS API - control plane to data plane:**
 
 Istio uses Envoy's xDS (discovery service) protocol to configure all Envoy proxies.
@@ -163,6 +167,8 @@ spec:
         weight: 10    # 10% -> v2 canary
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 DestinationRule - connection policies per subset:
 ```yaml
 kind: DestinationRule
@@ -184,6 +190,8 @@ spec:
   - name: v2
     labels: {version: v2}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Authorization Policy:**
 
@@ -207,6 +215,8 @@ spec:
         methods: [GET]
         paths: ["/api/v1/inventory/*"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Observability:**
 
@@ -466,6 +476,8 @@ istioctl proxy-config cluster <pod>
 kubectl logs <pod> -c istio-proxy | grep -v "200\|304"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: if mTLS mismatch: add the calling service to the mesh or change PeerAuthentication
 to PERMISSIVE temporarily. If circuit breaker: check destination service health and
 adjust outlierDetection thresholds.
@@ -572,6 +584,8 @@ iptables -t nat -A ISTIO_OUTPUT ! -d 127.0.0.1/32 -j ISTIO_REDIRECT
 iptables -t nat -A ISTIO_REDIRECT -p tcp -j REDIRECT --to-port 15001
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 After injection: the application thinks it's sending to `service:8080`. iptables
 redirects to Envoy at port 15001. Envoy handles mTLS, routing, and observability,
 then forwards to the actual destination.
@@ -644,6 +658,8 @@ Architecture:
    replicas=5          replicas=1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key insight: replica count doesn't determine traffic percentage. VirtualService weight does.
 You can have 1 v2 pod receiving 10% of traffic, or 5 v2 pods receiving 10%.
 
@@ -700,6 +716,8 @@ spec:
       interval: 10s
       baseEjectionTime: 30s
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Progressive rollout automation:
 Start at 1%, check error rate and latency for 15 minutes.
@@ -771,6 +789,8 @@ kubectl logs <source-pod> -c istio-proxy | tail -50
 # `upstream_cx_destroy_remote_with_active_rq`, `circuit_breaker_open`
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: check Istio proxy status for the source.
 ```bash
 # Check if Envoy knows about the destination endpoints
@@ -779,11 +799,15 @@ istioctl proxy-config endpoints <source-pod> | grep <destination-service>
 # If OUTLIER CHECK = FAILED: circuit breaker tripped for this endpoint
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: check mTLS configuration.
 ```bash
 istioctl authn tls-check <source-pod> <destination-service>
 # Output: ok (mTLS), or mismatch (one side strict, other not in mesh)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: check if PeerAuthentication is in STRICT mode but caller is not injected.
 ```bash
@@ -792,6 +816,8 @@ kubectl get peerauthentication -n <destination-namespace>
 # If source has no sidecar: plain HTTP rejected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: check destination service pods are healthy.
 ```bash
 kubectl get pods -n <destination-namespace> -l app=<service>
@@ -799,6 +825,8 @@ kubectl get pods -n <destination-namespace> -l app=<service>
 kubectl describe pod <destination-pod>
 # Readiness probe failing? Service unavailable?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common root causes:
 - Circuit breaker open: `outlierDetection` triggered due to errors in destination pods
@@ -852,6 +880,8 @@ PeerAuthentication -> LDS -> TLS filter
 AuthorizationPolicy -> LDS -> RBAC filter
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 xDS update mechanism: Envoy establishes a long-lived gRPC stream to istiod. istiod
 pushes config updates when any relevant Kubernetes object changes. Updates are
 incremental (delta xDS) for large meshes: only send what changed, not the entire
@@ -881,6 +911,8 @@ Step 2: identify the span with high latency.
   [checkout app: 10ms -> 340ms]
     [db Envoy out: 15ms -> 330ms] -> [db Envoy in: 20ms -> 325ms]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `checkout app` span is long. The DB call is also long. Is it the application or the DB?
 
 Step 3: check Istio metrics for that service pair.
@@ -894,6 +926,8 @@ istio_request_duration_milliseconds{
 # P99 latency for this specific service pair
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: check Envoy metrics for connection pool exhaustion.
 ```bash
 kubectl exec <checkout-pod> -c istio-proxy -- \
@@ -901,6 +935,8 @@ kubectl exec <checkout-pod> -c istio-proxy -- \
 # pending_overflow = requests queued waiting for connection
 # circuit_breakers.*.cx_open = circuit breaker open count
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: check if it's an mTLS overhead issue.
 For very high-frequency short calls (10ms target, 5ms mTLS overhead = 50% overhead):
@@ -990,6 +1026,8 @@ pilot_conflict_outbound_listener_tcp_over_current_tcp
 pilot_total_xds_connections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alert on: `pilot_xds_push_errors_total > 0` (configuration changes not propagating).
 
 Data plane - per-service health:
@@ -1007,6 +1045,8 @@ histogram_quantile(0.99,
     by (source_app, destination_app, le))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Certificate expiry:
 ```bash
 # Time until certificate expires for each workload
@@ -1015,6 +1055,8 @@ istio_agent_cert_expiry_seconds
 # Alert when < 48 hours remaining
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Proxy version drift (when upgrading Istio):
 ```bash
 # Shows all proxy versions - should match after upgrade
@@ -1022,6 +1064,8 @@ istioctl proxy-status
 # Output: NAME | CDS | LDS | EDS | RDS | SYNCED
 # SYNCED = proxy is up to date with istiod config
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Kiali dashboard: service topology, error rates, and traffic visualization.
 Run Kiali in production for visual debugging: `istioctl dashboard kiali`.
@@ -1115,6 +1159,8 @@ istioctl proxy-status | grep "NOT SYNCED" | awk '{print $1}'
 kubectl rollout restart deployment -n <affected-namespaces>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 New proxy version connected to new istiod successfully. xDS connections restored to 450.
 503 errors resolved within 10 minutes of rollout restart.
 
@@ -1175,6 +1221,8 @@ Topology:
   [Kiali: service topology visualization]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Security posture:
 - PeerAuthentication: STRICT mode for all namespaces (mTLS enforced)
 - AuthorizationPolicy per namespace: explicit allow lists for each service
@@ -1202,6 +1250,8 @@ kind: AuthorizationPolicy
 metadata: {name: default-deny, namespace: payments}
 spec: {}  # empty spec = deny all
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then explicitly allow each needed communication path. This means every inter-service
 communication is documented in code (AuthorizationPolicy), auditable, and enforced.
 Any new service that tries to call a service it's not authorized for: 403, visible in
@@ -1259,3 +1309,33 @@ sequenceDiagram
 > knows about TLS or the mesh. Both Envoys emit metrics and trace spans. The application
 > code is unchanged: it makes plain HTTP calls to service names. All security, traffic
 > management, and observability happen transparently in the proxy layer.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

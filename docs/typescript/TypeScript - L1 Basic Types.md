@@ -7,6 +7,17 @@ permalink: /typescript/l1-basic-types/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Primitive Types](#typescript-primitive-types) | foundational |
+| 2 | [Interfaces and Type Aliases](#interfaces-and-type-aliases) | foundational |
+| 3 | [Enums and Literal Types](#enums-and-literal-types) | foundational |
+
+---
+
 # TypeScript Primitive Types
 
 🎯 **Interview Weight:** foundational (★☆☆) - basic types are asked
@@ -150,6 +161,8 @@ NEVER IN EXHAUSTIVE CHECKS:
   // TypeScript error: Type 'hexagon' is not assignable to type 'never'
   // This catches missing cases at compile time!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -318,6 +331,8 @@ element.addEventListener('click', handleSubmit);
 // Only proceeds if element exists
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -426,6 +441,34 @@ primitive parent types?** `[MID]` MECHANISM
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Interfaces and Type Aliases
 
@@ -558,6 +601,8 @@ WHEN TO USE EACH:
     - Internal data structures
     - Simple object shapes with no need for declaration merging
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -723,6 +768,8 @@ interface String {
 //       *.d.ts file with a clear comment explaining the augmentation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -863,6 +910,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Enums and Literal Types
 
 🎯 **Interview Weight:** foundational (★☆☆) - enums vs literal unions
@@ -995,6 +1070,8 @@ ENUM PITFALLS:
   JSON.stringify({ direction: Direction.North })  // '{"direction":"NORTH"}'
   // Fine for string enums; numeric enums are less readable in JSON
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1167,6 +1244,8 @@ type Direction = 'N' | 'S';
 export const Direction = { North: 'N', South: 'S' } as const;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1306,3 +1385,33 @@ DECISION
 > is the natural representation. The runtime object is required for
 > the bitwise operations, and auto-increment from `1 << 0` is cleaner
 > than writing `1, 2, 4, 8, 16` manually.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -42,7 +42,7 @@ Open the workspace in VS Code with the GitHub Copilot Chat extension and use:
 - `@generate-entries` - generate keyword content in batches
 - `@fill-content` - fill stubs in existing files
 
-See [spec/interview_content_generator.md](spec/interview_content_generator.md) for the full v1.0 generation specification and [spec/topics_registry.md](spec/topics_registry.md) for the topic registry.
+See [spec/interview_content_generator.md](spec/interview_content_generator.md) for the full v1.0 generation specification and [spec/topics_registry.md](spec/topics_registry.md) for topic registry.
 
 ## Contributing
 

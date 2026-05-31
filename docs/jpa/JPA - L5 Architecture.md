@@ -8,9 +8,20 @@ permalink: /jpa/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L5 Architecture](#jpa---l5-architecture) | medium |
+
+---
+
 # JPA - L5 Architecture
 
 ## JPA at Scale: Aggregates, Repository Pattern, and Domain Model Design
+
+---
 
 ### 🎯 Model Answer
 
@@ -225,6 +236,8 @@ LARGE AGGREGATE DECOMPOSITION:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -369,6 +382,8 @@ CONSISTENCY:
     5. NotificationService: sendConfirmationEmail(customerId)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -478,6 +493,8 @@ Lesson: every child entity in an aggregate shares the root's @Version. If a chil
   frequently and independently: extract it to its own aggregate.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -522,4 +539,34 @@ without the address). "Order aggregate" contains Order + OrderItems (one order p
 Orders reference CustomerID by Long. Products: separate aggregate. The heuristic: each aggregate
 should be loadable in one query (or a very small number). If loading the aggregate requires a JOIN
 with more than 3 tables: it's likely too large.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

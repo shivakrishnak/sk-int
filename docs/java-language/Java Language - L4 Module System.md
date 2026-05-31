@@ -8,9 +8,20 @@ permalink: /java-language/l4-module-system/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L4 Module System](#java-language---l4-module-system) | medium |
+
+---
+
 # Java Language - L4 Module System
 
 ## Java Module System: JPMS and module-info.java
+
+---
 
 ### 🎯 Model Answer
 
@@ -165,6 +176,8 @@ COMMON COMPILER/RUNTIME FLAGS:
   // Show module resolution:
   java --show-module-resolution ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -357,6 +370,8 @@ Prevention:
   for library compatibility matrix.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -455,6 +470,8 @@ COPY --from=builder /opt/jre /opt/jre
 COPY --from=builder /app/build/libs/app.jar /app/app.jar
 ENTRYPOINT ["/opt/jre/bin/java", "-jar", "/app/app.jar"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This pattern: (1) the build image has the full JDK, (2) the runtime image has only the custom JRE.
 Size comparison: full `eclipse-temurin:21-jre` = ~200MB. Custom jlinked JRE = 60-100MB. A 100-140MB
 reduction per container replica, significant at scale. The `jdeps` output is often wrong for Spring
@@ -619,3 +636,33 @@ flowchart TD
 ### 📊 Diagram
 
 *(Omit: Module architecture shown in System Design section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

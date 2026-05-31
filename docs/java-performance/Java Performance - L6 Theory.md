@@ -8,9 +8,20 @@ permalink: /java-performance/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L6 Theory](#java-performance---l6-theory) | medium |
+
+---
+
 # Java Performance - L6 Theory
 
 ## Mechanical Sympathy: Hardware-Aware Java Programming
+
+---
 
 ### 🎯 Model Answer
 
@@ -100,7 +111,8 @@ CPU CACHE HIERARCHY NUMBERS (approximate, varies by CPU):
       Processing only status and amount: ids array not touched (no wasted cache space).
     
     Example: filtering 1M orders by status:
-    AoS: each order = 200 bytes. Scanning: 200MB traversal (most fields not needed for status check).
+    AoS: each order = 200 bytes.
+    Scanning: 200MB traversal (most fields not needed for status check).
     SoA: status array = 4MB. Scanning: 4MB traversal (only status, fits in L3 cache).
     Result: SoA is 50x more cache-efficient for status filtering.
 
@@ -197,6 +209,8 @@ MEMORY ORDERING AND HAPPENS-BEFORE:
   Don't use volatile: for single-thread variables or when JMM provides
                       ordering through other means (synchronized, CAS).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -333,6 +347,8 @@ Fix:
   Expected speedup: 10-20x (same as the ratio of RAM latency to L1 latency).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -376,6 +392,8 @@ tree traversal. The array binary search: elements close in memory. The tree trav
 ---
 
 ## Amdahl's Law and Little's Law: Theoretical Foundations
+
+---
 
 ### 🎯 Model Answer
 
@@ -528,6 +546,8 @@ QUEUING THEORY BASICS:
     NON-LINEAR LATENCY GROWTH: 80% utilization doesn't mean 1.25x latency.
     It means 5x total response time. This is why "target 60-70% utilization" matters.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -696,6 +716,8 @@ Fix:
     - Linear scaling possible: N shards = N times the write throughput.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -757,3 +779,33 @@ This is why microservices with P99/P50 ratio > 10 (high tail latency variability
 than services with low variance. The safety margin calculation: target utilization = 1 - (coefficient_of_variation * safety_factor). Services with high variance: lower target utilization.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

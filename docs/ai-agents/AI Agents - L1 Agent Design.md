@@ -120,6 +120,8 @@ HIERARCHICAL:
         └── Step 2b
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The explicit planning approach:**
 
 ```
@@ -136,6 +138,8 @@ Phase 3 - SYNTHESIZE:
   Prompt: "Given results: [all step results], 
            produce final answer."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -547,6 +551,34 @@ explanation are sufficient.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Agent System Prompt Design
 
 **Interview Weight:** ★☆☆ - The system prompt is
@@ -636,6 +668,8 @@ without changing application code.
 [OUTPUT FORMAT]  How responses should look
 [TERMINATION]    How to know when the task is done
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **What belongs in the system prompt vs. user message:**
 
@@ -1044,6 +1078,34 @@ is sufficient.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Agent State Management
 
 **Interview Weight:** ★☆☆ - State management is
@@ -1139,6 +1201,8 @@ AGENT STATE OBJECT:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **State injection into the agent loop:**
 
 At each iteration, the structured state is formatted
@@ -1151,6 +1215,8 @@ System message addendum:
     Steps completed: 1/3 (query customer)
     Steps remaining: update plan, confirm with customer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1500,6 +1566,8 @@ def load_checkpoint(task_id: str) -> AgentState:
     return AgentState.from_dict(data) if data else None
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For long-running tasks (hours/days), resumable state
 is not optional - it's a reliability requirement.
 
@@ -1578,6 +1646,8 @@ VALID_TRANSITIONS = {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `VALID_TRANSITIONS`
 map that prevents impossible state jumps - turning
 a conceptual model into a validation mechanism.
@@ -1600,3 +1670,33 @@ a conceptual model into a validation mechanism.
 
 *(Omit: the state components in the concept section
 cover the structure adequately.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

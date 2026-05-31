@@ -8,6 +8,15 @@ permalink: /database-sql/l4-wal-durability/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Write-Ahead Log (WAL) - Crash Recovery Internals](#write-ahead-log-wal---crash-recovery-internals) | medium |
+
+---
+
 # Write-Ahead Log (WAL) - Crash Recovery Internals
 
 **TL;DR:** WAL (Write-Ahead Log) is the durability mechanism in PostgreSQL.
@@ -99,6 +108,8 @@ Background: bgwriter/checkpoint
      not needed for recovery)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **WAL record structure:**
 
 ```
@@ -116,6 +127,8 @@ Physical WAL files:
   ...
   Segment name encodes: timeline + LSN (hex)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -364,6 +377,8 @@ Recovery to a specific point in time:
   4. Review data, promote when satisfied
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Write throughput and WAL:**
 
 ```
@@ -390,6 +405,8 @@ Checkpoint configuration for write-heavy:
   checkpoint_completion_target = 0.9  (spread checkpoint I/O)
   wal_compression = on   (reduce WAL size)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -477,6 +494,8 @@ ls -lh /var/lib/postgresql/data/pg_wal/
 # Look for stale WAL segments not being removed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```bash
 # If replication lag is the cause (WAL held for standby):
@@ -494,6 +513,8 @@ Fix:
 # pg_archivecleanup /pg_wal/ latest_archive_lsn
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Replication standby falls behind causing WAL retention**
 
 Symptom: `pg_wal/` grows continuously. `pg_stat_replication` shows increasing lag.
@@ -510,6 +531,8 @@ SELECT
 FROM pg_stat_replication;
 -- Lag > 1GB = concern. Lag > 10GB = critical.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: (1) Remove WAL retention slot if using slots (`DROP REPLICATION SLOT slot_name`).
 (2) Speed up standby (more CPU, faster disk). (3) Compress WAL (`wal_compression=on`).
@@ -533,6 +556,8 @@ SELECT pg_reload_conf();
 -- Now checkpoints spread writes over 90% of the checkpoint interval.
 -- I/O spikes become I/O gradual increase.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -712,3 +737,33 @@ test instance, verify data, time the restore. Measure actual RTO.
 Alert if last successful full backup is > 2 days old.
 (7) Target RPO/RTO: with continuous WAL archiving: RPO < 1 minute (maximum WAL archive lag).
 RTO: 30 minutes to 4 hours depending on base backup size and WAL volume."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

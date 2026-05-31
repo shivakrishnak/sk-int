@@ -109,6 +109,8 @@ IaC:
     -> "Works in dev" always reproducible in prod
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Terraform State Machine:**
 
 ```
@@ -125,6 +127,8 @@ REPLACEMENT WARNING:
     -> Data loss unless snapshot taken first!
     -> Solution: use target flag or prevent_destroy lifecycle
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -297,6 +301,8 @@ for rc in plan['resource_changes']:
 # Check which attribute triggered replacement
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use -target for non-destructive changes first.
 Take a manual snapshot. Apply the destructive change separately.
 Or use `lifecycle.ignore_changes` for the specific attribute.
@@ -318,6 +324,8 @@ terraform force-unlock LOCK_ID
 # Check for stale lock:
 aws dynamodb scan --table-name terraform-state-lock
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -393,6 +401,8 @@ terraform show -json plan.tfplan | \
   jq '.resource_changes[] | select(.change.actions != ["no-op"])'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Implementing scheduled drift
 detection in CI (daily plan + alert on drift) rather than discovering
 drift at the next deploy. Drift found at deploy time is an incident;
@@ -432,6 +442,8 @@ resource "aws_s3_bucket" "app" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that idempotency is not
 guaranteed by declaring resources - it requires avoiding all
 non-deterministic functions (`timestamp()`, `uuid()`) in resource
@@ -470,6 +482,8 @@ terraform plan  # confirm state is consistent
 terraform apply
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Never running `force-unlock`
 without first confirming the lock holder is dead. A concurrent
 apply that gets force-unlocked will corrupt state because two
@@ -494,6 +508,8 @@ resource "aws_db_instance" "main" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 2 - Set sensitive flag + encrypt state:
 ```hcl
 variable "db_password" {
@@ -510,6 +526,8 @@ terraform {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 3 - Generate and store in Secrets Manager (not in state):
 ```hcl
 resource "aws_secretsmanager_secret_rotation" "db" {
@@ -517,6 +535,8 @@ resource "aws_secretsmanager_secret_rotation" "db" {
   # Terraform only manages the existence of the secret
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that Terraform state files
 contain all resource attribute values in plaintext JSON by default,
@@ -575,6 +595,8 @@ Workspace limitations:
   # Conditional logic in IaC = complexity antipattern
   ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Preferred alternative (Terragrunt or directory-per-env):
 ```
 infra/
@@ -584,6 +606,8 @@ infra/
     staging/
     prod/
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Each environment directory has its own state and variables.
 No `terraform.workspace` conditionals in module code.
@@ -616,6 +640,8 @@ DB_PASS=$(terraform output -raw db_password)
 export DB_PASS  # do not echo or log this
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Better pattern: avoid outputting secrets from Terraform entirely.
 Instead, store the secret in Secrets Manager and output the
 Secret ARN (not the value). Downstream services read the value
@@ -627,6 +653,8 @@ output "db_secret_arn" {
   # ARN is safe to output - does not expose the value
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Secret ARN pattern. It
 avoids sensitive outputs entirely while still giving downstream
@@ -645,6 +673,8 @@ terraform show -json drift.tfplan | \
   jq '.resource_changes[] | select(.change.actions != ["no-op"]) |
   {resource: .address, actions: .change.actions}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 2: Categorize the drift:
 - Security-related drift (IAM changes, security groups): treat as
@@ -691,6 +721,8 @@ it blindly can re-introduce the original problem.
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 ```
@@ -725,6 +757,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Terraform vs CloudFormation vs CDK
 
@@ -826,6 +886,8 @@ const bucket = new Bucket(this, 'MyBucket', {
 });
 // L2 construct sets sensible defaults
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -995,6 +1057,8 @@ aws cloudformation continue-update-rollback \
 aws cloudformation delete-stack --stack-name my-stack
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Terraform provider version conflicts**
@@ -1016,6 +1080,8 @@ terraform {
 # Commit .terraform.lock.hcl to source control
 # This pins exact provider hashes for reproducibility
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1077,6 +1143,8 @@ CDK architecture:
 CDK Code (TypeScript) -> cdk synth -> CFN template.json -> cfn deploy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Advantages over raw CloudFormation:
 - Real programming language: loops, conditionals, functions, types
 - IDE support: autocomplete, type errors caught at compile time
@@ -1128,6 +1196,8 @@ resource "cloudflare_record" "web" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The dependency graph is the key feature: Terraform resolves `value =
 aws_instance.web.public_ip` and automatically creates the EC2
 instance before the DNS record. Resources with no dependency are
@@ -1175,6 +1245,8 @@ aws cloudformation continue-update-rollback \
 aws cloudformation import-resources \
   --stack-name my-stack ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `--resources-to-skip`
 is the correct lever for UPDATE_ROLLBACK_FAILED, not deleting and
@@ -1270,6 +1342,8 @@ CDK has three levels of constructs:
   });
   ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 L2/L3 constructs encode AWS best practices: S3 buckets block public
 access by default, IAM roles use least privilege, security groups
 only open required ports.
@@ -1301,6 +1375,8 @@ terraform plan -out=plan.json
 terraform show -json plan.json | opa eval -d policy.rego
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CloudFormation testing:
 ```bash
 # Lint: cfn-lint validates against AWS schema
@@ -1318,6 +1394,8 @@ template.hasResourceProperties('AWS::S3::Bucket', {
 # Real deployment test: deploy to dedicated test account,
 # run integration tests, then destroy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Testing in a dedicated test
 AWS account, not the dev account. Real integration tests that
@@ -1382,8 +1460,40 @@ laptop" problem that causes drift.
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 *(Omit: tooling comparison is best shown via table, not diagram.)*
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

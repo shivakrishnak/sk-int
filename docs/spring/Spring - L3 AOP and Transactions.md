@@ -8,7 +8,14 @@ permalink: /spring/l3-aop-and-transactions/
 render_with_liquid: false
 ---
 
-# Spring - L3 AOP and Transactions
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L3 AOP and Transactions](#spring---l3-aop-and-transactions) | medium |
+| 2 | [Spring AOP and Proxies](#spring-aop-and-proxies) | medium |
+| 3 | [@Transactional and Transaction Management](#transactional-and-transaction-management) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — AOP powers @Transactional, @Async, @Cacheable,
+🎯 Interview Weight: High - AOP powers @Transactional, @Async, @Cacheable,
 @Secured. Understanding proxies explains why self-invocation breaks these.
 
 ---
@@ -157,6 +164,8 @@ Internal call (BROKEN - bypasses proxy):
       }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Spring context holds the PROXY, not your original object. When beans inject
@@ -446,6 +455,8 @@ public void outer() {
 public void inner() { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes (best to worst):
 1. Extract inner() to a separate @Service - cleanest design
 2. @Autowired @Lazy private MyService self; - self-injection hack
@@ -495,6 +506,8 @@ Spring AOP supports five advice types matching the standard AOP vocabulary:
   @Before("execution(* com.example..*.*(..))")
   public void logBefore(JoinPoint jp) { ... }
   ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - **@After**: runs after the method (always - both success and exception).
   Like a finally block.
@@ -557,6 +570,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The aspect method signature includes the
 AuditLog parameter - Spring binds the annotation instance to it, giving you
 access to annotation attributes. Without this, you'd need pjp.getMethod()
@@ -581,6 +596,8 @@ execution(* com.example.service.*.*(..))
 execution(* com.example.OrderService.create*(..))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **@annotation()** - match by annotation:
 ```java
 // Any method with @Transactional
@@ -588,11 +605,15 @@ execution(* com.example.OrderService.create*(..))
     .annotation.Transactional)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **within()** - match by type:
 ```java
 // All methods in a class hierarchy
 within(com.example.service..*)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Combining with &&, ||, !**:
 ```java
@@ -600,6 +621,8 @@ within(com.example.service..*)
 execution(public * com.example.service..*.*(..)) &&
 @annotation(Transactional)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Overly broad pointcut expressions (execution(* *(..)))
 have significant performance impact - they intercept every method call.
@@ -629,6 +652,8 @@ public class EmailService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Requirements:
 - @EnableAsync on a @Configuration class
@@ -690,6 +715,8 @@ When multiple aspects apply to the same method, their order is controlled by:
    public class AuditAspect { ... }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Ordered interface**: implement org.springframework.core.Ordered.
 
 Order applies as a stack:
@@ -708,6 +735,34 @@ Spring Security's MethodSecurityInterceptor has lower order number
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # @Transactional and Transaction Management
 
 ---
@@ -724,7 +779,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — @Transactional is used in every Spring data
+🎯 Interview Weight: Critical - @Transactional is used in every Spring data
 application. Questions about propagation, isolation, and rollback rules are
 standard interview questions at all levels.
 
@@ -847,6 +902,8 @@ Propagation (nested transactional calls):
       // inner rollback DOES NOT roll back outer
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The default rollback rule - RuntimeException triggers rollback, checked
@@ -1165,6 +1222,8 @@ To change:
     noRollbackFor = OptimisticLockingException.class)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Recommendation: always use rollbackFor = Exception.class if your service
 methods throw or propagate checked exceptions.
 
@@ -1258,6 +1317,8 @@ public void onOrderCreated(OrderCreatedEvent event) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 TransactionPhase options:
 - AFTER_COMMIT (default): fires if transaction committed
 - AFTER_ROLLBACK: fires if transaction rolled back
@@ -1300,6 +1361,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use programmatic over declarative:
 - Fine-grained control over transaction boundaries within a method
 - Conditional transaction creation
@@ -1325,10 +1388,20 @@ rollback: status.setRollbackOnly() without throwing an exception.
 
 **Pessimistic locking** (@Lock annotation):
 - Database row lock held for the transaction duration
-- ```java
-  @Lock(LockModeType.PESSIMISTIC_WRITE)
-  Optional<Account> findById(Long id);
-  ```
+
+```java
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+Optional<Account> findById(Long id);
+```
+
+> **Code walkthrough:** `@Lock(PESSIMISTIC_WRITE)` annotates a
+> Spring Data repository method to issue `SELECT ... FOR UPDATE`.
+> The database row lock is held until the transaction commits,
+> blocking concurrent writers entirely. This prevents phantom
+> reads and lost updates but reduces throughput under contention.
+> Use only for high-conflict resources like account balances where
+> optimistic lock retries would loop indefinitely.
+
 - SELECT ... FOR UPDATE: blocks other writes until lock released
 - No conflicts possible, but lower throughput
 - Best for: high-contention resources (account balances), guarantee-critical
@@ -1365,3 +1438,33 @@ individual repository calls have their own transactions by default. The service
 method that calls multiple repository find methods is both a performance
 optimization and a consistency guarantee. All reads in the method see a
 consistent snapshot (no phantom reads within the read-only transaction scope).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

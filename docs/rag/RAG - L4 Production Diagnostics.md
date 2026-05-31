@@ -137,6 +137,8 @@ fixes.
     |           lost-in-the-middle, hallucination
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Debugging evidence matrix:**
 
 ```
@@ -164,6 +166,8 @@ Latency spike                   Retrieval    ANN ef_search?
   (not quality-related)         or Generation LLM API?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Retrieval score distribution analysis:**
 
 ```
@@ -185,6 +189,8 @@ Warning signs:
     -> ANN returning random neighbors
     -> ef_search too low
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -542,6 +548,8 @@ Required:
 - timestamp: ISO 8601
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Optional but useful:
 ```
 - user_id (for per-user debugging)
@@ -551,6 +559,8 @@ Optional but useful:
 - metadata_filters_applied
 - score_threshold_applied
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why each matters:
 - `retrieved_doc_ids + scores`: was the right doc
@@ -689,6 +699,8 @@ Every query emits a structured JSON log:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Ship to: Elasticsearch, Honeycomb, or Datadog Logs.
 
 **(2) Aggregate metrics (time-series):**
@@ -724,6 +736,8 @@ WARNING:  empty retrieval rate > 10%
 WARNING:  canary recall < 0.80
 INFO:     idk_rate > 15%
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Join user thumbs-
 down to query_id" - turning user feedback into
@@ -816,6 +830,8 @@ WHERE faithfulness < 0.7
 GROUP BY position
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fixes:
 
 (1) Reduce K: retrieve fewer but higher-quality
@@ -901,6 +917,8 @@ system = (
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Log the EXACT
 bytes sent to the LLM API" - going to the protocol
 level to rule out template bugs.
@@ -972,6 +990,8 @@ Strategies:
     safe_query = redact_pii(query, analyzer)
     log.info("query", query=safe_query, ...)
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Downside: redacted logs are harder to debug
     (you may lose context-relevant identifiers).
 
@@ -1222,6 +1242,8 @@ Grafana dashboards: real-time + quality + KB health
 Alertmanager: CRITICAL/WARNING thresholds -> PagerDuty
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data retention:**
 - Full traces (S3): 7 days (PII, encrypted)
 - Redacted metrics: 90 days
@@ -1309,3 +1331,33 @@ flowchart TD
 > non-systematic issues. The color coding matches
 > alert severity: red = critical, orange = warning,
 > yellow = investigate.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

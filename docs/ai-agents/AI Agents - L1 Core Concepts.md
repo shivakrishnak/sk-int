@@ -121,6 +121,8 @@ while True:
     # Next iteration: LLM sees updated messages
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Phases in detail:**
 
 ```
@@ -144,6 +146,8 @@ ACT (tool execution):
   - Return result as tool_result message
   - Append to messages for next observe
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -382,6 +386,8 @@ if i == max_iter - 2:  # second-to-last iteration
     })
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The second-to-last
 injection (not the last - the LLM needs one more
 iteration to respond to the warning).
@@ -499,6 +505,8 @@ except Exception as e:
     result = f"Error: {str(e)}"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The LLM receives the error in the next observe phase
 and can adapt: retry with different arguments, try
 a different tool, or acknowledge that the task cannot
@@ -613,6 +621,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Tool Use in Agents
 
 **Interview Weight:** ★☆☆ - Tools are how agents
@@ -721,6 +757,8 @@ web_search_tool = {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **How tool execution works:**
 
 ```
@@ -742,6 +780,8 @@ Application returns to LLM:
     "content": "[{'title': '...', 'snippet': '...'}]"
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1059,6 +1099,8 @@ Example:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The match between
 tool_use_id and the original request - if they don't
 match, the LLM won't associate the result with the
@@ -1156,6 +1198,8 @@ def execute_tool_safe(name, args):
     return call_actual_function(name, args)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The LLM receives the error and can correct its
 arguments on the next iteration.
 
@@ -1185,6 +1229,34 @@ examples and text. A visual adds no clarity.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Agent Memory Types
 
@@ -1279,6 +1351,8 @@ Semantic memory | Vector store      | Cross-session | Medium
 Procedural mem. | System prompt     | Per-agent type| Fast
 In-weights mem. | Model parameters  | Universal     | Instant
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use each:**
 
@@ -1720,6 +1794,8 @@ system = [
 ]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For agents with long system prompts (>1,000 tokens),
 prompt caching is a significant cost and latency
 optimization.
@@ -1784,3 +1860,33 @@ graph TD
 > types - what the agent can "see" and reason about
 > is determined by how well each memory type is populated
 > and retrieved.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

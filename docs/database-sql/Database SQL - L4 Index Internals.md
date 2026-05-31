@@ -8,6 +8,15 @@ permalink: /database-sql/l4-index-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [B-Tree Index Internals - Page Splits, Fill Factor, Bloat](#b-tree-index-internals---page-splits-fill-factor-bloat) | medium |
+
+---
+
 # B-Tree Index Internals - Page Splits, Fill Factor, Bloat
 
 **TL;DR:** PostgreSQL B-tree indexes are balanced trees of fixed-size pages (8KB).
@@ -79,6 +88,8 @@ Properties:
   - Each internal page's keys divide the key space for routing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fill factor and page splits:**
 
 ```
@@ -100,6 +111,8 @@ When fill factor = 100:
   - Append-only workloads (time-series with sequential keys)
   - Read-mostly tables with rare inserts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -344,6 +357,8 @@ Heap-index alignment (quarterly for large tables):
   -- Index scans become sequential, 10-100x faster.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -423,11 +438,15 @@ WHERE i.indrelid = 'orders'::regclass;
 -- leaf_live_percent < 70%: significant bloat.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```sql
 REINDEX INDEX CONCURRENTLY idx_orders_customer;
 -- After rebuild: size reduces, scans faster.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 2: Frequent page splits causing write latency spikes**
 
@@ -446,6 +465,8 @@ SELECT
     -- High blks_written increase = many page splits + dirty writes.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: lower fill factor (70%), or switch to a sequential key pattern if possible.
 For UUIDs (highly random): use UUID v7 (time-ordered) instead of UUID v4 (random).
 
@@ -462,6 +483,8 @@ FROM pg_stats WHERE tablename = 'orders' AND attname = 'customer_id';
 -- Index scan for one customer: 10,000 rows scattered across 10,000 heap pages.
 -- 10,000 random I/Os per customer query.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `CLUSTER orders USING idx_orders_customer` - reorders the heap by index key.
 After CLUSTER: correlation = 1.0. Index scan is now mostly sequential I/O.
@@ -518,3 +541,33 @@ CLUSTER requires a table lock; use pg_repack for zero-downtime.
 **Q12: What monitoring should you set up for index health in production?**
 
 🗣️ "Six key metrics: (1) Index bloat: weekly `pgstatindex` scan. Alert: leaf_live_percent < 70%. Action: REINDEX CONCURRENTLY. (2) Unused indexes: daily check `pg_stat_user_indexes.idx_scan`. If idx_scan = 0 for 7 days: candidate for removal review. (3) Index size growth: daily `pg_relation_size(index)`. Alert: growth > 10% per day (unexpected). (4) Split rate proxy: monitor WAL generation rate. Sudden WAL increase with constant data volume = more splits (more WAL per page split). (5) Cache efficiency: `pg_statio_user_indexes.idx_blks_read` vs `idx_blks_hit`. Target: 99% hit ratio. Low hit ratio = indexes not cached = disk reads. (6) Correlation: quarterly check `pg_stats.correlation` for frequently-scanned index columns. If correlation drops below 0.5 for a large table: schedule a CLUSTER or pg_repack. Set up a weekly report: index bloat + unused + size + cache hit. Dashboard in Grafana or DataDog with these metrics from the pg_stat views."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

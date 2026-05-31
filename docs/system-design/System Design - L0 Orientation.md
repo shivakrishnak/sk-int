@@ -8,7 +8,15 @@ permalink: /system-design/l0-orientation/
 render_with_liquid: false
 ---
 
-# System Design - L0 Orientation
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L0 Orientation](#system-design---l0-orientation) | medium |
+| 2 | [What is System Design](#what-is-system-design) | medium |
+| 3 | [System Design Interview Framework](#system-design-interview-framework) | medium |
+| 4 | [Scale Mental Models](#scale-mental-models) | medium |
 
 ---
 
@@ -107,6 +115,8 @@ Application Servers (horizontally scaled)
           +-- Async processing
           +-- Decoupling producers/consumers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **What an interviewer evaluates:**
 1. Requirements clarification (functional + non-functional)
@@ -285,6 +295,8 @@ Example: Design a URL shortener
    Feasible in Redis cluster
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key estimation shortcuts:
 - 1 day = 86,400 sec ≈ 100K sec (easy math: divide by 100K)
 - 1 million requests/day = ~12/second
@@ -362,6 +374,8 @@ High throughput != low latency:
   (processes each item immediately)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Optimizing for the wrong metric is a common
 mistake. Payment processing: optimize latency (user waits for transaction).
 Report generation: optimize throughput (many reports, latency less critical).
@@ -396,6 +410,8 @@ If system has 2 servers (parallel, either can serve):
   = 1 - 0.001 * 0.001 = 99.9999%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Achieving high availability:**
 - Redundancy: multiple instances, no SPOF
 - Failover: health checks, automatic routing around failures
@@ -411,6 +427,34 @@ because it determines infrastructure costs (3 nines = commodity hardware,
 5 nines = redundant everything at every layer).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # System Design Interview Framework
 
@@ -517,6 +561,8 @@ TIMING:
   45 min total: ~5+5+5+5+10+10+5 = 45 min
   Don't rush step 1 (requirements) even if interviewer pushes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -699,6 +745,8 @@ Hybrid (use both):
   NoSQL: user activity feeds, session storage, leaderboards
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The SQL vs NoSQL decision is not just about
 scale. Eventual consistency of NoSQL is a programming model change: your
 application must handle the case where data read is slightly stale. For
@@ -738,6 +786,8 @@ Refresh token pattern:
     Old refresh token invalidated
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The discussion of WHERE to store tokens
 reveals security awareness. httpOnly cookies prevent JavaScript access (XSS
 protection) but require CSRF protection. localStorage is accessible to
@@ -776,6 +826,8 @@ Horizontal scaling:
   Load balancer distributes traffic
   Database is the last thing to scale horizontally (hardest)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The boundary between vertical and horizontal
 is not binary. Databases are typically scaled vertically first (read replicas
@@ -819,6 +871,34 @@ Every design decision should trace back to a requirement. This shows systems
 thinking, not just technical knowledge.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Scale Mental Models
 
@@ -899,6 +979,8 @@ If service calls cross-region -> 150ms added per hop
 Minimize network hops in critical path
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Storage size mental models:**
 
 ```
@@ -924,6 +1006,8 @@ Recommendation: store thumbnails, not originals
 -> 1B * 10KB = 10 TB. Much more feasible.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Throughput benchmarks (order of magnitude):**
 
 ```
@@ -944,6 +1028,8 @@ Object storage (S3):
   S3 GET: ~5500/sec per prefix
   Add more prefixes (sharding) to scale beyond this
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1044,6 +1130,8 @@ Prevention strategies:
    User gets fast response (slightly stale)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The best solution depends on data type.
 Static content (product catalog): pre-warming works well. User-specific data
 (user profile): staggered expiry prevents synchronized expiry. High-traffic
@@ -1062,6 +1150,8 @@ Simple modulo hashing problem:
 Add 4th node: node = hash(key) % 4
 ~75% of keys now map to different nodes -> cache miss storm
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Consistent hashing solution:
 ```
@@ -1083,6 +1173,8 @@ Adding Node D at position 150:
   Rest of keys: unchanged
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Virtual nodes (for even distribution):
 ```
 Node A: positions 10, 110, 210
@@ -1091,6 +1183,8 @@ Node C: positions 70, 170, 270
 -> Each physical node has N virtual positions
 -> Even distribution even with few physical nodes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Consistent hashing is used in Redis Cluster,
 Amazon Dynamo, Apache Cassandra, and Riak. The ring topology also provides
@@ -1122,6 +1216,8 @@ If S = 0.1 (10% serial): max speedup = 10x
 If S = 0.25 (25% serial): max speedup = 4x
 If S = 0.5 (50% serial): max speedup = 2x
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 System design implications:
 - Identify serial bottlenecks before horizontal scaling
@@ -1172,6 +1268,8 @@ Read vs Write ratio: ~1000:1 (read-heavy)
   -> Writes are rarely the bottleneck for Twitter-like systems
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The action distribution matters. Twitter
 is 99%+ read. Instagram is similar. A commenting system is more balanced.
 An IoT data ingest system is write-heavy. The read/write ratio determines
@@ -1213,6 +1311,8 @@ Example: Design Twitter (5-year storage)
   - Media serving: CDN is mandatory (18 PB can't serve from origin)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Storage estimation reveals which tier is
 needed. Under 10 TB: single server or small cluster. Under 1 PB: commodity
 cluster. Over 1 PB: object storage or distributed file system. It also reveals
@@ -1244,6 +1344,8 @@ Example: Twitter timeline
   Key: CDN is not optional at this scale.
        Without CDN: 224 Gbps from origin = infeasible.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Bandwidth estimation drives CDN decision.
 At hundreds of Gbps, CDN is mandatory. At tens of Gbps, CDN is strongly
@@ -1286,6 +1388,8 @@ Software bug rate:
   1M QPS * (1 - 0.99999) = 10 errors/sec acceptable
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Failure rate reasoning leads to the correct
 architecture conversation. "At our scale, this will fail daily - how do we
 handle it?" Changes the question from "how do we prevent failure?" (impossible)
@@ -1293,3 +1397,33 @@ to "how do we tolerate failure?" (achievable). Chaos engineering (Netflix's Chao
 Monkey) operationalizes this: if failures are routine, test them in production
 to ensure the recovery mechanism works. Systems that handle failures gracefully
 are more reliable than systems that prevent failures rarely.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

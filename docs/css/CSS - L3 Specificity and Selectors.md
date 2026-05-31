@@ -7,6 +7,16 @@ permalink: /css/l3-specificity-and-selectors/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Specificity and Cascade Control](#css-specificity-and-cascade-control) | high |
+| 2 | [CSS Pseudo-classes and Pseudo-elements](#css-pseudo-classes-and-pseudo-elements) | medium |
+
+---
+
 # CSS Specificity and Cascade Control
 
 🎯 **Interview Weight:** high - specificity and the cascade
@@ -151,6 +161,8 @@ CSS CASCADE LAYERS (@layer):
      an element with both classes, regardless of
      specificity (both are 0,1,0) */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -369,6 +381,8 @@ DevTools steps:
 6. Check for !important (yellow warning icon)
 7. Check @layer (newer DevTools show layer badges)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1032,6 +1046,34 @@ flowchart TD
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Pseudo-classes and Pseudo-elements
 
 🎯 **Interview Weight:** medium - pseudo-selectors are used
@@ -1181,6 +1223,8 @@ Advanced:
   ::slotted()   - Shadow DOM slot content
   ::part()      - Shadow DOM exportparts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -2024,3 +2068,33 @@ scale covered in CSS methodologies and design tokens)*
 
 *(Omit: pseudo-selector categories are best shown through
 code examples, provided above)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

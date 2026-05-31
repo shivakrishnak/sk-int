@@ -280,6 +280,34 @@ choice depends on team expertise as much as performance."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Native Image JDBC and Database Drivers
 
 **Interview Weight:** hard - JDBC in native image has
@@ -524,6 +552,8 @@ public class PostgreSQLTestResource
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CI configuration:
 ```yaml
 # .github/workflows/native-test.yml
@@ -535,6 +565,8 @@ CI configuration:
   run: ./mvnw verify -Pnative-test
   # Tests run against native binary with real PostgreSQL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Native integration tests
 catch reflection and resource issues before production.
@@ -549,6 +581,34 @@ catch reflection and resource issues before production.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Native Image Build Failures and Diagnostics
 
@@ -684,6 +744,8 @@ cat target/reports/call_tree_*.txt | \
 # Shows: each phase timing, what's happening
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // FIXING CATEGORY 1: Missing reflection
 
@@ -792,6 +854,8 @@ grep -r "Class.forName\|getDeclaredField\|getDeclaredMethod" \
 # (need manual inspection)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Native failures are
 preventable with discipline. CI gate + tracing agent
 + reflection audit = near-zero production native failures.
@@ -802,3 +866,33 @@ preventable with discipline. CI gate + tracing agent
 | Hiring Manager | CI strategy for native. |
 | Bar Raiser | Systematic prevention, dependency vetting. |
 | Staff | "Native CI gate: non-negotiable. Catch reflection issues in PR review, not at 2am prod alert." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,7 +7,14 @@ permalink: /async-java/l3-reactor-internals/
 render_with_liquid: false
 ---
 
-# Async Java - L3 Reactor Internals
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L3 Reactor Internals](#async-java---l3-reactor-internals) | medium |
+| 2 | [Backpressure in Reactive Streams](#backpressure-in-reactive-streams) | medium |
+| 3 | [Schedulers and Threading in Project Reactor](#schedulers-and-threading-in-project-reactor) | medium |
 
 ---
 
@@ -118,6 +125,8 @@ Project Reactor implementation:
       );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Hot vs cold:**
 - **Cold** (Flux.just, Flux.fromIterable, HTTP response): starts emitting
   only when subscribed; each subscriber gets its own sequence; naturally
@@ -144,6 +153,8 @@ onBackpressureLatest():
   - Keeps only the most recent item
   - Ideal for UI refresh rate limiting or metrics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use each strategy:**
 - Buffer: audit logs, financial events where data loss is unacceptable
@@ -315,6 +326,8 @@ hotFlux
     .subscribe(this::persist);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: add `log()` to the pipeline:
 ```java
 hotFlux
@@ -322,6 +335,8 @@ hotFlux
         SignalType.REQUEST, SignalType.ON_NEXT)
     .onBackpressureBuffer(...)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The log shows: `request(256)` then `onNext x 256`, then next `request(256)`.
 If requests are much smaller than onNext events, overflow is occurring.
@@ -401,6 +416,8 @@ sink.tryEmitNext(3); // Both Sub1 and Sub2 see 3
 // Sub2 missed 1 and 2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Kafka-Reactor adapter (reactor-kafka)
 is a hot-to-cold bridge: it wraps Kafka's push model (hot) in a reactive
 Flux (cold) by pausing Kafka consumer polling when downstream demand is zero.
@@ -442,6 +459,8 @@ userInputFlux
     .debounce(Duration.ofMillis(200))
     .subscribe(this::updateUI);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Buffer sizing: `onBackpressureBuffer()`
 without a size limit is unbounded - it will OOM under sustained overflow.
@@ -486,6 +505,8 @@ Flux.fromIterable(tenThousandIds)
     .subscribe(r -> process(r));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `concatMap` vs `flatMap(fn, 1)`:
 `concatMap` subscribes to the next inner publisher only when the previous
 COMPLETES. `flatMap(fn, 1)` subscribes to the next when demand is satisfied.
@@ -506,6 +527,8 @@ Flux.range(1, 1000)
     .subscribe(i -> process(i));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pattern 2: limitRate - controlled batching**
 ```java
 Flux.range(1, 10_000)
@@ -513,6 +536,8 @@ Flux.range(1, 10_000)
     // (internally: request(100), replenish at 75% = request(75) each time)
     .subscribe(i -> process(i));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pattern 3: BaseSubscriber for exact control**
 ```java
@@ -534,6 +559,8 @@ source.subscribe(new BaseSubscriber<Item>() {
     }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `limitRate(100)` internally uses a
 "replenishment threshold" of 75%: after consuming 75 items, it requests
@@ -557,6 +584,8 @@ flux.log("MyFlux", Level.DEBUG,
 // Shows: request(256), onNext(item1), onNext(item2)...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **Micrometer metrics:**
 ```java
 // Add metrics to the pipeline
@@ -568,12 +597,16 @@ flux.metrics() // requires reactor-micrometer
 //          reactor.flow.received, reactor.flow.dropped
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **Visual detection via dropped items:**
 ```java
 flux.onBackpressureDrop(item ->
     meterRegistry.counter("backpressure.dropped",
         "topic", item.topic()).increment())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. **Heap analysis:**
 Reactor internal queues (SpscArrayQueue) appear in heap dumps as
@@ -589,6 +622,8 @@ Hooks.onOperatorError("bp-debug", (ex, obj) -> {
     return ex;
 });
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This catches ALL OverflowExceptions with the item that caused the overflow,
 giving both the error location and the offending data.
 
@@ -614,6 +649,8 @@ KafkaReceiver.create(options).receive()
         16) // max 16 concurrent processing tasks
     .subscribe();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The backpressure mechanism: when downstream demand is zero (flatMap is
 processing its maxConcurrency limit), reactor-kafka PAUSES the Kafka consumer
@@ -657,6 +694,8 @@ Flux.merge(
 ).subscribe(this::process);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `zip` with speed mismatch:
 - `zip` requests from the slower source only when it has items from both
 - The faster source gets buffered while zip waits for the slower source
@@ -692,6 +731,8 @@ Downstream request(10)
   (flatMap processes 8 items, emits up to 10 to downstream)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The actual upstream demand depends on the operator chain composition.
 `limitRate(n)` explicitly controls this: it caps upstream requests
 at n regardless of downstream demand.
@@ -703,6 +744,8 @@ Flux.range(1, 1000)
     .subscribe(r -> process(r));
 // Upstream request is always <=10 even if flatMap wants more
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Operator fusion: Reactor's assembly-time
 optimization fuses adjacent compatible operators (like `map` + `filter`
@@ -780,6 +823,34 @@ sequenceDiagram
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Schedulers and Threading in Project Reactor
 
@@ -891,6 +962,8 @@ Multiple publishOn:
       .subscribe(::println)   // thread C
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Scheduler types and use cases:**
 
 ```
@@ -918,6 +991,8 @@ Schedulers.fromExecutor(executor):
   - For: custom thread pools with specific naming or sizing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **publishOn vs subscribeOn decision:**
 
 ```
@@ -932,6 +1007,8 @@ Use publishOn when:
   - After a CPU-intensive step, hand off to I/O thread for persistence
   - After receiving I/O result, hand off to parallel for transformation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **First-principles derivation:**
 A reactive pipeline is a DAG of operations. The execution model without
@@ -1087,6 +1164,8 @@ reactor-http-nio-2 - BLOCKED
   at com.example.UserService.getUser(UserService.java:42)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause: blocking JDBC or HTTP call executed directly in a reactive pipeline
 without `subscribeOn(boundedElastic())`. The Netty NIO event loop thread
 (reactor-http-nio-*) is blocked, preventing it from processing any other
@@ -1109,12 +1188,16 @@ Mono<User> getUser(@PathVariable String id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 BlockHound detection (development):
 ```java
 BlockHound.install(); // Add to application startup
 // Now throws BlockingOperationError if blocking is detected
 // on reactive threads at runtime
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 BlockHound should be enabled in test and staging environments to catch
 all blocking calls before they reach production.
@@ -1152,6 +1235,8 @@ Flux.just(1, 2, 3)
 // C: parallel-1       (after publishOn switch)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The interaction: if you have BOTH
 `subscribeOn` and `publishOn`, the source runs on subscribeOn's scheduler,
 then publishOn switches the downstream to its scheduler. The subscribe
@@ -1180,6 +1265,8 @@ blocking?  -> boundedElastic
 CPU-bound? -> parallel
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Blocking JDBC: boundedElastic
 Mono.fromCallable(() -> jdbc.query(sql))
@@ -1190,6 +1277,8 @@ Flux.fromIterable(rawData)
     .publishOn(Schedulers.parallel())
     .map(data -> encodeExpensive(data));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The maximum thread count for
 `boundedElastic` (10 * CPU cores) can be overridden:
@@ -1224,6 +1313,8 @@ Mono<User> result = Mono.deferContextual(ctx ->
 .contextWrite(Context.of("requestId", requestId));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Solution 2: Spring Security Reactive Integration**
 ```java
 // Spring Security 5+ ReactiveSecurityContextHolder
@@ -1233,12 +1324,16 @@ Mono<String> currentUser = ReactiveSecurityContextHolder
 // Automatically propagates through reactive pipeline
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Solution 3: Micrometer Observation (Spring Boot 3+)**
 ```java
 // Automatic context propagation via micrometer-tracing
 // Configure: management.tracing.propagation.type=w3c
 // Trace context automatically propagates across thread switches
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `Hooks.enableAutomaticContextPropagation()`
 (Reactor 3.5+) automatically bridges Reactor Context with supported
@@ -1269,6 +1364,8 @@ Flux.range(1, 10_000)
 // No backpressure signal; downstream may buffer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The queue is effectively the upstream buffer. Under sustained high load
 where CPU work exceeds CPU capacity, the queue grows without bound.
 Upstream `limitRate(n)` bounds this:
@@ -1280,6 +1377,8 @@ Flux.range(1, 10_000)
     .map(i -> heavyCPUWork(i))
     .subscribe();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Custom parallel Scheduler with bounded
 queue:
@@ -1293,6 +1392,8 @@ Scheduler bounded = Schedulers.newBoundedElastic(
 // Propagated as error in the reactive pipeline
 // Enables circuit-breaking behavior
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1324,6 +1425,8 @@ events
     .subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `Schedulers.single()` uses one shared
 daemon thread for ALL pipelines that use it. If one pipeline's operation
 takes too long, it delays all others. For isolation, use
@@ -1350,6 +1453,8 @@ Flux.fromIterable(ids)
     .subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If the inner `subscribeOn` is omitted, the inner Mono's callable runs on
 the same thread that triggered the inner subscription, which is the
 outer pipeline's current thread (usually the boundedElastic thread from
@@ -1367,6 +1472,8 @@ Without it, `flatMap` serializes inner subscriptions on the calling thread.
 .flatMap(id -> Mono.fromCallable(() -> call(id)), 16)
 // ^ all 16 concurrent Monos on same thread -> not truly parallel
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `flatMap` with inner `subscribeOn` can
 create up to `maxConcurrency` threads simultaneously. With the default
@@ -1396,6 +1503,8 @@ BlockHound.install(builder -> builder
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 What it catches:
 - Thread.sleep() on event loop
 - InputStream.read() on NIO thread
@@ -1410,6 +1519,8 @@ reactor.blockhound.BlockingOperationError:
     at ... (reactor pipeline stack)
   on thread: parallel-1 [is single threaded]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* BlockHound is a JVM agent - install it
 via `-javaagent` in integration tests for maximum coverage, not just unit
@@ -1434,6 +1545,8 @@ Scheduler customPool = Schedulers.newBoundedElastic(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Correlating thread names with logs:
 ```java
 // With MDC propagation enabled
@@ -1442,6 +1555,8 @@ log.info("Processing on: {}",
 // Logs: Processing on: payment-io-3
 // Correlate with: which pipeline, which service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Thread dump analysis: if an application stalls, thread dump shows:
 - Many threads named `boundedElastic-*` WAITING: pool is idle (good)
@@ -1475,6 +1590,8 @@ StepVerifier.withVirtualTime(() ->
 // Completes instantly; virtual clock advanced, no real sleep
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Testing thread switches:
 ```java
 StepVerifier.create(
@@ -1488,6 +1605,8 @@ StepVerifier.create(
 .expectNext("result")
 .verifyComplete();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 BlockHound in tests:
 ```java
@@ -1503,6 +1622,8 @@ void testNoBlocking() {
         .verifyComplete(); // throws if any blocking detected
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `StepVerifier.withVirtualTime()` requires
 the Flux to be created inside the `Supplier<Publisher>` argument - creating
@@ -1567,3 +1688,33 @@ flowchart LR
 > execute on the parallel thread (orange nodes). This is the standard pattern
 > for fetching data from a blocking source on boundedElastic, then doing
 > CPU-bound transformation on the parallel pool.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

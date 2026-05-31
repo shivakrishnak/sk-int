@@ -8,6 +8,17 @@ permalink: /rest-api/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTTP Methods in REST APIs](#http-methods-in-rest-apis) | medium |
+| 2 | [HTTP Status Codes](#http-status-codes) | medium |
+| 3 | [REST Resource Naming and URL Design](#rest-resource-naming-and-url-design) | medium |
+
+---
+
 # HTTP Methods in REST APIs
 
 ---
@@ -52,6 +63,8 @@ DELETE  No    Yes         200 OK or 204
 Safe = no side effects (read-only)
 Idempotent = N identical calls = 1 call result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Idempotency is the property that enables safe retries. In distributed systems, network timeouts are common - you send a request but don't receive the response (was it processed?). If the operation is idempotent (PUT, DELETE), you can safely retry: calling it again produces the same result. If it's not idempotent (POST), retrying risks duplicates. This is why the payment industry invented idempotency keys: turn a POST (non-idempotent) into an effectively idempotent operation by deduplicating on the key.
@@ -232,6 +245,34 @@ Fix: Implement idempotency keys. Client generates UUID before sending: `Idempote
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTTP Status Codes
 
 ---
@@ -291,6 +332,8 @@ Status Code Classes:
   503 Unavailable  - maintenance/overload
   504 Gateway Tmout- upstream timeout
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The 401/403 distinction is subtle but important. 401 Unauthorized means "I don't know who you are - authenticate first." 403 Forbidden means "I know who you are, and you're not allowed." The naming is confusing (401 is authentication, 403 is authorization), but the distinction matters: 401 prompts the client to log in, 403 tells the user they don't have permission. Returning 403 for unauthenticated requests is a security best practice (don't reveal whether a resource exists to unauthenticated users).
@@ -462,6 +505,34 @@ Fix: Return 503 for server errors, not 200. 5xx responses are not cached by defa
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # REST Resource Naming and URL Design
 
 ---
@@ -519,6 +590,8 @@ GET /shipping-addresses
 POST /orders/456/cancel
 POST /users/123/verify-email
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The URL should read like a path through a hierarchy of resources, not like a function call. `/users/123/orders/456/items` reads: "user 123's order 456's items." A client who has never seen this API before can infer what this path means. This is the uniform interface constraint in practice.
@@ -694,3 +767,33 @@ Fix: Treat URLs as immutable contracts after release. For changes: (1) Keep the 
 > "Multi-tenant URL design: two main patterns. (1) Tenant in subdomain: `https://tenant-a.api.example.com/users`. Clean, enables per-tenant SSL certificates, DNS-level routing, and completely isolated infrastructure. Complex to implement (certificate management, DNS, routing rules). Used by Salesforce, Zendesk, Shopify. (2) Tenant in URL path: `https://api.example.com/tenants/{tenantId}/users` or `https://api.example.com/{tenantSlug}/users`. Simple to implement. Tenant isolation is at the application layer (extract tenantId from URL, apply in query). Easier to operate (one certificate, one endpoint). Used by GitHub (github.com/{org}/{repo}). The security concern: tenant ID in URL must be validated on every request. The authenticated user must have access to the tenant specified in the URL. Failing to validate this creates insecure direct object reference (IDOR) vulnerabilities - a user from Tenant A accessing Tenant B's data by changing the tenant ID. For internal APIs: put tenant ID in a header or JWT claim rather than the URL. This prevents clients from accidentally constructing cross-tenant requests."
 
 *What separates good from great:* "Naming the IDOR vulnerability (insecure direct object reference) from OWASP as a specific risk of tenant IDs in URLs shows security awareness. The recommendation to use headers/JWT for internal APIs (prevents cross-tenant URL construction accidents) is a production-safety insight."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

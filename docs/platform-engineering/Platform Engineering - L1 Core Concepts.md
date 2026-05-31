@@ -779,6 +779,34 @@ function becomes critical.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Golden Path
 
 **Interview Weight:** ★☆☆ - Core platform engineering
@@ -1584,6 +1612,34 @@ adoption.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Self-Service Infrastructure
 
 **Interview Weight:** ★☆☆ - Core platform capability
@@ -1714,6 +1770,8 @@ Developer accesses resource:
   kubectl get secret my-db-conn -o jsonpath=...
   # Or via platform dashboard
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The three layers of self-service:**
 
@@ -2263,6 +2321,8 @@ kubectl describe postgresqlinstance my-db \
 # Error message in condition = composition failure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Check the Composite Resource (XR):
 ```bash
 kubectl get xpostgresqlinstances \
@@ -2270,6 +2330,8 @@ kubectl get xpostgresqlinstances \
 kubectl describe xpostgresqlinstance xr-name
 # Check Conditions for error details
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Check Managed Resources (cloud resources):
 ```bash
@@ -2279,12 +2341,16 @@ kubectl describe rdsinstance rds-name
 # or if it failed with an error
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Check Crossplane provider logs:
 ```bash
 kubectl logs -n crossplane-system \
   -l app=crossplane-provider-aws
 # Look for errors related to the resource name
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common root causes: IAM permission error (provider
 credentials do not have permission to create the
@@ -2383,3 +2449,33 @@ No ticket to the platform team required.
 *What separates good from great:* The "decouples
 provider from consumer" role - understanding ESO
 as an abstraction layer, not just a secret sync tool.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

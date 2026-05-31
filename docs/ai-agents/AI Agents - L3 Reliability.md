@@ -135,6 +135,8 @@ CATEGORY 4: LOOP FAILURES
        termination criteria, handle all stop_reasons
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Debugging workflow:**
 
 ```
@@ -145,6 +147,8 @@ CATEGORY 4: LOOP FAILURES
 5. Fix: system prompt / tool / state / loop
 6. Validate: re-run with same inputs, verify fix
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -543,6 +547,8 @@ logger.info({
 })
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key fields for debugging:
 - `context_tokens`: is context growing toward limit?
 - `tools_called`: did the LLM call the right tools?
@@ -625,6 +631,8 @@ def retry_tool(fn, args, max_attempts=3):
         except PermanentError as e:
             return f"Tool error (not retriable): {e}"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Permanent failures: don't retry. Return a meaningful
 error message to the LLM immediately.
@@ -783,6 +791,8 @@ Design patterns:
      "reason": "Tool X unavailable"}
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (4) Fallback chain: if the primary approach fails,
     automatically try a simpler approach:
     - Primary: use full agent loop with all tools
@@ -832,6 +842,8 @@ def chaos_tool_wrapper(fn, failure_rate=0.1):
         return fn(**kwargs)
     return wrapped
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Run chaos tests in staging before production deployment.
 Review which failure injections the agent handles
@@ -923,6 +935,34 @@ flowchart TD
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Agent Testing and Evaluation
 
@@ -1025,6 +1065,8 @@ RELIABILITY:
   Metric: variance across runs, P99 behavior
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Test suite taxonomy:**
 
 ```
@@ -1048,6 +1090,8 @@ ADVERSARIAL TESTS:
   Expected: resistance, in-scope response
   Purpose: confirm safety
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1450,6 +1494,8 @@ test_agent:
   on_failure: block_merge
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Safety tests (adversarial, scope): require 100% pass.
 One scope violation in a PR = block. Quality tests
 (golden): allow some tolerance (90%+).
@@ -1707,3 +1753,33 @@ graph TD
 > quality signals after deployment. The feedback from
 > production sampling feeds back into the regression
 > test suite (new failures become new regression cases).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

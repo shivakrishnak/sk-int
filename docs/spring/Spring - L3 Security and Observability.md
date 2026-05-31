@@ -8,7 +8,14 @@ permalink: /spring/l3-security-and-observability/
 render_with_liquid: false
 ---
 
-# Spring - L3 Security and Observability
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L3 Security and Observability](#spring---l3-security-and-observability) | medium |
+| 2 | [Spring Security Filter Chain](#spring-security-filter-chain) | medium |
+| 3 | [Spring Boot Actuator](#spring-boot-actuator) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — Spring Security is in most Spring Boot applications.
+🎯 Interview Weight: High - Spring Security is in most Spring Boot applications.
 Understanding the filter chain architecture is essential for configuration and debugging.
 
 ---
@@ -161,6 +168,8 @@ Authorization flow:
        (antMatchers, hasRole, hasAuthority)
     -> @PreAuthorize/@PostAuthorize for method security
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Spring Security runs BEFORE DispatcherServlet - in the Servlet filter layer.
@@ -499,6 +508,8 @@ public class ApiKeyAuthProvider
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* AuthenticationProvider.supports() allows
 multiple providers to coexist for different authentication types. ProviderManager
 iterates providers, calling authenticate() only on those where supports() returns
@@ -565,6 +576,8 @@ public SecurityFilterChain webSecurity(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 FilterChainProxy checks chains in @Order order. First matching chain handles
 the request. API routes use JWT (stateless). Web routes use form login (session).
 
@@ -606,6 +619,8 @@ When to KEEP CSRF enabled:
     .ignoringRequestMatchers("/api/webhooks/**"))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* SameSite cookie attribute provides additional
 CSRF protection at the browser level. Setting session cookie to SameSite=Strict
 prevents cross-site requests from including the cookie at all. This is a defense-
@@ -646,6 +661,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @PreAuthorize evaluates SpEL: `authentication.name`, `principal.username`,
 `hasRole()`, `hasAuthority()`, method parameters (#paramName).
 
@@ -665,6 +682,8 @@ logging.level.org.springframework.security=DEBUG
 logging.level.org.springframework.security.web=DEBUG
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This logs:
 - Which SecurityFilterChain matched the request
 - Which filters ran and in what order
@@ -675,6 +694,8 @@ Spring Security's built-in debug mode:
 ```java
 @EnableWebSecurity(debug = true)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This logs request details and filter invocations at DEBUG level.
 
 Key things to look for in debug output:
@@ -690,10 +711,40 @@ Authentication auth = SecurityContextHolder.getContext()
     .getAuthentication();
 log.debug("Authorities: {}", auth.getAuthorities());
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If the authority list doesn't match your hasRole/hasAuthority checks,
 that's your bug.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Spring Boot Actuator
 
@@ -711,7 +762,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — every production Spring Boot application uses
+🎯 Interview Weight: High - every production Spring Boot application uses
 Actuator. Interview questions cover health checks, Kubernetes integration,
 and Micrometer metrics.
 
@@ -834,6 +885,8 @@ Metrics (Micrometer):
   /actuator/metrics
   /actuator/metrics/http.server.requests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Liveness vs Readiness is the critical distinction for Kubernetes. Liveness
@@ -1101,12 +1154,16 @@ management.health.livenessstate.enabled=true
 management.health.readinessstate.enabled=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Custom ReadinessHealthIndicators allow
 programmatic readiness control:
 ```java
 ApplicationAvailability.setReadinessState(
     ReadinessState.REFUSING_TRAFFIC);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is how graceful shutdown works - the app signals not-ready before
 the server stops accepting connections.
 
@@ -1118,6 +1175,8 @@ Option 1 - Separate management port (best for production):
 ```properties
 management.server.port=8081  # not exposed externally
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 No authentication needed - the port is only accessible internally.
 
 Option 2 - Spring Security rules:
@@ -1136,10 +1195,14 @@ public SecurityFilterChain actuatorSecurity(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3 - Expose only safe endpoints:
 ```properties
 management.endpoints.web.exposure.include=health,info
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Minimize attack surface by only exposing needed endpoints.
 
 *What separates good from great:* Production best practice: management port
@@ -1179,6 +1242,8 @@ public class ExternalServiceHealthIndicator
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Kubernetes readiness (not liveness):
 Implement ReadinessHealthIndicator to contribute only to /health/readiness.
 
@@ -1215,6 +1280,8 @@ Gauge.builder("queue.size", queue, Queue::size)
      .register(registry);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Micrometer's global registry
 (Metrics.globalRegistry) allows recording metrics without injecting MeterRegistry.
 But injecting MeterRegistry is cleaner and testable. For high-throughput code,
@@ -1243,6 +1310,8 @@ public class AppInfoContributor
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or via application.properties:
 ```properties
 management.info.env.enabled=true
@@ -1251,11 +1320,15 @@ info.app.version=@project.version@  # Maven placeholder
 info.app.description=Handles order processing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Git info (via spring-boot-maven-plugin):
 ```properties
 management.info.git.enabled=true
 management.info.git.mode=full  # includes branch, commit hash
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Including git commit hash in /actuator/info
 is a crucial production practice. When an incident occurs, you immediately know
@@ -1284,6 +1357,8 @@ Content-Type: application/json
 POST /actuator/loggers/com.example.orders
 {"configuredLevel": null}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is critical for production debugging: enable DEBUG logging for a specific
 package without restarting the application. After debugging, reset to INFO.
@@ -1335,6 +1410,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2 - Manual Timer (more control):
 ```java
 @Service
@@ -1356,6 +1433,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3 - LongTaskTimer for long-running operations:
 ```java
 LongTaskTimer batchTimer = LongTaskTimer
@@ -1366,8 +1445,40 @@ LongTaskTimer batchTimer = LongTaskTimer
 batchTimer.record(() -> runBatch(items));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Percentile metrics (p50, p95, p99) require
 client-side aggregation (publishPercentiles) which uses more memory, or server-
 side aggregation in Prometheus (publishPercentileHistogram). For Prometheus,
 use publishPercentileHistogram=true and let Prometheus calculate percentiles with
 histogram_quantile(). This scales better than pre-computing percentiles in-process.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

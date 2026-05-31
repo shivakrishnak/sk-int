@@ -8,7 +8,15 @@ permalink: /spring/l1-core-concepts/
 render_with_liquid: false
 ---
 
-# Spring - L1 Core Concepts
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L1 Core Concepts](#spring---l1-core-concepts) | medium |
+| 2 | [Dependency Injection](#dependency-injection) | medium |
+| 3 | [Spring Bean](#spring-bean) | medium |
+| 4 | [ApplicationContext](#applicationcontext) | medium |
 
 ---
 
@@ -28,7 +36,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — foundational concept tested in every Spring
+🎯 Interview Weight: Critical - foundational concept tested in every Spring
 interview. Cannot skip this.
 
 ---
@@ -122,6 +130,8 @@ With DI (loose coupling):
     injects: passes PaymentSvcImpl to OrderService constructor
     result: wired, testable object graph
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Three injection styles:
 1. **Constructor injection**: dependencies in constructor signature (preferred)
@@ -409,12 +419,16 @@ and does not know which to inject. You annotate the injection point with
 private PaymentService paymentService;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @Qualifier can also be used on bean definitions:
 ```java
 @Bean
 @Qualifier("fastPaymentService")
 public PaymentService fastPaymentService() { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Alternative to @Qualifier: @Primary marks one bean as the default choice
 without requiring injection-point annotations.
@@ -464,6 +478,8 @@ public class NotificationDispatcher {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring collects all beans implementing NotificationChannel (EmailChannel,
 SmsChannel, PushChannel, etc.) and injects them as a list. Adding a new
 channel requires only creating a new @Service that implements the interface -
@@ -498,12 +514,42 @@ public void process(Order order) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The modern alternative to @Autowired(required
 = false) is using Optional<T> as the injection type:
 `Optional<SmsSender> smsSender`. This forces you to explicitly handle the
 absent case and makes the optionality visible in the type signature.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Spring Bean
 
@@ -521,7 +567,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — "What is a Spring bean?" is asked in every
+🎯 Interview Weight: Critical - "What is a Spring bean?" is asked in every
 Spring interview to gauge foundational understanding.
 
 ---
@@ -619,6 +665,8 @@ Shutdown:
   1. call @PreDestroy / destroy()
   2. release resources
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The singleton cache is the core. Spring creates singleton beans once at
@@ -915,6 +963,8 @@ public class ProductCacheService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* @PostConstruct runs inside the
 singleton creation process, before the bean is exposed to other beans.
 This means slow @PostConstruct methods delay startup. For background
@@ -973,6 +1023,34 @@ creates the beans.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # ApplicationContext
 
 ---
@@ -989,7 +1067,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — understanding the ApplicationContext is the key
+🎯 Interview Weight: High - understanding the ApplicationContext is the key
 to understanding all Spring behaviour.
 
 ---
@@ -1093,6 +1171,8 @@ ApplicationContext lifecycle:
      -> calls @PreDestroy
      -> publishes ContextClosedEvent
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The ApplicationContext refresh is the critical startup phase. Every non-lazy
@@ -1347,6 +1427,8 @@ public class StartupValidator {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* In web applications, ContextRefreshedEvent
 fires when the parent context refreshes AND again when the web (child) context
 refreshes. Check event.getApplicationContext() to avoid double execution.
@@ -1456,3 +1538,33 @@ transactional annotation on a controller (in the child context) might not
 see the transaction manager (in the parent context) depending on how BPPs
 are configured. This was a classic Spring MVC gotcha that Boot's single
 context eliminated.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

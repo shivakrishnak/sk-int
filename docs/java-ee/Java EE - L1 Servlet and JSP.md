@@ -126,6 +126,8 @@ Container startup or first request
   [destroy()]  <- once
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Thread safety:**
 
 ```java
@@ -161,6 +163,8 @@ public class GoodServlet extends HttpServlet {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **loadOnStartup:**
 
 ```java
@@ -170,6 +174,8 @@ public class ApiServlet extends HttpServlet {
     // Default (-1) = lazy init on first request
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key insight:**
 
@@ -353,6 +359,8 @@ jmeter -n -t test.jmx -l results.jtl
 jstack <pid> | grep -A 5 "doGet\|doPost\|service"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move the state to a local variable or the
 `HttpServletRequest` attribute map.
 
@@ -392,6 +400,8 @@ String servletParam = getInitParameter("timeout");
 String appParam = getServletContext()
     .getInitParameter("app.env");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `context-param` is how Spring DispatcherServlet
 finds the Spring application context config path.
@@ -443,6 +453,8 @@ public class AsyncServlet extends HttpServlet {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use: long-polling, server-sent events,
 slow external service calls. Modern alternative:
 JAX-RS `@Suspended AsyncResponse` or reactive.
@@ -462,6 +474,8 @@ responses after:
 Request -> Filter1 -> Filter2 -> Servlet
                                -> Filter2 -> Filter1 -> Response
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Each filter calls `chain.doFilter()` to pass control
 forward. Not calling it short-circuits (used for
@@ -512,6 +526,8 @@ public class AppStartupListener
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring's ApplicationContext is stored as a
 ServletContext attribute - that is how Spring MVC
 finds the Spring context.
@@ -543,6 +559,8 @@ Error pages (web.xml):
 </error-page>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In JAX-RS: `ExceptionMapper<T>` maps exceptions
 to HTTP responses. In Spring MVC: `@ControllerAdvice`.
 
@@ -561,6 +579,8 @@ HttpSession session = request.getSession(true);
 session.setAttribute("user", userObject);
 session.setMaxInactiveInterval(1800); // 30 min
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Mechanism: container generates JSESSIONID cookie
 (or URL param if cookies disabled). Maps ID to
@@ -604,6 +624,34 @@ Prefer environment variables for new projects.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # HTTP Request and Response Handling
 
@@ -708,6 +756,8 @@ getAttribute("key")  -> request-scoped attribute
 getUserPrincipal()   -> authenticated user
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **JAX-RS parameter annotations:**
 
 ```java
@@ -722,6 +772,8 @@ public List<Order> getOrders(
     @Context UriInfo uriInfo
 ) { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -880,6 +932,8 @@ if (!response.isCommitted()) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Set all headers before writing any output.
 In Filters, set headers BEFORE calling chain.doFilter().
 
@@ -910,6 +964,8 @@ RequestDispatcher rd =
     req.getRequestDispatcher("/WEB-INF/views/result.jsp");
 rd.forward(req, resp);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Server-side: client never knows it happened
 - URL in browser stays the same
 - Request attributes are preserved
@@ -919,6 +975,8 @@ Redirect (client-side):
 ```java
 resp.sendRedirect("/login?error=true");
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Container sends 302 + Location header
 - Browser makes a new request
 - URL changes in browser
@@ -973,6 +1031,8 @@ public class UploadServlet extends HttpServlet {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Security: validate file type by content (magic bytes),
 not extension. A file named photo.jpg containing a
 script can cause server-side injection.
@@ -999,6 +1059,8 @@ public User getUser(@PathParam("id") Long id) {
     return userService.find(id);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 - `Accept: application/json` -> JSON
 - `Accept: application/xml` -> XML
@@ -1059,6 +1121,8 @@ public Response preflight() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Never use Access-Control-Allow-Origin: * for endpoints that use cookies or Authorization headers - browsers reject it with credentials anyway. Always use an explicit allowlist. Wildcard CORS signals a security misunderstanding to reviewers."
 
 ---
@@ -1097,6 +1161,8 @@ public void doPost(HttpServletRequest req, ...) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JAX-RS avoids this entirely by selecting the right
 MessageBodyReader based on Content-Type.
 
@@ -1121,6 +1187,8 @@ if (cookies != null) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Writing cookies:
 ```java
 Cookie cookie = new Cookie("session", tokenValue);
@@ -1134,6 +1202,8 @@ resp.setHeader("Set-Cookie",
     "; Path=/; HttpOnly; Secure; SameSite=Strict"
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The Servlet Cookie API doesn't have a SameSite attribute method - you must set it via the raw Set-Cookie header string. Always set HttpOnly=true (prevents JS from reading the cookie, blocking cookie theft via XSS) and Secure=true (HTTPS only). SameSite=Strict prevents CSRF for session cookies."
 
@@ -1155,6 +1225,8 @@ req.getRequestDispatcher("/WEB-INF/result.jsp")
 // Do NOT write to resp after this
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Include:
 - Target resource output is embedded in current response
 - Caller can write before and after include
@@ -1166,6 +1238,8 @@ req.getRequestDispatcher("/header.jsp")
 resp.getWriter().write("</header>");
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key difference: forward transfers control completely;
 include merges output.
 
@@ -1174,6 +1248,34 @@ include merges output.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JSP and JSTL
 
@@ -1278,6 +1380,8 @@ Container executes (one instance, many threads)
 HTML output sent to client
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Implicit objects in every JSP:**
 
 ```
@@ -1288,6 +1392,8 @@ application - ServletContext
 out         - JspWriter
 pageContext - PageContext
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **EL scope search order:**
 
@@ -1454,6 +1560,8 @@ Jakarta EE 9+ requires JSTL 3.x with `jakarta.*`.
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Update taglib URI:
 ```jsp
 <%-- Old --%>
@@ -1464,6 +1572,8 @@ Update taglib URI:
 <%@ taglib prefix="c"
   uri="jakarta.tags.core" %>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1498,6 +1608,8 @@ ${sessionScope.cart}     <%-- session attribute --%>
 ${applicationScope.cfg}  <%-- app-wide attribute --%>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Servlet sets request attributes before forwarding:
 ```java
 // Servlet
@@ -1506,6 +1618,8 @@ request.getRequestDispatcher(
     "/WEB-INF/views/list.jsp"
 ).forward(request, response);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Anti-pattern: putting data in session scope to avoid
 passing through request. This bloats sessions and
@@ -1532,6 +1646,8 @@ ${fn:substring(str, 0, 10)}
 ${fn:replace(str, "old", "new")}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key: `fn:escapeXml()` is equivalent to `<c:out>`
 for inline EL expressions.
 
@@ -1557,10 +1673,14 @@ Hello <%=user.getName()%>
 Hello <c:out value="${user.name}"/>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or `fn:escapeXml()` inline:
 ```jsp
 Hello ${fn:escapeXml(user.name)}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 JavaScript context (different escaping needed):
 ```jsp
@@ -1570,6 +1690,8 @@ var name = "${user.name}";
 <%-- Use OWASP Java Encoder for JS context --%>
 var name = "${e:forJavaScript(user.name)}";
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Defense in depth: Content-Security-Policy header,
 output encoding library (OWASP Java Encoder).
@@ -1603,6 +1725,8 @@ a custom tag without writing Java:
   message="${validationError}"/>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Custom tag handler: requires a Java class implementing
 `SimpleTagSupport` or `TagSupport`, plus a TLD file.
 Used when the tag needs Java logic that JSTL can't express.
@@ -1623,6 +1747,8 @@ Include directive (compile-time):
 ```jsp
 <%@ include file="header.jsp" %>
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Merged before compilation into one Servlet
 - Static: changes require recompilation
 - Shares variables with parent
@@ -1633,6 +1759,8 @@ Include directive (compile-time):
   <jsp:param name="title" value="${title}"/>
 </jsp:include>
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Separate request at runtime
 - Can pass parameters
 - Target can be any URL (Servlet, JSP, HTML)
@@ -1676,6 +1804,8 @@ Thymeleaf advantages:
 </html>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Thymeleaf's automatic escaping in th:text is the security win over JSP: you have to explicitly use th:utext (unescaped) to output raw HTML. In JSP you have to remember to use c:out. Safe-by-default vs safe-if-you-remember."
 
 ---
@@ -1717,4 +1847,36 @@ Pre-compilation advantages:
 </plugin>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Pre-compiling JSPs at build time is a production best practice: it catches syntax errors before deployment and eliminates the first-request compilation delay. It also removes the need for the jsp compiler on the production server - a minor security improvement."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

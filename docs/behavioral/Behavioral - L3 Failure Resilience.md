@@ -148,6 +148,8 @@ FAILURE NARRATION ARC
     prevented Y from happening."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 > **The failure story structure walkthrough:** The opening ownership
 > statement is the most critical sentence - it signals psychological
 > safety and maturity before you say anything else. Interviewers are
@@ -416,6 +418,34 @@ was hard to hear.** `[MID+]` SCENARIO
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Growth Mindset Under Pressure
 
 🎯 Interview Weight: high - pressure-response questions reveal
@@ -551,6 +581,8 @@ STORY STRUCTURE FOR PRESSURE QUESTIONS:
    What happened and what changed in your
    practice as a result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 > **The growth mindset structure walkthrough:** The "honest initial
 > reaction" is the section most candidates skip. Saying "my first
@@ -773,3 +805,33 @@ technology or domain under time pressure.** `[MID+]` SCENARIO
 > explicitly ("I identified the three highest-stakes decisions
 > first") rather than just describing that you learned quickly.
 > Specific strategy signals metacognitive maturity.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

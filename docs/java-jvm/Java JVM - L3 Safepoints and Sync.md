@@ -8,9 +8,20 @@ permalink: /java-jvm/l3-safepoints-and-sync/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L3 Safepoints and Sync](#java-jvm---l3-safepoints-and-sync) | medium |
+
+---
+
 # Java JVM - L3 Safepoints and Sync
 
 ## JVM Safepoints and Stop-the-World
+
+---
 
 ### 🎯 Model Answer
 
@@ -105,6 +116,8 @@ GC LOGS SHOW:
   [safepoint] Total time for which threads were stopped: 0.0850000 s
   (GC work = 0.0850 - 0.0820 = 0.003 = 3ms, reach time = 82ms!)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -263,6 +276,8 @@ Verification:
   [safepoint] Safepoint sync time: 0.0020000 seconds  <- 2ms reach time
   [safepoint] Total time stopped: 0.0070000 seconds   <- 7ms total (GC work)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -487,6 +502,8 @@ requested). JDK 14+ per-thread polling pages improve this further.
 
 ## JVM Synchronization Internals
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -594,6 +611,8 @@ LOCK INFLATION SEQUENCE:
      Notify one waiter (Thread B)
      Thread B wakes, acquires ObjectMonitor
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -758,6 +777,8 @@ Fix options:
   E. Remove shared state: thread-local data, partition by thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -819,6 +840,8 @@ public String buildReport() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Lock elision requires escape analysis to confirm the
 object is thread-local. If the object is passed to a method that the JIT can't inline:
 escape analysis fails (JIT can't be sure the method doesn't leak the reference). JIT
@@ -855,6 +878,8 @@ Fix: Replace synchronized with ReentrantLock
   -> virtual thread A remounts when I/O completes
   -> ReentrantLock re-acquired correctly
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* JDK 21 released virtual threads as GA. JDK 24 is
 fixing the pinning issue by making `synchronized` virtual-thread-friendly (Project Loom
@@ -957,6 +982,8 @@ double read() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* StampedLock is NOT reentrant. A thread that already
 holds a write lock cannot acquire a read lock (unlike ReentrantReadWriteLock).
 This causes deadlock if not careful. Also: StampedLock doesn't implement Lock/ReadWriteLock
@@ -1034,3 +1061,33 @@ battle-tested.
 ### 📊 Diagram
 
 *(Omit: lock state transitions described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

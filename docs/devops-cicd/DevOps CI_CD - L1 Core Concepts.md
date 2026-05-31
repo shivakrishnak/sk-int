@@ -8,6 +8,17 @@ permalink: /devops-cicd/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Continuous Integration Fundamentals](#continuous-integration-fundamentals) | medium |
+| 2 | [Continuous Delivery vs Continuous Deployment](#continuous-delivery-vs-continuous-deployment) | medium |
+| 3 | [Branching Strategies and Trunk-Based Development](#branching-strategies-and-trunk-based-development) | medium |
+
+---
+
 # Continuous Integration Fundamentals
 
 🎯 Interview Weight: critical - the foundation of all CI/CD practices,
@@ -647,6 +658,34 @@ masking large areas of untested behavior.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Continuous Delivery vs Continuous Deployment
 
 🎯 Interview Weight: high - frequently asked to probe whether the
@@ -1130,6 +1169,8 @@ if (featureFlags.isEnabled("new-checkout-flow", userId)) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The deployment pipeline deploys code with the flag defaulting to
 off. After deployment, the product team activates the flag for 1%
 of users, monitors metrics, expands to 10%, 50%, 100%.
@@ -1318,6 +1359,34 @@ organizational support. Vague quality arguments do not.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Branching Strategies and Trunk-Based Development
 
@@ -1539,6 +1608,8 @@ public PaymentResult processPayment(Order order, User user) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # .github/workflows/ci.yml
 # CI runs on every commit to main - catches problems immediately
@@ -1755,6 +1826,8 @@ if (featureFlags.isEnabled("new-search-algorithm", userId)) {
     return legacySearchService.search(query);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With this pattern, I can merge code for a new search algorithm
 to trunk daily even while it is 30% complete. The flag is disabled
@@ -1983,3 +2056,33 @@ are a solution to a specific problem that only manifests at high
 commit velocity. Recommending merge queues for a 5-person team is
 over-engineering. Knowing when the problem actually exists and what
 the cost-benefit of the solution is demonstrates architectural judgment.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

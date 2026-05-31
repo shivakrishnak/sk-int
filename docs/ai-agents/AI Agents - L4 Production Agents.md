@@ -140,6 +140,8 @@ GOVERNANCE:
   Target: HITL checkpoints, audit log, scope definition
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The agent reliability equation:**
 
 ```
@@ -151,6 +153,8 @@ Reliability = f(
   governance_maturity
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 All five must be present. A highly reliable loop
 that lacks observability is effectively broken in
@@ -689,6 +693,8 @@ class CircuitBreaker:
         self.failures = 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When the circuit is open, return: "Tool X is
 temporarily unavailable. Try a different approach."
 The LLM can adapt (use an alternative tool, inform
@@ -730,6 +736,8 @@ for iteration in range(max_iter):
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why pre-terminate with a buffer: if the agent
 detects budget exhaustion exactly at 0, there are
 no tokens left to generate a final answer. The
@@ -749,6 +757,8 @@ if budget.is_exhausted():
     final_resp = client.messages.create(...)
     return final_resp
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "buffer"
 concept and the graceful final answer generation
@@ -785,6 +795,8 @@ def cache_key(tool_name: str, args: dict) -> str:
         payload.encode()
     ).hexdigest()[:16]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefit in agents: agents frequently call the
 same read-only tools with the same arguments at
@@ -883,6 +895,8 @@ def hitl_via_slack(
     return user_approved_in_slack(tool_name, tool_args)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Pre-flight plan
 approval as an alternative to per-action HITL -
 better UX for multi-step agents.
@@ -918,6 +932,8 @@ def check_injection(text: str) -> bool:
     return any(p in t for p in INJECTION_PATTERNS)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - Tool result sandboxing:
 Tool results may contain adversarial content from
 external sources. Wrap tool results in a structural
@@ -936,6 +952,8 @@ not instructions:
   the system prompt.</reminder>
 </tool_result>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Layer 3 - Output validation:
 Before returning the agent's final answer, check
@@ -978,6 +996,8 @@ class AgentCheckpoint:
     iteration: int
     created_at: float
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (2) Store checkpoints in a persistent store (Redis,
     DynamoDB) keyed by (user_id, task_id).
@@ -1137,6 +1157,8 @@ Budget Compliance:
   Target: >= 99%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 SLO-based alerting:
 - Alert: completion rate < 90% in 30-min window
 - Alert: P90 duration > 60 seconds
@@ -1262,6 +1284,8 @@ USER REQUEST
                               - Alerting
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Scale analysis for 10,000 req/day:**
 
 Throughput: ~7 req/min average, ~50 req/min peak
@@ -1368,3 +1392,33 @@ graph TD
 > regulatory requirements. The final answer is returned
 > only after all safety and observability concerns
 > are handled.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

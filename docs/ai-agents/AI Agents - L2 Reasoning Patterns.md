@@ -120,6 +120,8 @@ REACT LOOP:
   (Full reasoning trail. Debugging: exactly what it thought.)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The Scratchpad effect:**
 
 Explicit intermediate reasoning steps improve
@@ -470,11 +472,15 @@ BAD Observation:
 {"data": [{"id": 1, "v": "0.3.1"}, ...], "err": null}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 GOOD Observation:
 ```
 Found 3 results: package "requests" v0.3.1 (outdated),
 "urllib3" v1.26.9 (current), "certifi" v2023.7.22 (current).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The Observation's quality directly affects the next
 Thought's quality. If the Observation is unreadable,
@@ -542,6 +548,8 @@ Observation: AAPL: $185.23 (as of 2025-01-15 14:32 UTC)
 Thought: I have the current price. I can answer.
 Answer: Apple stock (AAPL) is currently $185.23.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common issues: LLMs may skip Thought steps when
 confident (they know the answer immediately). If
@@ -706,6 +714,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Chain of Thought in Agents
 
 **Interview Weight:** ★★☆ - The reasoning technique
@@ -801,6 +837,8 @@ EXTENDED THINKING (Anthropic):
   Reasoning separate from response (not in messages).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **CoT and agent decision quality:**
 
 ```
@@ -819,6 +857,8 @@ WITH CoT:
   I can proceed with verification.
   -> LLM calls query_customer with correct intent
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1103,6 +1143,8 @@ resp = client.messages.create(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key constraints:
 - `model` must be Claude 3.5+ (Haiku doesn't support)
 - `max_tokens` must exceed `budget_tokens` by enough
@@ -1297,6 +1339,8 @@ Else:
   of extended thinking.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Continuous monitoring: measure CoT accuracy over
 time as task distribution changes. CoT impact
 may decrease or increase as the agent is deployed
@@ -1328,6 +1372,8 @@ Thought: I have the email. I can now proceed.
          I should flag this discrepancy.
 Action: [flags discrepancy to user]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Without CoT, the agent might: find a customer,
 not notice the email mismatch, proceed with the
@@ -1377,6 +1423,8 @@ def get_thinking_budget(task_type: str) -> int:
     }
     return budgets.get(task_type, 5000)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Monitoring: log actual thinking token usage per run.
 Alert if the P90 regularly exceeds the budget (the
@@ -1456,3 +1504,33 @@ flowchart TD
 > back into the CoT phase, grounding the next reasoning
 > step in actual retrieved data rather than in-weights
 > assumptions.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

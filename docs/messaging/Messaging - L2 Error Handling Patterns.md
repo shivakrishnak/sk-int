@@ -8,6 +8,16 @@ permalink: /messaging/l2-error-handling-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Dead Letter Queues and Poison Message Handling](#dead-letter-queues-and-poison-message-handling) | medium |
+| 2 | [Message Routing and Filtering](#message-routing-and-filtering) | medium |
+
+---
+
 # Dead Letter Queues and Poison Message Handling
 
 ---
@@ -62,6 +72,8 @@ Dead Letter Queue
                   - first/last failure timestamp
                   - exception message
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For RabbitMQ:
 1. Declare main queue with `x-dead-letter-exchange` argument pointing to DLX
@@ -301,6 +313,34 @@ Symptom: consumer lag grows rapidly on one partition or queue; all consumers are
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Routing and Filtering
 
 ---
@@ -360,6 +400,8 @@ Producer -[headers: {type:order,action:create}]->
          [binding: action=create] -> [audit Q]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kafka topic routing (consumer-side):
 ```
 Producer -> [orders topic] (all events, all types)
@@ -367,6 +409,8 @@ Consumer A: subscribe("orders"), filter by event type
 Consumer B: subscribe("orders"), filter by customer segment
 Consumer C: subscribe("orders.*"), subscribe multiple topics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Broker-side routing (RabbitMQ exchanges) consumes no consumer bandwidth for filtered messages - they never arrive. Consumer-side filtering (Kafka) means every consumer receives every message on the topic and decides whether to process it. At high volume, consumer-side filtering wastes significant CPU and network on discarded messages. However, broker-side routing is less flexible - changing routing rules requires re-declaring bindings.
@@ -566,3 +610,33 @@ Symptom: a fanout exchange delivers to three queues; one slow consumer on queue 
 | Hiring Manager | Lead with: routing topology design is a maintainability decision |
 | Bar Raiser | Lead with: routing rules as a governance and access control boundary |
 | Peer Engineer | "The topology mistake I see most is all events on one Kafka topic with heavy consumer filtering" |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

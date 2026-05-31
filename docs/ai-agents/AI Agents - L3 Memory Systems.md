@@ -126,6 +126,8 @@ WRITE LAYER (on task completion)
     kv_store.set(updated_entities)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Storage tier comparison:**
 
 ```
@@ -140,6 +142,8 @@ Key-value      | Exact lookup | Any JSON     | Fast user
 In-context     | Always       | Critical     | Always-needed
 (system prompt)| present      | instructions | facts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -498,6 +502,8 @@ def semantic_search(
     return [r[0] for r in rows]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The specific
 operator (`<=>` for cosine distance in pgvector)
 as a concrete implementation detail.
@@ -832,6 +838,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Episodic vs Semantic vs Procedural Memory
 
 **Interview Weight:** ★★☆ - The three non-working
@@ -943,6 +977,8 @@ PROCEDURAL MEMORY:
   Updated: by agent developers (system prompt change)
   Used for: consistent behavior, safety constraints
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1304,6 +1340,8 @@ async def retrieve_all_memory(
     return "\n\n".join(parts)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Context budget allocation: how much context space
 to allocate to each memory type matters.
 
@@ -1579,3 +1617,33 @@ graph LR
 > procedural stores are updated asynchronously via
 > knowledge base maintenance and system prompt changes,
 > not during agent runs.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

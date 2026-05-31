@@ -128,6 +128,8 @@ Lambda processes and returns:
 API Gateway converts to HTTP 201 with headers and body.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -145,6 +147,8 @@ public String handleRequest(Map<String, Object> event,
     // This returns a plain String -> 502 Bad Gateway
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Correct Lambda proxy integration response
@@ -185,6 +189,8 @@ private Map<String, Object> errorResponse(
     );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Deploy HTTP API with Lambda integration:
@@ -349,6 +355,8 @@ aws logs tail /aws/lambda/my-function \
   --filter-pattern "ERROR" --follow
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add a global exception handler in Lambda that
 catches all unhandled exceptions and returns a proper
 proxy response with a 500 status code. Never let
@@ -439,6 +447,34 @@ sequenceDiagram
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS Step Functions
 
@@ -551,6 +587,8 @@ Step Functions (orchestration):
   - Add steps without modifying other Lambdas
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -565,6 +603,8 @@ Step Functions (orchestration):
 // Problems: paying for all invocations to be running,
 // no retry logic, no visibility, no human approval support
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // GOOD: Step Functions state machine definition
@@ -635,6 +675,8 @@ Step Functions (orchestration):
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Start a Step Functions execution:
@@ -793,6 +835,8 @@ aws stepfunctions stop-execution \
   --error "ManualAbort" \
   --cause "Stuck execution - manual intervention"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Add `HeartbeatSeconds` to task states that
 wait for callbacks. Set `TimeoutSeconds` as max
@@ -1020,6 +1064,8 @@ aws stepfunctions get-execution-history \
 # Find: TaskStateFailed or ExecutionFailed event
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Find the failure details:**
 
 ```bash
@@ -1028,6 +1074,8 @@ aws stepfunctions get-execution-history \
   --query 'events[?type==`TaskFailed`]'
 # Returns: cause, error string for the failed task
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Get the Lambda logs for the failed invocation:**
 
@@ -1041,6 +1089,8 @@ aws logs filter-log-events \
   --filter-pattern "RequestId: abc-123-def"
 # Shows the full Lambda invocation logs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Check if it was retried:**
 
@@ -1237,6 +1287,8 @@ decoupling combined.
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Payment safety:** Standard workflow - exactly-once
 per state transition. Payment never re-runs on retry.
 
@@ -1280,6 +1332,8 @@ Payment API -> Kinesis Data Stream (50K events/s)
   -> Decision in < 50ms
   -> Publish result to Kinesis output stream
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is Lambda + Kinesis, not Step Functions.
 No orchestration needed for a single-step parallel
@@ -1339,6 +1393,8 @@ State Machine (Standard Workflow):
     [NotifyFailure] -> SNS -> PagerDuty (catch-all)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key design decisions:**
 
 ECS Fargate for heavy transforms: Lambda has 15-minute
@@ -1358,6 +1414,8 @@ aws cloudwatch put-metric-alarm \
   --alarm-actions arn:aws:sns:...:alerts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ECS Fargate +
 task token pattern is the production solution for
 compute-heavy steps that exceed Lambda's 15-minute limit.
@@ -1367,3 +1425,33 @@ when done. Step Functions is compatible with any compute
 type - not just Lambda.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

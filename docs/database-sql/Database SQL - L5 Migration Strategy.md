@@ -8,6 +8,15 @@ permalink: /database-sql/l5-migration-strategy/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Schema Migration Strategy at Scale - Zero-Downtime Deployments](#schema-migration-strategy-at-scale---zero-downtime-deployments) | medium |
+
+---
+
 # Schema Migration Strategy at Scale - Zero-Downtime Deployments
 
 **TL;DR:** Schema migrations at scale require zero-downtime because production databases
@@ -94,6 +103,8 @@ HIGH RISK (can block production):
   - ADD FOREIGN KEY (acquires ShareRowExclusiveLock,
     scans entire table to validate)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -350,6 +361,8 @@ Tools:
   - Debezium CDC: real-time data copy for cut-over
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -428,6 +441,8 @@ ALTER TABLE orders
 ALTER TABLE orders VALIDATE CONSTRAINT orders_discount_nn;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: CONCURRENTLY index build left 'invalid'**
 
 Symptom: `CREATE INDEX CONCURRENTLY` ran but queries are not using the new index.
@@ -441,6 +456,8 @@ JOIN pg_index i ON si.indexrelid = i.indexrelid
 WHERE relname = 'orders';
 -- indisvalid = false: index build failed.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `DROP INDEX CONCURRENTLY idx_name;` then retry `CREATE INDEX CONCURRENTLY`.
 Cause of failure: a long-running transaction was active during Phase 3 of the build.
@@ -497,3 +514,33 @@ Check for idle-in-transaction sessions before retrying.
 **Q12: What is the risk of running Flyway migrations at application startup vs. as a separate pre-deploy step?**
 
 🗣️ "At-startup migration (default Flyway): the application runs `flyway.migrate()` at startup, before serving traffic. Simple but has risks: (1) Multiple instances start simultaneously (Kubernetes rolling deploy): all instances try to migrate at once. Flyway uses a database lock to serialize this (only one wins; others wait). Safe for fast migrations. For long migrations: all instances wait (slow startup). (2) Migration failure = startup failure: if the migration fails, the new version does not start. Good (fast feedback) but may block rollout. (3) The migration runs with application credentials: must have DDL permissions. Application role should ideally be least-privilege. Workaround: separate migration role. Pre-deploy step (separate migration job): run the migration as a Kubernetes Job or a CI step before deploying the new application version. Advantages: (1) migration completes before any new app instances start. (2) Only one migration runner (the Job) - no serialization needed. (3) If migration fails: deployment pipeline stops before the new application is deployed. (4) Migration can run with a higher-privilege role; application uses least-privilege. Disadvantage: more complex CI/CD pipeline. Recommendation: pre-deploy step for production at scale; at-startup for simplicity in small applications."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

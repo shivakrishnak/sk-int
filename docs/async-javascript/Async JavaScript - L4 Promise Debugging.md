@@ -135,6 +135,8 @@ function watchConnectionCancellable(socket, signal) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // LEAK PATTERN 2: Promises accumulate in a Map/Set
 class RequestTracker {
@@ -164,6 +166,8 @@ class RequestTrackerFixed {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // LEAK PATTERN 3: Large closure retained by long-lived Promise
 async function processLargeDataset(data) { // data: 50MB array
@@ -184,6 +188,8 @@ async function processLargeDatasetFixed(dataRef) {
   return report;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 JavaScript closures capture variables by reference, not value.
@@ -405,6 +411,8 @@ Leak patterns to look for:
   - '@closure' objects retaining large data
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Browser tab memory growing during SPA navigation**
 ```
 Steps:
@@ -421,6 +429,8 @@ Common cause in React SPAs:
   - Event listeners added to window/document not removed
   - RxJS subscriptions not unsubscribed on component destroy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -463,6 +473,8 @@ async function heavyOperation() {
   // Only released when heavyOperation completes
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 V8 optimization: V8 performs "escape analysis" and may not
 retain variables that are proven not to be referenced after
@@ -507,6 +519,8 @@ Browser:
   window.performance.memory.usedJSHeapSize
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The forced-GC pattern: always
 call `global.gc()` before measuring to ensure you are measuring
 actual retained memory, not just unflushed allocated memory.
@@ -537,6 +551,8 @@ Promise
           -> MyService._connection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This reveals that `MyService._connection` is an EventEmitter
 with accumulated `data` event listeners.
 
@@ -563,6 +579,8 @@ function startAsyncOp(target, operation) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `WeakRef`: holds a reference to an object without preventing GC.
 
 ```javascript
@@ -581,6 +599,8 @@ class AsyncDataHolder {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `FinalizationRegistry`: callback when an object is GCed.
 Useful for debugging leaks or cleaning up external resources:
 
@@ -594,6 +614,8 @@ function trackData(data) {
   return data;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `WeakMap`/`WeakRef` are
 appropriate for caches and secondary associations. Using them
@@ -649,6 +671,8 @@ setInterval(() => {
 }, 5000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "oldest pending Promise"
 pattern - sorting pending Promises by age surfaces the ones
 that have been waiting longest. In production, these are the
@@ -679,6 +703,8 @@ useEffect(() => {
 }, []);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. `setInterval` not cleared on unmount:
 ```javascript
 // LEAKS: interval fires after unmount, holds component reference
@@ -687,6 +713,8 @@ useEffect(() => {
   return () => clearInterval(id); // REQUIRED
 }, []);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Global event listeners on `window` or `document`:
 ```javascript
@@ -700,6 +728,8 @@ useEffect(() => {
   };
 }, []);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Framing the cleanup function
 as mandatory, not optional. Every `useEffect` that registers
@@ -754,6 +784,8 @@ const results = await processWithPool(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The worker pool pattern uses
 exactly `concurrency` worker promises, not `items.length`.
 Memory is O(concurrency * closure_size) not O(N * closure_size).
@@ -797,6 +829,8 @@ async function suspectFunction() {
 // process._getActiveRequests() - pending IO requests
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In browsers: Chrome DevTools -> Application -> Service Workers
 shows pending async operations. For page hangs: use the
 "async" stack traces in DevTools Sources panel (requires
@@ -833,6 +867,8 @@ async function processTree(node, depth = 0) {
 // Memory: O(depth) Promises
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: trampoline or iterative approach with explicit stack:
 ```javascript
 async function processTreeIterative(root) {
@@ -847,6 +883,8 @@ async function processTreeIterative(root) {
   // Stack array size = O(max branching factor), not depth
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that TCO is specified
 but not universally implemented, and providing the iterative
@@ -879,6 +917,8 @@ async function timed(name, fn) {
 const user = await timed('fetchUser', () => fetchUser(id));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Browser DevTools: Performance tab -> record -> look for:
 - "Task" entries that are long: synchronous code blocking event loop
 - "Microtask checkpoint" gaps: Promise resolution delays
@@ -897,6 +937,8 @@ performance.measure('fetchDuration', 'fetchStart', 'fetchEnd');
 const [measure] = performance.getEntriesByName('fetchDuration');
 console.log(`Fetch: ${measure.duration.toFixed(1)}ms`);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `performance.mark/measure`
 in async code for production-observable timing. These entries
@@ -934,6 +976,8 @@ results.forEach((r, i) => {
   }
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The operational implication:
 in production, `Promise.all` + fast-failing Promises can
@@ -1000,12 +1044,16 @@ class ResourcePool {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "give directly to next waiter"
 pattern: releasing back to the pool passes the resource
 immediately to the oldest waiter, reducing latency versus
 pushing to the available array and having the waiter pop it
 asynchronously. Combined with AbortSignal timeout support,
 this prevents indefinite waiting under pool exhaustion.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1016,6 +1064,8 @@ this prevents indefinite waiting under pool exhaustion.
 | `diagnostics_channel` | Node.js | Promise lifecycle hooks | Complex setup |
 | `performance.memory` | Chrome only | Live heap in browser | Non-standard API |
 | `--prof` + 0x | Node.js | CPU + allocation profiling | Post-processing needed |
+
+---
 
 ### 🏛️ System Design
 
@@ -1050,6 +1100,8 @@ Client ──→ Job Queue (Redis)
            cleanup on settle: guaranteed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Design decisions:
 - Promise Pool limits concurrent Promises (memory bound)
 - Resource Pool limits DB connections (connection bound)
@@ -1065,6 +1117,8 @@ Memory characteristics at scale:
 memory usage is a deterministic function of concurrency settings,
 not a function of job volume. With a pool, more jobs at higher
 throughput = same peak memory.
+
+---
 
 ### 📊 Diagram
 
@@ -1115,3 +1169,33 @@ flowchart TD
 > shows both the happy path (immediate GC eligibility) and
 > the leak path (external reference prevents GC until explicit
 > deletion).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

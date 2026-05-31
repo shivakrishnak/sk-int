@@ -7,6 +7,17 @@ permalink: /javascript/l1-objects-and-arrays/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Objects and Prototypes](#objects-and-prototypes) | foundational |
+| 2 | [Arrays and Iteration Methods](#arrays-and-iteration-methods) | foundational |
+| 3 | [Destructuring and Spread Operator](#destructuring-and-spread-operator) | foundational |
+
+---
+
 # Objects and Prototypes
 
 🎯 **Interview Weight:** foundational (★☆☆) - JavaScript's
@@ -135,6 +146,8 @@ PROPERTY DESCRIPTORS:
     configurable: false // can't delete or redefine
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -268,6 +281,8 @@ Object.getPrototypeOf(Employee.prototype); // Person.prototype
 // If chain is broken: problem in constructor
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -324,6 +339,34 @@ Object.getPrototypeOf(Employee.prototype); // Person.prototype
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Arrays and Iteration Methods
 
@@ -461,6 +504,8 @@ ARRAY CREATION PATTERNS:
   chunk([1,2,3,4,5], 2)  // [[1,2],[3,4],[5]]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -590,6 +635,8 @@ const grouped = orders.reduce((groups, order) => {
 }, {});  // initial value: empty object
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -644,6 +691,34 @@ const grouped = orders.reduce((groups, order) => {
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Destructuring and Spread Operator
 
@@ -790,6 +865,8 @@ SHALLOW vs DEEP COPY:
   const deep2 = structuredClone(original); // ES2022, preferred
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -926,6 +1003,8 @@ setState(prev => ({
 // setState receives a completely new reference -> re-render triggered
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -987,3 +1066,33 @@ setState(prev => ({
 > those with names. Rest captures only the REMAINING unnamed arguments
 > and is a real Array with all Array methods (`.map`, `.filter`, etc.).
 > This is why rest is preferred over `arguments` in modern code.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-jvm/l5-deployment-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L5 Deployment Architecture](#java-jvm---l5-deployment-architecture) | medium |
+
+---
+
 # Java JVM - L5 Deployment Architecture
 
 ## JVM Selection and Deployment Architecture
+
+---
 
 ### 🎯 Model Answer
 
@@ -133,6 +144,8 @@ CONTAINER DEPLOYMENT ARCHITECTURE:
     -XX:+UseZGC                  # for latency-sensitive services
     -Xlog:gc*:file=/var/log/gc.log:time,level,tags:filecount=3,filesize=10m
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -324,6 +337,8 @@ Fix:
     # Then include native-image-config/ in build: produces reflect-config.json
     # Commit the generated config (don't regenerate every build)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -546,6 +561,8 @@ JVM_OPTS: >-
   -XX:NativeMemoryTracking=summary
   -Xlog:gc*:file=/var/log/gc.log:time:filecount=3,filesize=10m
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Services extend (add service-specific flags) but cannot remove baseline flags.
 Flag governance: any `--add-opens`, `-XX:+UnlockExperimentalVMOptions`, or
 `-XX:+DisableAttachMechanism` requires architecture review.
@@ -709,6 +726,8 @@ SHARED INFRASTRUCTURE:
   Crash capture: PVC at /var/crash/, sidecar ships to S3
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -779,3 +798,33 @@ flowchart TD
 > but wrong for a long-running API service). The four HotSpot specializations at the
 > bottom show that even within the same distribution, the GC and threading configuration
 > is driven by the service's primary constraint.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

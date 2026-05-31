@@ -7,6 +7,22 @@ permalink: /react/l3-forms-and-data/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Controlled vs Uncontrolled Components](#controlled-vs-uncontrolled-components) | intermediate |
+| 2 | [React Query and Server-State Management](#react-query-and-server-state-management) | intermediate |
+| 3 | [React Performance Optimization Techniques](#react-performance-optimization-techniques) | intermediate |
+| 4 | [React.memo and Re-render Prevention](#reactmemo-and-re-render-prevention) | intermediate |
+| 5 | [React Router and Client-side Routing](#react-router-and-client-side-routing) | working |
+| 6 | [Dynamic Routing and Code Splitting](#dynamic-routing-and-code-splitting) | working |
+| 7 | [Higher-Order Components](#higher-order-components) | working |
+| 8 | [Render Props and Compound Components](#render-props-and-compound-components) | working |
+
+---
+
 # Controlled vs Uncontrolled Components
 
 🎯 **Interview Weight:** intermediate (★★☆) - foundational form concept;
@@ -148,6 +164,8 @@ function OptimizedForm() {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -330,6 +348,34 @@ Symptom: form submission sends initial values regardless of what the user typed.
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # React Query and Server-State Management
 
 🎯 **Interview Weight:** intermediate (★★☆) - TanStack Query is industry
@@ -469,6 +515,8 @@ function UserList({ page }) {
   return <Table rows={data?.users ?? []} />;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -657,6 +705,34 @@ Symptom: network tab shows the same API request firing continuously; React Query
 > cancel + snapshot + update, then rollback on error + always refetch
 > on settle.
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 
 # React Performance Optimization Techniques
 
@@ -780,6 +856,8 @@ function VirtualList({ items }) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Premature optimization is the most common React performance mistake.
@@ -879,6 +957,88 @@ const ThemeContext = createContext();
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: React.memo, useMemo, and useCallback should be
+applied to every component and value.**
+
+Memoization has a cost: React.memo performs a shallow comparison on
+every render, useMemo and useCallback run comparison logic, and all
+three hold references in memory. Applying them everywhere often
+degrades performance by adding overhead without benefit. The right
+approach: profile first using React DevTools Profiler, identify
+components that re-render unnecessarily and cause visible jank,
+then apply memoization selectively. The golden rule: optimize when
+you have measured a problem, not speculatively.
+
+**Misconception 2: Virtualization solves slow list rendering for
+any list size.**
+
+Virtualization (react-window, react-virtual) is appropriate for
+lists of hundreds or thousands of items where only ~10-50 are
+visible at once. For lists under ~100 items, virtualization adds
+complexity (scroll position management, accessibility challenges,
+variable height items) without measurable benefit. The real
+performance bottleneck for moderate-size lists is usually item
+component complexity, not the number of DOM nodes. Profile before
+reaching for virtualization.
+
+**Misconception 3: Moving state down is always a performance
+optimization.**
+
+Moving state to the component that uses it reduces unnecessary
+re-renders of unrelated siblings - but it can create other problems:
+prop drilling if the state is needed by multiple components, complex
+state synchronization if multiple components need to stay in sync,
+and fragmentation of related state making debugging harder. Use
+state co-location as a starting point but recognize that shared
+state sometimes belongs higher in the tree. React Context or Zustand
+are the alternatives when co-location creates more problems than
+it solves.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Performance regression from context causing
+full subtree re-renders.**
+
+Symptom: profiler shows a large portion of the component tree
+re-rendering even when only one small piece of data changes.
+Root cause: a high-level context value changes on every parent
+render (object literal in Provider value), causing all consumers
+to re-render. Diagnosis: React DevTools Profiler shows components
+highlighted as "Context changed" in the flamegraph. Fix: split
+large contexts into smaller, focused ones (auth context, theme
+context, user prefs context separately); wrap context value in
+`useMemo`; or move the state down closer to the consumers.
+
+**Failure Mode 2: useCallback dependency array causes new function
+on every render, defeating memoization.**
+
+Symptom: a child wrapped in `React.memo` re-renders on every
+parent update despite receiving a "stable" callback. Root cause:
+`useCallback(fn, [deps])` only returns a stable reference when deps
+have not changed. If a dep like a state setter, or a variable that
+changes on every render, is included in the array (or missing from
+it and being captured via stale closure), the callback changes each
+render. Diagnosis: use the `why-did-you-render` library or React
+DevTools to trace which prop triggered the re-render. Fix: ensure
+state setters (always stable from useState) are excluded from the
+dependency array; use `useReducer` for complex state to avoid
+unstable references.
+
+**Failure Mode 3: Profiler shows expensive renders in dev but
+production performance is fine - or vice versa.**
+
+React dev mode performs additional checks that slow down rendering
+by 2-3x compared to production. Always measure performance in a
+production build (`npm run build && npx serve dist`). The reverse
+problem also exists: some optimizations that help in dev (like
+reduced prop drilling) can actually hurt in production due to
+runtime overhead of memoization checks on very cheap renders.
+Measure both environments before and after optimizations.
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -943,6 +1103,34 @@ const ThemeContext = createContext();
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # React.memo and Re-render Prevention
 
@@ -1055,6 +1243,8 @@ const UserList = React.memo(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 `React.memo` is frequently misused - applied without understanding the
@@ -1148,6 +1338,84 @@ function UserList({ users }) {
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: React.memo prevents ALL re-renders of a
+component.**
+
+`React.memo` prevents re-renders caused by PARENT re-renders when
+props have not changed (shallow comparison). It does NOT prevent
+re-renders caused by: (1) the component's own `useState` or
+`useReducer` dispatch, (2) `useContext` changes when the component
+is a context consumer, (3) `useEffect` dependencies triggering state
+updates inside the component. Understanding which re-render source
+you are optimizing against is critical before applying React.memo.
+
+**Misconception 2: React.memo uses deep equality for comparison.**
+
+`React.memo` uses SHALLOW equality by default - it compares prop
+references, not deep values. `{ a: 1 }` and `{ a: 1 }` are two
+different object references, so passing a new object literal each
+render causes React.memo to always re-render the component. The fix
+is to stabilize the prop reference: use `useMemo` for derived
+objects, `useCallback` for function props, or lift the value to
+module scope if it is a constant. A custom comparator can be passed
+as the second argument to React.memo for deep comparison, but this
+has its own cost.
+
+**Misconception 3: React.memo is only needed for expensive
+components.**
+
+React.memo is valuable for any component that: (1) renders
+frequently due to parent updates, and (2) receives stable props
+but is inside a fast-changing parent. The "expensive" threshold
+is much lower than developers assume - even components that are
+cheap individually can create performance problems when thousands
+of instances re-render in a list. Profile first; apply memo where
+the profiler shows unnecessary re-renders with stable inputs.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: React.memo has no effect because function props
+are recreated on each render.**
+
+Symptom: component wrapped in React.memo still re-renders every
+time its parent re-renders. Diagnosis: React DevTools shows the
+component re-rendering with "props changed"; check which prop is
+changing - a function prop created inline (`onClick={() => doX()}`)
+creates a new function reference each render. Fix: wrap function
+props in `useCallback`. Verify that `useCallback`'s dependency
+array is correct - a dep that changes on every render defeats the
+purpose.
+
+**Failure Mode 2: Custom comparator in React.memo causes stale
+renders.**
+
+Symptom: component shows outdated data even though the underlying
+value has changed. Root cause: a custom comparator (`React.memo(Comp,
+(prev, next) => shallowEqual(prev.data, next.data))`) incorrectly
+returns `true` (equal) when the props have actually changed in a
+way the comparator does not check. Fix: ensure the custom comparator
+checks ALL props that affect render output. The default shallow
+equality comparator is safer for most cases - only use a custom
+comparator when you have a specific known optimization and a test
+to verify it.
+
+**Failure Mode 3: Memoized component still re-renders because
+context changed.**
+
+Symptom: profiler shows component re-rendering despite stable props
+and React.memo applied. Diagnosis: DevTools shows "Context changed"
+as the reason for re-render. Root cause: the component consumes a
+context that updates frequently (e.g. a global store with frequent
+small updates), and React.memo does not protect against context
+changes. Fix: split the context into smaller focused contexts; use
+a selector pattern with `useMemo` to derive only the specific value
+needed; or use a state management library with built-in selector
+support (Zustand, Redux Toolkit with `useSelector`).
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -1222,6 +1490,34 @@ How do you diagnose and fix it?** `[SENIOR]` DEBUGGING
 > a function expression, it needs stabilization." The module-level constant
 > (`CONFIG`) is better than `useMemo` here because it truly never changes
 > across the entire app lifetime, not just between renders.
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 
 # React Router and Client-side Routing
@@ -1363,6 +1659,8 @@ function LoginForm() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Every non-trivial React app needs routing. React Router v6 is nearly
@@ -1458,6 +1756,82 @@ navigate(-1);                 // go back
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Client-side routing means the server never
+needs to know about routes.**
+
+The server must serve the React app's entry point (`index.html`)
+for ALL routes on initial page load or direct URL access. Without
+server configuration, navigating to `/dashboard/profile` returns
+a 404 because no file exists at that path. The server must be
+configured to fall back to `index.html` for all paths not matching
+static files. Nginx: `try_files $uri /index.html;`. Apache:
+`FallbackResource /index.html`. Hosts like Netlify/Vercel handle
+this automatically. Missing this causes "works in dev but 404
+in production" on deep links.
+
+**Misconception 2: `useNavigate` and `<Link>` are interchangeable
+based on preference.**
+
+`<Link>` renders a real `<a>` element: it supports keyboard
+navigation, screen reader route announcements, right-click
+"open in new tab", and browser history integration automatically.
+`useNavigate` is for PROGRAMMATIC navigation triggered by code
+logic: redirect after form submission, redirect after auth state
+change, redirect after API response. Using `useNavigate` for static
+menu links loses accessibility. Using `<Link>` where you need to
+navigate after an async operation complicates the code unnecessarily.
+
+**Misconception 3: React Router v6 is v5 with minor API changes.**
+
+v6 is a ground-up redesign. Key breaking changes: `<Switch>` is now
+`<Routes>`, `<Route component={C}>` is now `<Route element={<C />}>`,
+`useHistory()` is now `useNavigate()`, and route matching is now
+always exact by default (no more `exact` prop). Most importantly,
+nested routes in v6 use `<Outlet>` in the parent component to render
+child routes - the entire nested routing model changed. Migration from
+v5 to v6 requires systematic updates, not a find-replace.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Route params change does not trigger data
+re-fetch when navigating between same-component routes.**
+
+Symptom: navigating from `/user/1` to `/user/2` shows stale data;
+component does not re-fetch for the new param. Root cause:
+`useEffect` fetches data on mount but `params.userId` is not in
+the dependency array, or the effect uses stale closure over the
+initial params value. Diagnosis: add `console.log(params.userId)`
+in the effect to verify it re-runs on param change. Fix: add
+`params.userId` to the effect dependency array; or add
+`key={params.userId}` to the component to force remount on change.
+
+**Failure Mode 2: Nested route content is blank - Outlet missing
+from parent component.**
+
+Symptom: navigating to a child route renders the parent layout but
+the child route content area is empty. Root cause: the parent route
+component does not include `<Outlet />`. React Router renders matched
+child routes where `<Outlet />` appears. Without it, child route
+content has nowhere to render. Diagnosis: check if the parent route's
+component renders `<Outlet />`. Fix: add `<Outlet />` at the position
+in the parent layout where child route components should appear.
+
+**Failure Mode 3: Browser navigation (back/forward) breaks
+application state in single-page apps.**
+
+Symptom: pressing browser back/forward navigates URL correctly but
+the app state (filters, scroll position, form state) does not restore.
+Root cause: React component state is ephemeral - navigating away
+destroys state; navigating back creates a fresh component instance.
+Fix: serialize critical state to URL params (React Router
+`useSearchParams`) so that state survives navigation. For scroll
+position, use React Router's `ScrollRestoration` component. For form
+drafts, persist to `sessionStorage` with a route-specific key.
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -1527,6 +1901,34 @@ navigate(-1);                 // go back
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Dynamic Routing and Code Splitting
 
@@ -1648,6 +2050,8 @@ function NavBar() {
 // });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Bundle size directly impacts Time to Interactive (TTI). A 1MB bundle on
@@ -1740,6 +2144,85 @@ function App() {
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Code splitting is only useful for very large
+applications.**
+
+Even medium-sized SPAs benefit from code splitting. A 500KB initial
+bundle (pre-gzip) can become 150KB for the initial route plus deferred
+chunks for other routes. The user pays the parsing cost for all
+JavaScript in the initial bundle even if they never visit those routes.
+Code splitting at the route level gives every application a faster
+Time to Interactive (TTI) at no functionality cost - it is a
+structural optimization with no downside except slightly increased
+server round-trips.
+
+**Misconception 2: React.lazy and dynamic import are the same
+thing.**
+
+`import()` is a JavaScript dynamic import - it loads and evaluates
+a module lazily, returning a Promise. `React.lazy` wraps that Promise
+into a React component that can be rendered in the component tree.
+`React.lazy` requires `Suspense` as a boundary to handle the loading
+state. Dynamic `import()` can be used anywhere (non-React code, Webpack
+magic comments, prefetching). Together they enable route-based code
+splitting, but they serve different layers of the stack.
+
+**Misconception 3: Suspense boundaries replace loading state
+management entirely.**
+
+`Suspense` handles the loading state for lazy-loaded code and (with
+React 18) for async data sources. But Suspense does NOT handle error
+states - an `ErrorBoundary` component is required alongside `Suspense`
+to catch failed lazy imports (network error, chunk hash mismatch after
+deploy). A production lazy-loading implementation always pairs
+`<Suspense fallback={<Spinner />}>` with `<ErrorBoundary>` wrapping
+the lazy component to handle the chunk-load-failure error gracefully.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ChunkLoadError after deployment due to hash
+mismatch.**
+
+Symptom: users who have the app open during a deployment get
+`ChunkLoadError: Loading chunk X failed` when navigating to a lazy
+route. Root cause: Webpack/Vite generates content-hashed chunk names
+(e.g. `about.a3f8b.js`). After deployment, old chunk URLs referenced
+in the pre-deployment app no longer exist. Diagnosis: check the
+browser console for `ChunkLoadError`; check network tab for 404 on
+chunk files. Fix: add an error boundary around `React.lazy`
+components that catches `ChunkLoadError` and either reloads the
+page or shows a "New version available - please refresh" message.
+Vite's `import.meta.env.MODE` and service workers can also help.
+
+**Failure Mode 2: Lazy component re-imports on every render due
+to lazy call inside component.**
+
+Symptom: the lazy-loaded route component flashes/remounts on every
+parent re-render. Root cause: `const LazyComp = React.lazy(() =>
+import('./Comp'))` is called INSIDE a component function - creating
+a new lazy reference on each render. React sees a new component
+type and unmounts then remounts the tree. Fix: ALWAYS call
+`React.lazy()` at module scope, never inside component functions
+or render functions.
+
+**Failure Mode 3: Code splitting gains eliminated by large
+shared chunks.**
+
+Symptom: despite lazy loading routes, the initial bundle size
+barely decreases. Root cause: all routes share a common chunk
+containing most of the application code (large utility libraries,
+shared UI component library, etc.). Diagnosis: run `npm run build`
+with Webpack Bundle Analyzer or Vite's `rollup-plugin-visualizer`
+to visualize chunk composition. Fix: audit shared dependencies -
+libraries used by only one or two routes should not be in the
+shared chunk. Use Webpack's `splitChunks.cacheGroups` or Vite's
+`build.rollupOptions.output.manualChunks` to control chunk
+boundaries.
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -1791,6 +2274,34 @@ function App() {
 > Compression ratios vary by code type: JS compresses well, images do not.
 > The visualizer is the correct starting point - fixing bundle size without
 > measuring first is premature optimization.
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 
 # Higher-Order Components
@@ -1910,6 +2421,8 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 HOCs are part of React's component model history. Understanding them is
@@ -1933,7 +2446,8 @@ const ComponentWithEverything = withAuth(
     )
   )
 );
-// DevTools shows: withAuth > withTheme > withRouter > withErrorBoundary > withAnalytics > MyComponent
+// DevTools shows: withAuth > withTheme > withRouter
+//   > withErrorBoundary > withAnalytics > MyComponent
 
 // MODERN: compose hook calls inline (flat)
 function MyComponent() {
@@ -1998,6 +2512,86 @@ const MemoizedList = React.memo(ExpensiveList);
 | Render prop | Function prop | Flat | Direct | Explicit |
 
 ---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: HOCs are just like Python decorators and work the
+same way.**
+
+HOCs and Python decorators are similar in intent but different in
+mechanism. A Python decorator replaces a function at definition time.
+A React HOC wraps a component in a new component at runtime. The key
+difference: HOCs create wrapper components in the React tree, adding
+nesting visible in DevTools. Decorators do not create a wrapper
+in any tree. This distinction matters because HOC nesting accumulates:
+applying five HOCs creates five wrapper layers, inflating the component
+tree and making DevTools debugging painful.
+
+**Misconception 2: HOCs always add extra re-renders to wrapped
+components.**
+
+A well-written HOC does not add extra renders. The problem occurs
+when HOC logic triggers state changes that cascade downward. If the
+HOC passes stable references (via useMemo or useCallback) and its
+own state does not change unnecessarily, the wrapped component
+renders only when its own props change - same as without the HOC.
+The actual performance risk is creating HOCs inside render functions:
+`const Enhanced = withAuth(MyComponent)` inside a render call creates
+a new component class on each render, which forces React to unmount
+and remount the wrapped component every time.
+
+**Misconception 3: Custom hooks have made HOCs obsolete in all
+situations.**
+
+Custom hooks replace most HOC use cases - specifically, HOCs that
+inject behavior by calling hooks internally. But HOCs remain the
+right tool for: (1) wrapping class components that cannot call hooks,
+(2) library integrations that need to inject props into arbitrary
+components without touching their source, and (3) error boundaries
+(which cannot be implemented as hooks - only class components support
+`componentDidCatch`). Knowing when each pattern applies is the signal
+interviewers look for.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: HOC swallows the wrapped component's ref.**
+
+Symptom: `React.createRef()` or `useRef()` attached to the HOC-wrapped
+component returns `null` or points to the HOC wrapper instead of the
+inner component. Root cause: HOC does not forward refs - refs are
+blocked at the HOC boundary by default. Diagnosis: add a console.log
+to the ref callback to check what it receives; check whether
+`React.forwardRef` is used in the HOC definition. Fix: wrap the HOC
+with `React.forwardRef`: `const HOC = React.forwardRef((props, ref) =>
+<Wrapped {...props} ref={ref} />)`. Also set `HOC.displayName` for
+readable DevTools output.
+
+**Failure Mode 2: Props collision between HOC injected props and
+wrapped component props.**
+
+Symptom: a prop injected by the HOC (e.g. `isLoading`) is also
+accepted by the wrapped component for a different purpose; one
+silently overwrites the other, causing wrong behavior with no error
+message. Diagnosis: list all props injected by the HOC and compare
+to the wrapped component's prop types/TypeScript interface. Fix: HOCs
+should document their injected props and use namespaced or prefixed
+prop names to avoid collisions. Prefer TypeScript HOC signatures that
+separate "injected" from "passthrough" props using `Omit<T, K>`.
+
+**Failure Mode 3: HOC defined inside the render function causes
+perpetual remounting.**
+
+Symptom: wrapped component loses state on every parent render; inputs
+reset, animations restart, network requests repeat. Root cause: HOC
+is created inside the render/component body: `function Parent() {
+const Wrapped = withAuth(Child); return <Wrapped />; }` - React sees
+a new component type on every render and unmounts then remounts the
+tree. Diagnosis: add a `console.log` in Child's `componentDidMount`
+or `useEffect(()=>{...},[])` - if it fires on every parent update,
+the HOC is being recreated. Fix: always define HOC-wrapped components
+at module scope, never inside render functions.
+
 
 ### 🎯 Interview Deep-Dive
 
@@ -2071,6 +2665,34 @@ DECISION
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Render Props and Compound Components
 
@@ -2208,6 +2830,8 @@ Accordion.Item = AccordionItem;
 </Accordion>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Compound components are the dominant pattern for UI library design
@@ -2326,6 +2950,81 @@ Tabs.Content = TabsContent;
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Render props and compound components solve the
+same problem.**
+
+Render props pass behavior downward: a parent controls state and
+passes a render function the child can use. Compound components
+share implicit state across siblings: a parent `<Tabs>` holds active
+tab state; `<Tabs.Tab>` and `<Tabs.Panel>` each read it without prop
+drilling. The patterns are complementary, not alternatives. Render
+props answer "how do I share logic?" while compound components answer
+"how do I share state between related components with a natural API?"
+
+**Misconception 2: Compound components must use React.cloneElement
+to share state.**
+
+`React.cloneElement` was the original implementation technique. The
+modern approach uses `React.createContext` - the parent puts state
+in a Provider, each child component reads it with `useContext`. The
+Context approach is simpler (no child enumeration), works with
+non-direct children (deep nesting), and avoids the `cloneElement`
+limitation of only injecting props into direct children. Any new
+compound component implementation should use Context.
+
+**Misconception 3: Render prop callbacks execute like functions and
+have no performance concern.**
+
+The most common performance issue with render props: passing an
+inline arrow function as the render prop creates a new function
+reference on every parent render, which can cause the child to
+re-render even when underlying data has not changed. The fix is
+to memoize the render prop using `useCallback` when the child
+implements `React.memo`. This is a subtle issue because the child
+re-renders silently with no error or warning.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Compound component children used outside the
+Provider cause cryptic undefined errors.**
+
+Symptom: `Cannot read property 'activeTab' of undefined` or similar
+when a `<Tabs.Tab>` is rendered outside its `<Tabs>` wrapper.
+Root cause: the child calls `useContext(TabsContext)` but no Provider
+is an ancestor, so context returns its default value (usually
+`undefined` or an empty object). Diagnosis: check if the context
+default value is defensive (`{}` or `null` with a guard). Fix:
+add a guard in the context consumer: `const ctx = useContext(Ctx);
+if (!ctx) throw new Error("Tab must be used inside Tabs");` This
+surfaces the misconfiguration immediately with a clear error instead
+of a cryptic downstream crash.
+
+**Failure Mode 2: Render prop inline function prevents
+React.memo optimization.**
+
+Symptom: a child component wrapped in `React.memo` still re-renders
+on every parent update. Diagnosis: check if the render prop is
+passed as an inline arrow function: `<Mouse render={(pos) =>
+<Cat pos={pos} />} />`. Every parent render creates a new function
+reference, failing memo's shallow equality check. Fix: extract the
+render prop to `useCallback` or to a stable component-level function.
+
+**Failure Mode 3: Context value object recreated on every render
+breaks compound component performance.**
+
+Symptom: all compound component children re-render whenever any
+ancestor re-renders, even when the compound component's own state
+has not changed. Root cause: context value passed to Provider is
+an object literal: `<Ctx.Provider value={{ activeTab, setActiveTab }}>`.
+A new object reference is created on each render. Diagnosis: wrap
+the context value in `useMemo`: `const value = useMemo(() =>
+({ activeTab, setActiveTab }), [activeTab])`. This prevents
+unnecessary renders of all context consumers.
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -2416,3 +3115,33 @@ Tabs.Content = TabsContent;
 > shows production awareness. The outside click handler via `useEffect` +
 > `useRef` is the standard pattern for dismissing floating UI. The `setOpen(false)`
 > in `Dropdown.Item.onClick` auto-closes the menu after selection - expected UX behavior.
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

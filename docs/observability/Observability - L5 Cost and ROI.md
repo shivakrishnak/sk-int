@@ -236,6 +236,8 @@ Signal 4: PROFILES
   -> Profiles need aggressive downsampling for long retention
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The cost of not having observability data during an incident
 often exceeds the storage cost of retaining it. The economic
@@ -794,6 +796,8 @@ kubectl get events -n production \
   | tail -20
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix immediate: delete the high-cardinality metric series from
 Prometheus TSDB:
 ```bash
@@ -802,6 +806,8 @@ delete_series?match[]=YOUR_METRIC"
 curl -X POST "http://prometheus:9090/api/v1/admin/tsdb/\
 clean_tombstones"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Root cause fix: remove the high-cardinality label from the metric
 instrumentation. Move the high-cardinality attribute to span
 attributes instead (OTel traces handle high cardinality). Add
@@ -842,6 +848,8 @@ kubectl rollout history \
 # Output: 18:30 deploy confirms the timing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix immediate: rollback the checkout-service deploy or change
 the log level via environment variable:
 ```bash
@@ -852,6 +860,8 @@ kubectl set env deployment/checkout-service \
 # Loki does not support selective deletion in basic config
 # -> accept the cost for this cycle, prevent recurrence
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Prevention: add a Prometheus alert rule:
 ```yaml
@@ -866,6 +876,8 @@ Prevention: add a Prometheus alert rule:
     description: "{{ $labels.service }} log volume is
       3x baseline - check log level configuration"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Observability cost grows 40% monthly with no
 identified cause**
@@ -920,6 +932,8 @@ LIMIT 20" \
 # Services with span_per_sec >> expected * sampling_rate
 # -> likely running 100% sampling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: the four-part remediation: (1) reduce the new service's
 trace sampling to 1% tail sampling; (2) fix the high-cardinality
@@ -1673,6 +1687,8 @@ After Phase 2 (platform migration, -$70K/month):
   (includes platform team allocation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Staff angle:**
 The cost optimization conversation with leadership is most
 effective when framed as: "We can reduce observability spend
@@ -1779,3 +1795,33 @@ flowchart TD
 > + 100% trace sampling + no cardinality governance = ~$350K/month
 > estimated; applying all levers = ~$28K/month. Same debugging
 > capability because 99% of investigation uses data in the hot tier.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

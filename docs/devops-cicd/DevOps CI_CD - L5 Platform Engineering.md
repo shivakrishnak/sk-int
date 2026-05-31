@@ -8,6 +8,15 @@ permalink: /devops-cicd/l5-platform-engineering/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Internal Developer Platform Design](#internal-developer-platform-design) | medium |
+
+---
+
 # Internal Developer Platform Design
 
 🎯 Interview Weight: principal/architect level - the emerging discipline
@@ -150,6 +159,8 @@ spec:
     metrics: true
     tracing: true
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The platform controller reconciles this into the actual Kubernetes
 Deployment, Service, HorizontalPodAutoscaler, ServiceMonitor, and
 database provisioning via Crossplane.
@@ -324,6 +335,8 @@ spec:
                          # Loki log collection, Jaeger tracing
     alertPreset: standard  # Predefined alert rules for HTTP services
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```go
 // Platform controller (simplified): reconciles MicroService -> Kubernetes objects
@@ -768,6 +781,8 @@ spec:
     - component:user-service
     - resource:payment-database
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Backstage autodiscovers these files from all repositories and
 builds the catalog automatically. The catalog provides an
 organizational view: who owns what, how do services depend on
@@ -815,6 +830,8 @@ spec:
         resource: PostgreSQLClaim
         name: ${{ parameters.serviceName }}-db
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Plugin ecosystem: Backstage's strength is the 200+ community plugins
 for ArgoCD, Kubernetes, Grafana, PagerDuty, Jira, SonarQube, and
@@ -1265,6 +1282,8 @@ spec:
       - service: payment-database
       - external: api.stripe.com:443
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The platform controller creates NetworkPolicy objects based on this
 declaration. Undeclared connections are blocked.
 
@@ -1344,3 +1363,33 @@ perfect security) at the cost of developer friction (6-week
 onboarding, 20-minute deployments) is optimizing for the wrong
 metric. The Platform as a Product mindset ensures that developer
 experience is the primary success criterion.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

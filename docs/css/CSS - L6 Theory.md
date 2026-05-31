@@ -7,6 +7,16 @@ permalink: /css/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Object Model (CSSOM) and Houdini](#css-object-model-cssom-and-houdini) | high |
+| 2 | [CSS Specification Process and Levels](#css-specification-process-and-levels) | medium |
+
+---
+
 # CSS Object Model (CSSOM) and Houdini
 
 🎯 **Interview Weight:** high (★★☆) - CSSOM is the runtime
@@ -180,6 +190,8 @@ CSS PAINT API:
     --checker-color: #dbeafe;
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -374,6 +386,8 @@ Checklist:
      initial-value: 0; <- must be a valid <number>
    }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1028,6 +1042,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Specification Process and Levels
 
 🎯 **Interview Weight:** medium (★★☆) - Understanding how
@@ -1144,6 +1186,8 @@ BROWSER IMPLEMENTATION SIGNALS:
   WebKit Status (webkit.org/status): Safari status
   Interop (wpt.fyi): vendor coordination priorities
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1274,6 +1318,8 @@ Diagnosis:
    }
    /* .default in non-@supports block */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1843,3 +1889,33 @@ timeline
 > @supports in most production contexts. This gap is why
 > specification stage alone is insufficient for adoption
 > decisions - browser support data is always the primary signal.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

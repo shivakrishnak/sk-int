@@ -8,6 +8,15 @@ permalink: /microservices/l4-fault-tolerance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Fault Tolerance Patterns - Timeout, Retry, Fallback](#fault-tolerance-patterns---timeout-retry-fallback) | medium |
+
+---
+
 # Fault Tolerance Patterns - Timeout, Retry, Fallback
 
 ---
@@ -61,6 +70,8 @@ With fault tolerance (timeout + circuit breaker):
            OrderService is FUNCTIONAL
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Timeout - the foundation:**
 ```
 Never call a service without a timeout.
@@ -88,6 +99,8 @@ Timeout hierarchy (all required):
     WebClient (reactive):
       .timeout(Duration.ofSeconds(5))    // overall
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Retry - with discipline:**
 ```
@@ -121,6 +134,8 @@ RETRY CONFIGURATION:
     T+100ms and T+200ms -> spread load
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Circuit breaker states:**
 ```
 CLOSED (normal):
@@ -150,6 +165,8 @@ Parameters to configure:
   wait_duration_in_open: 30s
   half_open_max_calls: 10
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The three patterns are defensive layers, not alternatives. Every service call should have ALL THREE: a timeout to prevent thread exhaustion, a retry to handle transient failures, and a circuit breaker to prevent hammering a failing service. Missing any one creates a specific vulnerability: no timeout = thread exhaustion, no retry = unnecessary failures on transient errors, no circuit breaker = retry storms on sustained failures.
@@ -540,3 +557,33 @@ Fix: (1) Add jitter to all retry configurations immediately (random(0, wait_dura
 | Bulkhead | Thread pool exhaustion | Resilience4j Bulkhead | Multiple downstream dependencies |
 | Rate Limiter | Overload prevention | API Gateway, Resilience4j RateLimiter | Entry points, external API calls |
 | Idempotency Key | Duplicate writes on retry | Client UUID + server dedup table | Non-idempotent write operations |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

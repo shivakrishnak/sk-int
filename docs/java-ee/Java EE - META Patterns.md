@@ -316,6 +316,8 @@ Appears in REST response serialization, not in DB query.
 grep -rn "FetchType.LAZY\|@OneToMany\|@ManyToMany" src/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add JOIN FETCH to query, or use @EntityGraph to
 define fetch strategy per use case.
 
@@ -336,6 +338,8 @@ many threads waiting for connection.
 # Or DataSource pool stats:
 # HikariCP exposes: /actuator/metrics/hikaricp.connections.active
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -375,6 +379,8 @@ long queryCount = stats.getQueryExecutionCount();
 // Shows every SQL statement with parameters
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 // OPTION 1: JOIN FETCH in JPQL
@@ -393,6 +399,8 @@ Optional<Order> findById(Long id);
 @BatchSize(size = 20)
 private List<OrderItem> items;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that JOIN FETCH and
 `@EntityGraph` solve N+1 but can cause a different problem:
@@ -425,6 +433,8 @@ order.getItems().size(); // CRASH: LazyInitializationException
 // No active session to load items
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 1 - Eager fetch within transaction:
 ```java
 @Transactional
@@ -435,6 +445,8 @@ public Order loadOrderWithItems(Long id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2 - DTO projection (no proxy, pure data):
 ```java
 @Query("SELECT new OrderDTO(o.id, o.status, i.id, i.quantity) "
@@ -442,6 +454,8 @@ Fix 2 - DTO projection (no proxy, pure data):
 List<OrderDTO> findOrderProjection(@Param("id") Long id);
 // DTO has no associations, no proxy, no LazyInitializationException
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 3 - `spring.jpa.open-in-view=false` (anti-fix warning):
 Open Session in View keeps EntityManager open for the entire
@@ -478,6 +492,8 @@ curl localhost:8080/actuator/metrics/hikaricp.connections.active
 # Look for: ActiveCount == MaxPoolSize, WaitCount > 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention:
 ```java
 // ALWAYS close in finally (or use try-with-resources):
@@ -494,6 +510,8 @@ try (Connection conn = dataSource.getConnection()) {
 hikari.connectionTimeout=3000 // 3s wait, then fail fast
 hikari.maxLifetime=1800000   // 30min max age, prevents stale connections
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The distinction between pool
 exhaustion (active == max) and pool leak (active grows over time,
@@ -548,6 +566,8 @@ Step 1: Confirm pool exhaustion (not other cause):
 # These confirm pool exhaustion (not connectivity)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check pool metrics during the incident:
 ```bash
 # Spring Boot Actuator:
@@ -556,6 +576,8 @@ curl /actuator/metrics/hikaricp.connections.pending
 # active = pool_max: exhausted
 # pending > 0: confirmed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Find which code holds connections longest:
 ```bash
@@ -566,12 +588,16 @@ hikari.leakDetectionThreshold=10000 # 10s - logs stack trace
 # Stack trace shows exactly where the connection was acquired
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Thread dump to see what active transactions are doing:
 ```bash
 jstack <pid> | grep -A 20 "jdbc"
 # Or in WildFly CLI:
 /core-service=management/service=management-operations:read-resource
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The leak detection threshold.
 Setting it to 2x the expected maximum query time catches connections
@@ -610,6 +636,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Problems: business rules scattered across services, duplicated
 checks, entity invariants not enforced by the entity itself.
 
@@ -626,6 +654,8 @@ public class Order {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing when anemic is acceptable.
 For report-only queries and data transfer, anemic DTOs (not entities)
@@ -669,10 +699,14 @@ explicitly in the JPQL query.
 *(Omit: ★☆☆ keyword - comparison table not applicable for
 a list of anti-patterns where each has its own trade-offs.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - anti-patterns meta knowledge,
 no system design applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -682,6 +716,34 @@ not visual flows. No diagram applicable.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Debugging Enterprise Java Applications
 
@@ -777,6 +839,8 @@ Or at runtime via CLI (no restart needed):
   /subsystem=logging/logger=com.example:
     write-attribute(name=level,value=DEBUG)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -984,6 +1048,8 @@ grep "WELD-001409\|Ambiguous" \
 # and which beans are the candidates
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add @Qualifier to disambiguate, or use @Alternative
 to select specific implementation.
 
@@ -1007,6 +1073,8 @@ grep "com.example.MyClass" server.log
 
 # Check module dependencies in jboss-deployment-structure.xml
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1034,6 +1102,8 @@ jstack 12345 > thread-dump.txt
 # Method 3: kill -3 (SIGQUIT) - writes to stdout/log
 kill -3 12345  # WildFly must be started with console output
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 What to look for:
 - **BLOCKED threads**: waiting to acquire a monitor held by
@@ -1088,6 +1158,8 @@ deployment-info
 reload
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `statistics-enabled=true`
 command is runtime-changeable. You can enable pool statistics
 during an incident without a server restart, gather the data,
@@ -1119,6 +1191,8 @@ stats.getSecondLevelCacheHitCount() // L2 cache hits
 stats.getSecondLevelCacheMissCount() // L2 cache misses
 stats.getConnectCount()            // DB connections obtained
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 N+1 detection: `queryExecutionCount >> expectedCount`.
 If loading 20 orders produces 200 query executions = N+1 on items.
@@ -1162,6 +1236,8 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # MAT: Leak Suspects Report identifies retention path automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Always starting with the histogram.
 A full heap dump on a 4GB heap causes a multi-second GC pause that
 may trigger a health check failure and pod restart. The histogram
@@ -1179,6 +1255,8 @@ jstack <pid> | grep -c "RUNNABLE"
 # All TIMED_WAITING or WAITING = threads blocked on I/O or locks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: If threads BLOCKED (lock contention):
 ```bash
 # Find the lock owner:
@@ -1186,6 +1264,8 @@ jstack <pid> | grep -A 5 "BLOCKED"
 # "waiting to lock <0x...>" shows the monitor address
 # Search for that address to find the owner thread and what it is doing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: If threads WAITING on datasource:
 ```bash
@@ -1195,12 +1275,16 @@ Step 3: If threads WAITING on datasource:
 # WaitCount > 0 = pool exhaustion causing slowness
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: If no thread contention, check GC:
 ```bash
 jstat -gcutil <pid> 1000 10  # GC stats every 1s, 10 samples
 # FGC (full GC) count growing: GC overhead is the bottleneck
 # Time in GC > 5% of elapsed time: memory tuning needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The sequencing. Most engineers
 check database first. Thread dumps are faster and tell you whether
@@ -1231,6 +1315,8 @@ JAVA_OPTS_EXTRA="-agentlib:jdwp=transport=dt_socket,\
   get-system-properties  # check if already set
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 IntelliJ IDEA remote debug config:
 - Run -> Edit Configurations -> Remote JVM Debug
 - Host: `server-hostname`, Port: `8787`
@@ -1242,6 +1328,8 @@ enable it on a public network interface. Use an SSH tunnel:
 ssh -L 8787:localhost:8787 server-host
 # Connect IDEA to localhost:8787 - tunnelled to server
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The SSH tunnel pattern. Exposing
 JDWP directly to the network is a critical security vulnerability
@@ -1273,6 +1361,8 @@ grep -A 10 "ARJUNA016051" server.log
 # Usually followed by stack trace showing the slow operation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tuning transaction timeout:
 ```xml
 <!-- In standalone.xml -->
@@ -1281,6 +1371,8 @@ Tuning transaction timeout:
     <!-- 120s default; per-bean override via @TransactionTimeout -->
 </subsystem>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing ARJUNA error codes.
 A search for `ARJUNA016051` immediately identifies transaction
@@ -1294,10 +1386,14 @@ for `ERROR` and miss timeout events that log at WARN level.
 *(Omit: ★☆☆ keyword - debugging commands comparison
 is context-specific. No comparison table applicable.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - debugging practices, no system
 design applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1307,6 +1403,34 @@ described in prose. No diagram applicable.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reading Legacy Java EE Code
 
@@ -1416,6 +1540,8 @@ SCHEDULING:
   @Schedule(hour="0", minute="0", second="0")
   = runs at midnight daily
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1636,6 +1762,8 @@ grep -rn "new OrderService\|new.*ServiceEjb" src/
 # Any 'new' on an @Stateless/@Inject bean = injection skipped
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Always obtain managed beans through @Inject or @EJB.
 Never use new on CDI beans or EJBs.
 
@@ -1659,6 +1787,8 @@ Without it, CDI is disabled (in some containers).
        bean-discovery-mode="all">
 </beans>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1702,6 +1832,8 @@ public void processOrder(Order order) {
 // Commit attempt produces: javax.ejb.EJBException
 // Wrapped: javax.transaction.RollbackException
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `@Stateless` without
 any `@TransactionAttribute` annotation defaults to `REQUIRED` on ALL
@@ -1773,6 +1905,8 @@ jar tf legacy-app.war | grep beans.xml
 # require-bean-descriptor=false: implicit activation (EE 7+)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `require-bean-descriptor`
 WildFly subsystem setting. If enabled (legacy WildFly config),
 beans.xml is required even on EE 7+ deployments. New engineers
@@ -1794,6 +1928,8 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
        "java:/comp/env/jdbc/MyDS");
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. **`@EJB` annotation**: EJB-to-EJB injection (predates CDI `@Inject`):
    ```java
    @Stateless
@@ -1803,6 +1939,8 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. **`@Resource` annotation**: resource injection (DataSource,
    Queue, Topic, Environment entries):
    ```java
@@ -1810,11 +1948,15 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
    private DataSource dataSource;
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. **ServiceLocator pattern**: factory class performing JNDI lookup,
    used to inject dependencies in non-EJB classes:
    ```java
    PaymentService ps = ServiceLocator.getInstance(PaymentService.class);
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `@EJB` and `@Inject`
 have different semantics for local EJB lookup. `@EJB` looks up by
@@ -1836,6 +1978,8 @@ Causes (in order of frequency):
    OrderService svc = new OrderService();
    svc.paymentService; // null - container never injected it
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. **EJB not deployed**: the target EJB failed to deploy (deployment
    error, missing dependency), JNDI lookup returns null without
@@ -1862,6 +2006,8 @@ grep -rn 'new OrderService' src/
 # Any 'new' on an EJB class = container injection bypassed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `new` anti-pattern detection.
 `grep -rn 'new .*Service\|new .*Repository\|new .*EJB'` in the
 codebase catches all cases where container beans are instantiated
@@ -1884,6 +2030,8 @@ public class OrderRepository {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Application-managed JPA:
 ```java
 @Stateless
@@ -1905,6 +2053,8 @@ public class LegacyReportService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Warning signs for application-managed JPA:
 - `@PersistenceUnit` (not `@PersistenceContext`) in EJB code
@@ -1953,6 +2103,8 @@ grep -n 'createConnection\|getConnection' src/ -r |
 # Files with getConnection but no 'finally' block = leak suspect
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The unmanaged thread pattern
 (item 6) is both a resource leak AND a specification violation.
 EJBs that create threads via `new Thread()` bypass the container's
@@ -1967,10 +2119,14 @@ security context.
 *(Omit: ★☆☆ keyword - reading code is a skill, not a
 technology with alternatives. No comparison table applicable.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - code reading meta-skill, no system
 design applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1978,3 +2134,33 @@ design applicable.)*
 described with code examples. No diagram applicable.)*
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

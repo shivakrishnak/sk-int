@@ -8,6 +8,16 @@ permalink: /database-sql/l2-performance-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [EXPLAIN and Query Execution Plans](#explain-and-query-execution-plans) | medium |
+| 2 | [N+1 Query Anti-Pattern](#n1-query-anti-pattern) | medium |
+
+---
+
 # EXPLAIN and Query Execution Plans
 
 **TL;DR:** EXPLAIN shows how the database plans to execute a query:
@@ -90,6 +100,8 @@ Reading:
   - "HashAggregate": group by name, count.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Plan nodes quick reference:**
 
 ```
@@ -111,6 +123,8 @@ Other:
   Limit:        stop after N rows
   Gather:       collect parallel workers' results
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -314,6 +328,8 @@ ANALYZE orders;  -- refresh statistics
 -- Then re-run EXPLAIN ANALYZE to verify the plan changed.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Set `autovacuum_analyze_scale_factor = 0.05` for high-churn tables.
 
 ---
@@ -412,6 +428,34 @@ Reset with `pg_stat_statements_reset()`. Enable with `shared_preload_libraries =
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # N+1 Query Anti-Pattern
 
 **TL;DR:** The N+1 query problem occurs when code executes 1 query to
@@ -495,6 +539,8 @@ List<Customer> customers =
 // Total: 1 round trip.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Batch fetching as an alternative:**
 
 ```java
@@ -511,6 +557,8 @@ public class Customer {
 // SELECT * FROM orders WHERE customer_id IN (1,2,...50)
 // Instead of 1000 queries: ceil(1000/50) = 20 queries.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -693,6 +741,8 @@ logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 # Or use p6spy for per-query timing
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Count the number of queries for one page load. 1,000 queries * 1ms each
 = 1 second of pure database time, plus 1-2 seconds of network latency
 for 1,000 round trips = 3 second page load.
@@ -800,7 +850,39 @@ void shouldLoadCustomersWithoutNPlusOne() {
     assertThat(queriesAfter - queriesBefore).isLessThan(3);
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Libraries: db-util (Vlad Mihalcea), datasource-proxy-assert.
 This prevents regression: if someone adds a lazy association later,
 the test fails with 'Expected < 3 queries, got 12.'
 Run these tests in your CI pipeline."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

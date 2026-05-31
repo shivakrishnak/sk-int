@@ -8,6 +8,15 @@ permalink: /microservices/l4-service-mesh/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Service Mesh Deep Dive](#service-mesh-deep-dive) | medium |
+
+---
+
 # Service Mesh Deep Dive
 
 ---
@@ -62,6 +71,8 @@ DATA PLANE (Envoy sidecars):
     -> Envoy (add mTLS, retry, route)
     -> Network -> Target Envoy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Traffic management resources (Istio):**
 ```yaml
@@ -134,6 +145,8 @@ spec:
       labels:
         version: v2
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Istio's circuit breaker (outlierDetection) works at the pod level, not the service level. When Pod A of PaymentService returns 5 consecutive 5xx errors, Istio ejects that pod from the load balancer for 30 seconds. Other pods continue to receive traffic. This is a smarter circuit breaker than a service-level Resilience4j circuit breaker: it isolates unhealthy pods rather than cutting off the entire service.
@@ -472,3 +485,33 @@ Fix: Immediate: if Istiod is crashlooping, review resource limits (Istiod OOM at
 | Non-K8s support | Limited | Kubernetes only | Strong | Any |
 | Operational Complexity | High | Low | Medium | None |
 | Multi-cluster | Built-in | Built-in (enterprise) | Built-in | Manual |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

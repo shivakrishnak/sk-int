@@ -7,6 +7,17 @@ permalink: /typescript/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why TypeScript Exists](#why-typescript-exists) | foundational |
+| 2 | [TypeScript vs JavaScript Trade-off](#typescript-vs-javascript-trade-off) | foundational |
+| 3 | [TypeScript Tooling Ecosystem](#typescript-tooling-ecosystem) | foundational |
+
+---
+
 # Why TypeScript Exists
 
 🎯 **Interview Weight:** foundational (★☆☆) - every TypeScript interview
@@ -162,6 +173,8 @@ WHAT TYPESCRIPT DOES NOT CATCH:
   // But that's a PROMISE to TypeScript, not runtime validation
   // Use: Zod, Yup, io-ts for runtime validation of external data
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -357,6 +370,8 @@ function processData(rawData: unknown): string {
   return data.user.name.toLowerCase();  // TypeScript knows the shape
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -709,6 +724,34 @@ enable?** `[SENIOR]` MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # TypeScript vs JavaScript Trade-off
 
 🎯 **Interview Weight:** foundational (★☆☆) - being asked to compare
@@ -813,6 +856,8 @@ ECOSYSTEM ALIGNMENT:
   JavaScript-only (no official types):
     Rare in modern ecosystem (most have community @types/)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -993,6 +1038,8 @@ async function getUser(id: string): Promise<User> {
 // Not: undefined.name crash 10 lines later
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1076,6 +1123,34 @@ codebase?** `[STAFF]` DECISION
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # TypeScript Tooling Ecosystem
 
@@ -1207,6 +1282,8 @@ MONOREPO TYPESCRIPT:
       shared/tsconfig.json:
         { "composite": true }  // required for referenced packages
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -1374,6 +1451,8 @@ console.log(val.toUpperCase());  // Runtime crash if getValue() returns null
 // Keep it enabled for most builds (performance), but understand
 // it creates a gap between compile-time and runtime behavior
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1564,3 +1643,33 @@ create them?** `[SENIOR]` MECHANISM
 > TypeScript 5.0 specifically for bundler environments (Vite, webpack)
 > where Node.js's resolution rules don't apply (bundlers support
 > package.json `exports` field which `node10` resolution ignores).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

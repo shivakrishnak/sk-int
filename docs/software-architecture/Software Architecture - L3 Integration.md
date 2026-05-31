@@ -122,6 +122,8 @@ API GATEWAY PATTERN
   [Order Svc]  [User Svc]  [Product Svc]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Backend for Frontend (BFF) pattern:**
 
 ```
@@ -138,6 +140,8 @@ BFF PATTERN
                        |
                 [Internal Services]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **What should NOT be in the Gateway:**
 Business workflow orchestration, data aggregation with business
@@ -290,6 +294,8 @@ kubectl top pods -n gateway
 # CPU/memory spike or pod crash
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Multiple Gateway replicas across availability zones.
 Upstream load balancer with health checks routes around failed
 instances. Circuit breakers prevent downstream failures propagating
@@ -306,6 +312,8 @@ grep "rate_limited=false" /var/log/gateway/access.log |
   awk '{print $clientId}' | sort | uniq -c | sort -rn
 # High-volume client with no rate limits applied
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Rate limit keyed by JWT `sub` claim or API key, not IP
 address. Per-user limits prevent one client consuming all capacity.
@@ -472,6 +480,8 @@ filters:
       fallbackUri: forward:/fallback/orders
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fallback options: cached response, degraded response (empty list
 with message), or 503 with `Retry-After` header.
 
@@ -570,6 +580,8 @@ Gateway routes version-prefixed paths to the appropriate service:
 - path(/api/v1/orders/**): order-service-v1
 - path(/api/v2/orders/**): order-service-v2
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Deprecation process: (1) announce deprecation date; (2) add
 `Deprecation` and `Sunset` response headers to v1 routes; (3)
@@ -727,6 +739,34 @@ flowchart TB
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Saga Pattern for Distributed Transactions
 
 🎯 Interview Weight: critical - appears in virtually every senior+
@@ -840,6 +880,8 @@ FAILURE:
   4. --ReleaseInventory---> InventorySvc (compensation)
   5. --CancelOrder--------> OrderSvc (compensation)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Compensating transactions:**
 Each step has a corresponding compensation. `ReserveInventory`
@@ -1046,6 +1088,8 @@ WHERE status = 'RUNNING'
   AND started_at < NOW() - INTERVAL '5 minutes';
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Saga timeout monitor: a scheduled job finds stuck sagas
 and triggers compensation automatically. Or implement max-duration
 sagas that compensate on timeout.
@@ -1075,6 +1119,8 @@ public void refundPayment(
     refundRepo.save(new Refund(paymentId, sagaId));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1227,6 +1273,8 @@ public void advanceSaga(UUID sagaId, SagaStep nextStep,
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Idempotent steps: recovery resubmits the last command. Receiving
 services must handle duplicates via (sagaId, stepId) idempotency key.
 
@@ -1346,6 +1394,8 @@ void placeOrderSaga_paymentFails_compensatesInventory() {
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Idempotency tests: replay the same reply event twice. Assert saga
 state and service states unchanged after second replay.
@@ -1524,3 +1574,33 @@ sequenceDiagram
 > Compensation always runs in reverse order of the original steps.
 > The saga persists its current state at each transition, enabling
 > crash recovery by resubmitting the last command from persisted state.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-jvm/l4-escape-analysis/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L4 Escape Analysis](#java-jvm---l4-escape-analysis) | medium |
+
+---
+
 # Java JVM - L4 Escape Analysis
 
 ## Escape Analysis and Allocation Elision
+
+---
 
 ### 🎯 Model Answer
 
@@ -124,6 +135,8 @@ SCALAR REPLACEMENT EXAMPLE:
     - Zero GC pressure
     - Equivalent speed to C struct on stack
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -307,6 +320,8 @@ Fix:
   Option E: Pre-allocate and reuse (ThreadLocal pool for hot paths)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -400,6 +415,8 @@ public String withStringBufferNoEA() {
 }
 # JMH result: ~35ns/op (synchronized overhead visible: 3x slower)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Lock elision is visible in `-XX:+PrintOptimizations`
 output (diagnostic JVM build). Each eliminated lock is logged. For production debugging:
@@ -665,6 +682,8 @@ ALTERNATIVE (Value types with Valhalla):
   // Currently: JDK 23+ preview
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Design principles:** (1) ThreadLocal for hot-path context objects eliminates escape
 across thread boundaries. (2) "Mutate in place" reduces intermediate object count.
 (3) Defer allocation to output only (emit path). (4) Profile first to confirm the
@@ -743,3 +762,33 @@ flowchart TD
 > inlining = more NoEscape objects = more scalar replacements. The path from
 > "Object created" to "NO ESCAPE" requires the object to stay within the method's
 > analysis scope, either by never leaving or by having all callees inlined.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

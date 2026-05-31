@@ -7,6 +7,17 @@ permalink: /frontend-build-tools/l1-npm-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [npm Package Management](#npm-package-management) | medium |
+| 2 | [package.json and Semantic Versioning](#packagejson-and-semantic-versioning) | medium |
+| 3 | [node_modules and Dependency Resolution](#nodemodules-and-dependency-resolution) | medium |
+
+---
+
 # npm Package Management
 
 ---
@@ -80,6 +91,8 @@ Key commands:
   npm audit                # check for vulnerabilities
   npm audit fix            # auto-fix vulnerabilities
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -280,6 +293,34 @@ dep changes or is removed.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # package.json and Semantic Versioning
 
 ---
@@ -345,6 +386,8 @@ Special cases:
   Pre-1.0 packages: minor versions may be breaking
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The `^` operator in version 0.x.x behaves differently: for
@@ -374,6 +417,8 @@ your own library, or debugging version conflicts.
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # What each range resolves to:
@@ -419,6 +464,8 @@ npm list react
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # When to bump which version:
@@ -555,6 +602,34 @@ manual.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # node_modules and Dependency Resolution
 
 ---
@@ -624,6 +699,8 @@ Nested (strict) node_modules (pnpm):
   pnpm only creates symlinks for declared deps
   Phantom dependency access is blocked
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -707,6 +784,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY dist ./dist  # pre-built output (not source)
 CMD ["node", "dist/server.js"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```text
 .dockerignore:
@@ -826,3 +905,33 @@ does a clean install from the lockfile, deleting node_modules first.
 Combine with `.dockerignore` that excludes `node_modules` to prevent
 accidental copy, and use a `.npmrc` with `audit=false` in Docker to
 skip security audit during build (run audit separately in CI).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

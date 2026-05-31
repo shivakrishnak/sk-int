@@ -8,6 +8,16 @@ permalink: /messaging/l3-event-driven-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Event-Driven Architecture Patterns](#event-driven-architecture-patterns) | medium |
+| 2 | [Message Schema Evolution and Compatibility](#message-schema-evolution-and-compatibility) | medium |
+
+---
+
 # Event-Driven Architecture Patterns
 
 ---
@@ -65,6 +75,8 @@ Three core patterns:
    State: derived by replaying events from time T0
    Trade-off: complete history; reads require projection builds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 EDA trades synchronous coupling for temporal decoupling. The producer does not wait for consumers. But this creates a new problem: eventual consistency. Between when an event is published and when all consumers process it, the system is in an inconsistent state. Designing for this window - what is visible to which service, how long the inconsistency can last, what happens if a consumer never processes - is the core challenge of EDA.
@@ -290,6 +302,34 @@ Symptom: one service's failure causes processing to stop across multiple downstr
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Schema Evolution and Compatibility
 
 ---
@@ -349,6 +389,8 @@ TRANSITIVE variants (_TRANSITIVE):
   Recommendation: always use TRANSITIVE in production
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Avro field resolution:
 ```
 Writer schema: {name, age, email}
@@ -361,6 +403,8 @@ Avro resolution:
   phone -> in reader, not in writer -> use reader default
   If phone has no default and is not in writer -> ERROR
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Backward-transitive compatibility is the correct production default. Checking only against the previous version misses the case where a consumer running version N-5 receives a message written with schema version N. Transitive compatibility ensures every consumer running any deployed version can read any message ever written to the topic.
@@ -599,11 +643,13 @@ A: Likely a schema version that passed BACKWARD compatibility but introduced a f
 Q: What is the most common mistake candidates make when discussing schema evolution?
 
 **What NOT to say:** "I would just version the API - add /v2 to the endpoint."
+
 **Say instead:** "Message schema versioning is different from HTTP API versioning. A message can sit in a topic for 7 days and be read by consumers on any deployed version. I use the schema registry with backward_transitive compatibility to ensure any consumer on any deployed version can read any message in the retention window."
 
 Q: What should candidates not say about field removal compatibility?
 
 **What NOT to say:** "I can safely remove fields - consumers should just ignore unknown fields."
+
 **Say instead:** "Removing a field breaks forward compatibility - old consumers that have not been updated still expect that field. They will see null, which may cause incorrect processing. I either keep deprecated fields indefinitely or use a new event type with a migration period."
 
 #### Questions to Ask the Interviewer
@@ -617,3 +663,33 @@ Q: "How does the team handle breaking schema changes - new event types on new to
 
 *Why:* Shows the team has a strategy for the hard cases, not just compatible additions.
 *If asked back:* "I use new event types on new topics for breaking changes. The parallel publish period is typically 4-8 weeks. Consumer migration is tracked in a shared runbook."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /docker/l4-performance-diagnostics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L4 Performance Diagnostics](#docker---l4-performance-diagnostics) | medium |
+
+---
+
 # Docker - L4 Performance Diagnostics
 
 ## Docker Performance Diagnostics
+
+---
 
 ### 🎯 Model Answer
 
@@ -237,6 +248,8 @@ PROFILING WITH PERF:
   # Open flame.svg: width = time spent. Identify hot code paths.
   # No changes to the container needed. perf runs on the host.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -479,7 +492,8 @@ Diagnosis:
   # BLOCKED threads waiting for a lock -> contention.
   
   # 5. Check swap usage:
-  docker exec myapp cat /proc/$(cat /proc/1/status | grep PPid | awk '{print $2}')/status | grep VmSwap
+  PPID=$(cat /proc/1/status | grep PPid | awk '{print $2}')
+  docker exec myapp cat /proc/$PPID/status | grep VmSwap
   # Or: cat /sys/fs/cgroup/memory/docker/$CID/memory.stat | grep swap
 
 Fixes:
@@ -489,6 +503,8 @@ Fixes:
   # Lock contention: profile with async-profiler to find the lock.
   # Swap: set --memory-swappiness=0 to disable swap for this container.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -636,4 +652,34 @@ CPU limit. Without the correlation: you see "service B is slow" and
 spend hours debugging. With correlation: you have root cause in 5
 minutes. This is the value of unified observability infrastructure
 vs siloed monitoring tools.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

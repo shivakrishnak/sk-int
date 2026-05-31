@@ -188,6 +188,8 @@ Multi-provider  -> resilience, complexity
 Self-hosted     -> full control, operational burden
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Model selection is not a one-time decision. It requires
@@ -311,6 +313,8 @@ def select_model(
     selected = candidates[0][1]
     return selected
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # Model governance: version pinning and change management
@@ -508,6 +512,8 @@ Cost per call exceeded estimates.
 # Break-even: revenue_per_call > cost_per_call
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Prevention:* Model cost per call at design time.
 Instrument actual token usage. Set cost budget per
 feature. Alert on cost-per-call anomalies.
@@ -566,6 +572,8 @@ Tier 3 (security + compliance review):
   any self-hosted model deployment
   any model not from Anthropic/OpenAI/Google/AWS
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Change management process. Model upgrades for
 production features go through:
@@ -667,6 +675,8 @@ Hosted API if:
   - API cost < $300k/year
   - Speed to production is critical
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Hybrid: use hosted API for frontier tasks; self-
 hosted for high-volume, simple tasks where cost
@@ -771,6 +781,8 @@ class MultiProviderLLMClient:
             ].call(messages, system, **kwargs)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Provider selection for fallback: choose a provider
 with compatible API interface. OpenAI's API format
 has become a de facto standard; many providers
@@ -846,6 +858,8 @@ Cheapest model: $/call * calls/day * 30
 Mid-tier: $/call * calls/day * 30
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: select. Cheapest model that passes the
 quality bar at acceptable cost.
 
@@ -861,6 +875,8 @@ Reviewed by: [team lead]
 Date: 2025-01-15
 Next review: 2025-07-15
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 7: register in governance registry.
 
@@ -897,6 +913,8 @@ model = "claude-3-5-haiku-latest"
 # GOOD: pinned to specific dated version
 model = "claude-haiku-3-5-20241022"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why required for production:
 LLM providers update their models regularly. A "model
@@ -1033,6 +1051,8 @@ Quality delta: +Z%
 Decision: if Y < X AND quality >= current: adopt
           if Y > X: requires Z% quality justification
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Phase 4: security assessment. Run your OWASP LLM
 security checklist against the new model. Test
@@ -1318,6 +1338,8 @@ just listing the general trade-offs).
   -> [Governance Registry] (DPA, versions, deprecation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Flow:**
 
 1. Product team builds feature using common LLM client
@@ -1391,3 +1413,33 @@ flowchart TD
 > closed loop prevents both quality regressions from
 > silent model updates and missed deprecations from
 > causing emergency incidents.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

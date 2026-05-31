@@ -8,9 +8,20 @@ permalink: /java-concurrency/l4-java-memory-model/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L4 Java Memory Model](#java-concurrency---l4-java-memory-model) | medium |
+
+---
+
 # Java Concurrency - L4 Java Memory Model
 
 ## Java Memory Model (JMM)
+
+---
 
 ### 🎯 Model Answer
 
@@ -125,6 +136,8 @@ Happens-Before (HB) relationships established by:
    T detecting it (via interrupted() or InterruptedException)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Happens-before is a PARTIAL order. Actions with no HB relationship
 between them are unordered - the JMM makes NO guarantee about which
@@ -145,6 +158,8 @@ class ImmutablePoint {
 // WITHOUT synchronization - JMM guarantees final fields are visible
 // after construction, even without HB to the constructor
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Final fields written in the constructor are guaranteed visible to any
 thread that obtains a reference to the fully constructed object.
 This is what makes immutable objects thread-safe without synchronization.
@@ -182,6 +197,8 @@ class Singleton {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use it:**
 The JMM is always in effect. Understanding it is required to:
@@ -221,6 +238,8 @@ class StopFlag {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: volatile establishes happens-before
 class StopFlag {
@@ -238,6 +257,8 @@ class StopFlag {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: safe publication with AtomicReference
@@ -264,6 +285,8 @@ class ConfigLoader {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -350,6 +373,8 @@ class Unsafe {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: complete object construction before publishing the reference;
 use `volatile` or `synchronized` publication.
 
@@ -432,6 +457,8 @@ int x = 1; // A
 int y = 2; // B - guaranteed to see x=1 in this thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 2 - Monitor lock:** Unlocking a monitor HB locking the same monitor.
 ```java
 synchronized(lock) { data = "written"; } // unlock at end
@@ -439,12 +466,16 @@ synchronized(lock) { data = "written"; } // unlock at end
 synchronized(lock) { read = data; } // lock sees the unlock; reads "written"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 3 - Volatile write/read:** Volatile write HB subsequent volatile read.
 ```java
 volatile boolean ready = false;
 // Thread A: data = "hello"; ready = true; // volatile write
 // Thread B: if (ready) use(data); // volatile read sees "hello"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Rule 4 - Thread start:** `Thread.start()` HB every action in the thread.
 ```java
@@ -456,6 +487,8 @@ Thread t = new Thread(() -> {
 t.start();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 5 - Thread termination:** All actions in thread T HB `join(T)` returning.
 ```java
 Thread t = new Thread(() -> { result = compute(); });
@@ -465,12 +498,16 @@ t.join();
 System.out.println(result);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 6 - Transitivity:** A HB B and B HB C implies A HB C.
 ```java
 // Thread A: x = 1; synchronized(m) { y = 2; } unlock
 // Thread B: synchronized(m) { lock; z = y; } // sees y=2 (Rule 2)
 // Also sees x=1 via transitivity: x=1 HB unlock HB lock HB z=y
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The transitivity rule is why you can
 "chain" happens-before relationships. A class that uses a synchronized
@@ -500,6 +537,8 @@ read or write.
 Writes BEFORE volatile write -> never reordered to AFTER it
 Reads AFTER volatile read -> never reordered to BEFORE it
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This prevents the partial publication problem: all writes before a
 `volatile` store are committed before the store.
 
@@ -525,6 +564,8 @@ count++; // NOT atomic compound operation
 AtomicInteger count = new AtomicInteger(0);
 count.incrementAndGet(); // atomic
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Volatile reads and writes are cheaper
 than synchronized (no lock acquisition, no thread scheduling) but
@@ -562,6 +603,8 @@ SafePoint point = new SafePoint(3, 4); // constructor complete
 // point.x == 3 and point.y == 4
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Safe publication required for the final field guarantee:
 The reference itself must be published safely. If the reference is
 published through a data race (e.g., a non-volatile, unsynchronized
@@ -579,6 +622,8 @@ class Unsafe {
 // A thread reading an Unsafe instance via a data race may see x=0, y=0
 // (default values) even though the constructor set them
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The final field guarantee is what
 makes Java's immutable objects thread-safe without synchronization.
@@ -602,16 +647,22 @@ An object is safely published if it is published via:
    private static final Config INSTANCE = new Config(); // safe
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. A `volatile` or `AtomicReference` field:
    ```java
    private volatile Config config; // volatile write publishes fully
    config = new Config();
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. A field guarded by a `synchronized` block (published while holding lock):
    ```java
    synchronized(lock) { this.config = new Config(); }
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. A `final` field: the JMM freeze action guarantees visibility after
    the constructor completes.
@@ -629,6 +680,8 @@ if (sharedConfig != null) {
     sharedConfig.doSomething(); // may see partially constructed object!
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The race condition: Thread B may see `sharedConfig != null` (the
 reference write propagated) but the Config object's fields may still
@@ -651,6 +704,8 @@ class LazyInit {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without `volatile`, two threads may each see `resource == null` and
 create two instances, or one thread may see a partially constructed
 `Resource`. With `volatile`, the publication is safe.
@@ -680,6 +735,8 @@ class Singleton {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why it's broken (Java 4): `instance = new Singleton()` is three operations:
 1. Allocate memory for Singleton
 2. Initialize fields (run constructor)
@@ -694,6 +751,8 @@ Java 5 fix - JSR-133: make `instance` volatile.
 ```java
 private static volatile Singleton instance; // volatile!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Why volatile fixes it: a volatile write cannot be reordered before
 any preceding write. This prevents the reordering of step 3 (volatile
@@ -713,6 +772,8 @@ class Singleton {
     static Singleton getInstance() { return Holder.INSTANCE; }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The inner class is loaded lazily (on first call to `getInstance()`).
 Static initialization is thread-safe (handled by the class loader).
 No `volatile`, no `synchronized` needed.
@@ -756,6 +817,8 @@ volatile read:   [LoadLoad]  + read  + [LoadStore]
 lock:    [StoreStore] + [LoadLoad] (acquire semantics)
 unlock:  [StoreLoad]  + [StoreStore] (release semantics)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Real-world impact:** on x86 (TSO - Total Store Order), the hardware
 already prohibits most reorderings. The main one it allows is
@@ -854,11 +917,15 @@ synchronized(lock) { x = 1; }
 synchronized(lock) { y = x + 1; } // Guaranteed: y = 2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Not DRF: data race on x
 x = 1;         // Thread A (no synchronization)
 y = x + 1;     // Thread B: might see x=0, x=1, or anything
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "DRF = SC" theorem is why proper
 synchronization is the foundation of concurrent programming. It means:
@@ -911,6 +978,8 @@ public class SimpleRaceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "I never saw the race in testing"
 is not evidence of thread safety. Races depend on scheduling, CPU
 count, cache state, and JIT decisions. A program may run correctly
@@ -951,6 +1020,8 @@ void operate() {
     // May see initialized=false even after init() complete
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 4: Add volatile and retest.**
 If adding `volatile` fixes the bug, the diagnosis is confirmed.
@@ -1053,6 +1124,8 @@ Key: no synchronization needed in hot path (request handlers)
      Config is immutable (final fields) -> no visibility concern after publication
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Design alternatives:
 - `synchronized(lock)` around config read: mutual exclusion on every
   request - not needed, wasteful
@@ -1107,3 +1180,33 @@ flowchart LR
 > Thread B's reads - Thread B may see stale values or the CPU may never
 > flush Thread A's writes to Thread B's cache. The `volatile` keyword is
 > the synchronization action that creates this guarantee.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

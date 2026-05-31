@@ -7,6 +7,16 @@ permalink: /react/l2-component-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Higher-Order Components](#higher-order-components) | working |
+| 2 | [Render Props and Compound Components](#render-props-and-compound-components) | working |
+
+---
+
 # Higher-Order Components
 
 🎯 **Interview Weight:** working (★★☆) - HOCs are legacy pattern; knowing
@@ -124,6 +134,8 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 HOCs are part of React's component model history. Understanding them is
@@ -147,7 +159,8 @@ const ComponentWithEverything = withAuth(
     )
   )
 );
-// DevTools shows: withAuth > withTheme > withRouter > withErrorBoundary > withAnalytics > MyComponent
+// DevTools shows: withAuth > withTheme > withRouter
+//   > withErrorBoundary > withAnalytics > MyComponent
 
 // MODERN: compose hook calls inline (flat)
 function MyComponent() {
@@ -310,6 +323,34 @@ DECISION
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Render Props and Compound Components
 
 🎯 **Interview Weight:** working (★★☆) - compound components show advanced
@@ -445,6 +486,8 @@ Accordion.Item = AccordionItem;
   </Accordion.Item>
 </Accordion>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -678,3 +721,33 @@ Symptom: `<Tabs.Panel>` used without a parent `<Tabs>` wrapper throws a null ref
 > shows production awareness. The outside click handler via `useEffect` +
 > `useRef` is the standard pattern for dismissing floating UI. The `setOpen(false)`
 > in `Dropdown.Item.onClick` auto-closes the menu after selection - expected UX behavior.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

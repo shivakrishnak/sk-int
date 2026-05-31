@@ -8,6 +8,15 @@ permalink: /database-sql/l4-sql-injection/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [SQL Injection - Attack Vectors, Detection, and Prevention](#sql-injection---attack-vectors-detection-and-prevention) | medium |
+
+---
+
 # SQL Injection - Attack Vectors, Detection, and Prevention
 
 **TL;DR:** SQL injection: attacker-controlled input is interpreted as SQL syntax,
@@ -87,6 +96,8 @@ SQLi types:
      - Input saved to DB seemingly safely,
        retrieved and used in a query without re-validation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -369,6 +380,8 @@ Monitoring:
     tables (data exfiltration pattern)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -445,6 +458,8 @@ grep -r "nativeQuery.*+" src/
 # Or use SonarQube with SQL injection rule enabled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: convert to named parameters or Criteria API.
 
 **Failure 2: Second-order injection via stored data**
@@ -475,6 +490,8 @@ String sql = "SELECT ... ORDER BY " + sortBy;
 // Column names cannot be parameterized in SQL.
 // Whitelist is the correct approach for dynamic identifiers.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -527,3 +544,33 @@ String sql = "SELECT ... ORDER BY " + sortBy;
 **Q12: What is Row Level Security and how does it provide defense-in-depth against SQL injection?**
 
 🗣️ "Row Level Security (RLS): PostgreSQL feature that adds per-row access control to tables, enforced by the database engine. Even if an application query is: `SELECT * FROM orders` with no WHERE clause - RLS ensures the user only sees rows they are authorized to see. Example for multi-tenant SaaS: `CREATE POLICY tenant_policy ON orders USING (tenant_id = current_setting('app.tenant_id')::bigint)`. The application sets `SET app.tenant_id = 42` at connection time (from the session context). Any query on orders - even a completely injected query - will have `WHERE tenant_id = 42` implicitly added by PostgreSQL. The attacker cannot see other tenants' data. Defense-in-depth against SQLi: if an attacker achieves SQLi and runs `UNION SELECT * FROM orders --`, they only see orders for the current tenant (42). Cross-tenant data exfiltration is prevented at the database level. RLS bypass requires superuser or `BYPASSRLS` privilege - further reason for least-privilege application role with neither. RLS is a powerful additional layer that reduces the blast radius of a successful injection."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

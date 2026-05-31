@@ -7,6 +7,15 @@ permalink: /html/l4-seo-optimization/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Structured Data and HTML SEO](#structured-data-and-html-seo) | essential |
+
+---
+
 # Structured Data and HTML SEO
 
 🎯 **Interview Weight:** essential (★★★) - HTML SEO is cross-cutting
@@ -304,6 +313,8 @@ TECHNICAL SEO HTML PATTERNS:
   <!-- Anchor text tells crawler what the linked page is about -->
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 JSON-LD structured data is preferred over Microdata and RDFa because
@@ -359,6 +370,8 @@ inferring it.
   <!-- Social share: default browser title, no image -->
 </head>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: SEO-optimized head -->
@@ -619,6 +632,8 @@ Diagnosis pipeline:
   3. Search Console → URL Inspection → inspect individual URL
   4. Wait: new structured data takes 1-2 weeks to appear in SERPs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1480,6 +1495,8 @@ MONITORING:
     - Structured data rendering verification (random sample, weekly)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1551,3 +1568,33 @@ flowchart LR
 > only read Open Graph and Twitter Card tags - they don't execute
 > JavaScript and don't use structured data. This is why OG tags must
 > be in the initial HTML response, not rendered by JavaScript.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

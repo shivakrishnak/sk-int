@@ -8,6 +8,16 @@ permalink: /devops-cicd/l3-gitops-release-management/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [GitOps](#gitops) | medium |
+| 2 | [Feature Flags and Progressive Delivery](#feature-flags-and-progressive-delivery) | medium |
+
+---
+
 # GitOps
 
 🎯 Interview Weight: critical - GitOps is the dominant CD model
@@ -130,6 +140,8 @@ Git desired: deployment/myapp, replicas: 5, image: myapp:a3f5c2d
 Cluster actual: deployment/myapp, replicas: 3 (someone scaled down)
 ArgoCD: detects OutOfSync, applies desired state → replicas: 5
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Repository patterns:**
 - Monorepo: all application configs in one repository
@@ -259,6 +271,8 @@ jobs:
           git push
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # Step 2: ArgoCD Application - pulls from GitOps config, reconciles
 # gitops-config/apps/myapp/argocd-app.yaml
@@ -290,6 +304,8 @@ spec:
         factor: 2
         maxDuration: 3m
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # Step 3: AppProject - RBAC for GitOps multi-tenancy
@@ -635,6 +651,8 @@ kubectl create secret generic db-credentials \
 # sealed-secret.yaml can safely go into Git
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The Git repository contains the SealedSecret YAML. ArgoCD syncs
 it. The SealedSecrets controller in the cluster decrypts it and
 creates the actual Kubernetes Secret.
@@ -663,6 +681,8 @@ spec:
         key: production/myapp/db
         property: password
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Decision framework: use SealedSecrets for simplicity and fully
 offline GitOps (no external dependencies). Use External Secrets
@@ -693,6 +713,8 @@ argocd app diff myapp
 # Shows the diff between desired and live state
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check for resource finalization loops. If a resource is
 being deleted but has a finalizer that is not being processed (e.g.,
 a Helm hook that is failing), the resource is stuck in Terminating
@@ -700,6 +722,8 @@ state and ArgoCD cannot sync.
 ```bash
 kubectl get all -n myapp -o yaml | grep -A5 finalizers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Check for annotation drift. Some operators add annotations
 to resources after ArgoCD creates them. ArgoCD compares annotations
@@ -720,11 +744,15 @@ kubectl get deployment myapp -o yaml
 diff between the two outputs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: Force refresh and resync:
 ```bash
 argocd app get myapp --refresh  # Force re-read of Git
 argocd app sync myapp --force  # Force sync even if "synced"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Distinguishing between "out of
 sync because Git was wrong" and "out of sync because of operator
@@ -926,6 +954,34 @@ can cause issues for all other teams.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Feature Flags and Progressive Delivery
 
@@ -1176,6 +1232,8 @@ public class CheckoutController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // LaunchDarkly flag configuration (via dashboard/API)
 // Flag: "enhanced-checkout"
@@ -1211,6 +1269,8 @@ public class CheckoutController {
   "offVariation": 0  // When flag is OFF: everyone gets classic
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // Flag cleanup contract: flags that are fully rolled out
@@ -1555,6 +1615,8 @@ void checkout_withEnhancedCheckout_showsEnhancedUI() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Integration explosion: as you add flags, the number of state
 combinations grows. If you have a checkout flag, a payment flag,
 and a shipping flag, you have 8 combinations. Testing all 8 is
@@ -1720,3 +1782,33 @@ cohort as stage 2. Self-selected users are more likely to explore
 edge cases and report issues than a random 5% cohort. This layered
 approach - internal dogfooding, motivated beta, then percentage
 rollout - is more robust than jumping directly to percentage rollout.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

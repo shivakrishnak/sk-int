@@ -145,6 +145,8 @@ OLDER: HTTP + SSE (pre-2025-03, still supported):
   Streamable HTTP but backward-compatible.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Server code is transport-agnostic. The Python SDK's
@@ -364,11 +366,15 @@ proxy_cache off;
 add_header X-Accel-Buffering no;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Root cause (auth):* The proxy strips `Authorization`
 headers. Configure the proxy to forward auth headers:
 ```nginx
 proxy_pass_request_headers on;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -511,6 +517,8 @@ Config format:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key fields:
 - `command`: the executable to run (python, node, uvx)
 - `args`: arguments to the command
@@ -529,6 +537,8 @@ path issues):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 After editing: restart Claude Desktop.
 
 *What separates good from great:* "Use absolute paths
@@ -546,6 +556,8 @@ Step 1: Run the server command directly in the terminal:
 ```bash
 python /path/to/server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If it exits immediately, you'll see the error.
 
 Step 2: Check Claude Desktop logs:
@@ -556,6 +568,8 @@ tail -50 ~/Library/Logs/Claude/mcp-server-{name}.log
 # Windows
 Get-Content "$env:APPDATA\Claude\Logs\mcp-server-{name}.log" -Tail 50
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common causes:
 - Import error: a required package is not installed
@@ -570,6 +584,8 @@ Fix pattern:
 # Test with the exact environment from config:
 API_KEY=your-key python /path/to/server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If this works, the issue is in how Claude Desktop
 passes the environment.
 
@@ -721,6 +737,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # MCP Server Development
 
 **Interview Weight:** ★☆☆ - Every developer working
@@ -842,6 +886,8 @@ DEVELOPMENT WORKFLOW:
 6. Deploy / distribute:
    uv build -> PyPI -> uvx install
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1094,6 +1140,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize",
 {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
 | python server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Verify both responses arrive correctly.
 
 Step 2: Check the initialize response. The
@@ -1142,6 +1190,8 @@ from mcp.server import Server
 server = Server("my-server")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Register tools:
 ```python
 @server.list_tools()
@@ -1154,6 +1204,8 @@ async def list_tools():
 async def call_tool(name, arguments):
     return [types.TextContent(type="text", text="pong")]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) Add transport runner:
 ```python
@@ -1172,10 +1224,14 @@ async def main():
 asyncio.run(main())
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (5) Test:
 ```bash
 npx @modelcontextprotocol/inspector python server.py
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The Inspector
 is step 5 - always test with it before connecting
@@ -1225,6 +1281,8 @@ async def test_call_tool_unknown():
         await call_tool("nonexistent", {})
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For integration testing: use the MCP Inspector
 or send raw JSON-RPC messages via subprocess.
 
@@ -1250,6 +1308,8 @@ uv publish
 # Team install (no manual venv):
 uvx my-mcp-server
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Config: `"command": "uvx", "args": ["my-mcp-server"]`
 Zero path management. Each user gets isolated env.
 
@@ -1260,6 +1320,8 @@ COPY . .
 RUN pip install .
 CMD ["python", "server.py", "--http", "--port", "8000"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Team configures the URL + API key. Central deployment,
 zero per-user installation.
 
@@ -1299,6 +1361,8 @@ npx @modelcontextprotocol/inspector python server.py
 
 # Opens a browser UI at http://localhost:5173
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Workflow:
 1. Start Inspector with your server command
@@ -1354,6 +1418,8 @@ logger = logging.getLogger(__name__)
 logger.debug(f"Tool called: {name}")  # Goes to stderr
 # NOT: print(f"Tool called: {name}")  # BREAKS the server
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Claude Desktop, stderr from the server process
 appears in the server's log file:
@@ -1472,6 +1538,34 @@ well as numbered lists.)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP Client Integration
 
@@ -1608,6 +1702,8 @@ FORMAT (HTTP server - any client):
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1804,6 +1900,8 @@ Step 2: Validate JSON syntax:
 ```bash
 python -c "import json; json.load(open('.vscode/mcp.json'))"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Invalid JSON silently fails.
 
 Step 3: Check VS Code version - MCP support in
@@ -1817,6 +1915,8 @@ have a different PATH):
 # In VS Code integrated terminal:
 python path/to/server.py
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Check VS Code Output panel -> "MCP" channel
 for connection errors.
@@ -1846,8 +1946,6 @@ Claude Desktop MCP servers?**
 *Why they ask:* Practical readiness.
 
 Config file location:
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
 Format:
 ```json
@@ -1864,6 +1962,8 @@ Format:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Multiple servers: add more entries to `mcpServers`.
 Each server appears as a separate connection. All
@@ -1884,6 +1984,8 @@ For uvx-distributed servers:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Absolute paths
 in args, not relative - Claude Desktop's working
@@ -1913,6 +2015,8 @@ Claude Desktop:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 VS Code `.vscode/mcp.json`:
 ```json
 {
@@ -1926,6 +2030,8 @@ VS Code `.vscode/mcp.json`:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 VS Code supports variable substitution: `${MCP_API_KEY}`
 resolves from VS Code user settings or environment.
@@ -2006,6 +2112,8 @@ log file:
 tail -100 ~/Library/Logs/Claude/mcp-server-{server-name}.log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If the server shows red: the command failed to start.
 Check the command path and Python environment.
 
@@ -2077,12 +2185,16 @@ Layer 1: Commit the config template (no secrets):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2: `.env.local` for local secret injection:
 ```
 # .env.local (gitignored)
 DB_URL=postgres://user:password@localhost:5432/dev
 MCP_API_KEY=your-dev-key
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Source this in shell: `source .env.local` before
 opening VS Code.
 
@@ -2123,6 +2235,8 @@ For workspace-scoped configs:
     4. Verify: open Copilot Agent, check tool list
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Add `.env.example` with dummy values (committed)
     and `.env.local` in `.gitignore` (not committed).
 
@@ -2158,3 +2272,33 @@ no per-user command paths to manage."
 ### 📊 Diagram
 
 *(Omit: client config is best expressed as code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

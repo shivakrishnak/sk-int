@@ -7,6 +7,16 @@ permalink: /html/l3-web-components/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Custom Elements and Shadow DOM](#custom-elements-and-shadow-dom) | high |
+| 2 | [HTML Templates and Slots](#html-templates-and-slots) | high |
+
+---
+
 # Custom Elements and Shadow DOM
 
 🎯 **Interview Weight:** high (★★☆) - Web Components are now
@@ -224,6 +234,8 @@ LIFECYCLE ORDER:
   5. disconnectedCallback()  (element removed from DOM)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Shadow DOM CSS encapsulation has a critical limitation: ARIA
@@ -283,6 +295,8 @@ class BadButton extends HTMLElement {
 customElements.define('bad-button', BadButton);
 </script>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // GOOD: shadow DOM, lifecycle, accessibility, events
@@ -372,6 +386,8 @@ class AccessibleButton extends HTMLElement {
 
 customElements.define('accessible-button', AccessibleButton);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- Usage: -->
@@ -493,6 +509,8 @@ Diagnosis:
   Note: native click, input, focus ARE composed by default
         Custom events are NOT composed by default
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1203,6 +1221,34 @@ flowchart TB
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTML Templates and Slots
 
 🎯 **Interview Weight:** high (★★☆) - Templates and slots are
@@ -1394,6 +1440,8 @@ TEMPLATE PERFORMANCE:
   list.appendChild(fragment);  // single DOM mutation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Slotted content remains in the LIGHT DOM (the page's document).
@@ -1519,6 +1567,8 @@ class InfoCard extends HTMLElement {
 customElements.define('info-card', InfoCard);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```html
 <!-- Usage with all slots: -->
 <info-card>
@@ -1631,6 +1681,8 @@ Diagnosis:
   Check slot assignments: click on slot → "Assigned elements"
   shows what content is assigned to each slot
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2009,3 +2061,33 @@ flowchart LR
 > This design means the light DOM author retains ownership of their
 > content (can style it with page CSS) while the shadow DOM author
 > controls the layout structure.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

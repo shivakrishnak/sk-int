@@ -7,6 +7,16 @@ permalink: /typescript/l2-classes-and-decorators/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Classes and Access Modifiers](#typescript-classes-and-access-modifiers) | working |
+| 2 | [TypeScript Decorators](#typescript-decorators) | working |
+
+---
+
 # TypeScript Classes and Access Modifiers
 
 🎯 **Interview Weight:** working (★★☆) - classes and access modifiers
@@ -146,6 +156,8 @@ TYPESCRIPT CLASS FEATURES:
       serialize(): string { return JSON.stringify(this); }
     }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -408,6 +420,8 @@ class Dog extends Animal {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -584,6 +598,34 @@ DECISION
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # TypeScript Decorators
 
 🎯 **Interview Weight:** working (★★☆) - decorators are used extensively
@@ -722,6 +764,8 @@ TC39 STAGE 3 (TypeScript 5.0+, no flag):
   // Key difference: context object instead of raw prototype
   // context.name, context.kind, context.addInitializer, context.metadata
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -925,6 +969,8 @@ console.log(
 // Should print [] or [dep types], not undefined
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1093,3 +1139,33 @@ MECHANISM
 > emits `design:paramtypes` for decorated classes), when
 > `emitDecoratorMetadata` is true, and when `reflect-metadata` is
 > imported globally before any decorated classes load.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

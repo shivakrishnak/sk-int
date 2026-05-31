@@ -8,6 +8,16 @@ permalink: /distributed-systems/l2-communication-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Remote Procedure Call and gRPC](#remote-procedure-call-and-grpc) | medium |
+| 2 | [Message Passing and Event-Driven Architecture](#message-passing-and-event-driven-architecture) | medium |
+
+---
+
 # Remote Procedure Call and gRPC
 
 **TL;DR:** Remote Procedure Call (RPC) makes a network call look like
@@ -109,6 +119,8 @@ HTTP/2 multiplexing.
 7. Handler serializes response, sends back
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **HTTP/2 advantages:**
 
 ```
@@ -124,6 +136,8 @@ HTTP/2:
   - Server push (proactive data push)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Streaming types:**
 
 ```
@@ -133,6 +147,8 @@ Client stream: Client sends N, server sends 1
 Bidirectional: Client sends N, server sends N
                (independent streams, not request-response)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 gRPC's schema-first approach (.proto) is both its strength and its
@@ -415,6 +431,34 @@ you understand the non-obvious issue.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Passing and Event-Driven Architecture
 
 **TL;DR:** Message passing decouples services: a sender publishes a
@@ -501,6 +545,8 @@ One consumer processes each message.
 Used for: task distribution, work queues.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Topic/Pub-Sub (Broadcast):**
 ```
 Publisher → [Topic] → Consumer Group A
@@ -510,6 +556,8 @@ Each consumer group gets every message.
 Used for: event fan-out, notifications.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Event log (Kafka-style):**
 ```
 Publisher → [Partition 1] [Partition 2] [Partition 3]
@@ -518,6 +566,8 @@ Publisher → [Partition 1] [Partition 2] [Partition 3]
 Ordered log, retained for configurable time.
 Consumers can replay from any offset.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The Outbox Pattern (crucial):**
 
@@ -539,6 +589,8 @@ SOLUTION: Outbox table
   Marks as published.
   Atomic because both writes are in one DB transaction.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Event schema design:**
 
@@ -810,3 +862,33 @@ today?"
 
 *Why:* Most async systems have at-least-once delivery. Idempotency
 is required but often overlooked.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

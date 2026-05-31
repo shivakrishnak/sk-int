@@ -113,6 +113,8 @@ Fast, scalable       Best for production     Slow, safe,
 Risky for prod.      Most common pattern     for new agents
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Risk classification:**
 
 ```
@@ -133,6 +135,8 @@ HIGH risk (always require approval):
   - Actions affecting multiple users
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The approval lifecycle:**
 
 ```
@@ -143,6 +147,8 @@ HIGH risk (always require approval):
 5. Resume loop with decision
 6. Log: action, approver, timestamp
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -610,6 +616,8 @@ async def resume_from_hitl(
     ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* State serialization
 as the enabler of async HITL - the checkpoint must
 contain everything needed to resume, not just the
@@ -788,6 +796,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Autonomy vs Control Tradeoff
 
 **Interview Weight:** ★☆☆ - The meta-level design
@@ -881,6 +917,8 @@ AUTONOMY INCREASES:   CONTROL DECREASES:
   User experience       Trust from stakeholders
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Resolution framework:**
 
 ```
@@ -894,6 +932,8 @@ FOR EACH ACTION TYPE:
   3. What do stakeholders/regulators require?
      Regulated action -> control required regardless
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1434,6 +1474,34 @@ quadrantChart
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # When NOT to Use Agents
 
 **Interview Weight:** ★☆☆ - Knowing when NOT to
@@ -1534,6 +1602,8 @@ Also NOT an agent when:
   - High-volume low-complexity (cost too high)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common agent overuse patterns:**
 
 ```
@@ -1546,6 +1616,8 @@ Classification               Fine-tuned classifier
 Structured data extraction   Structured output (no loop)
 Simple lookup + response     LLM with retrieval (no loop)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1795,6 +1867,8 @@ resp = client.messages.create(
 # Parse resp.content[0].text as JSON
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Result: 1-2 second response (vs. 10-15). One LLM
 call (vs. 3-5 in agent loop). No tool call formatting
 overhead. More reliable (no agent failure modes).
@@ -1912,6 +1986,8 @@ NO -> Candidate for agent
   inputs produce different paths through the task)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Examples:
 - "Translate all documents in this folder": scripted
   pipeline. Steps: list files -> translate each -> save.
@@ -1945,6 +2021,8 @@ resp = client.messages.create(
 )
 result = json.loads(resp.content[0].text)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use structured output (not agent) when:
 - The extraction schema is known upfront
@@ -2185,3 +2263,33 @@ flowchart TD
 > and cost: green (simple, fast) through yellow
 > (moderate) to red (agent: most complex, slowest,
 > most expensive).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

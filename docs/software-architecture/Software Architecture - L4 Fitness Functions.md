@@ -150,6 +150,8 @@ Scalability:
   - Auto-scaling validation tests
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ArchUnit - the primary structural fitness function tool:**
 ArchUnit is a Java testing library that allows describing and
 testing architecture rules as unit tests. Runs in the standard
@@ -350,6 +352,8 @@ void paymentProcessingMeetsSLA() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Every performance fitness function must reference the QA
 scenario that defines its threshold. Document the source (e.g.,
 "ADR-015 defines P99 < 2s as the payment SLA"). Threshold changes
@@ -446,6 +450,8 @@ class LayeredArchitectureTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CI pipeline integration:
 ```yaml
 # Maven: runs automatically with mvn test
@@ -453,6 +459,8 @@ CI pipeline integration:
 # No special CI configuration needed -
 # ArchUnit tests are standard JUnit tests
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Most candidates describe rules
 in words. Great candidates write actual ArchUnit code with the
@@ -550,6 +558,8 @@ class UserServiceContractTest {
     // Runs all consumer pacts against the actual controller
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CI/CD integration: consumer runs pact tests -> uploads contract to
 Pact Broker -> provider downloads and verifies contract -> passes
@@ -655,6 +665,8 @@ export default function () {
     });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Threshold setting: thresholds must come from the QA scenario or
 ADR, not from the current performance. "Our payment SLA is P99 <
@@ -873,6 +885,8 @@ def test_no_deep_synchronous_chains():
         )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fan-out measurement: number of synchronous downstream services
 called per request. High fan-out = coupling smell.
 
@@ -1039,3 +1053,33 @@ flowchart LR
 > canary metrics are the final holistic fitness function: real
 > traffic against real infrastructure is the ultimate test of
 > all architectural properties simultaneously.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

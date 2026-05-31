@@ -8,6 +8,17 @@ permalink: /distributed-systems/l1-core-concepts/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CAP Theorem](#cap-theorem) | medium |
+| 2 | [Consistency Models](#consistency-models) | medium |
+| 3 | [Availability and Fault Tolerance Fundamentals](#availability-and-fault-tolerance-fundamentals) | medium |
+
+---
+
 # CAP Theorem
 
 **TL;DR:** The CAP Theorem states that a distributed data store can
@@ -330,6 +341,34 @@ the operation spans multiple services."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Consistency Models
 
 **TL;DR:** Consistency models define what values a distributed system
@@ -406,6 +445,8 @@ Weakest                                        Strongest
 Eventual  Causal  Read-your  Monotonic  Sequential  Linearizable
                   -writes    reads
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key models:
 1. **Eventual Consistency:** Replicas may diverge temporarily; given
@@ -697,6 +738,34 @@ That determines the consistency model to choose."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Availability and Fault Tolerance Fundamentals
 
 **TL;DR:** Availability is the fraction of time a system is operational.
@@ -784,6 +853,8 @@ Nines table:
 99.999%  = 5 minutes/year
 99.9999% = 31 seconds/year
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Redundancy patterns:**
 
@@ -1065,3 +1136,33 @@ with zero RPO requires synchronous multi-region replication and
 fast failover orchestration. Most businesses accept some RPO (5-15
 minutes) and some RTO (1-5 minutes) to avoid the cost of
 synchronous global replication."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

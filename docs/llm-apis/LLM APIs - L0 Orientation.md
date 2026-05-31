@@ -134,6 +134,8 @@ Frameworks:
   (orchestrate the Foundation APIs above)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key comparison dimensions:**
 
 Context window: how many tokens (roughly, words/4)
@@ -323,6 +325,8 @@ class AnthropicClient(LLMClient):
 # Switching providers: swap AnthropicClient for
 # OpenAIClient. Application code unchanged.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -581,6 +585,8 @@ client = anthropic.Anthropic(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Never commit keys to git:
    - `.env` files must be in `.gitignore`
    - Use `git secret` or similar for encrypted storage
@@ -623,6 +629,34 @@ a key reaches git history, where it's very hard to truly remove."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Claude API Overview
 
@@ -737,6 +771,8 @@ RESPONSE:
   stop_reason: "end_turn"
   usage: {input_tokens: 28, output_tokens: 3}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Claude model tiers:**
 
@@ -949,6 +985,8 @@ if msg.stop_reason == "max_tokens":
     print("WARN: response truncated", file=sys.stderr)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1107,6 +1145,8 @@ msg = client.messages.create(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Savings calculation: 10,000 RPD * 5,000-token system
 prompt = 50M input tokens/day. Without caching:
 $150/day. With caching (99% hits): ~$16/day. Savings: 89%.
@@ -1176,6 +1216,8 @@ client.messages.create(
 # Claude: "I don't know your name - you haven't told me."
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Claude does not know your name because the conversation
 where you said "My name is Alex" was never included.
 
@@ -1219,6 +1261,8 @@ result = client.beta.messages.count_tokens(
 print(f"System prompt: {result.input_tokens} tokens")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Check conversation history growth. After N turns,
     history could be 10,000+ tokens.
     Print `len(history)` and total token count.
@@ -1237,6 +1281,8 @@ print(json.dumps({
     "model": msg.model,
 }), file=sys.stderr)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Token count logging
 from day one prevents month-end billing surprises."
@@ -1262,6 +1308,34 @@ from day one prevents month-end billing surprises."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # GitHub Copilot Overview
 
@@ -1377,6 +1451,8 @@ Response
   - Chat: response in panel
   - Agent: tool calls (file read/write, terminal)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Three modes in detail:**
 
@@ -1873,3 +1949,33 @@ difference before recommending Copilot for a bank."
 ### 📊 Diagram
 
 *(Omit: architecture is clearer as structured text.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

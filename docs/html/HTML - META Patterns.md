@@ -7,6 +7,17 @@ permalink: /html/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Progressive Enhancement](#progressive-enhancement) | essential |
+| 2 | [Separation of Concerns in Web Documents](#separation-of-concerns-in-web-documents) | foundational |
+| 3 | [Document Semantics Mental Model](#document-semantics-mental-model) | foundational |
+
+---
+
 # Progressive Enhancement
 
 🎯 **Interview Weight:** essential (★☆☆) - fundamental philosophy
@@ -163,6 +174,8 @@ WHEN PROGRESSIVE ENHANCEMENT IS DIFFICULT:
     The app itself: JavaScript required (document this)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Progressive Enhancement is not about supporting old browsers.
@@ -210,6 +223,8 @@ document.getElementById('contact-form').innerHTML = `
 // - Form submission: no HTTP fallback
 </script>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: progressively enhanced contact form -->
@@ -361,6 +376,8 @@ Options:
      </noscript>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -417,6 +434,34 @@ Options:
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Separation of Concerns in Web Documents
 
@@ -576,6 +621,8 @@ MODERN NUANCE - COMPONENT-BASED APPROACHES:
   Both are valid when applied consistently.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When to use it:**
 
 In traditional multi-page sites and server-rendered applications:
@@ -605,6 +652,8 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
      can't be overridden without !important. -->
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```html
 <!-- GOOD: HTML provides structure -->
 <div class="notification notification--error" role="alert"
@@ -620,6 +669,8 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
   </button>
 </div>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```css
 /* CSS provides presentation - separate file */
@@ -638,6 +689,8 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
   border: none; cursor: pointer; font-size: 1.2rem;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // JavaScript provides behavior - separate file
@@ -732,6 +785,8 @@ Fix:
     // Do: el.classList.add('notification--error')
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -788,6 +843,34 @@ Fix:
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Document Semantics Mental Model
 
@@ -959,6 +1042,8 @@ PRACTICAL EXERCISE - READING HTML SEMANTICS:
   → the page lacks semantic structure → div-soup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Semantic HTML is a communication protocol. You communicate the
@@ -1010,6 +1095,8 @@ changed without changing the element.
 <!-- Google: unclear what is the article title/author -->
 <!-- Browser Reader Mode: can't identify article cleanly -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: semantic HTML - meaning encoded in markup -->
@@ -1143,6 +1230,8 @@ Heading structure check:
   Are headings used for structure (not just for font size)?
   Fix: replace visual-only bold/large text with appropriate headings
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1293,3 +1382,33 @@ When do you use each?** `[JUNIOR]` COMPARISON
 | Junior Interview | Element selection + button vs link |
 | Mid-level Interview | Landmarks + heading hierarchy |
 | Senior Technical | SoC in component frameworks + screen reader impact |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

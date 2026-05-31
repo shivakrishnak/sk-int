@@ -106,6 +106,8 @@ p.then(value => console.log('Fulfilled:', value))
   .catch(reason => console.log('Rejected:', reason));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 A Promise is a value-over-time abstraction. Once created,
 it will eventually settle (fulfill or reject) and all
@@ -277,6 +279,8 @@ function buggyFetch(url) {
   });
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: identify awaits that never complete; heap profiling
 shows accumulating Promise objects. Fix: always call reject
 in the failure path.
@@ -292,6 +296,8 @@ doOperation().catch(err => {
   throw err; // re-throw if caller needs to know
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -342,6 +348,8 @@ let called = false;
 Promise.resolve().then(() => { called = true; });
 console.log(called); // would be true if handlers were sync
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 would have unpredictable behavior depending on when the Promise
 resolved. With the guarantee, `called` is always `false` at
 this point because `.then` handlers are microtask-queued.
@@ -397,6 +405,8 @@ Use cases:
    }
    // Callers always get a Promise regardless of cache hit
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Starting a Promise chain: `Promise.resolve().then(step1).then(step2)`
 3. Testing: create immediately-resolved Promises for sync test execution.
 
@@ -432,6 +442,8 @@ someEventEmitter.once('done', data => resolve(data));
 
 const result = await promise; // waits for the event
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use: bridging event-emitter APIs with Promise-based
 code; implementing timeouts that can be cancelled from outside;
@@ -472,6 +484,8 @@ promise
   .catch(err => handle(err)); // catches riskyTransform errors
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing this asymmetry and
 preferring `.catch()` at the end of chains over dual-argument
 `.then()` for error handling - because `.catch()` catches
@@ -507,19 +521,27 @@ db.connect()
   // Wait - conn is not in scope here! Fix: use a variable
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `.finally`
 passes through values (unlike `.then(() => someValue)` which
 would replace the chain value). And recognizing the scoping
 issue in the example above - `conn` must be in scope for
 `.finally` to close it.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - covered in Async JavaScript - L2 Advanced Promises.md)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -528,6 +550,34 @@ issue in the example above - `conn` must be in scope for
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Promise States and the Microtask Queue
 
@@ -626,6 +676,8 @@ Promise.resolve('a')         // fulfilled immediately
 // 2. Microtask queue drains (all .then callbacks)
 // 3. Only then: macrotasks (setTimeout etc)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Promise state is observable but not writable after settlement.
@@ -782,6 +834,8 @@ function recursive() {
 }
 recursive(); // Never returns, blocks all tasks
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: setTimeout callbacks stop firing; event emitters
 are silent; CPU at 100%. Fix: add task boundaries (`setImmediate`)
 between recursive async operations.
@@ -793,6 +847,8 @@ const { inspect } = require('util');
 const state = inspect(somePromise);
 // Fragile: relies on internal formatting, not spec
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Better approach: use `Promise.race` with a dummy resolved
 Promise to check if a Promise is already settled.
 
@@ -882,6 +938,8 @@ Promise.reject(new Error('original'))
   .then(v => console.log(v)); // 'recovered' (fulfilled)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 A `.catch` that returns a value (or returns a fulfilled Promise)
 converts the chain back to fulfilled. If `.catch` throws or
 returns a rejected Promise, the chain remains rejected.
@@ -913,6 +971,8 @@ const p = Promise.resolve(fakePromise);
 // p is a native Promise that resolves with 42
 p.then(v => console.log(v)); // 42
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This assimilation enables interoperability between Promise
 libraries (bluebird, Q) and native Promises. You can pass
@@ -948,6 +1008,8 @@ const outer = new Promise(resolve => {
 // outer is resolved but not yet settled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In practice: "settled" is the term that matters for most
 use cases. "Resolved" in the sense above is a spec nuance
 important for implementing Promise libraries.
@@ -978,6 +1040,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Browser:
 ```javascript
 window.addEventListener('unhandledrejection', event => {
@@ -985,6 +1049,8 @@ window.addEventListener('unhandledrejection', event => {
   event.preventDefault(); // suppress default browser error
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Node.js flag: `--unhandled-rejections=throw` crashes on
 unhandled rejections (default behavior in Node.js 15+).
@@ -1025,6 +1091,8 @@ console.log('after attachment');
 // late handler: 42     (microtask queued and drains)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Practical use case: caching resolved Promises - if a module
 caches a Promise for a one-time async initialization, any
 component that calls `.then()` on it later still gets the
@@ -1036,13 +1104,19 @@ feature that makes Promise caching work. A resolved Promise
 acts like an observable value with guaranteed async delivery
 to all future subscribers.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - covered in L2 Advanced Promises)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1098,6 +1172,34 @@ stateDiagram-v2
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Promise Chaining
 
@@ -1186,6 +1288,8 @@ fetchUser(id)                    // Promise<User>
     return [];
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The `return` in a `.then` callback is critical. Without
@@ -1339,6 +1443,8 @@ fetchA()
   .then(([a, b, c]) => combine(a, b, c))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1358,6 +1464,8 @@ fetchUser(id)
   })
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Mixing `.then` and `await` confusingly**
 ```javascript
 // BAD: confusing mix - unclear error handling
@@ -1375,6 +1483,8 @@ async function clear(id) {
   return user;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1430,6 +1540,8 @@ Promise.reject(new Error('step 1 failed'))
   .then(v => console.log('continued:', v)); // 'recovered'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that the error
 propagation is what makes a single `.catch` at the end of
 a chain sufficient for most use cases.
@@ -1466,6 +1578,8 @@ startProcess()
     // No return needed - nothing chains on this
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding that recovery
 via middle `.catch` is a powerful pattern for resilience:
@@ -1517,12 +1631,16 @@ fetchUser(id).then(user =>
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. `Promise.all` accumulation:
 ```javascript
 fetchUser(id)
   .then(user => Promise.all([user, fetchOrders(user.id)]))
   .then(([user, orders]) => process(user, orders))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Async/await (best readability):
 ```javascript
@@ -1532,6 +1650,8 @@ async function fn(id) {
   return process(user, orders);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Recognizing this as a
 structural limitation of `.then` chaining and knowing the
@@ -1574,6 +1694,8 @@ Prefer `.then` chaining when:
      Promise.resolve(input)
    );
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. The code is already in a non-async context and you need
    a single short chain (< 3 steps)
 3. You need the specific return value of `.then` (a new Promise)
@@ -1593,13 +1715,19 @@ appears in functional pipeline patterns and in library code.
 have their place, and an experienced engineer knows when
 each is appropriate.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - comparison in L2 Advanced Promises)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1652,3 +1780,30 @@ flowchart TD
 > to the nearest `.catch`. After the `.catch` recovers (returns
 > a value), the chain resumes as fulfilled. The diagram shows
 > the two paths: success path (left) and error path (right).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

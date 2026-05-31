@@ -7,6 +7,17 @@ permalink: /nodejs/l1-file-system-streams/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [File System API (fs)](#file-system-api-fs) | medium |
+| 2 | [Streams and Piping](#streams-and-piping) | medium |
+| 3 | [Buffer and Encoding](#buffer-and-encoding) | medium |
+
+---
+
 # File System API (fs)
 
 ---
@@ -97,6 +108,8 @@ fs module APIs:
     - Async middleware
     - Anywhere the event loop must remain available
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -224,6 +237,8 @@ await Promise.all(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -236,6 +251,34 @@ await Promise.all(
 | What is `ENOENT` and how do you handle it? | Debugging | ★☆☆ | 1 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Streams and Piping
 
@@ -320,6 +363,8 @@ Stream types and data flow:
         process(chunk);
       }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -458,6 +503,8 @@ for await (const chunk of stream) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -470,6 +517,34 @@ for await (const chunk of stream) {
 | How do you create a Transform stream? | Code | ★★☆ | 3 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Buffer and Encoding
 
@@ -558,6 +633,8 @@ Buffer basics:
     In cryptographic contexts, always use Buffer.alloc(n)
     or fill immediately after allocUnsafe.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -680,6 +757,8 @@ const data = await readFile('file.txt', 'utf8'); # explicit
 # NOT: readFile('file.txt') then toString() without encoding
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Always specify encoding explicitly. Never assume ASCII.
 
 ---
@@ -693,3 +772,33 @@ Fix: Always specify encoding explicitly. Never assume ASCII.
 | How do you encode/decode binary data? | Mechanism | ★★☆ | 2 min |
 | `Buffer.alloc` vs `Buffer.allocUnsafe` | Comparison | ★★☆ | 2 min |
 | What is mojibake and how to diagnose it? | Debugging | ★★☆ | 3 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

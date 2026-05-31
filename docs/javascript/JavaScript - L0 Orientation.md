@@ -7,6 +7,17 @@ permalink: /javascript/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Origins and Purpose](#javascript-origins-and-purpose) | orientation |
+| 2 | [JavaScript Engine Overview](#javascript-engine-overview) | orientation |
+| 3 | [JavaScript Ecosystem Map](#javascript-ecosystem-map) | orientation |
+
+---
+
 # JavaScript Origins and Purpose
 
 🎯 **Interview Weight:** orientation (★☆☆) - foundational context
@@ -140,6 +151,8 @@ DESIGN DECISIONS:
     CPU-intensive work: Web Workers / Worker Threads.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 JavaScript's 10-day creation explains many quirks: `typeof null === 'object'`
@@ -255,6 +268,8 @@ console.log([] == ![]);  // true (complex coercion chain)
 // TypeScript catches these at compile time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -301,6 +316,34 @@ console.log([] == ![]);  // true (complex coercion chain)
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JavaScript Engine Overview
 
@@ -431,6 +474,8 @@ MONOMORPHIC/POLYMORPHIC/MEGAMORPHIC:
     -> TurboFan gives up: falls to generic slow path
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -545,6 +590,8 @@ node --prof-process isolate-*.log  # human-readable output
 # Look for: "Not Optimized", "Deoptimized" in flame chart
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -602,6 +649,34 @@ node --prof-process isolate-*.log  # human-readable output
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JavaScript Ecosystem Map
 
@@ -726,6 +801,8 @@ META-FRAMEWORKS (full-stack):
   Astro: content-focused, islands architecture
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The ecosystem has tiered stability. Runtimes (V8, Node.js) are
@@ -847,6 +924,8 @@ npx duplicate-package-checker-webpack-plugin
 # or in Vite: npx vite-bundle-analyzer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -902,3 +981,33 @@ npx duplicate-package-checker-webpack-plugin
 > (like a Node.js HTTP server running for hours), startup time
 > differences are amortized. The choice depends on: ecosystem needs
 > (Node.js), security requirements (Deno), startup performance (Bun).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

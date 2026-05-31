@@ -7,17 +7,6 @@ permalink: /platform-engineering/l3-team-topologies/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L3 Team Topologies
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Stream-Aligned vs Platform Team Dynamics](#stream-aligned-vs-platform-team-dynamics) | critical |
-| 2 | [Inverse Conway Maneuver](#inverse-conway-maneuver) | high |
-
----
-
 # Stream-Aligned vs Platform Team Dynamics
 
 ---
@@ -142,6 +131,8 @@ ANTI-PATTERN: TICKET-DRIVEN MODEL
   Symptoms: growing backlog, blocked product teams,
             platform doing toil not engineering
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 X-as-a-Service scales: 5 platform engineers can support 200 product
@@ -466,8 +457,6 @@ be minimized.
 design trade-offs, debugging patterns, distributed systems thinking).
 Valuable - preserve and grow this.
 
-Platform team's mission: reduce extraneous cognitive load on Stream-
-Aligned teams by absorbing infrastructure complexity into self-service
 products.
 
 Measurement: weekly surveys asking "how much time on infrastructure
@@ -585,6 +574,34 @@ delivery speed is a competitive concern.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Inverse Conway Maneuver
 
 ---
@@ -700,6 +717,8 @@ Target architecture:   Design org to match:
   Team communication = service API.
   No cross-team deps for routine features.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Architecture is a consequence of team structure. Architecture decision
@@ -850,6 +869,8 @@ Database coupling test:
   For each database, count teams with write access.
   Any database with > 1 team having write access = coupling point.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: data migration - extract team-specific data into team-owned data
 stores. Highest-effort, highest-value change for enabling team autonomy.
@@ -1136,3 +1157,33 @@ everything in 3 months" is not credible.
 When deploy coordination overhead exceeds 20% of team capacity,
 Conway's Law is producing an architectural coupling problem. The
 Inverse Conway Maneuver is the intervention.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

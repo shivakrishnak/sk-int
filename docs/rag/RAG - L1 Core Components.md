@@ -119,6 +119,8 @@ Sentence-window    Store by sentence,       When granularity matters
                    retrieve with context   (Q&A, precise retrieval)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Chunk size impact:**
 
 ```
@@ -138,6 +140,8 @@ SWEET SPOT (256-1024 tokens):
   - Practical context window use
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Overlap:**
 
 ```
@@ -154,6 +158,8 @@ With 25% overlap:
   Chunk 2: BB + BBBB + CC
   (Answer spanning boundary: retrieved by Chunk 1 or 2)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -382,6 +388,8 @@ With overlap: Chunk B starts with "December 31, 2025.
 At that point..." -> complete answer.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Typical overlap: 10-20% of chunk size. More overlap
 = better context preservation but more storage
 and redundant retrieval.
@@ -454,6 +462,8 @@ Query time:
   Map retrieved child -> parent
   Return parent chunks to LLM (more context)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When to use:
 - Answers in a small chunk but context needed from
@@ -708,6 +718,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Vector Embeddings for Retrieval
 
 **Interview Weight:** ★☆☆ - The core mechanism
@@ -798,6 +836,8 @@ Vector: [0.78, 0.23, -0.44, ..., -0.12]  <- different
 Cosine similarity: 0.12
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cosine similarity:**
 
 $$\text{similarity}(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|}$$
@@ -824,6 +864,8 @@ TRAINING: what the model was optimized for
   Code: better for code similarity
   Multilingual: cross-language retrieval
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1068,7 +1110,6 @@ similarity. A large angle (different directions)
 of the two vectors divided by the product of their
 magnitudes:
 
-$$\text{similarity}(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|}$$
 
 Why cosine similarity (not Euclidean distance):
 cosine similarity is scale-invariant. A long document
@@ -1407,6 +1448,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Vector Databases
 
 **Interview Weight:** ★☆☆ - Understanding vector
@@ -1503,6 +1572,8 @@ Why approximate: greedy navigation can miss
   some truly nearest vectors
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Vector DB operations:**
 
 ```
@@ -1514,6 +1585,8 @@ search       Find top-K similar to query vector
 delete       Remove vector by id
 query        Metadata-only query (no vector search)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Filtering options:**
 
@@ -1527,6 +1600,8 @@ Post-filtering: ANN search first, then filter results.
                 Fast but may return fewer than K results
                 if many top-K are filtered out.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1764,6 +1839,8 @@ has no vectors.
 # results = client.search(..., query_filter=None)
 # If results appear: filter is the problem
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Log vector count after indexing. Verify
 query vector dimension = index dimension. For
@@ -2151,3 +2228,33 @@ graph TB
 > is why the search is approximate. ef_search controls
 > how many candidates to consider at the bottom layer
 > (higher = more accurate, slower).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

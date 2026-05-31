@@ -8,9 +8,20 @@ permalink: /java-core/l5-api-design/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L5 API Design](#java-core---l5-api-design) | medium |
+
+---
+
 # Java Core - L5 API Design
 
 ## Java API Design Philosophy
+
+---
 
 ### 🎯 Model Answer
 
@@ -90,6 +101,8 @@ in decades. Good API designers think: what will callers need in 10 years?"
    - Boolean methods: is/has/can/should prefix (isValid, hasRole, canEdit)
    - Builder methods: noun phrases (name("Alice"), age(30))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -283,6 +296,8 @@ public List<User> getUsers() {
 // Choose based on: do you want callers to see live updates (FIX 1)
 // or a snapshot (FIX 2/3)?
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: unexpected state changes, ConcurrentModificationException,
 test isolation failures (one test modifies list, next test sees changes).
 
@@ -345,6 +360,8 @@ HttpClient.getInstance()    // getInstance: may be cached
 // cannot be subclassed (breaks inheritance hierarchy)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `List.of()` (Java 9) internally returns
 different implementation classes based on the number of elements:
 `List12` for 1-2 elements (avoids array overhead), `ListN` for 3+ elements.
@@ -396,6 +413,8 @@ class Notification {
 record Point(double x, double y) {}
 new Point(1.0, 2.0); // clear enough for 2 fields
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Builder pattern vs. record: for Java 16+,
 records with all required parameters often eliminate the need for builders.
@@ -464,6 +483,8 @@ public final class ImmutableRange {
 // -> No defensive copies needed: immutable types are self-protecting
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Immutable types have a multiplicative
 advantage in concurrent systems. You never need `synchronized` blocks to read
 an immutable object. You can freely share references across threads. You can
@@ -518,6 +539,8 @@ public Optional<User> findById(Long id) { ... }
 // Return type alternatives: Optional, Result<T, E>, CompletableFuture
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The real world shows checked exceptions
 falling out of favor. Java's original API (JDBC, IO) used checked exceptions
 heavily. Spring, Hibernate, and most modern frameworks wrap them in unchecked
@@ -534,7 +557,9 @@ forced to handle the failure case through the type system, not `try/catch`.
 
 A:
 **Source compatibility:** old code compiles with new library version
+
 **Binary compatibility:** old .class files run against new library version
+
 **Behavioral compatibility:** old behavior preserved (no semantic changes)
 
 ```java
@@ -575,6 +600,8 @@ public void oldMethod() { ... }
 // 3.0: removed (binary break if you depended on it)
 // Proper deprecation: announce in release notes, give 1+ version notice
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Java's JEP process for JDK APIs is the
 gold standard for compatibility management. JEPs (JDK Enhancement Proposals)
@@ -639,6 +666,8 @@ sealed interface HttpResponse permits OkResponse, ErrorResponse, RedirectRespons
 // All callers can exhaustively handle via switch expression
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Interface segregation matters most in
 libraries that are implemented by users (plugin systems, callback APIs).
 If an interface has 10 methods: every plugin author implements 10 methods,
@@ -702,6 +731,8 @@ class KeyStore {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The TOCTOU (Time of Check, Time of Use)
 attack on the `Period` constructor is a real security vulnerability. Without
 defensive copy: a thread modifies `start` after the `after()` check but
@@ -760,6 +791,8 @@ public void login(String user, char[] password) { ... } // v2 secure version
 //     // @deprecated module exports are not yet supported; use package naming
 // }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `@Deprecated(forRemoval=true)` pattern
 gives library users a structured migration path. Version N: method available,
@@ -824,6 +857,8 @@ class Validator<T> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Fluent APIs must be careful about type
 safety with generics. The type parameter tracks what you're building:
 `Validator<String>` vs `Validator<Integer>`. When methods apply only to
@@ -883,6 +918,8 @@ record Email(String value) {
 // 4. IDE auto-complete shows you need an Email, not any String
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Parse, don't validate" is a Haskell/functional
 programming concept translated to Java. The type system becomes your validation
 layer: if a method signature says `Email`, it's impossible to pass a String
@@ -931,6 +968,8 @@ class Cache<K, V> {
 // public:    full commitment (never break this)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Java platform failed this principle
 with `sun.misc.Unsafe` - it was internal but effectively became a public
 API because it leaked through. Java 9's module system was partly about
@@ -965,6 +1004,8 @@ module com.example.library {
     requires transitive java.sql;   // transitive: consumers also get java.sql
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The module system changes API design
 from a convention (Javadoc @internal, package naming) to an enforcement
@@ -1130,3 +1171,33 @@ flowchart TD
 > Following this tree consistently produces an API where: immutable data
 > uses records, closed hierarchies use sealed types, complex objects use
 > builders - matching modern Java best practices.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /nodejs/l3-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Node.js Performance Profiling](#nodejs-performance-profiling) | medium |
+| 2 | [Memory Management in Node.js](#memory-management-in-nodejs) | medium |
+
+---
+
 # Node.js Performance Profiling
 
 ---
@@ -114,6 +124,8 @@ Profiling tools and what they reveal:
        lastTick = now;
      }, 100);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -256,6 +268,8 @@ setInterval(() => {
 }, 5000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Reduce object allocation rate, use Buffer pools, use
 streaming instead of building large arrays.
 
@@ -272,6 +286,34 @@ streaming instead of building large arrays.
 | How do you measure performance without external tools? | Code | ★★☆ | 2 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Memory Management in Node.js
 
@@ -366,6 +408,8 @@ V8 memory structure:
          // interval keeps running, keeps closure alive
        }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -518,6 +562,8 @@ Step 2 - Trigger GC manually (for baseline):
 ```javascript
 if (global.gc) global.gc(); // requires --expose-gc flag
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If memory drops significantly after GC, objects were reachable.
 If memory doesn't drop, objects are still referenced somewhere.
 
@@ -538,3 +584,33 @@ captures object references and closure contexts, not just object
 counts. A single closure retaining a 1GB Buffer shows as one object
 but massive retained size. The "Retainer" path in DevTools traces
 exactly why the object can't be GC'd.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

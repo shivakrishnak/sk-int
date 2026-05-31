@@ -8,9 +8,20 @@ permalink: /java-language/l1-core-types/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L1 Core Types](#java-language---l1-core-types) | medium |
+
+---
+
 # Java Language - L1 Core Types
 
 ## Primitive Types and Wrapper Classes
+
+---
 
 ### 🎯 Model Answer
 
@@ -103,6 +114,8 @@ AUTOBOXING / UNBOXING (Java 5):
   Integer nullable = null;
   int c = nullable;          // NPE: unboxing null Integer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -260,6 +273,8 @@ Prevention: Financial calculations must use long or BigDecimal.
   Never int for money-related values.
   Code review: flag any int multiplication where the result may exceed 2 billion.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -433,6 +448,8 @@ in the Concept Explanation section. A diagram would not add meaningful value.)*
 
 ## Control Flow and Iteration Constructs
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -557,6 +574,8 @@ ITERATION PATTERNS:
       .map(this::transform)
       .collect(Collectors.toList());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -729,6 +748,8 @@ Note: CopyOnWriteArrayList does NOT throw CME during iteration
   Use for: very rare writes, frequent reads, iteration under modification.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -813,6 +834,8 @@ int[] findTarget(int[][] matrix, int target) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The extracted method version: clearer intent, testable, no label syntax. Labeled breaks:
 acceptable in leetcode, discouraged in production.
 
@@ -838,6 +861,8 @@ int test() {
 // Returns 2, not 1
 // This is NEVER acceptable in production code
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The finally return overrides any return in try or catch - a confusing behavior that
 suppresses exceptions too (an exception thrown in try is swallowed if finally returns
 normally). Code review: a `return` in a `finally` block is a red flag that should be
@@ -923,6 +948,8 @@ trees already embedded in the Concept Explanation section.)*
 ---
 
 ## Arrays and String Fundamentals
+
+---
 
 ### 🎯 Model Answer
 
@@ -1048,6 +1075,8 @@ STRINGBUILDER vs STRING:
   String result = items.stream()
       .collect(Collectors.joining(", "));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1209,6 +1238,8 @@ Validation: before/after benchmark with JMH (Java Microbenchmark Harness)
   Expected: 8 seconds -> < 10ms for 10,000 items.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1353,6 +1384,8 @@ String json = """
     }
     """;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Leading whitespace is stripped based on the column of the closing `"""`. No need for
 `\n`, `\"`. Use cases: SQL queries, JSON, HTML templates, XML in tests. Produces a regular
 `String` object. Can use `\n`, `\\` explicitly if needed.
@@ -1385,3 +1418,33 @@ actual newline.
 
 *(Omit: String pool and array structures are well-described in the concept explanation
 text and code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

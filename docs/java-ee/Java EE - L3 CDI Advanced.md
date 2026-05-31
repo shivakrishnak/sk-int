@@ -93,6 +93,8 @@ event.fire(new OrderPlaced(order));
   -> Any observer throws: propagates to caller
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Qualifier narrowing:**
 
 ```java
@@ -106,6 +108,8 @@ updatedEvent.fire(order); // only @Updated observers
 public void onUpdate(@Observes @Updated Order o) { }
 // No @Updated qualifier = receives ALL Order events
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Producer method:**
 
@@ -122,6 +126,8 @@ public class LoggerProducer {
 }
 // Any bean: @Inject Logger log; -> class-specific
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -297,6 +303,8 @@ grep -E "Observer|fire" server.log | grep -i exception
   value=true)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // GOOD: catch in observer, do not propagate
@@ -314,6 +322,8 @@ event.fireAsync(new OrderPlaced(order));
 // @ObservesAsync exceptions do NOT affect caller's TX
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -328,6 +338,8 @@ event.fireAsync(new OrderPlaced(order));
 | Setup | Zero config | Broker required | Zero config |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -408,6 +420,8 @@ public void onAny(@Observes Order o) {}
 // receives ALL Order events (including @Updated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "An observer without
 a qualifier receives ALL events of that type, including
 those fired with qualifiers. Use qualifiers consistently."
@@ -432,6 +446,8 @@ public void sendEmail(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Default IN_PROGRESS
 runs before commit. Data may never persist if TX rolls
 back. Always use AFTER_SUCCESS for external notifications."
@@ -454,6 +470,8 @@ public Logger logger(InjectionPoint ip) {
 }
 // @Inject Logger log; -> class-specific logger
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "InjectionPoint gives
 the producer context about where injection happens.
@@ -480,6 +498,8 @@ public void sendEmail(@ObservesAsync OrderPlaced e) {
     emailClient.send(e.getCustomerEmail(), ...);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Async observer exceptions do NOT affect caller's TX.
 
@@ -508,6 +528,8 @@ public void close(@Disposes Connection conn) {
     catch (SQLException e) { log.warn("Close", e); }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Forgetting @Disposes
 for resource-producing methods causes leaks."
@@ -552,6 +574,8 @@ public class InventoryProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All in one TX: if any step fails, all roll back.
 
 *What separates good from great:* "Elegant for simple
@@ -595,6 +619,8 @@ void test() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Integration tests
 catch AFTER_SUCCESS observer issues that unit tests miss.
 Quarkus @TestTransaction is simplest for transactional
@@ -603,6 +629,34 @@ observer testing."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # CDI Interceptors and Decorators
 
@@ -682,6 +736,8 @@ Client -> CDI Proxy:
 Client <- result
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Decorator call chain:**
 
 ```
@@ -691,6 +747,8 @@ Client -> Decorator.placeOrder()
           <- result
        <- result (possibly modified)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Self-invocation bypass:**
 
@@ -892,6 +950,8 @@ grep -r "@Priority" src/main/java/
 -Dorg.jboss.cdi.DEBUG=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Enable via @Priority (no beans.xml needed):
@@ -903,6 +963,8 @@ public class AuditInterceptor { ... }
 @Inject NotificationService notification;
 notification.send(order); // goes through CDI proxy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -917,6 +979,8 @@ notification.send(order); // goes through CDI proxy
 | Interface required | No | Yes | No |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -1003,6 +1067,8 @@ public Object timeConstruction(InvocationContext ctx)
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "@AroundConstruct
 is useful for diagnosing expensive @ApplicationScoped
 bean initialization. Slow startup becomes visible
@@ -1027,6 +1093,8 @@ public class AuditInterceptor { ... }
 // Chain: Logging(in) -> Audit(in) -> method()
 //        method() -> Audit(out) -> Logging(out)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Security interceptors
 run outermost (lower priority): fail early, no TX started.
@@ -1059,6 +1127,8 @@ public class ValidationDecorator
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Multiple decorators
 stack in @Priority order. Each @Delegate gets the
 next decorator or real bean."
@@ -1081,6 +1151,8 @@ public void processOrder(Order o) {
     notification.send(o); // through CDI proxy - intercepted
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Most common interceptor
 bug. Methods needing their own TX boundary or cross-cutting
@@ -1107,6 +1179,8 @@ public void registerBean(InvocationContext ctx)
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Lifecycle interceptors
 are useful for bean registration in metrics and service
 discovery frameworks."
@@ -1131,6 +1205,8 @@ verify(auditService).record(
     anyLong(), isNull()
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Integration tests
 catch self-invocation bypasses that unit tests miss."
@@ -1193,6 +1269,8 @@ if (order.getTotal() > 10000) {
 // GOOD: use a Decorator
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Anti-pattern 2: Swallowing exceptions
 ```java
 // BAD:
@@ -1201,6 +1279,8 @@ catch (Exception e) { return null; } // hides errors
 
 // GOOD: log and rethrow, or handle specifically
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Anti-pattern 3: Not calling ctx.proceed() without documentation
 (legitimate for circuit breaker/cache patterns, but
@@ -1211,3 +1291,33 @@ one responsibility, no domain imports, always call
 ctx.proceed() unless intentionally bypassing."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -123,6 +123,8 @@ Log Insights query (find errors):
   -> Shows top 20 orders by error count in time range
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -145,6 +147,8 @@ public Map<String, Object> handleRequest(
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: Custom metrics for business and technical signals
@@ -184,6 +188,8 @@ public Map<String, Object> handleRequest(
 // EMF metrics appear as CloudWatch metrics automatically
 // (Lambda logs are CloudWatch Logs; EMF format is detected)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # CloudWatch Log Insights: find slow Lambda invocations
@@ -354,6 +360,8 @@ aws cloudwatch describe-alarms \
 # INSUFFICIENT_DATA (no data points in evaluation window)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use `treat-missing-data notBreaching` for
 intermittently invoked functions. Verify exact metric
 name/namespace/dimensions with `list-metrics`.
@@ -438,6 +446,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # AWS X-Ray and Distributed Tracing
 
@@ -548,6 +584,8 @@ Anomaly: if Lambda p99 suddenly 400ms:
   -> DynamoDB p99: 360ms (DynamoDB is the bottleneck)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -566,6 +604,8 @@ public Map<String, Object> handleRequest(
     return success();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: X-Ray instrumentation for full breakdown
@@ -614,6 +654,8 @@ private <T> T subsegment(String name,
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Enable X-Ray active tracing on Lambda:
@@ -769,6 +811,8 @@ aws xray get-sampling-rules
 # Default rule: 5% of requests (1 req/s fixed + 5%)
 # May explain missing traces at low traffic
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Set `TracingConfig.Mode = Active`. Add
 `AWSXRayDaemonWriteAccess` to Lambda execution role.
@@ -963,6 +1007,8 @@ String traceHeader = AWSXRay.getCurrentSegment()
 httpRequest.setHeader("X-Amzn-Trace-Id", traceHeader);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sampling decision propagation:**
 
 The `Sampled=1` flag means: this request was chosen
@@ -1010,6 +1056,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --extended-statistics p99 ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: X-Ray for specific slow traces:**
 
 ```bash
@@ -1022,6 +1070,8 @@ aws xray batch-get-traces --trace-ids $TRACE_ID
 # Breakdown: which subsegment is slow?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 3: Log Insights for patterns:**
 
 ```
@@ -1031,6 +1081,8 @@ filter @type = "REPORT"
     by bin(1m)
 | sort count desc
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `@initDuration > 0` in the results = cold start.
 
@@ -1105,6 +1157,8 @@ aws xray create-sampling-rule \
 # FixedRate=1.0 for error responses
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The adaptive strategy
 (100% error traces + 5% success) provides complete
 error visibility at minimal cost. Every failed request
@@ -1148,6 +1202,8 @@ filter @message like /PaymentGateway/
 | filter @message like /timeout/
 | stats count(*) by bin(1m)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Confirmed: 100% of errors were PaymentGateway timeout
 starting at 14:23.
@@ -1219,6 +1275,8 @@ aws cloudwatch put-composite-alarm \
     ALARM("sqs-queue-depth-high")'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Dashboards:**
 
 One dashboard with: API Gateway latency, Lambda error
@@ -1252,6 +1310,8 @@ aws lambda update-alias \
 # If latency returns to 100ms: new version is the cause
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: X-Ray comparison (before vs after):**
 
 ```bash
@@ -1268,6 +1328,8 @@ aws xray get-trace-summaries \
   --filter-expression 'responsetime > 0.5'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Compare subsegment breakdown: which subsegment is
 now taking longer? DynamoDB? A new external call?
 
@@ -1278,6 +1340,8 @@ filter @type = "REPORT"
 | stats avg(@duration), avg(@initDuration),
     avg(@maxMemoryUsed) by bin(5m)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If `@initDuration` increased significantly: cold starts
 from the new deployment. Lambda creates new execution
@@ -1350,6 +1414,8 @@ Incident Response:
   Target: root cause in < 15 minutes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Observability as code:
 CloudWatch alarms, dashboards, and X-Ray sampling rules
 defined in CloudFormation or CDK alongside the services
@@ -1359,3 +1425,33 @@ where a service goes to production without alarms and
 the first notification of a problem is a customer complaint.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

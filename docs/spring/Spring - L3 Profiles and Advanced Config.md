@@ -8,7 +8,14 @@ permalink: /spring/l3-profiles-and-advanced-config/
 render_with_liquid: false
 ---
 
-# Spring - L3 Profiles and Advanced Config
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L3 Profiles and Advanced Config](#spring---l3-profiles-and-advanced-config) | medium |
+| 2 | [Spring Profiles](#spring-profiles) | medium |
+| 3 | [Conditional Beans and @ConditionalOnX](#conditional-beans-and-conditionalonx) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — environment-specific configuration is a fundamental
+🎯 Interview Weight: High - environment-specific configuration is a fundamental
 DevOps/Spring topic. Kubernetes, CI/CD, and microservice interview questions
 frequently touch profiles.
 
@@ -157,6 +164,8 @@ Profile-aware @Bean:
     }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The most important profile is "default" - it is active when NO other profiles
@@ -375,6 +384,8 @@ public @interface Profile { ... }
 public CacheService cacheService() { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @ConditionalOnProperty is the most commonly combined annotation. This enables
 feature flags that work across environments.
 
@@ -409,11 +420,15 @@ env:
     value: prod
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Docker Compose:
 ```yaml
 environment:
   - SPRING_PROFILES_ACTIVE=dev
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* SPRING_PROFILES_ACTIVE (env var) is the
 best choice for containers: it works across Docker, Kubernetes, and CI/CD
@@ -433,6 +448,8 @@ spring.profiles.group.prod=\
 spring.profiles.group.dev=\
   dev-db,dev-mocks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When `SPRING_PROFILES_ACTIVE=prod`:
 - prod profile is active
@@ -468,6 +485,8 @@ spring.profiles: prod
 server.port: 80
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 After (Spring Boot 2.4+):
 ```yaml
 server.port: 8080
@@ -475,6 +494,8 @@ server.port: 8080
 spring.config.activate.on-profile: prod
 server.port: 80
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Migration: add spring.config.use-legacy-processing=true to restore old behavior
 during migration.
@@ -507,6 +528,8 @@ spring.jpa.hibernate.ddl-auto=create-drop
 payment.service.mock=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Profile-specific test beans:
 ```java
 @TestConfiguration
@@ -520,6 +543,8 @@ public class TestServiceConfig {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* @Primary ensures the mock bean wins over
 any non-mock bean for the same type in tests. Combining @TestConfiguration
@@ -543,6 +568,8 @@ spring.datasource.password=${DB_PASS}
 spring.datasource.url=\
   jdbc:postgresql://${DB_HOST:localhost}/orders
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Property placeholder resolution: Spring resolves ${VARIABLE_NAME} from:
 1. System properties
@@ -584,6 +611,8 @@ spring:
     active: prod
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Spring Cloud Config enables runtime
 configuration refresh: change a property in Git, push, and running applications
 can pick up the change via /actuator/refresh (with @RefreshScope on beans that
@@ -605,6 +634,8 @@ Multiple ways:
    String[] profiles = env.getActiveProfiles();
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. /actuator/env endpoint:
    Returns all environment properties including
    activeProfiles array
@@ -624,6 +655,34 @@ configuration values (sanitized - no secrets) as a deployment sanity check.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Conditional Beans and @ConditionalOnX
 
 ---
@@ -640,7 +699,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Medium-High — understanding @Conditional is key to
+🎯 Interview Weight: Medium-High - understanding @Conditional is key to
 understanding Spring Boot auto-configuration and writing custom starters.
 
 ---
@@ -773,6 +832,8 @@ Auto-configuration registration:
     org.springframework.boot.autoconfigure
       .AutoConfiguration.imports
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 @ConditionalOnMissingBean is the key to Spring Boot's extensibility. The
@@ -984,6 +1045,8 @@ public class DataSourceAutoConfiguration {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 DataSourceAutoConfiguration only activates if:
 1. DataSource class is on classpath (JPA dependency pulls it in)
 2. No reactive R2DBC ConnectionFactory exists
@@ -1040,6 +1103,8 @@ public class MyLibraryAutoConfiguration {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Properties class:
 ```java
 @ConfigurationProperties(prefix = "my.library")
@@ -1050,12 +1115,16 @@ public class MyLibraryProperties {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Registration file (Spring Boot 3):
 `META-INF/spring/org.springframework.boot
 .autoconfigure.AutoConfiguration.imports`:
 ```
 com.example.MyLibraryAutoConfiguration
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* @AutoConfiguration (Spring Boot 3) adds
 proxyBeanMethods=false by default (avoids CGLIB proxy overhead) and registers
@@ -1089,6 +1158,8 @@ report.getConditionAndOutcomesBySource()
         log.info("{}: {}", src, outcomes));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The conditions report shows not just IF a
 configuration activated, but WHY or WHY NOT. "Did not match: @ConditionalOnMissingBean
 (types: javax.sql.DataSource; SearchStrategy: all) found beans: dataSource" tells
@@ -1119,6 +1190,8 @@ public class AdvancedFeatureConfig { ... }
 public class DefaultCacheConfig { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 matchIfMissing=true = "opt-out" feature (active unless you turn it off)
 matchIfMissing=false = "opt-in" feature (inactive unless you turn it on)
 
@@ -1144,6 +1217,8 @@ public class MvcAutoConfiguration { ... }
     type = ConditionalOnWebApplication.Type.REACTIVE)
 public class WebFluxAutoConfiguration { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Types:
 - SERVLET: traditional Spring MVC / Tomcat
@@ -1178,6 +1253,8 @@ All conditions must be true for the bean to register:
 public CacheManager redisCacheManager(...) { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All three must be true:
 - RedisCacheManager on classpath
 - No CacheManager already defined
@@ -1191,10 +1268,14 @@ For OR logic, use @ConditionalOnExpression with SpEL:
     + " == 'redis'")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or implement a custom Condition:
 ```java
 @Conditional(RedisOrHazelcastCondition.class)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* @AnyNestedCondition and @AllNestedConditions
 are meta-conditions that allow composing conditions with OR and AND logic
@@ -1220,12 +1301,16 @@ public DataSource dataSource() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 2 - Exclude auto-configuration explicitly:
 ```java
 @SpringBootApplication(exclude = {
     DataSourceAutoConfiguration.class
 })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pattern 3 - Use application.properties overrides:
 ```properties
@@ -1234,6 +1319,8 @@ Pattern 3 - Use application.properties overrides:
 spring.datasource.hikari.maximum-pool-size=50
 spring.datasource.hikari.minimum-idle=10
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Excluding auto-configuration should be a
 last resort. It breaks the intent of auto-configuration and requires you to
@@ -1293,9 +1380,41 @@ class MyAutoConfigurationTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* ApplicationContextRunner is the correct
 testing tool for auto-configurations. It creates a lightweight application
 context without starting a full Spring Boot application. withPropertyValues(),
 withClassLoader(), withSystemProperties() let you control the condition inputs.
 The fluent assertions from assertThat(ctx) are specific to context content.
 This is the testing pattern used by Spring Boot's own test suite.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

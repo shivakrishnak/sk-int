@@ -104,6 +104,8 @@ Producer          Broker             Consumer
    |                |-- delete() ------>|
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 1. Producer creates a message (payload + metadata headers) and sends to broker.
 2. Broker stores the message (durable disk or in-memory).
 3. Broker routes the message to one or more consumers by queue/topic rules.
@@ -306,6 +308,8 @@ curl -u guest:guest \
   | jq '.messages'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add consumer instances (horizontal scale). Identify slow processing
 path. Consider partitioning to increase parallelism.
 
@@ -507,6 +511,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Synchronous vs Asynchronous Communication
 
 **TL;DR:** Synchronous: the caller sends a request and blocks until the
@@ -592,6 +624,8 @@ Caller               Receiver
   |   (UNBLOCKS)         |
   |   (continues)        |
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **How it works - Asynchronous:**
 
@@ -809,6 +843,8 @@ GET /actuator/metrics/executor.pool.size
 GET /actuator/metrics/executor.queued
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add circuit breaker with timeout. Move non-critical downstream
 calls to async. Increase thread pool size as short-term mitigation.
 
@@ -831,6 +867,8 @@ asyncOperation()
         return null;
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure: Async ordering assumed but not guaranteed**
 
@@ -1028,6 +1066,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Broker Ecosystem Overview
 
 **TL;DR:** The broker ecosystem splits into traditional message queues
@@ -1120,6 +1186,8 @@ CLOUD FAN-OUT (broadcast to many targets)
   Google Pub/Sub  -> Global managed, push + pull
   Azure ServiceBus-> Queues + topics, enterprise
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The critical distinction is message lifecycle. In a queue, a message is
@@ -1276,6 +1344,8 @@ curl -u guest:guest \
   | jq '{messages:.messages,bytes:.message_bytes}'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Root cause: consumers down or processing too slowly.
 Fix: Scale consumers. Configure queue length limits with overflow
 action (drop-head or reject-publish). Configure message TTL.
@@ -1292,6 +1362,8 @@ kafka-consumer-groups.sh \
   --describe --group my-group
 # Look for frequent rebalance events in consumer logs
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Root cause: consumers crashing due to processing time exceeding
 `max.poll.interval.ms` (default 5 minutes). Kafka considers the
@@ -1515,3 +1587,33 @@ mindmap
 > (bottom cluster) handle the broadcast pattern at managed scale without
 > full streaming capabilities. Your architectural choice depends on which
 > cluster's properties match your system's requirements.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

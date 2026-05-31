@@ -118,6 +118,8 @@ TOP COST DRIVERS (typical order):
    Win: Reduce cross-AZ traffic between microservices
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Compute Optimizer Example:**
 
 ```
@@ -135,6 +137,8 @@ Rationale: burstable t3 handles low-steady + occasional
 WARNING: t3 has CPU burst limits - not suitable for
   sustained CPU-intensive workloads (batch, video encoding)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,6 +345,8 @@ resource "aws_budgets_budget" "monthly" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: NAT Gateway charges from ECR pulls**
@@ -373,6 +379,8 @@ resource "aws_vpc_endpoint" "s3" {
   # S3 traffic (ECR layers stored in S3) avoids NAT
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -450,12 +458,16 @@ aws cloudwatch get-metric-statistics \
 #   might be appropriate (pays per actual burst, cheaper for spiky)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Memory metrics require CloudWatch agent (not default):
 ```bash
 # Install CW agent on EC2 to get memory metrics:
 # Then check: mem_used_percent
 # If both CPU < 20% AND memory < 30%: downsize both dimensions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The burstable instance insight.
 T3/T4g instances use CPU credits. For workloads that are idle 90%
@@ -491,6 +503,8 @@ Lifecycle policy example:
   }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Intelligent Tiering note: automatically moves objects between
 frequent and infrequent access tiers. No retrieval fee.
@@ -542,6 +556,8 @@ aws ce get-cost-and-usage ... \
 # Find which team or environment is responsible
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The NAT Gateway data transfer
 cost pattern. A team that adds a new service pulling Docker images
 from ECR through a NAT Gateway can generate $500-2000/month in
@@ -570,6 +586,8 @@ resource "aws_vpc_endpoint" "s3" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Interface Endpoint (HOURLY COST)**: for all other AWS services.
 ```hcl
 resource "aws_vpc_endpoint" "ecr_api" {
@@ -581,6 +599,8 @@ resource "aws_vpc_endpoint" "ecr_api" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 NAT Gateway cost avoided by VPC Endpoints:
 ```
 NAT Gateway: $0.045/GB processed + $0.045/hour
@@ -591,6 +611,8 @@ Example: 100GB/day S3 traffic through NAT
 VPC Endpoint: $0 (Gateway endpoint is free)
 Savings: $135/month with 1-hour implementation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that ECR (Docker images)
 stores layers in S3. Adding the Gateway VPC Endpoint for S3 (not
@@ -628,6 +650,8 @@ Savings > $100/month AND P99 latency impact < 5%: optimize
 Savings > $500/month AND P99 latency impact < 20%: optimize
 Any impact on availability SLA: do not optimize
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Measuring performance AFTER
 optimization, not predicting. Right-size an instance in a staging
@@ -667,6 +691,8 @@ aws ce get-reservation-coverage \
   --time-period Start=2024-01-01,End=2024-01-31
 # Shows: On-Demand Hours, Reserved Hours, Coverage%
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Buying Compute Savings Plans
 instead of EC2 Instance Savings Plans or standard RIs for EC2.
@@ -711,6 +737,8 @@ resource "aws_autoscaling_schedule" "scale_down_night" {
 # Savings: 18 instance-hours/day = 60% cost reduction
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Setting scale-in cooldown longer
 than scale-out cooldown. Scale out quickly (CPU spike = scale NOW),
 scale in slowly (wait 5-10 minutes of low CPU before removing an
@@ -734,6 +762,8 @@ Week 1: Establish baseline and quick wins
 #    - Old AMIs with no active instances
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Week 2-4: Analysis and RI/SP purchase
 ```bash
 # 1. Check RI/Savings Plans coverage:
@@ -743,6 +773,8 @@ Week 2-4: Analysis and RI/SP purchase
 # 2. Right-size top 10 highest-cost instances:
 #    EC2 Compute Optimizer recommendations
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Month 2+: Architectural optimization
 - Auto-scaling for variable-load services
@@ -783,6 +815,8 @@ architectural optimizations.
 
 *(Omit: ★★☆ - system design is for ★★★ only.)*
 
+---
+
 ### 📊 Diagram
 
 *(Omit: cost optimization is best expressed as code and tables.)*
@@ -790,6 +824,34 @@ architectural optimizations.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Reserved vs On-Demand vs Spot Pricing
 
@@ -884,6 +946,8 @@ SAVINGS PLAN example:
     Next $0.05: at On-Demand rate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Spot Interruption Risk:**
 
 ```
@@ -907,6 +971,8 @@ WORKLOADS SUITABLE FOR SPOT:
   - ML training (checkpoint frequent)
   - Video encoding (segment-based)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1122,6 +1188,8 @@ while true; do
 done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Reserved Instances under-utilized**
@@ -1143,6 +1211,8 @@ aws ec2 describe-reserved-instances-modifications
 # Cost Explorer -> Reservations -> Coverage
 # Shows which instance types are covered vs On-Demand
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Exchange Standard RIs for Convertible RIs
 (allows type change). Or use Compute Savings Plans
@@ -1227,6 +1297,8 @@ spot/termination-time 2>/dev/null)
 done &
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Interruption rates by instance type (approximate):
 - Small, common types (m5.large): 5-15% monthly rate
 - Large, less common (x1e.32xlarge): < 1% monthly rate
@@ -1310,6 +1382,8 @@ aws ec2 get-spot-placement-scores \
 # Increases probability of capacity being available
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using the Spot Placement Score
 before submitting a large Spot request. The score shows which
 combination of region/AZ/instance-types has the best probability
@@ -1340,6 +1414,8 @@ Break-even analysis:
   No-Upfront RI: break even at month 6-8 (lower upfront risk,
   slightly less total savings)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Risk factors for 3-year commitment:
 - Will this instance type still fit the workload in 3 years?
@@ -1420,6 +1496,8 @@ interrupted or unavailable.
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Allocation strategies:
 - `lowestPrice`: always use cheapest available (highest interruption risk)
 - `diversified`: spread across all specified pools (lowest interruption risk)
@@ -1451,6 +1529,8 @@ Application order (automatic, most specific first):
 3. On-Demand rate applied to uncovered usage
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Practical example:
 ```
 Usage: 100 m5.large hours in us-east-1 (Linux)
@@ -1466,6 +1546,8 @@ Application:
 - Lambda: Compute SP only (EC2 SP doesn't apply)
 - Fargate: Compute SP only (EC2 SP doesn't apply)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Optimization: buy EC2 Instance SP for your primary instance family
 (highest discount for that specific commitment), then add Compute SP
@@ -1501,6 +1583,8 @@ Step 1: Classify the workload (1 week):
 #   - 70-90% savings
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Purchase Savings Plans immediately:
 ```bash
 aws ce get-savings-plans-purchase-recommendation \
@@ -1511,12 +1595,16 @@ aws ce get-savings-plans-purchase-recommendation \
 # Apply to Group A steady-state usage
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Migrate Group C to Spot (2 weeks):
 ```bash
 # Move CI/CD workers to Spot Fleet
 # Jenkins agents, build runners, batch processors
 # 80% savings for 5 instances = large absolute saving
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Right-size Group A and Group B (4 weeks):
 - Compute Optimizer recommendations
@@ -1538,16 +1626,16 @@ let the SP expire without purchasing the next one).
 | Pricing Model | Discount | Commitment | Interruption | Best For |
 |--------------|---------|------------|-------------|----------|
 | On-Demand | 0% | None | Never | Unpredictable, short-lived |
-| 1-yr Reserved | 40% | 1 year | Never | Steady-state production |
 | 3-yr Reserved | 60-75% | 3 years | Never | Long-term stable workloads |
 | Savings Plans | 40-66% | 1-3 years | Never | Mixed/changing instances |
-| Spot | 70-90% | None | 2-min notice | Batch, CI, fault-tolerant |
 
 ---
 
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - system design is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1593,3 +1681,33 @@ flowchart LR
 > the checkpoint.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

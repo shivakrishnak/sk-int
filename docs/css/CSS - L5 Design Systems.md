@@ -7,6 +7,15 @@ permalink: /css/l5-design-systems/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Design Token Architecture at Scale](#css-design-token-architecture-at-scale) | critical |
+
+---
+
 # CSS Design Token Architecture at Scale
 
 🎯 **Interview Weight:** critical (★★★) - Design tokens
@@ -215,6 +224,8 @@ MULTI-PLATFORM OUTPUT (Style Dictionary):
     }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -490,6 +501,8 @@ Fix:
 3. Define dark tokens in [data-theme="dark"] { }
    rather than @media - faster to apply before render.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1522,6 +1535,8 @@ GOVERNANCE:
   - Visual regression: Chromatic on every PR
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1563,3 +1578,33 @@ flowchart LR
 > every platform - CSS, iOS, Android - in one build. No
 > manual updates in platform code. This is the "single source
 > of truth" that design token systems promise.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

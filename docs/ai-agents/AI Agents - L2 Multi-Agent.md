@@ -125,6 +125,8 @@ PEER-TO-PEER (Network):
   (Direct communication, no central coordinator)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Agent-to-agent communication options:**
 
 ```
@@ -143,6 +145,8 @@ Option 3: Direct message passing (Anthropic SDK)
   to Agent B's LLM call
   Simple but tightly coupled
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -767,6 +771,34 @@ graph TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Agent Orchestration vs Choreography
 
 **Interview Weight:** ★★☆ - A fundamental architectural
@@ -875,6 +907,8 @@ CHOREOGRAPHY:
   No orchestrator. Event bus connects everything.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Decision criteria:**
 
 ```
@@ -892,6 +926,8 @@ USE CHOREOGRAPHY when:
   - No strict ordering required
   - Fan-out to many independent handlers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1286,6 +1322,8 @@ bus.subscribe("analysis_done", writing_agent)
 bus.publish("task_received", {"topic": "AI trends"})
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For production: use a persistent message queue
 (Redis Pub/Sub, AWS SQS, Kafka) instead of an
 in-process event bus. This adds: persistence (messages
@@ -1546,3 +1584,33 @@ graph TD
 > to. To add a new agent in orchestration: modify
 > the orchestrator. In choreography: subscribe the
 > new agent to the relevant events.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

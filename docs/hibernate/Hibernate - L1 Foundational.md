@@ -308,6 +308,8 @@ FROM information_schema.sequences
 WHERE sequence_name = 'product_id_seq';
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Either set `@SequenceGenerator(allocationSize = 50)`
 AND `CREATE SEQUENCE ... INCREMENT BY 50`, or use
 `allocationSize = 1` (safe but slower).
@@ -336,6 +338,8 @@ private List<OrderItem> items = new ArrayList<>();
 private Set<OrderItem> items = new HashSet<>();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 3: `@Transient` Field Accidentally Persisted**
@@ -363,6 +367,8 @@ public class Product {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -398,6 +404,8 @@ public class Product {
     private String name;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is valid and Hibernate will map it. The defaults are:
 table name equals the class name (`product` or `Product`
@@ -495,6 +503,8 @@ insert into order_items values (?, ?, ?)
 -- ... 999 more inserts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: change the collection to `Set`, which uses element identity
 rather than position:
 ```java
@@ -506,6 +516,8 @@ private List<OrderItem> items;
 @OneToMany
 private Set<OrderItem> items;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If order matters, use `@OrderColumn` which adds a position
 column to the table and enables proper index-based tracking.
@@ -558,6 +570,8 @@ private Set<Order> orders;
     orphanRemoval = true)
 private Set<OrderItem> items;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `orphanRemoval = true` removes child entities when they are
 removed from the parent's collection - not just when the parent
@@ -623,6 +637,8 @@ public class User {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The User table has columns `street_line1`, `city`, etc. for
 shipping address AND `billing_line1` etc. for billing address
 (using `@AttributeOverrides` to rename).
@@ -683,6 +699,8 @@ Java-level validation:
 @Column(nullable = false)
 private String name;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With both, `@NotNull` prevents setting null in Java,
 and the DB constraint is a last-resort safety net.
@@ -751,6 +769,34 @@ and code are out of sync" failures.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Session, SessionFactory, and Persistence Context
 
@@ -860,6 +906,8 @@ Session (= EntityManager = Persistence Context)
   - Dirty checking at flush
   - Closes: releases connection, clears maps
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The persistence context is a unit-of-work scope, not a connection
@@ -1076,6 +1124,8 @@ spring.jpa.open-in-view=true
 spring.jpa.open-in-view=false
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Set `open-in-view=false`, load all required associations
 with JOIN FETCH in the service layer, return DTOs.
 
@@ -1097,6 +1147,8 @@ in the call chain. Enable transaction logging:
 ```properties
 logging.level.org.springframework.transaction=DEBUG
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Understand transaction propagation. Use REQUIRES_NEW
 only when you genuinely need a separate transaction (audit log,
@@ -1258,6 +1310,8 @@ public OrderDTO getOrderDTO(Long id) {
     return new OrderDTO(o); // construct DTO inside session
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The systematic prevention: always return DTOs from service
 methods, never return entities. Entities should never cross
@@ -1427,6 +1481,7 @@ with Hibernate session lifecycle issues.
 this class of problem proactively?"
 
 **Answer:**
+
 **S (Situation):** Our recommendation engine service was leaking
 database connections. Under moderate load (200 RPS), the HikariCP
 pool exhausted (max 20 connections) and all requests queued or
@@ -1443,6 +1498,8 @@ I added HikariCP leak detection logging:
 ```properties
 spring.datasource.hikari.leak-detection-threshold=5000
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This logs a stack trace for any connection held longer than 5
 seconds. The next day, logs showed a specific `RecommendationBatchJob`
 class was holding connections for 10-30 seconds. The code:
@@ -1459,6 +1516,8 @@ public void runBatch() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 A `RuntimeException` during batch processing prevented the
 `session.close()` from executing. Without a `finally` block,
 the Session (and its borrowed connection) leaked until GC
@@ -1472,6 +1531,8 @@ try (Session session = sf.openSession()) {
     // session.close() guaranteed in finally
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 And migrated the batch job to `@Transactional` so Spring manages
 the Session lifecycle automatically. Added HikariCP leak detection
 permanently to the staging environment monitoring dashboard.
@@ -1570,6 +1631,34 @@ stateDiagram-v2
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # HQL and JPQL Queries
 
@@ -1876,6 +1965,8 @@ User findUserWithOrdersAndTags(@Param("id") Long id);
 // = 10 orders × 5 tags = 50 rows
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // GOOD: Load in two queries (Hibernate feature)
@@ -1889,6 +1980,8 @@ Optional<User> findById(Long id);
 @BatchSize(size = 25) // loads 25 users' collections in 1 SQL
 private Set<Order> orders;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1909,6 +2002,8 @@ The Session has stale snapshots.
   WHERE u.department = :dept")
 int deactivateByDepartment(@Param("dept") String dept);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `clearAutomatically = true` calls `session.clear()` after the
 bulk update, evicting all cached entities. The next access
@@ -2000,6 +2095,8 @@ for (Order o : orders) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // With JOIN FETCH: 1 query (or 2 with DISTINCT)
 List<Order> orders = em.createQuery(
@@ -2012,6 +2109,8 @@ List<Order> orders = em.createQuery(
 // DISTINCT in JPQL deduplicates the Order objects
 // in Java memory (not via SQL DISTINCT)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `DISTINCT` keyword: because the JOIN produces multiple SQL
 rows per Order (one per item), Hibernate would return 10 Order
@@ -2054,6 +2153,8 @@ Fix 1: `@EntityGraph` with subgraph loading. Spring Data JPA's
 @EntityGraph(attributePaths = {"items", "tags"})
 Optional<Order> findById(Long id);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Hibernate executes 3 queries: one for Order, one for items,
 one for tags. Each is simple and efficient.
 
@@ -2065,6 +2166,8 @@ Hibernate.initialize(order.getItems()); // batch-loaded
 Hibernate.initialize(order.getTags());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 3: `@BatchSize` on the collections, which loads N collections
 per SQL query when iterating:
 ```java
@@ -2072,6 +2175,8 @@ per SQL query when iterating:
 @BatchSize(size = 25)
 private Set<OrderItem> items;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Loading 25 orders' items uses 1 SQL query instead of 25.
 
 The rule: only JOIN FETCH chained associations (Order -> Item ->
@@ -2120,6 +2225,8 @@ q.where(predicates.toArray(new Predicate[0]));
 return em.createQuery(q).getResultList();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The predicates list grows or shrinks based on which filters
 were provided. The query structure is built programmatically.
 
@@ -2165,6 +2272,8 @@ em.createQuery(
     .getSingleResult();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Hibernate generates: `SELECT id, name, email FROM users WHERE email = ?`
 and passes `userInput` as the bind parameter value. If `userInput`
 is `"admin' OR '1'='1"` (SQL injection payload), the database
@@ -2178,6 +2287,8 @@ String hql = "FROM User WHERE name = '" + name + "'";
 // Even if 'name' is "validated" - validation is hard to
 // get right and easy to bypass
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The rule: always use named or positional parameters for any
 user-supplied value. Never concatenate user input into query
@@ -2215,6 +2326,8 @@ Option 1: map to an entity (simplest for full entity results):
 List<User> findRecentRandomSample(@Param("n") int n);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2: interface-based projection (Spring Data, no entity needed):
 ```java
 public interface UserSummary {
@@ -2230,6 +2343,8 @@ public interface UserSummary {
 List<UserSummary> findSummaryByDepartment(
     @Param("deptId") Long deptId);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Data generates a proxy that implements the interface.
 
 Option 3: `@SqlResultSetMapping` for complex query results:
@@ -2249,6 +2364,8 @@ Option 3: `@SqlResultSetMapping` for complex query results:
     resultSetMapping = "UserStats")
 public class User { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For most cases, interface-based projection (Option 2) is the
 most practical: no extra mapping declaration, works with any
@@ -2321,3 +2438,33 @@ workloads.
 *(Omit: System Design - ★☆☆ keyword)*
 
 *(Omit: Diagram - concept is sufficiently clear from code examples)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

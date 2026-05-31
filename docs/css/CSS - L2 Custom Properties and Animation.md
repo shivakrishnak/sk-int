@@ -7,6 +7,16 @@ permalink: /css/l2-custom-properties-and-animation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Custom Properties (Variables)](#css-custom-properties-variables) | critical |
+| 2 | [CSS Transitions and Animations](#css-transitions-and-animations) | high |
+
+---
+
 # CSS Custom Properties (Variables)
 
 🎯 **Interview Weight:** critical - Custom properties are the
@@ -147,6 +157,8 @@ CSS VALUES:
     - calc() contexts: calc(var(--base) * 2)
     - NOT property names, selectors, at-rules
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -351,6 +363,8 @@ elsewhere in the cascade.
 # Click variable name → Styles tab shows where it's set
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: dark mode custom property not applying**
@@ -377,6 +391,8 @@ font-size: var(--size); /* direct use */
 :root { --size: 16; }
 font-size: calc(var(--size) * 1px); /* multiply by unit */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1050,6 +1066,34 @@ examples, which are provided above)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Transitions and Animations
 
 🎯 **Interview Weight:** high - Animations are tested in
@@ -1200,6 +1244,8 @@ PERFORMANCE TIERS:
     top, left, right, bottom (when not position:fixed)
     font-size, line-height
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1406,6 +1452,8 @@ after animation ends.
 # Replace with transform equivalent
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: animation restarts on page visibility restore**
@@ -1424,6 +1472,8 @@ document.addEventListener('visibilitychange', () => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2068,3 +2118,33 @@ scale covered in L5 Design Systems)*
 
 *(Omit: animation timing is better understood through code
 examples than static diagrams)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

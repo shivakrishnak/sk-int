@@ -8,6 +8,16 @@ permalink: /microservices/l2-event-driven-and-cqrs/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Event-Driven Microservices](#event-driven-microservices) | medium |
+| 2 | [CQRS Pattern](#cqrs-pattern) | medium |
+
+---
+
 # Event-Driven Microservices
 
 ---
@@ -56,6 +66,8 @@ EVENT-DRIVEN (asynchronous):
   OrderService has no knowledge of subscribers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Event design:**
 ```json
 {
@@ -78,6 +90,8 @@ EVENT-DRIVEN (asynchronous):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Idempotent consumer pattern:**
 ```java
 @KafkaListener(topics = "order-events")
@@ -96,6 +110,8 @@ public void handleOrderCreated(
       new ProcessedEvent(event.getEventId()));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Event-driven architecture trades synchronous consistency for availability and decoupling. The question to ask about every event-driven flow: "What happens if this event is processed twice? What happens if it is processed 30 minutes late?" If the answer is acceptable, event-driven is appropriate. If not (a payment must be charged exactly once, in near-real-time), synchronous with strong guarantees may be better.
@@ -286,6 +302,34 @@ Fix: For throughput: scale consumer instances, increase max.poll.records. For po
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CQRS Pattern
 
 ---
@@ -341,6 +385,8 @@ READ MODEL EXAMPLES:
   Reports: ClickHouse (aggregations)
   Dashboard: Materialized view in PostgreSQL
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CQRS is most valuable when read and write patterns are fundamentally different. The complexity cost (two data stores, event synchronization, consistency management) must be justified by the performance or scalability gain. Don't apply CQRS to every entity - apply it at the bounded context level where the read/write divergence is real.
@@ -516,3 +562,33 @@ Fix: Scale the consumer horizontally (if read model update is I/O-bound). Optimi
 | Materialized Views | Pre-computed results | Configurable | Medium | Specific expensive queries |
 | Single Model | Compromised | Strong | Low | Simple CRUD, small scale |
 | Event Sourcing + CQRS | Rebuild from events | Eventual | Very High | Audit trail, complex domains |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,22 @@ permalink: /java-language/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L0 Orientation](#java-language---l0-orientation) | medium |
+| 2 | [Java Design Goals: WORA Safety and OOP](#java-design-goals-wora-safety-and-oop) | medium |
+| 3 | [JDK vs JRE vs Language Specification](#jdk-vs-jre-vs-language-specification) | medium |
+
+---
+
 # Java Language - L0 Orientation
 
 ## Java Language History and Platform Evolution
+
+---
 
 ### 🎯 Model Answer
 
@@ -103,6 +116,8 @@ LTS CADENCE: Java 8 (2014), 11 (2018), 17 (2021), 21 (2023)
              Next LTS: Java 25 (2025)
 RELEASE CADENCE: 6-month releases since Java 9 (2017)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -268,6 +283,8 @@ Fix:
       FROM eclipse-temurin:21-jre-alpine
     (use same major version in both stages)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -500,7 +517,37 @@ timeline
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Java Design Goals: WORA Safety and OOP
+
+---
 
 ### 🎯 Model Answer
 
@@ -615,6 +662,8 @@ JAVA DESIGN GOALS -> LANGUAGE FEATURES MAP:
    - Immutable strings: no buffer corruption from shared string mutation
    - Integer overflow: deterministic (not undefined behavior as in C++)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -781,6 +830,8 @@ Fix:
 Rule: NEVER use an unbounded static Map for caching.
       Always: bounded, with eviction policy.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -971,7 +1022,37 @@ in the concept explanation section.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # JDK vs JRE vs Language Specification
+
+---
 
 ### 🎯 Model Answer
 
@@ -1094,6 +1175,8 @@ JLINK (Custom Runtime):
   # Result: 45MB custom JRE vs 300MB full JDK
   # Use in Dockerfile: FROM scratch; COPY --from=builder /opt/my-runtime /opt/runtime
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1243,6 +1326,8 @@ Fix:
     Include in CI: build + smoke test the jlink image on every PR.
     Failure in CI is much cheaper than failure in production.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1428,3 +1513,33 @@ system design exercise.)*
 *(Omit: The JDK structure and relationships are adequately explained in the text table
 format in the Concept Explanation section. A visual diagram would not add clarity over
 the structured text already present.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

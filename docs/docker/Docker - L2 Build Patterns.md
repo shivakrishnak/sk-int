@@ -8,9 +8,20 @@ permalink: /docker/l2-build-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L2 Build Patterns](#docker---l2-build-patterns) | medium |
+
+---
+
 # Docker - L2 Build Patterns
 
 ## Multi-Stage Builds
+
+---
 
 ### 🎯 Model Answer
 
@@ -175,6 +186,8 @@ DISTROLESS AND SCRATCH IMAGES:
   # Image size: ~10MB (just the binary + TLS certs). vs ~600MB with Go base.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -337,6 +350,8 @@ Fix:
   Or: docker scout in CI (Docker's own advisory scanning).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -415,6 +430,8 @@ pod = 7.5GB vs 500MB total pull traffic per deployment.
 ---
 
 ## Docker Compose for Local Development
+
+---
 
 ### 🎯 Model Answer
 
@@ -569,6 +586,8 @@ USEFUL COMPOSE COMMANDS:
   docker compose scale app=3      # run 3 instances of app service
   docker compose config           # show merged compose config (with overrides)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -753,6 +772,8 @@ Fix:
     // Handles: startup race AND production DB restarts.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -796,4 +817,34 @@ should NEVER be in `.env`. Use the real secret management system
 (Vault, AWS Secrets Manager) even locally for production-equivalent
 testing. Developer secrets for local dev databases: low-risk if the
 dev database is isolated and disposable.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

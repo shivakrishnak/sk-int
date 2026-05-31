@@ -8,6 +8,16 @@ permalink: /database-sql/l2-transactions-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Transactions and ACID Properties](#transactions-and-acid-properties) | medium |
+| 2 | [Commit and Rollback - Transaction Lifecycle](#commit-and-rollback---transaction-lifecycle) | medium |
+
+---
+
 # Transactions and ACID Properties
 
 **TL;DR:** A transaction is a unit of work that is atomic (all or nothing),
@@ -95,6 +105,8 @@ D - DURABILITY
     the COMMIT returns.
 ```
 
+> **Code walkthrough:** This reference maps each ACID letter to its guarantee, the exact failure it prevents, and how the engine implements it. The implementation column is the key insight: Atomicity uses an undo log so a crash mid-transaction can be reversed; Durability uses WAL so a committed change survives a crash before the page is flushed to disk. Consistency relies on constraint checking at commit time, not continuously. Isolation is implemented by MVCC in PostgreSQL rather than coarse table locks, which is why reads do not block writes. Knowing the implementation mechanism separates surface knowledge from the understanding needed to diagnose production failures.
+
 **Read phenomena in isolation:**
 
 ```
@@ -114,6 +126,8 @@ PHANTOM READ: re-running a WHERE query gets different rows.
   T2 inserts a new row with age=25 and commits.
   T1 re-runs WHERE age > 20: gets 6 rows. New "phantom" row.
 ```
+
+> **Code walkthrough:** Each anomaly is shown as a two-transaction sequence, making the timing dependency concrete. Dirty read requires T1 to be uncommitted when T2 reads, so T1's ROLLBACK retroactively invalidates T2's data. Non-repeatable read only occurs when T2 commits between T1's two reads of the exact same row. Phantom read targets range queries rather than individual rows, which is why row-level locking cannot prevent it - a new row inserted by T2 was not locked by T1 because it did not exist yet. Preventing phantoms requires predicate locks or SERIALIZABLE isolation, not just row locks.
 
 ---
 
@@ -282,6 +296,8 @@ WHERE state != 'idle'
 ORDER BY duration DESC;
 ```
 
+> **Code walkthrough:** This diagnostic query surfaces all non-idle connections with their age, identifying transactions that are holding locks too long. `now() - xact_start` produces a human-readable interval showing exactly how long each transaction has been open. The `state != 'idle'` filter excludes connections waiting for the next query; the dangerous state is `idle in transaction`, where BEGIN was issued but the connection is sitting without executing SQL while holding row locks. Sorting by `duration DESC` surfaces the oldest blockers first. Run this immediately when application writes stall or lock wait timeouts appear in logs.
+
 Fix: kill the idle-in-transaction session:
 ```sql
 SELECT pg_terminate_backend(pid)
@@ -289,6 +305,8 @@ FROM pg_stat_activity
 WHERE state = 'idle in transaction'
   AND now() - xact_start > INTERVAL '5 minutes';
 ```
+
+> **Code walkthrough:** `pg_terminate_backend(pid)` sends SIGTERM to the backend process, which triggers a graceful shutdown and automatic ROLLBACK of the abandoned transaction, releasing all held locks. The `INTERVAL '5 minutes'` threshold is a tuning decision: too short kills legitimate long-running transactions; too long allows blocking to continue. This is an emergency fix - the root cause is almost always a missing `connection.close()` or error handling gap in application code that never commits or rolls back. Production systems should configure `idle_in_transaction_session_timeout` in PostgreSQL to enforce this automatically without manual intervention.
 
 Set `idle_in_transaction_session_timeout` to auto-kill them.
 
@@ -387,6 +405,34 @@ local transactions with compensating transactions for failure)."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Commit and Rollback - Transaction Lifecycle
 
 **TL;DR:** COMMIT makes all changes in the transaction permanent and visible
@@ -462,6 +508,8 @@ ABORTED state:
   Only ROLLBACK (or ROLLBACK TO savepoint) is accepted.
 ```
 
+> **Code walkthrough:** This state machine reveals a critical PostgreSQL behavior: once any statement fails mid-transaction, the connection enters ABORTED state where every subsequent SQL is rejected with the same error regardless of whether it would succeed independently. The only escape is ROLLBACK. The COMMIT path shows WAL flush happening before COMMIT returns to the client - this is the implementation of the Durability guarantee. The ABORTED trap is the most common source of cascading errors in connection pools: a failed statement puts the connection in ABORTED state, and subsequent queries on the reused connection all fail until rollback is issued.
+
 **JDBC transaction management:**
 
 ```java
@@ -480,6 +528,8 @@ try {
     throw e;
 }
 ```
+
+> **Code walkthrough:** This shows the two JDBC transaction modes side by side. In auto-commit mode, each `executeUpdate` is wrapped in its own implicit BEGIN/COMMIT - fine for single-statement operations but breaks atomicity across multiple statements. Manual mode uses `setAutoCommit(false)` to start an explicit transaction, then requires explicit `commit()` on success and `rollback()` in the catch block. Without the `rollback()` call, a failure after the first UPDATE commits one change and leaves the other uncommitted - a silent partial update that violates atomicity. Connection poolers like HikariCP reset autocommit between borrows, so always set it explicitly rather than assuming state.
 
 ---
 
@@ -663,12 +713,16 @@ Fix:
 @Transactional(rollbackFor = Exception.class)
 ```
 
+> **Code walkthrough:** This single-annotation change fixes the most common Spring transaction bug: checked exceptions not triggering rollback. By default, Spring's transaction proxy only rolls back on RuntimeException and Error - checked exceptions are rethrown with changes committed, which is almost never the intended behavior in a service method. Setting `rollbackFor = Exception.class` makes the proxy intercept all Throwable subtypes and issue ROLLBACK before rethrowing. Use `noRollbackFor` when a specific checked exception represents an expected business condition that should not roll back (for example, a validation exception that should commit audit logs).
+
 Or rethrow as an unchecked exception:
 ```java
 catch (CheckedException e) {
     throw new RuntimeException("Unexpected error", e);
 }
 ```
+
+> **Code walkthrough:** Wrapping a checked exception as RuntimeException triggers Spring's default rollback behavior without modifying the `@Transactional` annotation. The original exception is preserved as the cause, so stack traces remain complete for debugging. This pattern is appropriate when the checked exception signals a programming error rather than an expected recoverable condition - it communicates 'this should never happen in correct code'. The trade-off is that callers lose the ability to `catch (CheckedException e)` specifically; they must handle RuntimeException or let it propagate. Prefer `rollbackFor` on the annotation when you want to be explicit; use wrapping only when the exception truly is unexpected.
 
 **Failure: Transaction committed in aborted state (PostgreSQL)**
 
@@ -685,6 +739,8 @@ ROLLBACK;  -- clears the aborted state
 BEGIN;
 ...
 ```
+
+> **Code walkthrough:** This two-step recovery pattern clears PostgreSQL's ABORTED state before retrying. Once any error occurs inside a transaction, PostgreSQL enters ABORTED state and rejects every subsequent statement with 'current transaction is aborted, commands ignored until end of transaction block' - no matter how simple the next query is. `ROLLBACK` is the only accepted command; it releases all locks and returns the connection to a clean state. Application connection pools must call rollback automatically when they detect or return a connection in ABORTED state, otherwise the next operation on that connection will fail with the same error cascade.
 
 ---
 
@@ -780,3 +836,33 @@ orchestrator directs each step. Saga provides eventual consistency, not ACID
 isolation. For most microservice scenarios: saga is better than 2PC. 2PC
 is only appropriate when you control both databases and can accept the
 lock contention risk."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

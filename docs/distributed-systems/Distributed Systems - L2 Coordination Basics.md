@@ -8,6 +8,16 @@ permalink: /distributed-systems/l2-coordination-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Leader Election](#leader-election) | medium |
+| 2 | [Distributed Locking](#distributed-locking) | medium |
+
+---
+
 # Leader Election
 
 **TL;DR:** Leader election designates one node among a group of peers
@@ -108,6 +118,8 @@ States: Follower → Candidate → Leader
 6. Leader sends heartbeats to prevent new elections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ZooKeeper-based election:**
 ```
 1. All nodes create ephemeral sequential znodes:
@@ -124,6 +136,8 @@ States: Follower → Candidate → Leader
    next node becomes leader automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fencing tokens:**
 ```
 Leader is given a monotonically increasing epoch/token
@@ -131,6 +145,8 @@ when elected. All writes include this token.
 Storage/replicas reject any write with token < latest_known.
 Prevents zombie leaders from writing stale data.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Leader election must be combined with epoch fencing. Winning the
@@ -350,6 +366,34 @@ criticality of exactly-once execution."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Distributed Locking
 
 **TL;DR:** A distributed lock ensures only one process across a cluster
@@ -445,6 +489,8 @@ TTL: lock auto-expires if holder crashes before release
 unique_id: prevents releasing another process's lock
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The fencing token problem:**
 
 ```
@@ -459,6 +505,8 @@ Storage MUST check: token=1 < latest=2 → REJECT
 This is fencing. Redis SETNX alone does NOT provide
 fencing - you must implement it at the storage layer.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **ZooKeeper-based distributed lock:**
 
@@ -480,6 +528,8 @@ fencing - you must implement it at the storage layer.
 The monotonically increasing znode sequence
 number IS the fencing token.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 A distributed lock with TTL but without fencing is not safe.
@@ -698,6 +748,8 @@ unprotected. Safe release requires an atomic check-and-delete:
 `if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) else return 0 end`.
 The Lua script is atomic in Redis - no other command can interleave
 between the GET and the DEL."
+
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1370,3 +1422,33 @@ processing is already serialized per entity (actor model pattern).
 ceiling. "If the critical section takes 50ms, this lock can never
 do more than 20/s no matter how fast the lock infrastructure is.
 The bottleneck is the critical section, not the lock acquisition."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

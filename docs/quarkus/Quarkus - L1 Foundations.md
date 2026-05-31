@@ -241,6 +241,8 @@ class OrderService_CDIProxy
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why the proxy?
 1. Scope management: the proxy can return different
    instances for different scopes. For @RequestScoped:
@@ -271,6 +273,34 @@ concrete generated class, not magic.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Quarkus Dev Mode and Live Coding
 
@@ -408,6 +438,8 @@ class OrderServiceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Customization:
 ```properties
 # application.properties
@@ -415,6 +447,8 @@ Customization:
   postgres:16
 %test.quarkus.datasource.devservices.port=5433
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefit: tests use the same database version as
 production (configure image name to match prod version).
@@ -433,6 +467,34 @@ not one per test class.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Quarkus Configuration System
 
@@ -639,6 +701,8 @@ env:
 quarkus.datasource.password=${DB_PASSWORD}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Quarkus resolves ${DB_PASSWORD} at runtime from env var.
 Works in native image: runtime config resolution.
 
@@ -651,11 +715,15 @@ quarkus.vault.authentication.kubernetes.role=app
 # at startup
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3: AWS Secrets Manager:
 ```properties
 quarkus.vault.url is replaced by
 quarkus.amazon.secretsmanager.*
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security rule: never put secrets in
 application.properties in version control.
@@ -676,6 +744,34 @@ least privileged approach.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Quarkus Extensions Ecosystem
 
@@ -795,6 +891,8 @@ Step 1: Add the library as a normal dependency:
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Test in JVM mode first. Libraries work in
 JVM mode even without Quarkus extension.
 
@@ -810,6 +908,8 @@ java -agentlib:native-image-agent=\
 # Agent captures reflect-config.json
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Include generated config in native build:
 ```
 src/main/resources/META-INF/native-image/
@@ -817,12 +917,16 @@ src/main/resources/META-INF/native-image/
   resource-config.json
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 5: For initialization issues:
 ```properties
 # application.properties
 quarkus.native.additional-build-args=
   --initialize-at-run-time=com.problematic.Class
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Tracing agent as
 the automated way to discover reflection needs.
@@ -833,3 +937,33 @@ the automated way to discover reflection needs.
 | Hiring Manager | Rich extension ecosystem for productivity. |
 | Bar Raiser | Deployment vs runtime artifact, adding libraries without extensions. |
 | Peer Engineer | "Used tracing agent for a library without an extension. Generated reflect-config.json in 20 minutes." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

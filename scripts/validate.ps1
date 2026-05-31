@@ -32,6 +32,17 @@
         Comparison Table, System Design, Diagram.
         Conditional sections need explicit OMIT note if not applicable.
         HARD STOP if any section header missing.
+    R22 render_with_liquid: false required in every content file frontmatter
+        (prevents Liquid parsing of {{ }} and {% %} in code examples)
+    R23 No duplicate YAML frontmatter keys (undefined Jekyll/Psych behaviour)
+    R24 parent: value must match topic index.md title: exactly
+        (prevents orphaned pages with no sidebar entry)
+    R25 YAML unsafe tag values - bare @, *, ? in YAML sequences
+        (YAML 1.1 reserved chars trigger Ruby Psych parse error)
+    R26 Required frontmatter fields present
+        Content files: layout, title, parent, nav_order, permalink,
+                       render_with_liquid
+        Topic index.md: title, nav_order, has_children (NO parent allowed)
 
 .PARAMETER FileList
   Path to a text file containing one staged file path per line. Used by
@@ -89,8 +100,8 @@ if (-not (Test-Path $rulesScript)) {
 . $rulesScript
 
 foreach ($file in $files) {
-  $errs = Invoke-FileValidation -FilePath $file
-  if ($errs -and $errs.Count -gt 0) {
+  $errs = @(Invoke-FileValidation -FilePath $file)
+  if ($errs.Count -gt 0) {
     Write-Host "FAIL: $file" -ForegroundColor Red
     $errs | ForEach-Object { Write-Host "  - $_" }
     $exitCode = 1

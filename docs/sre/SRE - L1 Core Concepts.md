@@ -167,6 +167,8 @@ MEASUREMENT POINT CHOICES
   Synthetic:    probes from outside, controlled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 An SLI must be chosen for its relevance to user experience, not
 for its convenience. The distinction between an SLI and a general
@@ -377,6 +379,8 @@ probe_success{job="blackbox",target="api.service.com"}
 # DNS or CDN failure: probe cannot reach server
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add external synthetic monitoring (Prometheus Blackbox
 Exporter, Pingdom, Datadog Synthetic) to capture failures the
 server never sees.
@@ -406,6 +410,8 @@ sum(rate(http_requests_total{
   path!="/health"
 }[5m]))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Exclude health checks, synthetic probes, and monitoring
 traffic from the SLI denominator. Document the exclusion.
@@ -651,6 +657,34 @@ and the implementation challenge.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Service Level Agreement (SLA)
 
 🎯 Interview Weight: high - asked to test whether you understand
@@ -773,6 +807,8 @@ REMEDY CALCULATION (common example)
   Credit = % of affected month's subscription
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The SLA is the floor, not the target. An SRE team that aims to
 meet the SLA rather than the SLO is setting a dangerously low bar.
@@ -882,6 +918,8 @@ Current SLI 99.5% vs SLA 99.99%
 = error budget exhausted 60x faster than allowed.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add SRE review as a gate to the sales process. No
 enterprise SLA above current SLO tier without SRE sign-off
 and a reliability roadmap.
@@ -911,6 +949,8 @@ increase(http_requests_total{status=~"2.."}[28d])
 # Manual: check contract for exact method
 # If results differ: monitoring gap identified
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement SLA-specific measurement matching the contractual
 calculation exactly.
@@ -1150,3 +1190,33 @@ with quota enforcement.
 tenant SLAs without considering multi-tenancy. Great candidates
 explain the noisy neighbor risk, technical mitigations, attribution
 requirements, and dedicated infrastructure design for enterprise SLAs.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

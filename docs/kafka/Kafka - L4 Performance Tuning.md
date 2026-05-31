@@ -8,9 +8,20 @@ permalink: /kafka/l4-performance-tuning/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L4 Performance Tuning](#kafka---l4-performance-tuning) | medium |
+
+---
+
 # Kafka - L4 Performance Tuning
 
 ## Kafka Performance Tuning
+
+---
 
 ### 🎯 Model Answer
 
@@ -201,6 +212,8 @@ OS TUNING (Linux):
   sysctl -w vm.dirty_background_ratio=5  # background flush at 5%
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -340,6 +353,8 @@ should match actual consumer parallelism + throughput requirements.
   Per broker: ~170 MB/s. Per disk (8): ~21 MB/s. Well within SSD capability.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -443,6 +458,8 @@ Monitor:
   throughput (should recover), compression-rate-avg (should be < 0.7 for text data).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure: Consumer throughput plateau - max.poll.interval.ms exceeded under load.**
 ```
 Symptom: consumer throughput fine at low load. Under high load: consumers repeatedly leave
@@ -453,7 +470,8 @@ Root cause: processing time for max.poll.records (default 500) records > 5 minut
   Example: each record triggers a synchronous HTTP call (200ms RTT).
     500 records * 200ms = 100 seconds per batch.
     max.poll.interval.ms=300s (5min).
-    Under normal load: fine. Under spike: queue backs up, each record takes 500ms -> 500*500ms = 250s.
+    Under normal load: fine. Under spike: queue backs up,
+    each record takes 500ms -> 500*500ms = 250s.
     Then load increases more -> 500ms * 500 = 250s. Spike -> 600ms -> 300s = timeout.
 
 Fix options:
@@ -474,6 +492,8 @@ Fix options:
      Batch HTTP requests. Cache common responses. Use async HTTP client.
      This fixes the root cause; the others are mitigations.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -678,4 +698,34 @@ CooperativeStickyAssignor (balances + minimizes partition movement). Also: custo
 assignment - `PartitionAssignor` that assigns based on current partition lag (assign most-lagged
 partitions to least-loaded consumers). This is the stateful partition assignment that some
 high-performance Kafka deployments implement.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

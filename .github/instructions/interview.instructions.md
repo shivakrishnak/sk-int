@@ -239,10 +239,34 @@ Place it as the last field before the closing `---`.
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - Use `# Keyword Name` as keyword separators within content files
   (Jekyll renders the first H1 as the page title)
-- Every code block followed by `> **Code walkthrough:**` (3-6 sentences:
-  what it shows, key mechanism, why it matters, what breaks, takeaway)
-- Every diagram followed by `> **Diagram walkthrough:**` (3-5 sentences).
-  For DUAL blocks, one shared walkthrough after the Mermaid block is sufficient
+- Every code block MUST be followed by `> **Code walkthrough:**` (3-6 sentences
+  covering ALL five dimensions - a bare code block is a spec violation):
+  (1) WHAT IT SHOWS: concept or behaviour illustrated.
+  (2) KEY MECHANISM: what the runtime/compiler/library does step-by-step.
+  (3) WHY IT MATTERS: real-world consequence in production if used
+      correctly or incorrectly.
+  (4) WHAT BREAKS: exact symptom when misapplied - error message,
+      silent failure, or performance cliff.
+  (5) TAKEAWAY: one transferable rule the reader should internalise.
+- Always specify language after opening triple backtick (e.g. ` ```java `).
+- ASCII diagrams: max 59 characters wide (ESCAPE HATCH: up to 79 chars only if
+  adjacent prose description exists AND content is genuinely clearer at that
+  width; >79 → split or convert to Mermaid-only).
+- Every ASCII diagram MUST be followed by `> **Diagram walkthrough:**`
+  (3-5 sentences covering ALL five dimensions):
+  (1) WHAT IT DEPICTS: name the system, flow, or structure.
+  (2) HOW TO READ IT: walk left-to-right or top-to-bottom, naming each
+      key node and arrow explicitly.
+  (3) KEY RELATIONSHIP: most important dependency, bottleneck, or
+      decision point.
+  (4) EDGE CASE: what happens on the error/failure path shown, or why
+      none is depicted.
+  (5) INSIGHT: what a senior engineer notices that a junior overlooks.
+- Every Mermaid block MUST be preceded by a 1-2 sentence prose description
+  (accessibility alt-text) AND followed by `> **Diagram walkthrough:**`
+  using the same five-dimension structure above.
+- For DUAL blocks (ASCII + Mermaid): one shared walkthrough AFTER the Mermaid
+  block is sufficient - do not duplicate.
 
 ### Blank Mind Recovery Format (Mandatory - R19)
 

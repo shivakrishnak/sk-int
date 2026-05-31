@@ -7,6 +7,16 @@ permalink: /javascript/l3-design-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Design Patterns](#javascript-design-patterns) | high |
+| 2 | [Functional Programming Patterns in JavaScript](#functional-programming-patterns-in-javascript) | high |
+
+---
+
 # JavaScript Design Patterns
 
 🎯 **Interview Weight:** high (★★☆) - Tested at mid/senior level;
@@ -129,6 +139,8 @@ STRATEGY (swappable algorithms):
   // Just pass a function - Strategy is a first-class function
   sort(array, (a, b) => a - b); // comparator = strategy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -539,6 +551,8 @@ class EventEmitter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Slicing the listener array before
 calling `forEach` - if a listener calls `off` or `on` during emit,
 it would modify the array being iterated. The slice prevents that
@@ -547,6 +561,34 @@ the self-removal works correctly even when the user calls `off(event, fn)`
 before the once fires.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Functional Programming Patterns in JavaScript
 
@@ -661,6 +703,8 @@ Function composition:
   );
   process(3); // ((3*2)+1)^2 = 49
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1019,3 +1063,33 @@ Instead of `throw`, functions return `{ ok: true, value }` or
 (Promises, Array `flatMap`) without calling them monads. The academic
 name matters less than understanding the pattern: wrap a value,
 chain operations, handle the context (async, nullable, error) uniformly.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

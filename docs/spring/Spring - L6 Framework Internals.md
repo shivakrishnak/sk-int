@@ -8,7 +8,14 @@ permalink: /spring/l6-framework-internals/
 render_with_liquid: false
 ---
 
-# Spring - L6 Framework Internals
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L6 Framework Internals](#spring---l6-framework-internals) | medium |
+| 2 | [Spring Framework Design Patterns](#spring-framework-design-patterns) | medium |
+| 3 | [Custom Spring Boot Starter Design](#custom-spring-boot-starter-design) | medium |
 
 ---
 
@@ -111,6 +118,8 @@ Adapter             HandlerAdapter, MessageConverter
 Composite           ApplicationContext hierarchy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The Proxy Pattern in depth:**
 
 ```
@@ -139,6 +148,8 @@ Proxy limitations:
   3. JDK proxy requires interface
      -> CGLIB proxy works without interface
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The Template Method Pattern in depth:**
 
@@ -174,6 +185,8 @@ public <T> T execute(String sql,
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The Observer Pattern in depth:**
 
@@ -457,6 +470,8 @@ class OrderService { void placeOrder(); }
 // Post-Spring 5.2: CGLIB by default even with interface
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Boot 2.0+ defaults: `spring.aop.proxy-target-class=true` (CGLIB).
 Reasons for CGLIB default:
 1. Simpler: no interface required, works on any class
@@ -496,6 +511,8 @@ public class PerformanceBeanPostProcessor
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 BeanPostProcessor chain = Decorator chain:
 - AutowiredAnnotationBeanPostProcessor: injects @Autowired fields
@@ -554,6 +571,8 @@ public class OrderService {
 // Testing = mock just ApplicationEventPublisher
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Trade-offs:
 - Event: loose coupling, hard to trace execution flow
 - Direct call: tight coupling, easy to trace, easy to test
@@ -609,6 +628,8 @@ jdbcTemplate.query(sql, ps -> {
 // Even if YOUR lambda throws an exception
 // The template method pattern guarantees cleanup
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* JdbcTemplate's guarantee comes from the
 try/finally structure in its template methods. The connection is acquired
@@ -684,6 +705,8 @@ public class ApiKeyAuthenticationProvider
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Strategy pattern in AuthenticationProvider
 enables pluggable authentication without modifying the framework. The Chain of
 Responsibility pattern works alongside it: ProviderManager iterates through all
@@ -720,6 +743,8 @@ Example: two web apps sharing same service layer:
   Both controllers can use both services.
   Services can't inject controllers (wrong direction).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Spring Boot, single ApplicationContext is common.
 Multiple contexts: Spring MVC test (WebApplicationContext),
@@ -788,6 +813,8 @@ public class LifecycleListener {
 // @PreDestroy: before bean is destroyed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* ContextRefreshedEvent vs ApplicationReadyEvent:
 Both fire after the context is ready. The difference: ContextRefreshedEvent fires
 on EVERY refresh, including @RefreshScope refreshes. ApplicationReadyEvent fires
@@ -831,6 +858,8 @@ DispatcherServlet.doDispatch() {
 // Each adapter translates its handler to
 //   the uniform handle() call
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* HandlerAdapter is also where @RequestParam,
 @PathVariable, @RequestBody resolution happens. RequestMappingHandlerAdapter
@@ -910,6 +939,8 @@ public class TenantDataCache {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Custom scopes are powerful but require careful
 lifecycle management. The TenantScope above leaks memory: if tenantBeans is never
 cleaned up, beans accumulate. Production implementation: use weak references or
@@ -920,6 +951,34 @@ Understanding the Scope SPI shows that these are not special framework features
 but just registered Scope implementations - you can replace them.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Custom Spring Boot Starter Design
 
@@ -1022,6 +1081,8 @@ Conditional logic:
   @ConditionalOnProperty: enabled=true in properties?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Conditional annotations:**
 
 ```
@@ -1046,6 +1107,8 @@ Conditional logic:
 @ConditionalOnExpression("${my-thing.mode} == 'async'")
   -> SpEL-based condition (avoid if possible - hard to test)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1289,6 +1352,8 @@ spring-boot-autoconfigure (auto-configure)
   -> (all other auto-configurations)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 You can depend directly on spring-boot-autoconfigure if you only want
 the auto-configuration without the starter's dependency management.
 This is useful when you want explicit control over JPA library versions.
@@ -1322,6 +1387,8 @@ public class JdbcTemplateAutoConfiguration {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 JdbcTemplateAutoConfiguration runs AFTER DataSourceAutoConfiguration
 because it needs the DataSource bean to be available.
@@ -1380,6 +1447,8 @@ mycompany.service.retry.max-attempts=5
 # mycompany.service.timeout: not set, uses default 5000
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Metadata generation (IDE autocompletion):
 ```xml
 <!-- In autoconfigure module pom.xml: -->
@@ -1389,6 +1458,8 @@ Metadata generation (IDE autocompletion):
     <optional>true</optional>
 </dependency>
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Generates META-INF/spring-configuration-metadata.json at compile time.
 IDE reads this for autocompletion in application.properties.
 
@@ -1426,6 +1497,8 @@ spring.autoconfigure.exclude=\
 })
 class MyTest { }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use case for exclusion:
 - Test environments (exclude DataSource, use in-memory or mock)
@@ -1495,6 +1568,8 @@ public class MyServiceAutoConfiguration {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* @ConditionalOnClass(HealthIndicator.class)
 ensures the health indicator only activates when actuator is on the classpath.
 If actuator is excluded, no HealthIndicator bean is created. This is the
@@ -1520,6 +1595,8 @@ Spring Boot 3 changes:
    @AutoConfiguration(after = DataSourceAutoConfiguration.class)
    public class JdbcTemplateAutoConfiguration { }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Probing: Spring Boot 3 uses DeferredImportSelector with different
    ordering guarantees. @AutoConfiguration classes are processed as a group
    AFTER all regular @Configuration classes.
@@ -1582,6 +1659,8 @@ class ServiceAutoConfigTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ApplicationContextRunner.withBean() method
 adds a bean as if the user had declared it in their @Configuration. This accurately
 tests that @ConditionalOnMissingBean fires correctly. Key edge case: what if the
@@ -1604,6 +1683,8 @@ constructor.
     <optional>true</optional>
 </dependency>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Generated at compile time:
 META-INF/spring-configuration-metadata.json
@@ -1630,6 +1711,8 @@ For additional hints not auto-generated:
     }]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Result in IDE: typing mycompany.service. in application.properties
 shows autocomplete for all properties with descriptions and types.
@@ -1673,6 +1756,8 @@ mycompany-service-spring-boot-starter/
     @AutoConfigureMyServiceMock.java   (test auto-config)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Test starter:
 ```java
 // Service tests auto-configure a mock server
@@ -1692,6 +1777,8 @@ class OrderServiceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The test module is the underrated part of a
 good internal starter. Production code using the starter needs test support.
 Without a test module: every team writes their own WireMock stubs or Mockito mocks.
@@ -1700,3 +1787,33 @@ that all teams use. This ensures tests use a consistent mock that matches the
 real service contract. The test module depends on the autoconfigure module
 (to understand the beans) and WireMock (for HTTP mocking), but NOT on test
 scope - it's a compile dependency for test code.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

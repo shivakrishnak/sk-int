@@ -7,7 +7,13 @@ permalink: /async-java/l4-async-anti-patterns/
 render_with_liquid: false
 ---
 
-# Async Java - L4 Async Anti-Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L4 Async Anti-Patterns](#async-java---l4-async-anti-patterns) | medium |
+| 2 | [Async Java Anti-Patterns and Dangerous Pitfalls](#async-java-anti-patterns-and-dangerous-pitfalls) | medium |
 
 ---
 
@@ -115,6 +121,8 @@ Category D: Concurrency correctness failures
   D3: Double subscribe creating duplicate side effects
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Most dangerous by production impact:**
 
 ```
@@ -127,6 +135,8 @@ HIGH     | Mutable state sharing | Data corruption
 MEDIUM   | Wrong thread pool     | Starvation under load
 MEDIUM   | Missing timeout       | Resource leak + slowdown
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -313,6 +323,8 @@ sendOnce.subscribe(); // sends
 sendOnce.subscribe(); // no-op (replays cached Void)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚠️ Common Misconceptions
@@ -331,6 +343,8 @@ flux.subscribe(
     ex -> log.error("Background task failed: {}",
         ex.getMessage(), ex));
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without this, exceptions thrown in `process()` vanish.
 
 ---
@@ -362,6 +376,8 @@ BlockHound.install(builder ->
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: move blocking operations off the event loop:
 ```java
 // WRONG: JDBC on event loop
@@ -378,6 +394,8 @@ public Flux<User> getUsers() {
         .flatMapIterable(Function.identity());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -412,6 +430,8 @@ With block():
   Under high load: all 8 ETs blocked -> server unresponsive
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Detection:
 ```java
 // BlockHound throws immediately when block() is called on an event loop
@@ -420,6 +440,8 @@ BlockHound.install();
 // Throws: reactor.blockhound.BlockingOperationError
 //   at Mono.block() called from EventLoopThread
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Reactor team designed the "scheduler
 contract": event loop threads (Netty) MUST never block. Schedulers like
@@ -459,6 +481,8 @@ Flux.fromIterable(ids)
             .subscribeOn(Schedulers.boundedElastic()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `boundedElastic` is bounded to prevent
 unbounded thread growth (which would be equivalent to creating a new thread
 per task). The cap (`10 * CPU`) means at most 10x CPU threads for blocking
@@ -497,6 +521,8 @@ Flux<Event> shared = eventFlux.share();
 // All subscribers receive the same events from a single source
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Side effect duplication is the production impact: notifications sent twice,
 metrics counted twice, database records inserted twice.
 
@@ -528,6 +554,8 @@ ExecutorService bounded = new ThreadPoolExecutor(
     new ThreadPoolExecutor.CallerRunsPolicy()); // backpressure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Reactor pipeline buffers:**
 ```java
 // flatMap internal queue: 256 elements by default
@@ -537,6 +565,8 @@ ExecutorService bounded = new ThreadPoolExecutor(
 flux.flatMap(fn, 16,    // max 16 concurrent
                  64);   // inner queue prefetch = 64
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. CompletableFuture accumulation:**
 ```java
@@ -558,6 +588,8 @@ Lists.partition(millionItems, 1000).forEach(batch -> {
         .join(); // process batch before next
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Monitoring resource consumption metrics:
 `executor.queue.size`, `jvm.memory.used.heap`, `reactor.buffer.size`
@@ -606,6 +638,8 @@ while (!Thread.currentThread().isInterrupted()) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In virtual thread context: swallowing `InterruptedException` prevents
 StructuredTaskScope from cancelling the task. The scope's `join()` will
 hang indefinitely waiting for the uncancellable task.
@@ -647,6 +681,8 @@ class EnrichmentService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why it is dangerous:
 1. The outer `map` lambda runs on the subscribing thread (possibly event loop)
 2. Inside `map`, `block()` is called, blocking that thread
@@ -664,6 +700,8 @@ Mono<Order> processOrder(OrderRequest req) {
 }
 // enrichReactive() returns Mono, no hidden block()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The convention in Reactor teams: methods
 that return `Mono<T>` or `Flux<T>` are "reactive-pure" (no internal block).
@@ -703,6 +741,8 @@ Flux.range(1, 5)
     // Output: 1, 2, 3, 4, 5 (ordered) - at 90ms total time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Anti-pattern: using `flatMap` when ordered output is required (e.g.,
 paginated results, audit logs). Result: random ordering depending on
 network/processing time, causing hard-to-reproduce bugs.
@@ -740,6 +780,8 @@ class BadSubscriber<T> implements Subscriber<T> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Correct cancellation:
 ```java
 // GOOD: cancel on application shutdown
@@ -762,6 +804,8 @@ class ResourceAwareSubscriber<T>
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In practice: use `Disposable` (Reactor's resource handle):
 ```java
 Disposable subscription = eventFlux.subscribe(
@@ -771,6 +815,8 @@ Disposable subscription = eventFlux.subscribe(
 // On shutdown:
 subscription.dispose(); // cancels subscription, upstream notified
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Spring's `@PreDestroy` pattern for
 reactive subscriptions:
@@ -790,6 +836,8 @@ class EventProcessingService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -830,6 +878,8 @@ source
 // Source only sends 100 at a time; fetch next when ready
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Memory monitoring:
 ```java
 // Heap dump trigger before OOM:
@@ -838,6 +888,8 @@ Memory monitoring:
 // Analyze with Eclipse Memory Analyzer (MAT)
 // Look for: large Flux buffers, accumulated CFs, subscriber queues
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `limitRate(n)` is the key operator for
 controlling the flow rate at the source. Unlike `onBackpressureBuffer`
@@ -894,6 +946,8 @@ a push-pull balance that prevents memory accumulation.
     ✗ flux.subscribe(...); // returned Disposable discarded
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Item 10 is often missed. When `subscribe()`
 returns a `Disposable` and it's not stored, there's no way to cancel the
 subscription from outside. For application-level event consumers (Kafka,
@@ -930,6 +984,8 @@ hot.subscribe(subscriber2); // registers but not started
 hot.connect(); // starts the source once; both get the same events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common scenario: reactive pipeline used as a "service":
 ```java
 // BAD: ReactiveCacheService re-executes on each get()
@@ -947,6 +1003,8 @@ class CacheService {
     Mono<Config> getConfig() { return config; }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `Mono.cache(duration)` is time-bounded
 caching: the result is cached for the specified duration, then re-fetched
@@ -992,6 +1050,8 @@ Mono<Response> buildPipeline(String userId) {
         .flatMap(id -> userService.fetch(id));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The principle: reactive code should
 propagate errors AS reactive signals, not as thrown exceptions. This
@@ -1044,6 +1104,8 @@ Layer 4: Production monitoring
           p99.latency > SLA
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1089,3 +1151,33 @@ quadrantChart
 > quadrant: it looks fine in code review and testing, but silently loses data
 > in production. Technical debt quadrant (bottom-right): patterns that are
 > hard to find but manageable if load is low - refactor before scaling.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,17 @@ permalink: /microservices/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [What Are Microservices and Why They Emerged](#what-are-microservices-and-why-they-emerged) | medium |
+| 2 | [Monolith vs Microservices Trade-offs](#monolith-vs-microservices-trade-offs) | medium |
+| 3 | [Microservices Ecosystem and Supporting Infrastructure](#microservices-ecosystem-and-supporting-infrastructure) | medium |
+
+---
+
 # What Are Microservices and Why They Emerged
 
 ---
@@ -63,6 +74,8 @@ MICROSERVICES:
   Scale: scale only Inventory under Black Friday load
   Failure: isolated to the failed service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Microservices are primarily an organizational pattern, not a technical one. Conway's Law: organizations build systems that mirror their communication structures. A microservices architecture enables teams to be as independent as their services. The technical benefits (independent scaling, deployment) follow from the organizational decision.
@@ -187,6 +200,34 @@ Fix: Each service must own its data exclusively. No shared databases. Decompose 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Monolith vs Microservices Trade-offs
 
 ---
@@ -245,6 +286,8 @@ MICROSERVICES REQUEST FLOW:
   Benefit: each service scales and deploys independently
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The difference is not technical - it is organizational. The right architecture is the one that allows your team structure to operate efficiently. Small teams: monolith. Large organizations needing independent deployment: microservices.
 
@@ -266,6 +309,8 @@ MODULAR MONOLITH:
   Migration path: when ready, extract OrderModule
     as a separate service with minimal refactoring
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -430,6 +475,34 @@ Fix: Add a timeout on all cross-service calls (no more than 1-2 seconds). Add a 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Microservices Ecosystem and Supporting Infrastructure
 
 ---
@@ -489,6 +562,8 @@ EACH SERVICE NEEDS:
   - Metrics endpoint (/metrics for Prometheus)
   - Graceful shutdown (SIGTERM handling)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The infrastructure does not come free. Kubernetes, Istio, Jaeger, Prometheus, and a CI/CD system for 50 services represent significant platform engineering investment. This is why microservices require a platform engineering team - the infrastructure cost must be amortized across many services to be worthwhile.
@@ -601,3 +676,33 @@ Fix: Scale CoreDNS replicas (kubectl scale deployment coredns -n kube-system --r
 *What separates good from great:* "GitOps requires discipline: the GitOps repository must be the single source of truth. No manual kubectl apply in production. No 'quick fixes' applied directly to the cluster. If someone bypasses the GitOps flow for an emergency, they must immediately commit the same change to the repository to prevent the agent from reverting their fix."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

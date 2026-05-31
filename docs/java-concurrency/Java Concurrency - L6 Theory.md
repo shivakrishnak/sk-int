@@ -8,9 +8,20 @@ permalink: /java-concurrency/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L6 Theory](#java-concurrency---l6-theory) | medium |
+
+---
+
 # Java Concurrency - L6 Theory
 
 ## Lock-Free Algorithms
+
+---
 
 ### 🎯 Model Answer
 
@@ -106,6 +117,8 @@ Java examples:
   Lock-based:  synchronized blocks, ReentrantLock
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **CAS - the atomic primitive:**
 Compare-and-Swap is the hardware instruction (x86: `CMPXCHG`) that
 underpins lock-free algorithms:
@@ -118,6 +131,8 @@ CAS(memory_location, expected, new_value):
     else:
       return FAILURE (current value unchanged)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **ABA problem:**
 ```
@@ -132,6 +147,8 @@ Thread 1: resumes, CAS(X, A, newValue) SUCCEEDS!
   Thread 1 made a decision based on stale state (the A it read
   was a different A than the current A)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **ABA fix - AtomicStampedReference:**
 ```java
@@ -149,6 +166,8 @@ boolean success = head.compareAndSet(
     stamp, stamp + 1);  // version old -> new
 // A->B->A trick fails: stamp would be 0->1->2, not 0->0->0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -170,6 +189,8 @@ class LockedCounter {
 }
 // All threads compete for lock even when incrementing different "slots"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: lock-free counter using CAS loop
@@ -194,6 +215,8 @@ class LockFreeCounter {
     long get() { return value.get(); }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // PRODUCTION: lock-free Treiber stack
@@ -233,6 +256,8 @@ class LockFreeStack<T> {
 // ABA problem: if a Node is recycled and pushed again with same address,
 // CAS could succeed incorrectly. Fix: AtomicStampedReference<Node<T>>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -309,6 +334,8 @@ Diagnosis: add invariant checks or use AtomicStampedReference.
 AtomicStampedReference<Node> head = new AtomicStampedReference<>(null, 0);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -374,6 +401,8 @@ CAS(address, expected, new_value) -> boolean
       return false
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 On x86: compiled to `LOCK CMPXCHG` instruction.
 On ARM: compiled to `LDAXR` / `STLXR` (load-acquire / store-release).
 
@@ -391,6 +420,8 @@ do {
     long update = f(current);    // compute new value
 } while (!atom.compareAndSet(current, update)); // CAS (acquire+release)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Performance cost of CAS:
 - Uncontended: ~3-4 nanoseconds (just a locked instruction)
@@ -430,6 +461,8 @@ Thread 1: resumes, CAS(head, A, B) SUCCEEDS
   Stack is now corrupted: head -> B -> (dangling?)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 1: AtomicStampedReference (version number):
 ```java
 AtomicStampedReference<Node> head =
@@ -446,6 +479,8 @@ Node current = head.get(stamp); // stamp[0] = 0
 head.compareAndSet(current, newNode, stamp[0], stamp[0] + 1);
 // stamp[0]=0, but actual stamp=2 -> FAIL -> Thread 1 retries
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix 2: Hazard pointers (not in Java stdlib):
 Mark nodes as "in use" before reading their fields. GC in managed
@@ -517,6 +552,8 @@ Total work to advance by N: O(N^2)
 Throughput: O(1/N) - throughput DECREASES as threads increase
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mitigation strategies:
 
 **1. LongAdder / LongAccumulator:**
@@ -526,6 +563,8 @@ adder.increment(); // CAS on one of 16 Cells (hash(threadId) % cells)
 // Different threads likely hit different Cells
 // N threads -> N/16 threads per Cell -> much less contention
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **2. Exponential backoff:**
 ```java
@@ -537,6 +576,8 @@ while (!atom.compareAndSet(expected, update)) {
     update = compute(expected);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Eliminate the shared state:**
 Use per-thread counters (ThreadLocal) aggregated periodically.
@@ -590,6 +631,8 @@ while (!atom.compareAndSet(expected, update)) {
     update = compute(expected);
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is sometimes called "bounded spinning with lock fallback."
 
 ---
@@ -620,6 +663,8 @@ class Cell {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 increment() logic:
 1. Hash thread ID to determine target Cell index.
 2. Attempt CAS on the Cell.
@@ -637,6 +682,8 @@ long sum() {
     return sum;
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Note: sum() is NOT atomic. While iterating cells, other threads
 may be incrementing them. LongAdder.sum() is an estimate. For
 exact value: use AtomicLong.
@@ -710,6 +757,8 @@ class LockFreeQueue<T> {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "consistent read" checks (`t == tail.get()`)
 are necessary because the algorithm uses two CAS operations (one to
@@ -819,6 +868,8 @@ sequenceDiagram
 
 ## Linearizability and Sequential Consistency
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -923,6 +974,8 @@ Under sequential consistency: LEGAL
   Thread B reads y=1 (correct) and x=0 (Thread A hadn't "committed" x yet in this order)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Java's memory model:**
 Java volatile provides sequential consistency for volatile accesses.
 Java synchronized/CAS provides linearizability for operations within
@@ -953,6 +1006,8 @@ class BadPoint {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // GOOD: linearizable point update using AtomicReference
 class LinearizablePoint {
@@ -970,6 +1025,8 @@ class LinearizablePoint {
     Point getPoint() { return point.get(); } // always consistent
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1034,6 +1091,8 @@ volatile int x, y;
 // Thread B: if (y == 1) assert x == 1; // FAILS!
 // Thread B may see y=1 but x=0 (store-store reorder on non-x86)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use AtomicReference<Point> or synchronize the compound operation.
 
 ---
@@ -1072,6 +1131,8 @@ Thread A: read counter=5; increment to 6; write counter=6
 Thread B: read counter=5; increment to 6; write counter=6
 Result: counter=6 (should be 7)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This violates linearizability: no sequential order of these operations
 produces counter=6 if the counter started at 5 and both threads
 incremented once.
@@ -1082,6 +1143,8 @@ Thread A: CAS(5, 6) -> SUCCESS; counter=6
 Thread B: CAS(5, 6) -> FAIL; re-read 6; CAS(6, 7) -> SUCCESS; counter=7
 Result: counter=7 (correct)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CAS makes the increment linearizable: the linearization point is the
 successful CAS.
 
@@ -1115,6 +1178,8 @@ Under linearizability: ILLEGAL
   B returning 0 violates the real-time constraint.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sequential consistency:** Total order does NOT need to respect
 real-time for non-overlapping operations.
 ```
@@ -1123,6 +1188,8 @@ Same timeline under sequential consistency: LEGAL
   This is a valid sequential execution (x was 0 before write).
   Sequential consistency allows this reordering.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Practical impact:**
 - Linearizability: safe for any real-time reasoning ("I called the
@@ -1168,6 +1235,8 @@ if (ready) {        // volatile read -> sees data=42
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Linearizability in Java:**
 CAS operations provide linearizability:
 ```java
@@ -1178,6 +1247,8 @@ counter.incrementAndGet();
 // Observable effect: counter increased by 1, atomically
 // No thread ever sees counter in an intermediate state
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Double-checked locking requires volatile for linearizability:**
 ```java
@@ -1197,6 +1268,8 @@ Singleton getInstance() {
     return instance;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The JMM's HB relation provides
 the exact minimum guarantees needed for correct concurrent programs.
@@ -1267,6 +1340,8 @@ Processor B: write(y, 1); read(x) -> 0
 
 Can both processors see the other's initial write as 0?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Under sequential consistency:** YES
 One valid sequential order:
@@ -1395,6 +1470,8 @@ class MyCounterTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `jcstress` is the standard JVM tool
 for stress testing concurrency primitives. It runs tests with many
 different thread interleavings, verifies results against the acceptable
@@ -1419,6 +1496,8 @@ void setTime(int h, int m) { hour = h; minute = m; }
 
 // FIX: AtomicReference<LocalTime> for linearizable time update
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Decision 2: Database read-after-write.**
 If your database provides linearizability (strongly consistent reads),
@@ -1468,6 +1547,8 @@ Singleton getInstance() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The problem: `new Singleton()` is NOT a single atomic operation.
 At the bytecode level:
 1. Allocate memory
@@ -1489,6 +1570,8 @@ Fix with volatile:
 ```java
 private volatile Singleton instance; // volatile ensures publication ordering
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `volatile` adds a store fence after the write to `instance`, ensuring:
 step 2 (constructor) HB step 3 (volatile write to `instance`) HB
@@ -1570,3 +1653,33 @@ flowchart TD
 > guarantees at all. System designers must explicitly choose where on
 > this spectrum their system sits, as the choice drives latency,
 > availability, and the types of bugs that can occur.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /nodejs/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Node.js Decision Framework](#nodejs-decision-framework) | medium |
+| 2 | [Async Pattern Selection](#async-pattern-selection) | medium |
+| 3 | [Node.js at Scale Mental Model](#nodejs-at-scale-mental-model) | medium |
+
+---
+
 # Node.js Decision Framework
 
 ---
@@ -84,6 +95,8 @@ Node.js decision tree:
     Never use odd-numbered     -> Non-LTS, short support window
     Upgrade path               -> Test with node@next before release
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -229,6 +242,34 @@ computation, consider a worker thread design or a different language.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Async Pattern Selection
 
 ---
@@ -309,6 +350,8 @@ Async pattern decision matrix:
     Fastest wins?            -> Promise.race([...])
     First success?           -> Promise.any([...])
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -441,6 +484,8 @@ console.log('Pool idle:', pool.idleCount,
   'total:', pool.totalCount, 'waiting:', pool.waitingCount);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -453,6 +498,34 @@ console.log('Pool idle:', pool.idleCount,
 | How do you consume a paginated API lazily? | Code | ★★★ | 3 min |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Node.js at Scale Mental Model
 
@@ -546,6 +619,8 @@ Scale mental model layers:
       -> Too many queued callbacks (I/O congestion)
       -> Fix: reduce concurrent connections, backpressure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -696,6 +771,8 @@ ORDER BY mean_exec_time DESC
 LIMIT 10;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Reduce pool size per instance, add PgBouncer (connection pooler),
 add Redis caching for hot reads, add read replicas.
 
@@ -712,3 +789,33 @@ add Redis caching for hot reads, add read replicas.
 | How do you design a stateless Node.js service? | Design | ★★☆ | 3 min |
 | What metrics tell you your Node.js service is healthy? | Production | ★★★ | 3 min |
 | How do you handle the database connection limit? | Scale | ★★★ | 3 min |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

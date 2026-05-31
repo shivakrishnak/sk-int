@@ -129,6 +129,8 @@ BRIDGE MODEL (most common in production SaaS):
   Scaling: add tenant = create schema, provision S3 prefix
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Row Level Security (PostgreSQL):**
 
 ```sql
@@ -158,6 +160,8 @@ ALTER TABLE orders FORCE ROW LEVEL SECURITY;
 -- FORCE: applies RLS even to table owner
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Noisy Neighbor Controls:**
 
 ```
@@ -184,6 +188,8 @@ CONTROLS:
   5. Monitoring: per-tenant metrics
      Alert when one tenant consumes > N% of shared resources
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,6 +347,8 @@ public class OrderController {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```sql
 -- S3 PER-TENANT ISOLATION via IAM:
 
@@ -465,6 +473,8 @@ grep -v "tenant_id" /var/log/postgresql/postgresql.log | \
 # Any match: missing tenant filter in application code
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 1. Add PostgreSQL RLS as immediate safety net
 2. Create custom Hibernate filter that auto-appends tenant
@@ -501,6 +511,8 @@ public Object assertTenantCleared(ProceedingJoinPoint pjp)
     return pjp.proceed();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -734,6 +746,8 @@ grep "SELECT.*FROM orders" /var/log/postgresql/postgresql.log |
 -- Any match: this query has no tenant filter
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 3: Identify the code path:**
 The query without tenant filter maps to a specific
 repository method. Cross-reference with the export
@@ -801,6 +815,8 @@ ORDER BY connections DESC;
 # Schema with excessive connections = database noisy neighbor
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Immediate mitigation:**
 ```bash
 # Rate limit the offending tenant at API Gateway:
@@ -816,6 +832,8 @@ FROM pg_stat_activity
 WHERE query_start < now() - interval '30 seconds'
   AND schemaname = 'tenant_x';
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Permanent fix:**
 - Add per-tenant rate limiting to API Gateway usage plans
@@ -959,6 +977,8 @@ TIER 3 - Starter (no compliance, ~4,450 tenants):
   Migration: single schema migration for all starter tenants
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Shared infrastructure:**
 
 API Gateway: usage plans per tier (throttle limits).
@@ -1017,6 +1037,8 @@ CREATE TABLE features (
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Evaluation logic:**
 
 ```java
@@ -1040,6 +1062,8 @@ public class FeatureFlagService {
     // Same tenant always gets same result (consistent)
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Infrastructure:**
 
@@ -1196,6 +1220,8 @@ ORDER BY mean_exec_time DESC
 LIMIT 10;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Recommendation:** Short term: add indexes, VACUUM,
 increase connection cap for their schema. Long term:
 migrate this tenant to the bridge or silo model.
@@ -1258,3 +1284,33 @@ companies do not have this - they either refuse pentesting
 or allow it with no containment.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

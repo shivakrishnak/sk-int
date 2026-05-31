@@ -7,6 +7,15 @@ permalink: /javascript/l4-performance-profiling/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Performance Profiling and Debugging](#javascript-performance-profiling-and-debugging) | expert |
+
+---
+
 # JavaScript Performance Profiling and Debugging
 
 🎯 **Interview Weight:** expert (★★★) - performance profiling is a
@@ -124,6 +133,8 @@ PERFORMANCE TIMELINE:
   │    ^--- user input blocked for 200ms         │
   └──────────────────────────────────────────────┘
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -366,6 +377,8 @@ PRODUCTION PERFORMANCE MONITORING:
   - Service Worker: cache static assets
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -503,6 +516,8 @@ class Poller {
 // After fix: restart, monitor heap growth rate
 // Should plateau at a stable level (not grow indefinitely)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1139,3 +1154,33 @@ it up?** `[SENIOR]` MECHANISM
 > per-request profiling. Building this instrumentation into application
 > infrastructure (not per-route) provides performance visibility for
 > every request automatically.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

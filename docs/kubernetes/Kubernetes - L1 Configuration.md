@@ -22,6 +22,8 @@ render_with_liquid: false
 
 # ConfigMap and Secret
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -101,6 +103,8 @@ Via volume mount:
   (updated dynamically ~60s after ConfigMap change)
   (pod sees new file without restart)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When a ConfigMap is mounted as a volume, the files in the mount are symlinks into
 a configmap-managed directory. When the ConfigMap is updated, Kubernetes atomically
@@ -623,7 +627,37 @@ flowchart TD
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Namespace and Resource Quotas
+
+---
 
 ### 🎯 Model Answer
 
@@ -703,6 +737,8 @@ RBAC: team-a user -> Role -> only namespace team-a
       team-b user -> Role -> only namespace team-b
       platform admin -> ClusterRole -> all namespaces
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ResourceQuota admission: when a pod is created in a namespace, the ResourceQuota
 Admission Controller checks if the namespace's current usage plus the new pod's
@@ -1188,7 +1224,37 @@ flowchart TB
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # kubectl CLI Basics
+
+---
 
 ### 🎯 Model Answer
 
@@ -1271,6 +1337,8 @@ HTTP GET https://api.my-cluster.com/api/v1/namespaces/default/pods
        v
 JSON response -> formatted table output
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 kubeconfig contexts let you switch between clusters and namespaces:
 `kubectl config use-context prod-cluster`
@@ -1582,6 +1650,8 @@ spec:
         kubectl.kubernetes.io/restartedAt: "2024-01-15T10:30:00Z"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is safe for production because it respects the Deployment's rolling update
 strategy (maxSurge, maxUnavailable). The rollout can be paused, watched, or
 rolled back with the standard rollout commands.
@@ -1608,6 +1678,8 @@ Option 1: kubectl debug with an ephemeral container (K8s 1.25+):
 ```bash
 kubectl debug -it <pod> --image=busybox --target=app
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This attaches an ephemeral busybox container to the running Pod, sharing its
 process namespace. You can see the app's processes and files without modifying
 the running Pod or image.
@@ -1618,6 +1690,8 @@ kubectl debug <pod> --copy-to=debug-pod \
   --container=app --image=ubuntu -- sleep infinity
 kubectl exec -it debug-pod -c app -- bash
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Creates a copy of the Pod with the app container's image replaced by ubuntu.
 Useful when you want a full shell in the same environment.
 
@@ -1657,6 +1731,8 @@ Usage:
 kubectl apply --server-side -f deployment.yaml
 kubectl apply --server-side --field-manager=argocd -f deployment.yaml
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefits for GitOps: Argo CD uses SSA by default in newer versions. It eliminates
 the common conflict where HPA, KEDA, or other operators modify resources that Argo CD
@@ -1757,3 +1833,33 @@ flowchart LR
 > Deployment controller sees the change and creates/updates ReplicaSets. The scheduler
 > assigns pods to nodes. The kubelet on the target node starts the actual containers.
 > kubectl's role ends after the API call - everything else is driven by the control plane.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

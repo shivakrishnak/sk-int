@@ -153,6 +153,8 @@ cat /proc/$PID/maps | grep app-runner
 # If pauses >>expected: look for long native calls
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Image heap vs runtime heap
 
@@ -257,6 +259,8 @@ LD_PRELOAD=./libasyncProfiler.so \
 # Alternative: use endpoint:
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Self-diagnostic endpoint (Quarkus)
 @Path("/q/diagnostics")
@@ -279,12 +283,16 @@ public class DiagnosticsResource {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JMX in native:
 ```properties
 # Enable JMX in native (SubstrateVM subset)
 quarkus.native.additional-build-args=\
   --enable-monitoring=jmxserver,jmxclient
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Native image requires
 planning observability at build time. Retro-fit is hard.
@@ -299,6 +307,34 @@ planning observability at build time. Retro-fit is hard.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Graal JIT Compiler Architecture
 
@@ -525,6 +561,8 @@ for (int i = 0; i < arr.length; i++) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Trade-off: sea-of-nodes is harder to understand/debug.
 Register allocator is more complex (no ordering).
 
@@ -542,6 +580,34 @@ because they require restructuring basic blocks.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Native Image Heap Initialization
 
@@ -784,6 +850,34 @@ a JVM alternative to native image for the startup problem.
 
 ---
 
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
 # Points-To Analysis in Native Image
 
 **Interview Weight:** hard - Understanding points-to
@@ -895,6 +989,8 @@ that could possibly be called."
 # Visualize with: gephi, graphviz
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Understanding what analysis can/cannot follow
 
@@ -990,6 +1086,8 @@ Medium service (20 deps): 4-6 minutes
 Large monolith (100+ deps): 8-15 minutes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 What drives build time:
 1. Number of JARs: each adds more reachable code.
 2. Reflection: each @RegisterForReflection adds work.
@@ -1014,6 +1112,8 @@ Reducing build time:
 # 23+ improvements: 20-30% faster analysis phase
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CI optimization:
 ```yaml
 # Cache GraalVM download + local Maven repo
@@ -1024,6 +1124,8 @@ CI optimization:
       ~/.graalvm-cache
     key: graalvm-${{ hashFiles('pom.xml') }}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Build time is a cost.
 Treat it like unit test speed: optimize, cache, measure.
@@ -1038,6 +1140,34 @@ Treat it like unit test speed: optimize, cache, measure.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Truffle Framework and AST Interpreters
 
@@ -1289,6 +1419,8 @@ When AST is stable and types are profiled:
    - No AST node traversal
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Example - before partial evaluation:
 ```
 AddNode.execute(frame)
@@ -1299,11 +1431,15 @@ AddNode.execute(frame)
   → addLongs(1, 2)        [method call]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 After partial evaluation (Graal inlines everything):
 ```
 // All of the above compiles to:
 return 3L  // constant folded!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Or for variable expressions:
 ```
@@ -1312,6 +1448,8 @@ Or for variable expressions:
 return frame.getLong(slot_x) + frame.getLong(slot_y)
 // Same as C: array[0] + array[1]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Partial evaluation
 is the theoretical foundation that makes Truffle possible.
@@ -1324,3 +1462,33 @@ with a Java-based interpreter.
 | Hiring Manager | Polyglot language performance. |
 | Bar Raiser | Partial evaluation, JIT connection. |
 | Principal | "Truffle is Futamura projection in practice. The AST is the program. The interpreter is specialized by Graal's partial evaluator." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

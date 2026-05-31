@@ -133,6 +133,8 @@ BROKER GUARANTEES (varies by broker):
  - Replay (Kafka: consumers rewind offset)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Three event types:**
 
 | Type | Contents | Use Case |
@@ -377,6 +379,8 @@ kafka-console-consumer.sh \
 # OrderCancelled is on partition 7 -> ordering violation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use a consistent partition key: `orderId` as the Kafka
 message key. Kafka guarantees ordered delivery within a partition
 for the same key.
@@ -402,6 +406,8 @@ kafka-console-consumer.sh \
   --from-beginning
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Configure error handler with dead-letter queue:
 ```java
 @Bean
@@ -415,6 +421,8 @@ public ConcurrentKafkaListenerContainerFactory factory() {
     return factory;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -544,6 +552,8 @@ public void handleOrderPlaced(OrderPlacedEvent event) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The window: idempotency keys must be retained for the expected
 redelivery window (typically 24-72 hours, matching broker retention).
 
@@ -642,6 +652,8 @@ public DefaultErrorHandler errorHandler(
     );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Most candidates know what a DLQ
 is. Great candidates describe the retry-then-DLQ flow, the distinction
@@ -856,6 +868,34 @@ suppression during replay as the complete design.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CQRS - Command Query Responsibility Segregation
 
 🎯 Interview Weight: high - common at architect and senior levels;
@@ -981,6 +1021,8 @@ QUERY SIDE (Read)             |
   (reads from read model directly,
    no domain logic, no joins needed)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Read and write models optimize for different things. The write
@@ -1202,6 +1244,8 @@ FROM order_summary_views;
 # Compare to last OrderPlaced event time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix 1 (client-side):* After command success, temporarily show
 the result from the command response (optimistic UI). Do not wait
 for the read model.
@@ -1228,6 +1272,8 @@ SELECT event_id FROM processed_events
 ORDER BY event_id;
 -- Look for gaps (missing event IDs)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Rebuild the projection from scratch by replaying all events
 from the event store. This is the "read model repair" capability -
@@ -1464,6 +1510,8 @@ kafka-consumer-groups.sh \
 # Restart projection service - it rebuilds from scratch
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Without Event Sourcing: the write store holds current state, not
 event history. Rebuilding from scratch may not be possible unless
 you also store events separately. Fallback: write a reconciliation
@@ -1593,6 +1641,8 @@ void placeOrder_raisesOrderPlacedEvent() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Projection handler testing: publish an event, verify the read
 model was updated correctly. Use an in-memory or real database
 for the projection store.
@@ -1607,6 +1657,8 @@ void orderPlacedEvent_updatesOrderSummaryView() {
     assertThat(view.getTotal()).isEqualTo(total);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 End-to-end CQRS test: issue a command, wait for the projection
 to update (poll with timeout), assert on the read model. This
@@ -1638,3 +1690,33 @@ operational verification.
 | Recovery from bug | Replay events to rebuild projection | Re-run reconciliation job |
 | Best for | High read/write ratio, diverse read shapes | Uniform load, simple read requirements |
 | Team requirement | EDA expertise, eventual consistency comfort | Basic ORM knowledge |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

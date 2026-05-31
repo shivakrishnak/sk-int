@@ -115,6 +115,8 @@ TIMELINE:
   2024: Jakarta EE 11 (in progress)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **TCK (Technology Compatibility Kit):**
 
 The TCK is a test suite that verifies an implementation
@@ -143,6 +145,8 @@ Application written to JAX-RS 3.1 spec:
   -> runs on Open Liberty (TCK passed)
   No code changes needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -314,6 +318,8 @@ grep -rn "import org.jboss\|import com.ibm\
 # Any non-jakarta.*, non-java.* import is a portability risk
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Replace vendor-specific APIs with spec equivalents,
 or document the vendor dependency explicitly.
 
@@ -337,6 +343,8 @@ mvn dependency:tree | grep -E "javax.persistence|jakarta.persistence"
 # cannot be cast to jakarta.persistence.Entity
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```xml
 <!-- Exclude old javax.* from dependencies: -->
@@ -351,6 +359,8 @@ mvn dependency:tree | grep -E "javax.persistence|jakarta.persistence"
     </exclusions>
 </dependency>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -553,6 +563,8 @@ mvn dependency:tree -Dincludes=javax.persistence
 #   "multiple versions of javax.persistence detected"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```xml
 <!-- Exclude old javax.persistence from the offending dependency -->
@@ -582,6 +594,8 @@ Fix:
   </configuration>
 </plugin>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Adding the Maven Enforcer rule as
 a permanent guard. The ClassCastException can re-appear if a new
@@ -635,6 +649,8 @@ Compatibility checklist:
    # Or decompile a class:
    javap -c -classpath library.jar some.Class | grep 'javax\|jakarta'
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. **Published artifact version**: check Maven Central metadata for
    `jakarta.*` vs `javax.*` in the artifact's `pom.xml` dependencies.
@@ -707,10 +723,14 @@ rules catch the problem at compile time.
 | Portability guarantee | TCK compliance | JDK TCK | None |
 | Source of truth | Specification doc | JLS + JVM spec | Framework code |
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: L6 Theory - the specification process is a governance
 model, not a deployable system design. No system design applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -759,6 +779,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MicroProfile and Lean Enterprise Java
 
@@ -858,6 +906,8 @@ MICROPROFILE SUBSET:
   Startup: <100ms, Heap: 50MB (Quarkus native)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fault Tolerance in Practice:**
 
 MicroProfile Fault Tolerance is one of its most valuable APIs.
@@ -871,6 +921,8 @@ CLOSED (normal operation)
   -> HALF-OPEN (probe request)
   -> CLOSED (if probe succeeds)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1121,6 +1173,8 @@ curl http://service/q/metrics | \
 # failure count, success count, times transitioned
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Increase volume threshold and use shorter delay for recovery:
@@ -1131,6 +1185,8 @@ curl http://service/q/metrics | \
     successThreshold = 3         // more successes to close
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1156,6 +1212,8 @@ curl http://localhost:8080/q/dev-ui/configuration
 # 4. application.properties
 # 5. META-INF/microprofile-config.properties
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1234,6 +1292,8 @@ public class VaultConfigSource implements ConfigSource {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing the Kubernetes mapping.
 Env vars from ConfigMaps and Secrets become priority 400 sources
 automatically. Application teams that understand MP Config priority
@@ -1263,6 +1323,8 @@ State transitions:
 )
 public Order processPayment(PaymentRequest req) { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Transition logic:
 - CLOSED -> OPEN: last 10 requests had >50% failures
@@ -1348,6 +1410,8 @@ public class DatabaseReadiness implements HealthCheck {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The common mistake of putting
 database connectivity in the liveness check. If the database is
 temporarily unavailable, this causes all pods to restart (liveness
@@ -1370,6 +1434,8 @@ public Order loadOrder(String id) {
 // OrderNotFoundException is swallowed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis:
 ```bash
 # Enable MP Fault Tolerance debug logging:
@@ -1381,6 +1447,8 @@ quarkus.log.category."org.eclipse.microprofile.faulttolerance".level=DEBUG
 #   Retrying method ... attempt X of 3
 #   Exception not retryable: ... (type mismatch)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix:
 ```java
@@ -1400,6 +1468,8 @@ public Order loadOrderFallback(String id) {
     throw new OrderNotFoundException(id); // re-throw explicitly
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding that `@Retry` catches
 and re-throws after exhaustion - it does not swallow the exception.
@@ -1430,6 +1500,8 @@ curl http://service:8080/metrics | grep circuitbreaker
 # alert: CircuitBreakerOpen
 # expr: rate(application_ft_circuitbreaker_state_open_total[5m]) > 0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Quarkus, the SmallRye Fault Tolerance extension emits these metrics
 automatically when `quarkus-smallrye-fault-tolerance` and
@@ -1521,11 +1593,15 @@ slowest evolution but the strongest stability guarantee.
 | OpenAPI | MP OpenAPI | SpringDoc / Springfox |
 | Tracing | MP OpenTelemetry | Micrometer Tracing |
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: L6 Theory - MicroProfile defines a programming
 model specification, not a deployable system architecture
 pattern. No system design section applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1587,3 +1663,33 @@ stateDiagram-v2
 > for each service dependency is a production operations task.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

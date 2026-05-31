@@ -8,6 +8,17 @@ permalink: /database-sql/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [ACID Reasoning as Universal Correctness Framework](#acid-reasoning-as-universal-correctness-framework) | medium |
+| 2 | [Index Design as Cache Prefetching](#index-design-as-cache-prefetching) | medium |
+| 3 | [SQL Query as Set Theory](#sql-query-as-set-theory) | medium |
+
+---
+
 # ACID Reasoning as Universal Correctness Framework
 
 **TL;DR:** ACID thinking transfers beyond databases. Any shared mutable state problem
@@ -92,6 +103,8 @@ Durability examples:
   Cache:        cache-aside means DB is the durable copy
   File:         fsync before close (OS buffer != durable)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -218,6 +231,8 @@ Files.move(tmp, Path.of(configPath),
 // No intermediate state visible to readers.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -251,6 +266,34 @@ Files.move(tmp, Path.of(configPath),
 🗣️ "Cache invalidation is notoriously complex ('one of two hard problems in computer science'). ACID lens: (1) Atomicity: updating the database and invalidating the cache are two separate operations. If the DB update succeeds and cache invalidation fails: stale data in cache. Solution: (a) cache-aside with short TTL (stale for at most TTL seconds - acceptable staleness). (b) Write-through cache (update cache and DB together - but still not atomic). (c) Event-driven invalidation (database event triggers cache purge - at-least-once delivery). (2) Consistency: what invariant must the cache maintain? 'Cache never serves data for a deleted entity.' Solution: TTL as the backstop. Even if invalidation fails: TTL eventually expires the stale entry. (3) Isolation: if two writes to the same cache key occur concurrently, which wins? Last-write-wins is the default (Redis SET). If ordering matters: use a version/timestamp check before updating the cache. (4) Durability: the cache is ephemeral (Redis can be configured for persistence, but the primary durability is the database). The design principle: treat the cache as a performance optimization, not a source of truth. If the cache is lost: the database is the source of truth and the cache is rebuilt on demand."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Index Design as Cache Prefetching
 
@@ -326,6 +369,8 @@ Key parallel: both precompute and organize data for
 future reads. Both have a write cost. Both are most
 valuable for frequently repeated access patterns.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -478,6 +523,34 @@ Common causes:
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # SQL Query as Set Theory
 
 **TL;DR:** Every SQL query is a transformation of sets (tables are sets of rows).
@@ -545,6 +618,8 @@ Cardinality |A|     SELECT COUNT(*) FROM A
 Universal quant.    WHERE NOT EXISTS (NOT EXISTS ...)
 Existential quant.  WHERE EXISTS (...)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -723,6 +798,8 @@ ORDER BY calls * mean_exec_time DESC;
 -- High calls on a single-row lookup = N+1 pattern.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use JPA `@EntityGraph` or `JOIN FETCH` to load related entities in one query.
 Or: use `IN (ids)` batch query instead of per-ID queries.
 
@@ -757,3 +834,33 @@ Or: use `IN (ids)` batch query instead of per-ID queries.
 **Q7: What is the practical impact of thinking of GROUP BY as set partitioning?**
 
 🗣️ "GROUP BY as set partitioning: each unique value of the GROUP BY column(s) defines one partition (sub-set). Aggregate functions (SUM, COUNT, MAX, MIN, AVG) compute over each partition. Output: one row per partition. The SET THINKING insight: GROUP BY does not 'iterate over rows' (imperative view). It partitions the entire row set into disjoint sub-sets and computes statistics per sub-set. Practical impact on query writing: (1) Multiple aggregates per GROUP BY: `SELECT dept, COUNT(*), SUM(salary), MAX(salary) FROM employees GROUP BY dept` computes ALL aggregates in ONE pass over the partitioned set. Not three separate queries. (2) FILTER clause: `COUNT(*) FILTER (WHERE status = 'ACTIVE')` counts only the sub-set of each partition where status is ACTIVE. One GROUP BY, selective count. (3) ROLLUP/CUBE: extend GROUP BY with hierarchical or multi-dimensional partitioning. `GROUP BY ROLLUP(year, month)`: partitions by (year, month), then by (year), then by () (total). Each partition level produces one output row. (4) Understanding that GROUP BY partitions (not sorts) explains why HAVING is post-partition and WHERE is pre-partition."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

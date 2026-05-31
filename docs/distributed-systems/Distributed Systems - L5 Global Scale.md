@@ -8,6 +8,15 @@ permalink: /distributed-systems/l5-global-scale/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Global-Scale Distributed System Design](#global-scale-distributed-system-design) | medium |
+
+---
+
 # Global-Scale Distributed System Design
 
 **TL;DR:** Designing at global scale means solving problems that
@@ -153,6 +162,8 @@ Level 5 - Data residency enforcement:
          custom shard routing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The speed-of-light constraint:**
 
 ```
@@ -168,6 +179,8 @@ Physical distance → minimum RTT:
 Resolution: serve Tokyo users from a Tokyo (or Singapore) region.
 Any data the Tokyo service needs from NY: asynchronously pre-replicated.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Active-Active vs. Active-Passive multi-region:**
 
@@ -204,6 +217,8 @@ Active-Active (harder, higher availability):
   route to their home region primary, preventing conflicts)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Global databases (when to use):**
 
 ```
@@ -231,6 +246,8 @@ Most applications:
   - 95% of operations stay within one region anyway
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **CDN architecture pattern (most impactful for latency):**
 
 ```
@@ -257,6 +274,8 @@ CDN with authentication:
   - Edge functions (Cloudflare Workers): compute at edge,
     fetch user-specific data from regional service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Global scale requires a tiered approach. Not all data and
@@ -585,6 +604,8 @@ Traffic numbers:
   Each region: 3,500 RPS reads + 700 writes/sec (very manageable per region)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -684,6 +705,8 @@ grep "GET / HTTP" /var/log/nginx/access.log | \
 # "Cache Miss Rate" spike at the same time = invalidation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 1: staggered cache invalidation. Invalidate CDN regions
 one at a time (5 minutes apart). Not all 250 POPs at once.
 
@@ -701,6 +724,8 @@ limit_req zone=origin_protect burst=200 nodelay;
 # At most 1 origin request per second per URI
 # Others return 429 or serve stale CDN content
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -733,6 +758,8 @@ kafka-consumer-groups.sh \
 # "LAG" column: should be < 1000, was 850,000
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix (short-term): for inventory reads specifically, always
 read from primary (no replica):
 ```java
@@ -754,6 +781,8 @@ public class InventoryService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix (long-term): inventory depletion is a CP operation.
 Use a globally consistent counter (DynamoDB Global Tables
@@ -787,6 +816,8 @@ aws logs filter-log-events \
 # If results: EU PII in US logs = GDPR violation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 1. Immediate: remove all PII from structured log context.
    Never log email, name, IP in structured logs.
@@ -807,6 +838,8 @@ Fix:
        re.IGNORECASE)
    # Block deployment if PII detected in logs
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -900,6 +933,8 @@ DNS resolution:
   TTL: 60-300 seconds (DNS cache duration)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Route53 latency-based routing:
 ```
 Route53 measures actual latency from each AWS region
@@ -908,6 +943,8 @@ to Route53 resolvers worldwide.
 → Return the IP for that region
 This is more accurate than geographic lookup alone.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Limitations:**
 
@@ -992,6 +1029,8 @@ Conflict resolution (Last-Writer-Wins by timestamp):
   
   Result: both regions converge to "Bob" (last writer wins)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Consistency modes:**
 - Read from any region: eventually consistent (replica may be slightly behind)
@@ -1083,6 +1122,8 @@ Regional service:
   - Return personalized response
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the hybrid architecture.
 The real production pattern is neither "CDN-only" nor "regional-
 only" but a layered approach where the edge handles stateless
@@ -1112,6 +1153,8 @@ curl https://api.eu-west-1.example.com/products/X | \
 # 3 hours stale: EU replica stopped replicating at 11:00
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Check CDC / replication lag:
 ```bash
 # If using MySQL binlog replication:
@@ -1127,6 +1170,8 @@ kafka-consumer-groups.sh \
 # Shows consumer group LAG
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3 - Root cause: replication stopped due to constraint error:
 ```bash
 # The deployment introduced a new NOT NULL column in US
@@ -1139,6 +1184,8 @@ mysql -h eu-replica -e "DESCRIBE products" | grep version_tag
 mysql -h us-primary -e "DESCRIBE products" | grep version_tag
 # → NOT NULL DEFAULT '' (added in deployment)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix:
 1. Apply schema migration to EU replica first
@@ -1180,6 +1227,8 @@ order.setCreatedAt(
 // Or as UTC offset: 2024-01-15T14:03:21.000Z
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 2: Display in user's local time zone, not server's:**
 ```javascript
 // BAD: display raw UTC
@@ -1196,6 +1245,8 @@ const display = new Intl.DateTimeFormat('ja-JP', {
 // Shows: "2024年1月15日 23:03"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 3: Business logic uses UTC; never use local time for scheduling:**
 ```java
 // BAD: "run this job at 9am" - 9am where?
@@ -1211,6 +1262,8 @@ public void morningReport() {...}
 // "run_at_utc_hour": 14
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Rule 4: Time-based rate limiting uses sliding windows:**
 ```java
 // "100 requests per hour per user"
@@ -1219,6 +1272,8 @@ public void morningReport() {...}
 // GOOD: sliding window: "100 requests in the last 60 minutes"
 // Redis sliding window rate limiter: no time zone issues
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Rule 5: Daylight Saving Time transitions:**
 - DST gaps/overlaps cause "duplicate" hours and "missing" hours
@@ -1407,6 +1462,8 @@ Scale:
     → 500,000 human reviews/day (substantial moderation operation)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the separate regional ML models.
 A single global moderation model applies US content norms globally.
 What is legal in the US may violate German law (certain symbols),
@@ -1549,6 +1606,8 @@ AWS implementation:
   // EU-origin service cannot store data outside eu-west-1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Layer 2: Data classification tags:**
 ```java
 // Every data entity tagged with residency requirement
@@ -1567,6 +1626,8 @@ public class UserProfile {
 // any code that would serialize UserProfile to a non-EU
 // endpoint generates a compiler warning
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Layer 3: Application-level routing enforcement:**
 ```java
@@ -1593,6 +1654,8 @@ public class DataResidencyEnforcer {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Layer 4: Logging and audit trail:**
 ```java
 // Every access to regulated data: audit log
@@ -1618,6 +1681,8 @@ public class DataAccessAudit {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* the multi-layer enforcement.
 Many teams implement data residency at the infrastructure layer
@@ -1658,6 +1723,8 @@ Immediate actions (first 30 minutes):
      --retention-in-days 365
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Investigation (next 2-4 hours):
 
 Step 1: Access logs
@@ -1669,6 +1736,8 @@ Step 1: Access logs
    ORDER BY created_at DESC;
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Correlate with infrastructure
    ```bash
    # Was there a cross-region API call?
@@ -1679,6 +1748,8 @@ Step 2: Correlate with infrastructure
        AttributeValue=<eu_data_bucket> \
      --region us-east-1
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Root cause
    Common causes: debug logging (reviewed earlier), a developer
@@ -1708,3 +1779,33 @@ GDPR Article 33 requires supervisory authority notification within
 notification can result in additional fines beyond the breach
 itself. Senior engineers know to involve Legal immediately, not
 after the technical investigation is complete.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

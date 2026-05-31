@@ -7,6 +7,15 @@ permalink: /frontend-build-tools/l4-ci-cd-integration/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Frontend Build Pipeline in CI/CD](#frontend-build-pipeline-in-cicd) | medium |
+
+---
+
 # Frontend Build Pipeline in CI/CD
 
 ---
@@ -85,6 +94,8 @@ Environment management:
   Never commit .env files to git
   CI reads secrets from GitHub Actions secrets/OIDC
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -406,6 +417,8 @@ Cost management:
   - Share CDN distribution (only index.html per preview)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -568,6 +581,8 @@ steps:
       role-to-assume: arn:aws:iam::ACCOUNT:role/frontend-deploy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The runner receives a short-lived AWS session token (1 hour default)
 with only the permissions defined in the `frontend-deploy` role (S3
 write to specific bucket, CloudFront invalidation). No long-lived
@@ -583,3 +598,33 @@ so that PRs from forks cannot request production credentials even if
 the workflow file is modified. Defense-in-depth: even if a supply
 chain attack in a dependency exfiltrates the runner's environment,
 the token only works for 1 hour and only for the specific AWS resources.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

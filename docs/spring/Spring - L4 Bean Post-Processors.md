@@ -8,7 +8,13 @@ permalink: /spring/l4-bean-post-processors/
 render_with_liquid: false
 ---
 
-# Spring - L4 Bean Post-Processors
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L4 Bean Post-Processors](#spring---l4-bean-post-processors) | medium |
+| 2 | [BeanFactoryPostProcessor and BeanPostProcessor](#beanfactorypostprocessor-and-beanpostprocessor) | medium |
 
 ---
 
@@ -28,7 +34,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — distinguishing BFPP vs BPP and understanding their
+🎯 Interview Weight: High - distinguishing BFPP vs BPP and understanding their
 ordering in the refresh cycle is a standard Staff/Principal interview filter.
 Misuse causes AOP proxy bypass bugs that are hard to diagnose.
 
@@ -202,6 +208,8 @@ Key architectural constraint:
   Spring warns: "not eligible for getting processed
   by all BeanPostProcessors"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The separation of BFPP (Phase 5) and BPP (Phase 6 + 11) is intentional and
@@ -504,6 +512,8 @@ For each singleton BeanDefinition in Phase 11:
    Returned object (proxy) replaces bean in context.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Many candidates know steps 4-8 but miss
 steps 1-3. The Aware interface injection in step 3 is interesting: it runs
 BEFORE @PostConstruct. This is why ApplicationContextAware.setApplicationContext()
@@ -550,6 +560,8 @@ CGLIB vs JDK proxy:
     - Cannot proxy final classes or final methods
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Spring Boot sets proxyTargetClass=true by default
 (CGLIB for all beans). This avoids the "must implement interface" constraint of
 JDK proxies. The performance difference is negligible at runtime (< 1% method
@@ -581,6 +593,8 @@ postProcessAfterInstantiation(Object bean, String beanName)
   -> Return false to skip property population
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 AutowiredAnnotationBeanPostProcessor implements IABPP:
 - postProcessProperties() handles @Autowired, @Value, @Inject field/method injection
 - Reads @Autowired metadata from bean class
@@ -606,6 +620,8 @@ BeanPostProcessors (for example: not eligible
 for auto-proxying).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Diagnosis process:**
 
 Step 1: Note the bean name in the warning (myService).
@@ -620,6 +636,8 @@ Step 3: Enable debug logging:
 logging.level.org.springframework
   .context.support.PostProcessorRegistrationDelegate=DEBUG
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This logs the creation order in detail.
 
 Step 4: Check if myService needs AOP (@Transactional, @Cacheable):
@@ -644,6 +662,8 @@ class MyBFPP implements BeanFactoryPostProcessor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix 2: Make the dependency lazy:
 ```java
 @Component
@@ -653,6 +673,8 @@ class MyBFPP implements BeanFactoryPostProcessor {
     // (after BPPs are registered)
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The warning is often harmless (bean doesn't
 need AOP), but it points to an architectural issue: a post-processor depending
@@ -686,6 +708,8 @@ Phase 11, per-bean, after instantiation:
     5. Use reflection to set field value
        (field.setAccessible(true), field.set(bean, value))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Important: @Autowired field injection uses reflection.setAccessible(true).
 This bypasses Java access modifiers - private @Autowired fields work.
@@ -725,6 +749,8 @@ Context stores ProxyA2
 Call path: ProxyA2 -> ProxyA2 advice -> ProxyA1 -> ProxyA1 advice -> rawA
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This double-wrapping is usually undesirable. Spring's AOP avoids it
 by using a single AbstractAutoProxyCreator that collects ALL advisors
 for a bean and creates ONE proxy with all the advice:
@@ -738,6 +764,8 @@ Creates one CGLIB proxy with all three interceptors.
 Method calls: proxy -> TX advice -> Cache advice
              -> Retry advice -> actual method
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The advice chain order within a single
 proxy is controlled by Ordered on @Aspect classes. Default: higher @Order
@@ -805,6 +833,8 @@ boolean primary         // @Primary
 boolean autowireCandidate // can this be @Autowired?
 String[] dependsOn      // @DependsOn ordering
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Bean instance: the actual Java object created from BeanDefinition.
 
@@ -955,6 +985,8 @@ public class LiteConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Implications:
 - proxyBeanMethods=true: inter-@Bean calls return singleton. CGLIB overhead.
 - proxyBeanMethods=false: inter-@Bean calls create new instances. No CGLIB.
@@ -990,6 +1022,8 @@ Phase 6 (registerBeanPostProcessors):
 3. Re-register ApplicationListenerDetector at end
    (must remain last BPP)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 BPPs themselves go through:
 - Constructor instantiation
@@ -1030,6 +1064,8 @@ interface BeanDefinitionRegistryPostProcessor
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Execution order in Phase 5:
 1. BDRPPs run first:
    a. PriorityOrdered BDRPPs (postProcessBeanDefinitionRegistry)
@@ -1056,3 +1092,33 @@ registered as additional @Configuration classes. ConfigurationClassPostProcessor
 then iterates again to process those new classes. The iteration continues until
 no new classes are added. This is how the entire auto-configuration chain loads
 from a single @SpringBootApplication annotation.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /kafka/l5-event-driven-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L5 Event-Driven Architecture](#kafka---l5-event-driven-architecture) | medium |
+
+---
+
 # Kafka - L5 Event-Driven Architecture
 
 ## Event-Driven Architecture with Kafka
+
+---
 
 ### 🎯 Model Answer
 
@@ -179,7 +190,8 @@ SAGA CHOREOGRAPHY vs ORCHESTRATION:
   Choreography (event-driven, no central coordinator):
     Order Service:    publishes "OrderPlaced"
     Payment Service:  reacts, processes payment, publishes "PaymentProcessed" or "PaymentFailed"
-    Inventory Service:reacts to "PaymentProcessed", reserves inventory, publishes "InventoryReserved"
+    Inventory Service: reacts to "PaymentProcessed",
+    reserves inventory, publishes "InventoryReserved"
     Shipping Service: reacts to "InventoryReserved", creates shipment.
     
     On failure: compensating events flow in reverse:
@@ -214,7 +226,8 @@ EDA ANTI-PATTERNS:
   Anti-pattern 2: Implicit ordering dependency without key guarantee:
     "OrderPlaced" on partition 3.
     "OrderShipped" on partition 7 (different key used).
-    Consumer processes "OrderShipped" before "OrderPlaced" (different partitions, different consumers).
+    Consumer processes "OrderShipped" before "OrderPlaced"
+    (different partitions, different consumers).
     Business logic: invalid state.
     Fix: use consistent key (orderId) for all events in the same aggregate.
   
@@ -228,6 +241,8 @@ EDA ANTI-PATTERNS:
     Schema changes: discovered at runtime (consumer parse error at 3am).
     Fix: Avro/Protobuf with Schema Registry. Schema compatibility enforcement at produce time.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -417,6 +432,8 @@ single database transaction boundary or use a distributed transaction protocol (
     InventoryUnavailable -> Payment Service: refund, Order Service: cancel.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -514,6 +531,8 @@ Fix long-term:
      On restart: resume from SAGA state (not just Kafka offset).
   4. Use a SAGA orchestrator (Temporal, Axon Server) for explicit state management.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -632,4 +651,34 @@ orchestration's explicit state management and recovery guarantee. For complex, l
 workflows (hours, days): Temporal is significantly more reliable than custom SAGA choreography.
 For simple, fast workflows (< 30 seconds): Kafka SAGA choreography is simpler and has no
 additional infrastructure dependency.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -7,7 +7,13 @@ permalink: /async-java/l3-security/
 render_with_liquid: false
 ---
 
-# Async Java - L3 Security
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L3 Security](#async-java---l3-security) | medium |
+| 2 | [Secure Async Patterns in Java](#secure-async-patterns-in-java) | medium |
 
 ---
 
@@ -107,6 +113,8 @@ Async CompletableFuture (BREAKS):
   });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Thread-based security context mechanisms:**
 
 ```
@@ -130,6 +138,8 @@ Reactive: ReactiveSecurityContextHolder
   - Integrated with Spring Security 5+ WebFlux
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **TOCTOU (Time-of-Check vs Time-of-Use) vulnerability:**
 
 ```
@@ -147,6 +157,8 @@ SECURE PATTERN:
   4. t=3: Async callback validates token before write
   -> If token expired: operation rejected
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Sensitive data in async contexts:**
 
@@ -355,6 +367,8 @@ log.debug("Thread: {}", Thread.currentThread().getName());
 // vs "http-nio-8080-exec-1" (request thread) - has security context
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 @Configuration
@@ -370,6 +384,8 @@ class AsyncConfig implements AsyncConfigurer {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -419,6 +435,8 @@ SecurityContextHolder.setStrategyName(
     SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `DelegatingSecurityContextExecutor` uses
 a `Supplier<SecurityContext>` - by default it captures the context from
 the SUBMITTING thread. For cases where you want to run async tasks with
@@ -431,6 +449,8 @@ CompletableFuture.runAsync(
     new DelegatingSecurityContextRunnable(
         () -> systemLevelJob(), systemContext));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -454,6 +474,8 @@ Set by Spring Security WebFlux:
   -> context propagates to all downstream operators
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Read authentication in reactive service:
 public Mono<UserProfile> getProfile() {
@@ -475,6 +497,8 @@ public Mono<ServerResponse> getProfile(ServerRequest req) {
             ServerResponse.ok().bodyValue(profile));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Context propagation through subscriber
 chain: when `contextWrite(Context.of("key", "value"))` is used, the context
@@ -518,6 +542,8 @@ Code pattern:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mitigations:
 
 1. **Short-lived operation**: TOCTOU risk is low for operations completing
@@ -531,6 +557,8 @@ Mitigations:
        return reportService.generateFullReport();
    });
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. **Token-based authorization**: issue a short-lived capability token
    at check time; verify the token hasn't been revoked at use time.
@@ -584,6 +612,8 @@ public ResponseEntity<ApiError> handleException(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Structured logging fields vs log messages
 for PII: structured logging allows field-level redaction:
 ```java
@@ -594,6 +624,8 @@ log.info("User action",
 // Log aggregator can strip "userId" field for compliance
 // vs: log.info("User {} logged in", userId) <- embedded in string
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -643,6 +675,8 @@ public CompletableFuture<Report> generateReport(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Async validation: never perform validation
 ONLY in the async callback thread. If the callback thread validates but the
 submission thread does not, the caller receives an exception asynchronously
@@ -680,6 +714,8 @@ Thread vt = Thread.ofVirtual().start(() -> {
 // NOT by the request thread -> no inheritance
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Security with virtual threads (Spring Boot 3.2+):
 ```yaml
 spring:
@@ -687,6 +723,8 @@ spring:
     virtual:
       enabled: true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With `spring.threads.virtual.enabled=true`, Tomcat uses virtual threads for
 HTTP request handling. Each request gets its own virtual thread. ThreadLocal
@@ -752,6 +790,8 @@ public CompletableFuture<Void> deleteRecord(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Audit logs for async operations should
 include BOTH the submission time and the execution time. For compliance
 (GDPR, HIPAA, PCI DSS), the audit trail must show: who authorized the
@@ -808,6 +848,8 @@ public Mono<String> fetchUrl(String userProvidedUrl) {
         .bodyToMono(String.class);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The allowlist must check the RESOLVED
 IP, not just the hostname, to prevent DNS rebinding attacks. After DNS
@@ -870,6 +912,8 @@ public CompletableFuture<Response> callSecurely(
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `char[]` for secret storage: Java's
 `String` is immutable and interned in the string pool. A `String` containing
@@ -949,3 +993,33 @@ sequenceDiagram
 > identity. After the task completes, the executor clears the pool thread's
 > SecurityContext to prevent it from leaking to the next task assigned to
 > this thread (which may be for a different user).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

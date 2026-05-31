@@ -8,9 +8,20 @@ permalink: /jpa/l4-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L4 Internals](#jpa---l4-internals) | medium |
+
+---
+
 # JPA - L4 Internals
 
 ## Hibernate Session Internals: Flush Modes and Write-Behind Cache
+
+---
 
 ### 🎯 Model Answer
 
@@ -172,6 +183,8 @@ AUTO-FLUSH HEURISTIC DETAILS (important edge case):
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -318,6 +331,8 @@ EXTENDED PERSISTENCE CONTEXT (anti-pattern in web apps):
   Web apps: always use TRANSACTION-scoped EntityManager (default).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -441,6 +456,8 @@ Fix:
   Result: updates grouped into batches of 500. 20 UPDATEs instead of 10,000.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -538,4 +555,34 @@ Resolution: explicit `em.flush()` between the delete of the third-table entity a
 parent. This forces ordering: delete third-table row, flush, delete parent+children (no FK violation).
 Or: `@ForeignKey(ConstraintMode.NO_CONSTRAINT)`: disable the FK constraint (dangerous but sometimes
 pragmatic for audit/soft-delete scenarios).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

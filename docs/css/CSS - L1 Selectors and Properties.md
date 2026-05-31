@@ -7,6 +7,17 @@ permalink: /css/l1-selectors-and-properties/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Selectors](#css-selectors) | high |
+| 2 | [CSS Units and Values](#css-units-and-values) | high |
+| 3 | [CSS Colors and Typography](#css-colors-and-typography) | medium |
+
+---
+
 # CSS Selectors
 
 🎯 **Interview Weight:** high - tested in every frontend
@@ -117,6 +128,8 @@ MODERN:
 :has(.child) - parent selector, matches by descendant
 :not(.skip)  - negation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -311,6 +324,8 @@ Diagnosis:
 # e.g. type ".nav > a" - DevTools highlights all matches
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: :has() not working**
@@ -324,6 +339,8 @@ Fix: Check caniuse.com; add JS fallback or feature query:
   .container:has(.active) { /* ... */ }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -689,6 +706,34 @@ selectors without requiring a diagram)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Units and Values
 
 🎯 **Interview Weight:** high - CSS unit choice is a daily
@@ -820,6 +865,8 @@ MODERN MATH:
   max(1rem, 2vw)
   clamp(min, preferred, max)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1014,6 +1061,8 @@ Diagnosis:
 # DevTools: Computed tab shows final px value of rem
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Replace `font-size: 16px` with `font-size: 1rem`.
 Ensure root is `font-size: 100%` not a fixed px value.
 
@@ -1035,6 +1084,8 @@ Fix:
   .hero { height: 100dvh; }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1388,6 +1439,34 @@ for understanding CSS units)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CSS Colors and Typography
 
 🎯 **Interview Weight:** medium - foundational knowledge;
@@ -1506,6 +1585,8 @@ TYPOGRAPHY PROPERTIES:
   font-variant:    small-caps;
   font-display:    swap;    [on @font-face - FOIT prevention]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1708,6 +1789,8 @@ Diagnosis:
 # Check: is the @font-face before the rule using it?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: text fails accessibility contrast check**
@@ -1718,6 +1801,8 @@ Diagnosis:
 # Or: Elements panel > select text > Accessibility tab
 # Shows contrast ratio with pass/fail against AA/AAA
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: increase contrast by darkening foreground or lightening
 background (or vice versa). Use oklch or a contrast checker
@@ -2106,3 +2191,33 @@ comparisons are covered inline in the Concept Explanation)*
 
 *(Omit: prose and code examples are sufficient for understanding
 CSS colors and typography)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

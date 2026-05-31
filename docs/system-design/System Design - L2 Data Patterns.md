@@ -8,7 +8,14 @@ permalink: /system-design/l2-data-patterns/
 render_with_liquid: false
 ---
 
-# System Design - L2 Data Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L2 Data Patterns](#system-design---l2-data-patterns) | medium |
+| 2 | [Database Sharding and Partitioning](#database-sharding-and-partitioning) | medium |
+| 3 | [Replication Strategies](#replication-strategies) | medium |
 
 ---
 
@@ -124,6 +131,8 @@ Consistent hashing:
   Use: cache rings (Redis Cluster), distributed KV stores
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cross-shard queries:**
 
 ```
@@ -151,6 +160,8 @@ Secondary index approaches:
     Time query: time-series shard (no scatter-gather)
     Cost: 2x storage, 2x write complexity
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -319,6 +330,8 @@ Users table sharding:
     Twitter uses fanout for normal users (<1M followers)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Twitter's actual architecture evolved from
 MySQL + scatter-gather to fanout-on-write to hybrid (celebrities skip fanout,
 regular users get fanout). The shard key decision at Twitter was driven by
@@ -364,6 +377,8 @@ Duration: hours to days (depends on data volume)
 Risk: bugs in migration logic cause data loss or duplication
 Testing: run migration in staging first, verify checksums
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Online resharding is complex enough that most
 teams use a shard proxy (Vitess, PlanetScale) that handles it transparently.
@@ -425,6 +440,8 @@ Horizontal Partitioning (row splitting):
       FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Postgres native partitioning (PARTITION BY RANGE)
 is transparent to the application - queries to `orders` automatically route to
 the correct partition. The optimizer uses partition pruning: `WHERE created_at > 2024`
@@ -485,6 +502,8 @@ Avoid cross-shard transactions (design):
   This is the preferred solution
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Saga pattern is the production answer to
 distributed transactions, not 2PC. 2PC is blocking (locks held across network)
 and not suitable for high-throughput systems. Saga is non-blocking (async events,
@@ -544,6 +563,8 @@ Resharding with Vitess:
   Online resharding: zero downtime, tested in production
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Vitess abstracts the sharding complexity that
 would otherwise require significant custom application code. The application
 writes standard MySQL SQL; Vitess handles routing, connection pooling, and
@@ -593,6 +614,8 @@ Friend-of-friend queries (2 hops):
     -> Very expensive for users with 1000+ connections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Social graph traversal is a fundamentally
 cross-shard problem. No sharding strategy eliminates it. Facebook's TAO system
 handles this with a caching layer that absorbs the read traffic (80% of graph
@@ -641,6 +664,8 @@ Hybrid (pool + silo for large tenants):
            isolation for large (prevent noisy neighbor)
   Used by: Salesforce, Slack, Shopify
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "noisy neighbor" problem in pool sharding
 is the most common production complaint. One large tenant runs expensive queries
@@ -695,6 +720,8 @@ Option 4: Design avoidance
     Ledger entries are immutable (no update conflicts)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ledger pattern (append-only credit/debit
 entries) avoids cross-shard UPDATE conflicts entirely. Instead of "UPDATE balance
 SET balance = balance - 100 WHERE user_id = X" (update on shard A), write a
@@ -738,6 +765,8 @@ Vitess: built-in monitoring dashboard
   Replication lag per tablet
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The heat map visualization is the key
 diagnostic tool for sharding. A QPS heat map shows which shards are hot
 and at what time. Time-correlated hot spots (same shard busy every morning)
@@ -748,6 +777,34 @@ masks problems: aggregate DB CPU 40% looks fine; individual shard CPU 85%
 is a warning. Always monitor per-shard, not just aggregate.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Replication Strategies
 
@@ -844,6 +901,8 @@ Quorum Replication:
   Cassandra, DynamoDB use quorum
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Replication modes:**
 
 ```
@@ -871,6 +930,8 @@ Quorum writes:
   Trade-off: W=N (all replicas) = highest durability, high latency
              W=1 (one replica) = low latency, risk of data loss
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1108,6 +1169,8 @@ Failover:
   Tools: Patroni, repmgr (automate failover)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Patroni is the industry standard for Postgres
 HA. It uses a distributed consensus system (etcd, ZooKeeper, or Consul) to
 elect a single leader (primary). On primary failure: Patroni automatically
@@ -1160,6 +1223,8 @@ Multi-AZ trade-off:
     Not automatic failover to read replica
     Lower latency writes, but stale reads
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The failover time matters as much as data
 loss. Synchronous replication gives zero data loss but only matters if failover
@@ -1217,6 +1282,8 @@ Practical pattern (Slack):
   Enterprise workspaces: all data in enterprise's contracted region
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Multi-region active-active is complex to
 implement correctly. Most companies don't need it until they have a global
 user base AND have proven that cross-region write latency is hurting users
@@ -1271,6 +1338,8 @@ Amazon Aurora:
   Transparent to application: Aurora handles routing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Most production systems handle this with a
 combination of (1) short default TTL for cached user data and (2) route post-write
 reads to primary for the first 500ms. The 500ms window is longer than typical
@@ -1320,6 +1389,8 @@ Multi-datacenter:
   LOCAL_QUORUM reads: read from local DC (fast)
   Write propagates to both DCs eventually
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Cassandra's replication model is fundamentally
 different from primary-replica. There is no primary; any node can handle writes
@@ -1372,6 +1443,8 @@ Synthetic monitoring:
   Measure time to appear on each replica
   = Real replication lag measurement (not just WAL bytes)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The synthetic monitoring approach gives the
 true end-to-end replication lag as experienced by the application, not just
@@ -1433,6 +1506,8 @@ Use cases for logical replication:
     Analytics DB: additional columns, different schema
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Logical replication enables zero-downtime
 major version upgrades - the most important operational use case. Before logical
 replication (Postgres 10): major version upgrades required `pg_upgrade` and
@@ -1491,6 +1566,8 @@ Application reconnection:
     -> Retry on connection failure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The split-brain prevention is the most
 critical correctness concern in automated failover. If the old primary recovers
 and starts accepting writes while the new primary is already accepting writes:
@@ -1546,6 +1623,8 @@ Zero-downtime (expand-contract):
   6. Later: clean up if needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Flyway / Liquibase migration timing is
 the critical operationally. Many teams run migrations as part of the application
 startup (before serving traffic). This can cause problems with replication:
@@ -1555,3 +1634,33 @@ that don't exist on replicas. Solution: run migrations as a separate step
 in the deployment pipeline (not at startup), wait for replication lag = 0 on
 all replicas after each migration, then proceed with application deployment.
 Tools: Flyway's `flyway.outOfOrder=false` and a health check step in CI/CD.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

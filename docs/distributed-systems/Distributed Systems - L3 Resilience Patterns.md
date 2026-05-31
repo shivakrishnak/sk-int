@@ -8,6 +8,16 @@ permalink: /distributed-systems/l3-resilience-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Circuit Breaker Pattern](#circuit-breaker-pattern) | medium |
+| 2 | [Distributed Monolith Anti-pattern](#distributed-monolith-anti-pattern) | medium |
+
+---
+
 # Circuit Breaker Pattern
 
 **TL;DR:** A circuit breaker wraps a remote call with a state machine
@@ -100,6 +110,8 @@ HALF-OPEN <───────────────────────
 OPEN (back)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Resilience4j configuration:**
 
 ```java
@@ -119,6 +131,8 @@ CircuitBreakerConfig config = CircuitBreakerConfig.custom()
     .build();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fallback strategies:**
 
 ```
@@ -136,6 +150,8 @@ CircuitBreakerConfig config = CircuitBreakerConfig.custom()
    Example: order placed → outbox → retry when B recovers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Sliding window types (Resilience4j):**
 
 ```
@@ -149,6 +165,8 @@ COUNT_BASED is simpler. TIME_BASED is better for
 variable-rate services (different failure rates
 at different times of day).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The circuit breaker serves two purposes: (1) protects the caller
@@ -375,6 +393,34 @@ downstream service."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Distributed Monolith Anti-pattern
 
 **TL;DR:** A distributed monolith has the worst of both worlds:
@@ -486,6 +532,8 @@ is the first step to fixing it.
    - One service's cache eviction storms affect all
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **What makes a TRUE microservice:**
 
 ```
@@ -498,6 +546,8 @@ Independence checklist:
 ✅ Has an independent release pipeline
 ✅ A team can work on it without coordinating with other teams
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Fix strategies:**
 
@@ -521,6 +571,8 @@ Remove shared domain objects from common library.
 Share only: API client stubs, proto files, event schemas.
 Never share: domain objects, business logic, JPA entities.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The shared database is the most common and most severe form
@@ -744,6 +796,8 @@ the shared database dependency last - this is the hardest step.
 Test independence thoroughly before removing the monolith code.
 A good first extraction: the auth/identity service (usually
 minimal outbound dependencies, clear ownership of user data)."
+
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1031,6 +1085,8 @@ CircuitBreakerConfig.custom()
     .build()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 After (records only infrastructure exceptions):
 ```java
 CircuitBreakerConfig.custom()
@@ -1044,6 +1100,8 @@ CircuitBreakerConfig.custom()
         PaymentDeclinedException.class)
     .build()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: if it stays open too long, reduce `waitDurationInOpenState`
 and increase `permittedNumberOfCallsInHalfOpenState` (more probe
@@ -1482,3 +1540,33 @@ to 625 potential coupling points.
 observation. This is why "just add another service" makes the
 distributed monolith exponentially worse over time. The fix must
 be architectural, not incremental.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

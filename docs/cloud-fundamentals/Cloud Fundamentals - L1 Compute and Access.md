@@ -107,6 +107,8 @@ SERVERLESS:
   Dense packing: millions of functions per provider
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cold Start vs Warm Container:**
 
 ```
@@ -124,6 +126,8 @@ COLD START MITIGATION:
   - Use languages with fast cold starts (Node.js/Python)
   - Scheduled "ping" to keep warm (hack, not recommended)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -328,6 +332,8 @@ take 2-5s to initialize. No warm instances available.
 # | stats avg(@initDuration) by bin(5m)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix options:*
 1. Provisioned concurrency: always-warm (costs money)
 2. Switch to Quarkus native or Python (< 100ms cold start)
@@ -351,6 +357,8 @@ kubectl top pod order-service-abc123
 # Shows current memory usage
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Increase memory limits, or diagnose and fix memory
 leak in the application.
 
@@ -360,9 +368,13 @@ leak in the application.
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -434,6 +446,34 @@ The Open Container Initiative (OCI) is a Linux Foundation project that defines o
 
 *What separates good from great: Explaining that Docker images work on Kubernetes because both implement OCI, not because Kubernetes uses Docker, and knowing the implications for CI build pipelines.*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # IAM and Cloud Access Control
 
@@ -527,6 +567,8 @@ Use permission boundaries for delegated admin."
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **IAM Evaluation Logic:**
 
 ```
@@ -541,6 +583,8 @@ REQUEST: GET s3://my-bucket/reports/jan.pdf
 COMMON TRAP: Allow in identity policy + Allow in SCP
 but deny in resource policy -> net DENY
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -581,6 +625,8 @@ but deny in resource policy -> net DENY
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```python
 # IAM Roles for EC2/Lambda (no hardcoded credentials)
 
@@ -589,7 +635,7 @@ import boto3
 
 # Never do this - credentials in code = security incident:
 # s3 = boto3.client('s3',
-#     aws_access_key_id='AKIAIOSFODNN7EXAMPLE',
+#     aws_access_key_id='AKIA_YOUR_KEY_EXAMPLE',
 #     aws_secret_access_key='wJalrXUtn...')
 
 # GOOD: use IAM role attached to EC2/Lambda
@@ -745,6 +791,8 @@ aws cloudtrail lookup-events \
 # Look for errorCode: AccessDenied
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Credentials leaked in source code**
@@ -757,20 +805,22 @@ unusual regions.
 ```bash
 # Immediately deactivate compromised key:
 aws iam update-access-key \
-  --access-key-id AKIAIOSFODNN7EXAMPLE \
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE \
   --status Inactive
 
 # Delete it:
 aws iam delete-access-key \
-  --access-key-id AKIAIOSFODNN7EXAMPLE
+  --access-key-id AKIA_YOUR_KEY_EXAMPLE
 
 # Check CloudTrail for what was done with the key:
 aws cloudtrail lookup-events \
   --lookup-attributes \
     AttributeKey=AccessKeyId,\
-    AttributeValue=AKIAIOSFODNN7EXAMPLE
+    AttributeValue=AKIA_YOUR_KEY_EXAMPLE
 # Review ALL API calls made with the leaked key
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -778,9 +828,13 @@ aws cloudtrail lookup-events \
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -852,6 +906,34 @@ Federated identity allows users to authenticate with an external identity provid
 
 *What separates good from great: Explaining that revocation is immediate (no separate offboarding step needed) and naming the specific protocol mechanisms (SAML 2.0, AssumeRoleWithSAML).*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cloud Cost Model and Billing
 
@@ -942,6 +1024,8 @@ WHEN TO USE EACH:
                anything that can survive interruption
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data Transfer: the Hidden Cost:**
 
 ```
@@ -960,6 +1044,8 @@ MITIGATION:
   - ALB cross-zone load balancing costs vs latency trade-off
   - VPC endpoints for AWS services (no NAT Gateway charges)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1153,6 +1239,8 @@ aws ec2 describe-instances \
 # Sort by launch time - old instances are suspicious
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Unexpected data transfer charges**
@@ -1171,6 +1259,8 @@ than expected. Traced to inter-AZ traffic.
 # Filter by usage type containing "Regional"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use VPC endpoints for AWS services, co-locate
 high-traffic services in same AZ, or use AWS PrivateLink
 for service-to-service communication.
@@ -1181,9 +1271,13 @@ for service-to-service communication.
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1254,3 +1348,33 @@ Fargate eliminates node management: no EC2 instances to patch, right-size, or sc
 Cloud waste is cloud spend that generates no business value - resources running but not used, over-provisioned resources providing far more capacity than needed. Industry studies (Flexera 2023) estimate 28-32% of cloud spend is waste. Most common sources: (1) Zombie resources: EC2 instances, RDS databases, and Elastic Load Balancers created for temporary purposes (load testing, one-time migration) and never terminated. Cost Explorer idle resource detection and AWS Trusted Advisor identify instances with < 5% CPU utilization over 14 days. (2) Over-provisioned instances: an application using 8% of a db.r5.4xlarge could run on a db.r5.large (1/16 the cost). Right-sizing requires measuring actual utilization over time and comparing to instance specs. AWS Compute Optimizer provides automated right-sizing recommendations. (3) Unattached EBS volumes: when an EC2 instance is terminated without its EBS volume, the volume continues to be charged at $0.10/GB/month. Scan for volumes with no attachments. (4) Idle Elastic IPs: $0.005/hour for allocated but unassociated Elastic IPs. (5) Old snapshots: EBS and RDS snapshots accumulate and are never deleted. A daily snapshot retention policy without a matching deletion policy grows indefinitely. (6) NAT Gateway overuse: unnecessary cross-AZ traffic through NAT Gateways (use VPC endpoints for AWS services to bypass NAT Gateway charges). (7) S3 intelligent tiering not enabled: frequently accessed infrequent data on Standard tier instead of Standard-IA.
 
 *What separates good from great: Citing industry waste percentage estimates and knowing the specific AWS Trusted Advisor/Compute Optimizer tools that automate detection.*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

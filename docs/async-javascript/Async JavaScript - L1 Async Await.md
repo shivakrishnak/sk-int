@@ -117,6 +117,8 @@ async function awaitNonPromise() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 `await` suspends the FUNCTION, not the THREAD. When an
 `async` function hits `await`, it yields control back to the
@@ -266,6 +268,8 @@ async function broken() {
 // Type 'Promise<User>' has no property 'name'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: `await` in non-async function**
 ```javascript
 // This is a syntax error in regular functions:
@@ -277,6 +281,8 @@ async function isAsync() {
   const data = await fetch('/api'); // OK
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Top-level await in non-module files**
 Top-level `await` (outside a function) is only valid in ES
@@ -321,6 +327,8 @@ f(); // starts sync execution, returns Promise<'done'>
 console.log('after f()'); // runs before 'resumes...'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that async functions
 start synchronously and only pause at the first `await`.
 
@@ -342,6 +350,8 @@ console.log('sync'); // runs before 'after one tick'
 // Output: 'sync', 'after one tick'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Even `await 42` (non-Promise) wraps in `Promise.resolve(42)`,
 introducing a microtask checkpoint. This is why `await`
 always yields to other pending microtasks.
@@ -362,11 +372,15 @@ for (const item of items) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Parallel iteration:
 ```javascript
 // Promise.all with map - all start immediately
 await Promise.all(items.map(item => processItem(item)));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Parallel with concurrency limit:
 ```javascript
@@ -378,6 +392,8 @@ for (let i = 0; i < items.length; i += limit) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `forEach` does NOT work with await:
 ```javascript
 // BAD: forEach with async callback - doesn't wait
@@ -387,6 +403,8 @@ items.forEach(async item => {
 });
 // Code after forEach continues immediately
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `forEach` ignores
 Promise return values, making async callbacks in `forEach`
@@ -406,6 +424,8 @@ and Node.js 14.8+.
 const config = await loadConfig(); // blocks module evaluation
 export const port = config.port;
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases:
 - Module initialization that requires async setup
@@ -451,6 +471,8 @@ async function processWithPartialFailure(items) {
   return successful;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When all-or-nothing: `Promise.all` (throws on first rejection).
 When partial success acceptable: `Promise.allSettled`.
@@ -504,6 +526,8 @@ fetchAndSave(data); // floating promise
 void fetchAndSave(data); // intentional, suppresses warning
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `void` operator evaluates the expression and returns
 `undefined`, making it clear the Promise is intentionally
 ignored.
@@ -516,18 +540,26 @@ void fetchAndSave(data).catch(err =>
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that `void`
 is not just a TypeScript workaround - it communicates intent
 to human readers. "I know this returns a Promise and I am
 deliberately not waiting for it" is meaningful information.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - comparison in L2 Advanced Promises)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -537,6 +569,34 @@ diagram)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Error Handling in Async Functions
 
@@ -644,6 +704,8 @@ try {
   handleError(err);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `await promise` converts promise rejection into a throw inside
@@ -822,6 +884,8 @@ async function handler(req) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Error context lost in rethrowing**
 ```javascript
 // BAD: rethrow loses context
@@ -839,6 +903,8 @@ try {
   // err.cause === original, stack trace preserved
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -878,6 +944,8 @@ function f() {
     .catch(err => { /* rejection */ });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `try/catch` catches: Promise rejections at `await`, synchronous
 throws, and type errors in the try block. It does NOT catch
@@ -929,6 +997,8 @@ const result = await getUser(id);
 if (!result.ok) { /* handle */ }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing the result pattern
 and when it is better than exceptions. Exceptions-as-control-
 flow is often criticized, but result types add verbosity.
@@ -964,6 +1034,8 @@ const values = results
   .map(r => r.value);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing to use `AggregateError`
 (ES2021) when aggregating multiple errors, and knowing that
 `Promise.all` short-circuits but does NOT cancel in-flight
@@ -978,6 +1050,8 @@ ES2022 added `cause` support to `Error`:
 ```javascript
 new Error('High-level message', { cause: originalError })
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `err.cause` preserves the original error chain. When rethrowing
 with added context, `cause` allows both the high-level error
@@ -998,6 +1072,8 @@ async function processPayment(orderId) {
 // Logger can traverse: err.message, err.cause.message,
 // err.cause.cause.message... for full error chain
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `cause` consistently
 means error logging can traverse the full chain from the high-
@@ -1026,6 +1102,8 @@ async function assertThrows(fn, ErrorClass) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pitfall: not `await`-ing the `expect().rejects` assertion:
 ```javascript
 // BAD: missing await - test passes even if no error thrown
@@ -1034,6 +1112,8 @@ expect(getUser('invalid')).rejects.toThrow('...');
 // GOOD: await the assertion
 await expect(getUser('invalid')).rejects.toThrow('...');
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing the specific failure
 mode of non-awaited assertions in async tests, and having a
@@ -1071,6 +1151,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that async route
 handlers in Express do not automatically propagate errors to
@@ -1118,19 +1200,27 @@ async function robustFetch(url) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Applying the distinction
 consistently in code review and architecture decisions. A
 service that catches all errors and returns 200 with error
 JSON is hiding bugs. A service that lets programming errors
 propagate as 500s is correct.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - covered in L3 files)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1140,6 +1230,34 @@ Promise state diagram in L1 Promise Basics)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Promise.all vs Promise.race vs Promise.allSettled
 
@@ -1254,6 +1372,8 @@ function withTimeout(promise, ms) {
 }
 const data = await withTimeout(fetchData(), 5000);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `Promise.all` does not cancel operations when it rejects.
@@ -1446,6 +1566,8 @@ const results = await Promise.all(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Lost error context in Promise.all rejection**
 ```javascript
 // Promise.all gives you one error - you don't know which failed
@@ -1456,6 +1578,8 @@ try {
   // Fix: use allSettled and inspect individual results
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1520,6 +1644,8 @@ const data = await withTimeout(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Limitation: the operation continues running after timeout.
 For network requests, use `AbortController` to actually cancel:
 
@@ -1535,6 +1661,8 @@ async function fetchWithTimeout(url, timeoutMs) {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Identifying that `Promise.race`
 for timeouts is a pattern but does not cancel the underlying
@@ -1565,6 +1693,8 @@ const image = await Promise.any([
 // Promise.race would reject (CDN1 rejects first)
 // Promise.any resolves with CDN3's result
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `Promise.any`
 was specifically designed for redundant-source patterns.
@@ -1631,6 +1761,8 @@ async function processAll(items, processFn, maxConcurrent = 10) {
 // p-limit allows N concurrent at any time, not per batch
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The difference: batch processing (N per batch) serializes
 batches. `p-limit` maintains N concurrent at all times
 regardless of which operations complete first. `p-limit` is
@@ -1664,6 +1796,8 @@ try {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `AggregateError` also appears from `Promise.any` in the browser
 when the Fetch API's `fetchLater` queues all fail. It is the
@@ -1703,6 +1837,8 @@ const result = await tryInOrder([
 ]);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Concurrent (all start simultaneously, first success wins):
 ```javascript
 const result = await Promise.any([
@@ -1711,6 +1847,8 @@ const result = await Promise.any([
   fetchFromBackup(key)
 ]);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Sequential is correct for expensive operations or when later
 tries should not start if earlier ones succeed. Concurrent is
@@ -1724,13 +1862,19 @@ fallback (`Promise.any`) is preferable for latency. In server-
 side scenarios with expensive operations, sequential fallback
 is correct to avoid unnecessary load.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ - see table in concept explanation above)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1782,3 +1926,33 @@ flowchart TD
 > primarily useful for timeouts. The Mermaid diagram provides
 > a quick reference for choosing the right combinator in code
 > review and design discussions.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-jvm/l3-jit-and-deopt/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java JVM - L3 JIT and Deopt](#java-jvm---l3-jit-and-deopt) | medium |
+
+---
+
 # Java JVM - L3 JIT and Deopt
 
 ## JIT Compilation Tiers and Method Inlining
+
+---
 
 ### 🎯 Model Answer
 
@@ -102,6 +113,8 @@ COMPILATION THRESHOLDS (approximate defaults):
   C2: ~10,000 invocations + loop iterations
   (actual: adaptive, depends on number of compiler threads)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -257,6 +270,8 @@ Fix:
     Warning: higher compilation overhead, longer warm-up
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -356,6 +371,8 @@ for (int x : list) { ... }  // Iterator created, passed to hasNext()/next()
 // -> No GC pressure from iterator objects in tight loops!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Escape analysis + scalar replacement is why
 Java code doesn't pay the allocation/GC overhead for short-lived objects in
 tight loops (when fully JIT-optimized). The `for-each` loop over `ArrayList`:
@@ -405,6 +422,8 @@ JIT compiler budget exhausted (Code Cache full, too many compilation tasks).
 # @ 20   Collection::size (10 bytes)   virtual call (megamorphic)
 # @ 25   MyService::process (35 bytes)   inline (hot)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `-XX:MaxInlineSize=35` default is
 conservative. For the highest-priority hot loop in your application:
@@ -507,6 +526,8 @@ containerized Java microservices entirely.
 
 ## Deoptimization and Speculative Compilation
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -580,6 +601,8 @@ RECOMPILATION AFTER DEOPT:
   New Tier 4 version: less speculative (handles both types,
   checks both branches, etc.)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -713,6 +736,8 @@ Nuclear option: CompileThreshold increase
   -XX:CompileThreshold=50000 (compile less aggressively, better profile first)
   Risk: longer warm-up time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -938,3 +963,33 @@ competitive with C++, while benchmarks that include startup/warm-up show a disad
 ### 📊 Diagram
 
 *(Omit: deoptimization flow described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

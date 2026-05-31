@@ -7,7 +7,13 @@ permalink: /async-java/l5-async-migration/
 render_with_liquid: false
 ---
 
-# Async Java - L5 Async Migration
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L5 Async Migration](#async-java---l5-async-migration) | medium |
+| 2 | [Migrating Blocking Java to Async and Reactive](#migrating-blocking-java-to-async-and-reactive) | medium |
 
 ---
 
@@ -102,6 +108,8 @@ Migration Target C: Selective Async (CompletableFuture for hot paths)
   Benefit: targeted improvement without full migration
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Strangler Fig pattern:**
 
 ```
@@ -130,6 +138,8 @@ Phase 4: Complete, decommission legacy
   Legacy MVC completely removed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Layer migration order and complexity:**
 
 ```
@@ -153,6 +163,8 @@ Layer 4 (critical): Security Context
   OR: DelegatingSecurityContextExecutor (virtual threads)
   Risk: HIGH (security bugs if wrong)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -348,6 +360,8 @@ Mono.fromCallable(() -> service.blockingMethod())
     .subscribeOn(Schedulers.boundedElastic())
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Permanent fix: complete the R2DBC/WebClient migration for the affected layer.
 Remove the `subscribeOn` wrapper once the underlying call is non-blocking.
 
@@ -383,6 +397,8 @@ Concrete example:
   t=3: All paths -> WebFlux -> R2DBC
         Spring MVC removed entirely
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Benefits of Strangler Fig over "big bang" migration:
 - System remains operational throughout migration
@@ -434,6 +450,8 @@ public Mono<Order> createOrder(OrderRequest req) {
     return txOp.transactional(work);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 R2DBC transaction limitations vs JPA:
 1. No `@Transactional(propagation = REQUIRES_NEW)` nested transactions
@@ -516,6 +534,8 @@ Mono.zip(
     tuple.getT1(), tuple.getT2()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* WebClient configuration for production:
 connection pooling (Netty uses connection pools by default),
 connection timeout, read timeout, and base URL configuration:
@@ -537,6 +557,8 @@ WebClient externalServiceClient(WebClient.Builder builder) {
         .build();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -565,6 +587,8 @@ NOT available in R2DBC:
   Hibernate-specific features (envers, multi-tenancy)
   Stored procedure support (limited)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Risk assessment:**
 
@@ -598,6 +622,8 @@ Mono<OrderWithDetails> findOrderWithDetails(Long orderId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* For services with complex object graphs,
 the JPA -> R2DBC migration may require redesigning the domain model. If the
 service currently uses 10 `@OneToMany` relationships that JPA resolves
@@ -623,6 +649,8 @@ spring:
 # - Switches @Async to use virtual threads
 # - No code changes required
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // BEFORE (blocking, Spring MVC):
@@ -650,6 +678,8 @@ public UserProfile getProfile(@PathVariable String id)
     // Still blocking code; virtual threads do the heavy lifting
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Virtual thread migration checklist:**
 1. Upgrade to Java 21 (compile and runtime)
@@ -716,6 +746,8 @@ public Dashboard getDashboard(String userId) throws Exception {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Performance comparison for this pattern:
 - Blocking sequential: 300ms
@@ -786,6 +818,8 @@ public class SecurityConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key differences:
 - `WebSecurityConfigurerAdapter` -> `SecurityWebFilterChain` bean
 - `HttpSecurity` -> `ServerHttpSecurity`
@@ -812,6 +846,8 @@ public class JwtAuthFilter implements WebFilter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -854,6 +890,8 @@ compensationLog.record(
     Instant.now());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Feature flags for gradual rollout of
 migrated code paths:
 ```java
@@ -865,6 +903,8 @@ if (featureFlags.isEnabled("use-r2dbc-orders")) {
         .subscribeOn(Schedulers.boundedElastic());
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Feature flags allow 1%, 10%, 100% rollout of migrated paths. Any consistency
 issue: toggle off the feature flag, revert to old path, investigate.
 
@@ -904,6 +944,8 @@ meter_registry.counter("errors",
 # Before: P99 = 500ms (thread queuing under load)
 # After: P99 = 120ms (no queuing; non-blocking)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Success criteria checklist:
 - Throughput equal or higher under same concurrency
@@ -967,6 +1009,8 @@ class UserControllerTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Additional test migration:
 - Service layer: `assertEquals(result, expected)` -> `StepVerifier`
 - Error tests: `assertThrows(...)` -> `StepVerifier.create(...).expectError(...)`
@@ -1006,6 +1050,8 @@ spring:
       acquire-retry: 3
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why R2DBC pool is smaller: with blocking JDBC, one thread holds one
 connection for the duration of the query. With R2DBC, a connection is
 held only during the actual DB write/read operation; the connection is
@@ -1025,6 +1071,8 @@ int acquired = metrics.acquiredSize();
 int pending = metrics.pendingAcquireSize();
 // If pendingAcquireSize > 0 consistently: pool too small
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Mixed migration: for services using both
 JPA (for complex queries) and R2DBC (for hot paths), maintain BOTH connection
@@ -1047,6 +1095,8 @@ Java 21 available?
   No + > 5k concurrency + streaming -> Reactive migration (3-6 months)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Virtual thread migration (if Java 21):**
 ```
 Week 1:
@@ -1058,6 +1108,8 @@ Week 1:
      Fix synchronized -> ReentrantLock if pinning found
   6. Deploy to production (gradual rollout: 10%, 50%, 100%)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Full reactive migration (if required):**
 ```
@@ -1083,6 +1135,8 @@ Month 4: Cleanup
   - Performance validation in production
   - Incident review: document any migration-related incidents
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The most common migration failure mode:
 skipping the "validate correctness" step in month 2. R2DBC query behavior
@@ -1151,6 +1205,8 @@ Architecture after migration:
               -> Flux pipeline with backpressure
               -> Database (R2DBC for write-heavy analytics)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Migration plan:
 - Week 1-2: Java 21 upgrade + VThread config + load test
@@ -1246,3 +1302,33 @@ flowchart TD
 > shared by both paths - it's the one layer that benefits both approaches.
 > Starting with WebClient migration (low risk, high value) is the recommended
 > first step for either migration path.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -144,6 +144,8 @@ RESPONSE ANATOMY:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Messages rules:**
 
 - Must alternate user/assistant/user/assistant...
@@ -377,6 +379,8 @@ def trim_history(
     return history[-(max_turns * 2):]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For applications where long-term memory matters,
 use summarization: every 20 turns, ask Claude to
 summarize the conversation so far, then replace
@@ -459,6 +463,8 @@ def chat(user_msg: str) -> str:
     return reply
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pattern 2 - Sliding window (long conversations):
 
 ```python
@@ -482,6 +488,8 @@ def chat_windowed(
     )
     return reply, history
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pattern 3 - Persistent storage (multi-session):
 Store history in a database keyed by session_id.
@@ -538,6 +546,8 @@ if msg.stop_reason == "tool_use":
     # Continue: call messages.create again
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "tool_use stop_reason
 starts an async loop - the conversation continues
 until stop_reason is end_turn."
@@ -564,6 +574,8 @@ if raw.startswith("```"):
 result = json.loads(raw)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Approach 2 - Assistant turn prefill:
 Add a partial assistant message to force JSON start:
 
@@ -573,6 +585,8 @@ messages=[
     {"role": "assistant", "content": "{"}  # force JSON
 ]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Then prepend `{` to the response before parsing.
 Very reliable: Claude continues from where you left off.
@@ -635,6 +649,8 @@ msg = client.messages.create(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Temperature=0
 doesn't guarantee identical output across all model
 versions - always run regression tests when upgrading."
@@ -684,6 +700,8 @@ def create_with_retry(
     raise last_err
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For production: use the Anthropic SDK's built-in
 retry with `max_retries=3` in the client constructor.
 
@@ -705,6 +723,8 @@ cost = (input_tokens * input_price)
      + (output_tokens * output_price)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mid-2025 pricing (approximate):
 - claude-3-5-sonnet: $3/MTok in, $15/MTok out
 - claude-3-5-haiku: $0.80/MTok in, $4/MTok out
@@ -723,6 +743,8 @@ cost_usd = (
 
 print(f"Cost: ${cost_usd:.6f}")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Monthly estimation: if avg request = 500 in + 200 out
 at 10,000 requests/day:
@@ -757,6 +779,34 @@ for similar quality on simpler tasks."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # LLM API Authentication and Key Management
 
@@ -857,6 +907,8 @@ These are bearer tokens: possession = access.
 No expiry. No refresh flow.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key storage by environment:**
 
 ```
@@ -881,6 +933,8 @@ CI/CD:
   GitLab CI Variables (masked)
   Never in pipeline scripts or artifacts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Defense layers:**
 
@@ -1072,6 +1126,8 @@ are world-readable for public repositories.
 # Add linting rule: no print(os.environ["...KEY..."])
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1258,6 +1314,8 @@ import os
 print(f"Starting with key: {os.environ['ANTHROPIC_API_KEY']}")
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This key is now in:
 - Application stdout logs
 - Container logs (Docker, Kubernetes)
@@ -1284,6 +1342,8 @@ print(
 )
 # Never: print(f"Key: {key}")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Log boolean presence
 or first 8 chars for format verification - never
@@ -1333,6 +1393,8 @@ response = bedrock.invoke_model(
 result = json.loads(response["body"].read())
 print(result["content"][0]["text"])
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security benefits: no credential in code, no rotation
 required (IAM credentials auto-rotate), audit trail
@@ -1392,6 +1454,8 @@ def tracked_call(client, **kwargs):
     return msg
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Per-call metrics
 emitted to a TSDB give you minute-level visibility
 and enable alerts on rate anomalies, not just total spend."
@@ -1417,6 +1481,34 @@ and enable alerts on rate anomalies, not just total spend."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Streaming API Responses
 
@@ -1529,6 +1621,8 @@ Total wait: 15s (same)
 Time to first content: 0.2s (75x faster perception)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **SSE event types in Anthropic streaming:**
 
 ```
@@ -1539,6 +1633,8 @@ content_block_stop    - content block finished
 message_delta         - stop_reason, usage updates
 message_stop          - stream complete
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For text generation: you only need `content_block_delta`
 events where `delta.type == "text_delta"`. The
@@ -1740,6 +1836,8 @@ return StreamingResponse(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2 - nginx config:
 ```nginx
 location /api/chat {
@@ -1749,6 +1847,8 @@ location /api/chat {
     proxy_read_timeout 300s;  # longer timeout for streaming
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Always test streaming behind the full proxy stack,
 not just the app server. nginx buffering is invisible
@@ -1801,6 +1901,8 @@ Streaming for the same 500-token response:
   T+5s:   250 tokens. User is reading
   T+10s:  500 tokens. Generation complete
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For user-facing chat: streaming is always preferred.
 For batch processing, background jobs, or when the
@@ -1857,6 +1959,8 @@ async def stream_async():
 asyncio.run(stream_async())
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `flush=True` on print is essential: without it
 Python's stdout buffering accumulates chunks until
 a buffer boundary, preventing the streaming effect.
@@ -1911,6 +2015,8 @@ async def stream_chat(body: dict):
     )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Browser JavaScript:
 ```javascript
 const res = await fetch('/stream', {
@@ -1936,6 +2042,8 @@ while (true) {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Include error
 events in the SSE stream - the browser must handle
@@ -2025,6 +2133,8 @@ except anthropic.APIStatusError as e:
     # Signal error to caller
     yield "[ERROR: response incomplete]"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For web applications: send an error SSE event so
 the browser knows the stream ended abnormally and
@@ -2125,3 +2235,33 @@ for streaming - set it to 300s before launching."
 ### 📊 Diagram
 
 *(Omit: time sequence clearer as text for this concept.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

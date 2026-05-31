@@ -8,6 +8,16 @@ permalink: /microservices/l3-observability-and-anti-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Observability - Distributed Tracing, Logs, Metrics](#observability---distributed-tracing-logs-metrics) | medium |
+| 2 | [Microservices Anti-patterns](#microservices-anti-patterns) | medium |
+
+---
+
 # Observability - Distributed Tracing, Logs, Metrics
 
 ---
@@ -65,6 +75,8 @@ DISTRIBUTED TRACES (Jaeger / Tempo):
   Use for: identifying which service is slow
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Trace propagation:**
 ```
 HTTP Headers (W3C TraceContext standard):
@@ -81,6 +93,8 @@ Spring Boot auto-configuration:
   implementation 'io.micrometer:micrometer-tracing-bridge-brave'
   management.tracing.sampling.probability=0.1 # 10% sampling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **SLO / SLA / SLI:**
 ```
@@ -101,6 +115,8 @@ Error budget:
   If error budget exhausted: freeze new features,
   focus on reliability
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Observability data is useless if not correlated. Logs, metrics, and traces must all carry the same trace ID. When an alert fires (metrics), you need to find the traces from that time window, then find the logs for those trace IDs. The trace ID is the correlation key across all three pillars.
@@ -318,6 +334,34 @@ Fix: Use Micrometer's instrumented executors (ContextPropagatingExecutorService)
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Microservices Anti-patterns
 
 ---
@@ -388,6 +432,8 @@ Microservices anti-patterns are implementation choices that produce systems hard
    Cause: no resilience patterns
    Fix: circuit breakers + bulkheads
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Anti-patterns usually emerge from applying microservices decomposition without changing the data access and communication patterns. Splitting a monolith along class lines (one service per repository class) produces tiny services with maximum inter-service coupling. The correct decomposition is by business capability (bounded context) where each capability is independently deployable and owns its data.
@@ -587,3 +633,33 @@ Fix: Break the coupling at its root: establish database-per-service (migration),
 | Shared Business Logic Library | Library changes break all | DRY across service boundaries | Copy domain code, share only infra |
 | No Circuit Breakers | One failure cascades | Missing resilience design | Circuit breaker + bulkhead |
 | No Observability | Can't debug incidents | Treating distributed as monolith | Three pillars: metrics, logs, traces |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-core/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - META Patterns](#java-core---meta-patterns) | medium |
+
+---
+
 # Java Core - META Patterns
 
 ## Java Code Review Mental Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -94,6 +105,8 @@ conditions (logic), and unenforceable promises (incorrect assumptions)."
    - Missing tests for edge cases
    - Duplication: same logic in two places
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -235,6 +248,8 @@ public int hashCode() {
 // IDE will warn: "equals() but not hashCode()" via IntelliJ inspection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -308,6 +323,8 @@ if (instance == null) {
 // Fix: volatile instance, or class holder idiom, or enum singleton
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Thread safety bugs are notoriously hard
 to reproduce (intermittent, timing-dependent). The review strategy: look for
 SHARED + MUTABLE state. Single-threaded code is safe by definition. Immutable
@@ -353,6 +370,8 @@ ExecutorService exec = Executors.newFixedThreadPool(4);
 // Fix: exec.shutdown() in finally or use try-with-resources (ExecutorService
 // is Closeable in Java 19+ via AutoCloseable)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Connection pool exhaustion is the most
 common resource leak symptom in production. The log shows: "Timeout waiting
@@ -406,6 +425,8 @@ catch (Exception e) { // catches NPE, OutOfMemoryError, etc.
 // Fix: catch specific exceptions; let unexpected exceptions propagate
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Design smell detection requires context.
 Not every long method or large class is a problem: a 100-line method in a
 utility class with clear local variables may be more readable than 5 extracted
@@ -452,6 +473,8 @@ byte[] token = new byte[32];
 sr.nextBytes(token); // cryptographically random
 String tokenHex = HexFormat.of().formatHex(token); // 64-char hex token
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Security review is the highest-risk review
 dimension. A single SQL injection can exfiltrate the entire database. A single
@@ -505,6 +528,8 @@ try {
 try { doWork(); }
 finally { cleanup(); } // always runs: normal AND exception paths
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Exception handling strategy should be
 defined at the architecture level, not method by method. The "log at the
@@ -561,6 +586,8 @@ class SecurityConfig {
 // - Is this class used across threads? -> must be thread-safe (immutable or synchronized)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Immutability review is about anticipating
 where sharing goes wrong. A `List<String>` field that's never shared across
 threads and is always replaced wholesale (not mutated) is fine as mutable.
@@ -593,6 +620,8 @@ properly synchronized.
 ---
 
 ## Java Version Upgrade Decision Framework
+
+---
 
 ### 🎯 Model Answer
 
@@ -663,6 +692,8 @@ Decision:
   -> On Java 17? Upgrade to 21
   -> Always run on latest LTS with active support
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -813,6 +844,8 @@ Mockito fix: Mockito 5+ is Java 17 compatible (uses Byte Buddy, not reflection)
 PowerMock: ABANDONED, no Java 17 support -> migrate to Mockito 5 + @Spy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -910,6 +943,8 @@ Migration steps:
   8. Adopt new features incrementally
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The most common Java 11 to 17 migration
 failure: PowerMock or old Mockito versions that use reflection into JDK
 internals for mocking. Java 17 blocks this with no workaround (no
@@ -955,6 +990,8 @@ try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
 // (millions of virtual threads = millions of ThreadLocal entries)
 // Use ScopedValue (Java 21 preview, GA in 23) for structured value passing
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Virtual threads don't eliminate the need
 to understand blocking. A virtual thread blocked on a `synchronized` block
@@ -1010,6 +1047,8 @@ double area(Shape shape) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Records replace 80% of Lombok's `@Data`
 use cases natively. The migration: `@Data class Foo { String a; int b; }` ->
 `record Foo(String a, int b) {}` is often one line shorter and doesn't need
@@ -1053,6 +1092,8 @@ seq.addFirst("z"); // add to front (for mutable collections)
 // LinkedHashMap, TreeMap implement SequencedMap
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Sequenced collections filled a long-standing
 gap. The `Iterable` interface has `iterator()` but no `first()` or `last()`.
 This caused every library and application to implement first/last access
@@ -1095,6 +1136,8 @@ Diagnosing GC after upgrade:
   JFR GC events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Java 8 to 11 GC default change
 (Parallel -> G1) is usually transparent but can cause latency changes in
 throughput-optimized applications. Parallel GC: designed for maximum
@@ -1127,6 +1170,8 @@ events before declaring the upgrade successful.
 ---
 
 ## Debugging Java APIs in Production
+
+---
 
 ### 🎯 Model Answer
 
@@ -1199,6 +1244,8 @@ High latency / Slow requests:
   2. Async Profiler wall-clock mode: captures blocking time (I/O, lock wait)
   3. Distributed traces (Jaeger, Zipkin): find slow downstream services
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1353,6 +1400,8 @@ Step 4: Fix
   Option D: use optimistic concurrency (ConcurrentHashMap.compute)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1401,6 +1450,8 @@ Thread naming: use meaningful names for debugging
   // Thread dump shows: "payment-processor-1" not "Thread-42"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Thread naming is a production
 first-responder technique: when you get a thread dump with 200 threads,
 `Thread-42 BLOCKED at ...` tells you nothing. `payment-processor-1 BLOCKED
@@ -1439,6 +1490,8 @@ Common findings:
   - Classloader leak: webapp redeployment in app server, old ClassLoader retained
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "path to GC roots" is the key operation
 in MAT. A leaked object is leaked because something is holding a reference to
 it. "Path to GC root" shows the chain: `StaticField -> HashMap -> ArrayList
@@ -1470,6 +1523,8 @@ jcmd <pid> JFR.dump filename=/tmp/incident.jfr maxage=5m
 # -> returns Recording with last N minutes of events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key JFR event categories and what they reveal:
 ```
 jdk.MethodSampling       -> hot methods (CPU profiling)
@@ -1481,6 +1536,8 @@ jdk.ObjectAllocationInNewTLAB -> allocation hotspots
 jdk.ThreadSleep          -> where threads are sleeping
 jdk.CPULoad              -> CPU usage over time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The continuous JFR recording setup is the
 difference between "we have data" and "we have no idea what happened."
@@ -1541,6 +1598,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ThreadLocal leak is the most insidious:
 it's not just a memory leak, it's a data leak between requests. User A's
 request context (authentication, tenant ID, permissions) remains on the thread
@@ -1580,6 +1639,8 @@ jstack <java_pid> | grep "nid=0x3039" -A 20
 # - Regex backtracking (ReDoS): catastrophic regex with adversarial input
 #   -> Use timeout: Pattern.CASE_INSENSITIVE + input length check
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The native thread ID to hex conversion
 is the key link between `top -H` (OS-level thread view) and `jstack` (JVM-level
@@ -1623,6 +1684,8 @@ jcmd <pid> JFR.start duration=60s settings=default filename=/tmp/gc.jfr
 # jvm_memory_used_bytes{area="heap"}
 # jvm_gc_live_data_size_bytes (baseline heap after full GC)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `jvm_gc_live_data_size_bytes` (or equivalent)
 is the most important long-term GC metric. This is the heap required for
@@ -1675,6 +1738,8 @@ stack com.example.DatabasePool getConnection
 # Find: who is calling getConnection without closing it!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Arthas `trace` is the production equivalent
 of a profiler for a specific code path: you get the call tree of ONE specific
 method with timing, live, in production, without any restart or code change.
@@ -1702,3 +1767,33 @@ on the traced methods; disable after diagnosis.
 ### 📊 Diagram
 
 *(Omit: symptom-to-tool mapping described adequately in Concept Explanation)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

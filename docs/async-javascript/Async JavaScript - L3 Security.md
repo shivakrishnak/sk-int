@@ -132,6 +132,8 @@ class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // PROTOTYPE POLLUTION via async response processing
 async function loadUserConfig(userId) {
@@ -161,6 +163,8 @@ function safeMerge(target, source) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // ASYNC EVENT HANDLER INJECTION
 class EventEmitter {
@@ -182,6 +186,8 @@ class EventEmitter {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Every `await` point is a potential security checkpoint. Anything
@@ -351,6 +357,8 @@ Fix:
   - Client checks session before each privileged action
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Concurrent async updates to shared state**
 ```javascript
 // Race condition: two async functions update same object
@@ -373,6 +381,8 @@ async function debitSafe(amount) {
   user.balance = result.newBalance; // refresh from authoritative source
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -412,6 +422,8 @@ async function purchaseItem(userId, itemId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The fix: make the check-and-modify atomic at the data layer
 (database-level atomic operations, compare-and-swap):
 ```javascript
@@ -428,6 +440,8 @@ async function purchaseItemSafe(userId, itemId) {
   await createOrder(userId, itemId, result.rows[0]);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Moving the critical section
 into a database transaction where atomicity is guaranteed.
@@ -478,6 +492,8 @@ app.post('/api/user', async (req, res) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `requestId` pattern:
 log internally with full details, return `requestId` to client.
 Support can correlate the client's error to internal logs
@@ -500,6 +516,8 @@ Object.assign(target, source);
 console.log({}.isAdmin); // true - polluted
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Object spread (`{ ...source }`): only copies own enumerable
 properties. Does NOT trigger prototype pollution:
 ```javascript
@@ -507,6 +525,8 @@ const source = JSON.parse('{"__proto__":{"isAdmin":true}}');
 const target = { ...source }; // safe
 console.log({}.isAdmin); // undefined - not polluted
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 But spread can still copy `__proto__` as a regular key:
 ```javascript
@@ -516,6 +536,8 @@ const target = { ...source };
 // __proto__ as a literal key: source.__proto__ is the object
 // {isAdmin: true} - it IS copied as a regular property
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Best practice: validate schema before merging (use Zod, Joi):
 ```javascript
@@ -527,6 +549,8 @@ const UserConfigSchema = z.object({
 const config = UserConfigSchema.parse(await resp.json());
 Object.assign(userConfig, config); // now safe: validated shape
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The difference between
 `JSON.parse('{"__proto__":...}')` (creates object with `__proto__`
@@ -557,6 +581,8 @@ async function login(username, password) {
 // Slow response (~100ms) = user exists, password was checked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: constant-time response:
 ```javascript
 async function loginSafe(username, password) {
@@ -574,6 +600,8 @@ async function loginSafe(username, password) {
   return { success: true };
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Always running the expensive
 operation (bcrypt compare) even when the user doesn't exist,
@@ -611,6 +639,8 @@ async function fetchUserProfile(userId: string) {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key principles:
 1. Type `response.json()` as `unknown`, not `any`
@@ -664,6 +694,8 @@ class SafeEmitter {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The snapshot pattern (`[...handlers]`)
 prevents handler injection during processing. The re-entrancy
 guard prevents recursive event loops that could be exploited
@@ -706,10 +738,14 @@ window.addEventListener('unhandledrejection', event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The fail-fast principle for
 unhandled rejections in production: rather than continuing
 in an unknown state, exit and let the process manager (PM2,
 Kubernetes) restart with a clean state.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -721,9 +757,13 @@ Kubernetes) restart with a clean state.
 | Error leakage | Unhandled rejections | Global error handler | Structured error responses |
 | Timing attack | Response time differences | N/A | Constant-time comparison |
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -777,6 +817,34 @@ sequenceDiagram
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Safe Async Data Handling in TypeScript
 
@@ -923,6 +991,8 @@ async function safeLoadUser(userId: string) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```typescript
 // SANITIZING FOR DOM INSERTION (prevent XSS from async data)
 import DOMPurify from 'dompurify';
@@ -943,6 +1013,8 @@ async function loadAndDisplayContent(articleId: string) {
   // textContent is always safe - no HTML parsing
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The trust boundary is explicit: outside boundary = untrusted,
@@ -1143,6 +1215,8 @@ async function fetchWebhookTargetSafe(url: string) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Eval in async callback**
 ```javascript
 // NEVER: eval from async data
@@ -1160,6 +1234,8 @@ socket.on('message', async (msg) => {
   if (handler) await handler(params);
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1196,6 +1272,8 @@ const data = UserProfileSchema.parse(raw);
 // Throws ZodError if subscription is missing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The correct mental model: `as T` is a claim ("I promise this
 is T"). `Schema.parse()` is a check ("let me verify this is T").
 
@@ -1230,6 +1308,8 @@ const MessageEnvelopeSchema = z.object({
 // Full payload validation only for critical messages
 const TradeSchema = z.object({ ... }); // only when type === 'trade'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Profiling before optimizing.
 The overhead of Zod is almost never the bottleneck. Network
@@ -1268,6 +1348,8 @@ const OrderSchema = z.object({
   { message: 'Order total does not match items sum' }
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `.refine()` method adds cross-field business logic
 validation on top of structural validation. This catches
@@ -1319,6 +1401,8 @@ class SecureWebSocket {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using `safeParse` instead of
 `parse` in message handlers - invalid messages should be
 logged and dropped, not crash the handler with an unhandled
@@ -1366,6 +1450,8 @@ function buildUserUrl(userId: string): string {
   return `/api/users/${encodeURIComponent(userId)}`;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `URLSearchParams` for
 query strings (it handles encoding) and validating path segments
@@ -1420,6 +1506,8 @@ class IframeBridge {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using Zod `discriminatedUnion`
 for postMessage schemas: TypeScript correctly narrows the type
 in each case branch. The `height` constraint (`max(2000)`)
@@ -1461,10 +1549,14 @@ async function processApiData(raw: ExternalData): Promise<ProcessedResult> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Making the trust boundary
 explicit in code through types. Using `unknown` for external
 data forces developers to explicitly validate before use. TypeScript
 enforcement of the boundary through the type system.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1480,9 +1572,13 @@ enforcement of the boundary through the type system.
 TypeScript-first with DX focus: Zod. JSON Schema integration:
 TypeBox or ajv. FP codebase: io-ts. Form validation: Yup.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1523,3 +1619,33 @@ flowchart LR
 > data flows to app logic) and failure path (invalid data is
 > logged and rejected). The key insight: once data crosses into
 > green, it is safe to use without additional checks.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

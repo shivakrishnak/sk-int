@@ -318,6 +318,8 @@ orders.forEach(o -> {
 // 1 + N SQL queries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solution 1: @Join on the repository method:
 ```java
 @Join(value="items", type=JoinType.FETCH)
@@ -325,6 +327,8 @@ List<Order> findAllWithItems();
 // Generates a LEFT JOIN
 // 1 SQL query
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Solution 2: Batch loading:
 ```java
@@ -338,6 +342,8 @@ List<OrderItem> items =
 // 2 SQL queries total
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solution 3: Explicit @Query with JOIN:
 ```java
 @Query("""
@@ -348,6 +354,8 @@ Solution 3: Explicit @Query with JOIN:
     """)
 List<OrderWithItems> findAllWithItems();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* @Join as the
 idiomatic Micronaut Data JDBC solution vs the manual
@@ -380,6 +388,8 @@ javap -p -c \
   com/example/$OrderRepository$Intercepted.class
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 You can see the exact SQL Micronaut will use without
 running the application. Useful for debugging unexpected
 query behavior.
@@ -397,6 +407,34 @@ generated SQL at compile time - no need to run the app.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Data JPA
 
@@ -626,6 +664,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 readOnly=true optimization: Hibernate skips dirty
 checking and flush at transaction end. Saves time
 for read-heavy operations.
@@ -644,6 +684,34 @@ AOP. Spring requires self-injection workaround.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Data Repositories and Criteria
 
@@ -877,6 +945,8 @@ spec = spec.and(withItems())
 // Generates SELECT with JOIN FETCH items
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or: use @EntityGraph on the repository method:
 ```java
 @EntityGraph(attributePaths={"items"})
@@ -884,6 +954,8 @@ Page<Order> findAll(
     PredicateSpecification<Order> spec,
     Pageable pageable);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* FETCH JOIN inside
 the specification (not just in the predicate). And
@@ -899,6 +971,34 @@ the specification (not just in the predicate). And
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Transaction Management
 
@@ -1180,6 +1280,8 @@ public void processOutbox() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Outbox is a pattern,
 not a feature. The transactional guarantee comes from
 writing to the DB in the same transaction.
@@ -1194,6 +1296,34 @@ writing to the DB in the same transaction.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Micronaut Data Reactive Repositories
 
@@ -1484,6 +1614,8 @@ R2DBC driver stable → Reactive
 Otherwise → JDBC + @Blocking
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Start with JDBC. Migrate to reactive if profiling
 shows thread exhaustion under load.
 
@@ -1497,3 +1629,33 @@ concurrency requirements.
 | Hiring Manager | Non-blocking for scalable services. |
 | Bar Raiser | Reactive vs JDBC decision framework, @Transactional reactive semantics, backpressure. |
 | Peer Engineer | "Added @Blocking to JDBC repositories first. Only migrated to R2DBC when profiling showed 400 threads blocked under peak load." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

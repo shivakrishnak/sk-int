@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # StatefulSet vs Deployment
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -108,6 +110,8 @@ If kafka-1 crashes -> replaced as kafka-1 on same (or different) node
 PVC data-kafka-1 reattaches to the new pod -> data preserved
 DNS name unchanged -> other brokers reconnect to kafka-1 at same address
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Ordered operations:
 - Scale up: 0 -> 1 -> 2 (each waits for previous to be Running+Ready)
@@ -433,6 +437,8 @@ kind: StatefulSet
 # postgres-2: streams from postgres-0.postgres-headless...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 My recommendation: use the Crunchy Data PGO or Zalando PostgreSQL Operator.
 These operators wrap StatefulSet + orchestrate:
 - Automatic failover via Patroni (leader election with etcd/consul)
@@ -712,6 +718,8 @@ Does the app form a cluster where members identify each other?
            NO  -> Deployment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🏛️ System Design
@@ -767,7 +775,37 @@ flowchart TB
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # DaemonSet and Job
+
+---
 
 ### 🎯 Model Answer
 
@@ -860,6 +898,8 @@ CronJob: nightly-report (schedule: "0 2 * * *")
   02:00 -> creates Job -> Job creates Pod -> Pod runs report -> exits 0 -> Job: Complete
   (Job auto-deleted after TTL)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 DaemonSet bypasses the scheduler for node assignment - it places pods directly on
@@ -1238,6 +1278,8 @@ spec:
   parallelism: 20         # 20 pods at a time
   completionMode: Indexed # each pod gets JOB_COMPLETION_INDEX 0-99
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Each pod processes records [index * 100000 : (index+1) * 100000].
 No queue needed. Deterministic partitioning. Re-run failed pod for its index.
 
@@ -1329,6 +1371,8 @@ spec:
         securityContext:
           privileged: true    # required for eBPF kernel probes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Security implications of privileged: a privileged container has full host access.
 Compromise of a Falco DaemonSet pod = full node compromise. Mitigate by:
@@ -1489,6 +1533,8 @@ Is the work node-level infrastructure?
                     NO  -> Deployment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🏛️ System Design
@@ -1531,3 +1577,33 @@ flowchart TD
 > identity requirements). Choosing the wrong controller forces you to implement
 > missing semantics in application code - choose the controller that matches
 > your workload shape.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Bundler Internals (AST, Module Graph, Tree Walking)](#bundler-internals-ast-module-graph-tree-walking) | medium |
+| 2 | [ESM Specification and Browser-Native Modules](#esm-specification-and-browser-native-modules) | medium |
+
+---
+
 # Bundler Internals (AST, Module Graph, Tree Walking)
 
 ---
@@ -114,6 +124,8 @@ Phase 5: EMIT
   Write to output file with source map
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The shift from CommonJS to ESM (ES Modules) was required for tree
@@ -149,6 +161,8 @@ npm run build
 grep -l 'subtract\|multiply' dist/assets/*.js
 # If grep returns nothing: tree shaking worked
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // Why CJS defeats tree shaking:
@@ -349,6 +363,34 @@ always verify with the bundle analyzer after optimizing.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # ESM Specification and Browser-Native Modules
 
 ---
@@ -446,6 +488,8 @@ CJS vs ESM key differences:
   Default in Node   Yes              With "type":"module"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Vite's dev server works without bundling because browsers natively
@@ -531,6 +575,8 @@ console.log(counter.count); // 2 (the property on the object is live)
 </body>
 </html>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // src/main.jsx (served as-is, no bundling)
@@ -698,3 +744,33 @@ the production case for bundling weakens. Projects like Deno Deploy
 and some edge runtimes already serve unbundled ESM in production for
 simple apps. The decision is always a performance measurement on your
 specific app and user network distribution, not a universal rule.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

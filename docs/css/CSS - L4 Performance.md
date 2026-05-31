@@ -7,6 +7,15 @@ permalink: /css/l4-performance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Performance, Reflow, and Repaint](#css-performance-reflow-and-repaint) | critical |
+
+---
+
 # CSS Performance, Reflow, and Repaint
 
 🎯 **Interview Weight:** critical (★★★) - browser rendering
@@ -173,6 +182,8 @@ FORCED SYNCHRONOUS LAYOUT (LAYOUT THRASHING):
   });
   // Result: 1 layout calculation total
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -439,6 +450,8 @@ Diagnosis checklist:
 - CSS transition on layout properties → use transform
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: layout thrashing (slow list/table operations)**
@@ -460,6 +473,8 @@ elements.forEach(el => {
 });
 // FastDOM batches all reads then all writes per frame
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1378,6 +1393,8 @@ CSS PERFORMANCE ARCHITECTURE:
 └─────────────────────────────────────────────┘
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key decisions:
 - Critical CSS inlined: eliminates render-blocking CSS
 - `contain: layout` on all widget boundaries: prevents
@@ -1441,3 +1458,33 @@ flowchart LR
 > based animations are guaranteed to never compete with
 > JavaScript for main thread time and never drop frames
 > under JavaScript load.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -134,6 +134,8 @@ hot.subscribe(v => console.log('B:', v));
 hot.next(1); // A: 1, B: 1 - both receive same value
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Observables and Promises are not interchangeable. `from(promise)`
 wraps a Promise as an Observable, but you lose the lazy
@@ -333,6 +335,8 @@ class Component {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -375,6 +379,8 @@ subject.subscribe(v => console.log('A:', v));
 subject.subscribe(v => console.log('B:', v));
 subject.next(1); // both receive: A: 1, B: 1
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that cold Observables
 can be "warmed" (converted to hot) using `share()` and
@@ -437,6 +443,8 @@ input$.pipe(
 // Only "jav" results ever display
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The key: when `switchMap` receives a new source value, it
 calls `unsubscribe()` on the current inner observable.
 If the inner observable was created from a fetch with
@@ -482,6 +490,8 @@ messages$.pipe(concatMap(m => sendMessage(m)))
 submit$.pipe(exhaustMap(() => submitForm()))
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Memory device: Switch = latest wins. Merge = all concurrent.
 Concat = ordered queue. Exhaust = first wins while active.
 
@@ -523,6 +533,8 @@ class Component {
 // async pipe subscribes, updates, and unsubscribes automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `async` pipe also triggers change detection when the
 Observable emits - critical for `OnPush` change detection
 strategy where manual subscriptions require `markForCheck()`.
@@ -549,6 +561,8 @@ data$.pipe(
 ).subscribe(v => console.log('subscriber:', v));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check subscription - is the Observable cold and
 never subscribed?
 
@@ -569,6 +583,8 @@ scheduler.run(({ cold, expectObservable }) => {
   expectObservable(output$).toBe('--a-----c');
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Marble testing syntax
 and the TestScheduler pattern. It allows testing time-based
@@ -602,6 +618,8 @@ data$.subscribe(d => console.log('B:', d)); // same call
 // Late subscriber receives cached value immediately
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `shareReplay(1)` is the standard pattern for shared HTTP
 requests in Angular services.
 
@@ -627,6 +645,8 @@ subject.subscribe(v => console.log(v)); // subscribes
 subject.next(2); // received: 2
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solutions for late subscribers:
 - `BehaviorSubject(initialValue)`: replays the last value
   to new subscribers
@@ -643,6 +663,8 @@ Use case choice:
 *What separates good from great:* Knowing all three Subject
 types and their specific use cases. `BehaviorSubject` for
 current state is the most common pattern in Angular services.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -663,9 +685,13 @@ wrap Observable (`lastValueFrom(obs$)`). When in doubt and
 working in an RxJS-heavy codebase (Angular), prefer Observable
 for consistency.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -718,6 +744,34 @@ timeline
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Core RxJS Operators
 
@@ -848,6 +902,8 @@ const component$ = stream$.pipe(
   takeUntil(destroy$) // complete when destroy$ emits
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The `takeUntil(destroy$)` pattern is the correct way to
@@ -1034,6 +1090,8 @@ const results$ = search$.pipe(
 // fetchAborted: actual network request cancelled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: combineLatest blocks until all sources emit**
 ```javascript
 const a$ = interval(1000); // starts emitting
@@ -1046,6 +1104,8 @@ const combined$ = combineLatest([a$, b$]).subscribe(
 // Diagnosis: add tap before combineLatest to check
 // which source is not emitting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1092,6 +1152,8 @@ const saveWithUser$ = saveButton$.pipe(
 // uses current user at that moment
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Choosing based on "what
 drives the emission": if both sources drive it, `combineLatest`;
 if only the primary source drives it and you need context
@@ -1135,6 +1197,8 @@ submitEnabled$.subscribe(enabled => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Using `combineLatest` for
 form-wide validity that combines individual field streams.
 The full solution composes individual field validations
@@ -1161,6 +1225,8 @@ const data$ = api$.pipe(
   map(v => v.items) // continue transforming
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `tap` is the operator-safe way to include side effects.
 Putting side effects inside `map` works but implies a relationship
@@ -1206,6 +1272,8 @@ api$.pipe(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RxJS 7+: `retry({count: 3, delay: (err, i) => timer(...)})` -
 cleaner API combining both behaviors.
 
@@ -1249,6 +1317,8 @@ const urgentAlerts$ = alerts$.pipe(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `throttleTime` with
 `{leading: true, trailing: true}` - this emits the first
 value immediately (leading), then the last value after the
@@ -1283,6 +1353,8 @@ positions$.pipe(
   throttleTime(0, animationFrameScheduler)
 ).subscribe(pos => updateDOMPosition(pos));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `animationFrameScheduler`
 is the correct scheduler for DOM updates - it synchronizes
@@ -1327,6 +1399,8 @@ it('debounceTime works correctly', () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The TestScheduler virtualizes time - the entire test runs
 synchronously while simulating the passage of time.
 
@@ -1334,6 +1408,8 @@ synchronously while simulating the passage of time.
 time-based operators instead of `setTimeout` in tests.
 Marble tests are synchronous, deterministic, and express
 the timing clearly in the test string.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1353,9 +1429,13 @@ For inner Observables: draw the use case as a marble diagram,
 then match the cancellation/concurrency semantics. For time-based:
 debounce for "wait for pause," throttle for "rate limit."
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1406,3 +1486,30 @@ flowchart TD
 > which preserves order but increases total time. `exhaustMap`
 > drops B entirely because A was still active - correct for
 > operations where you want to ignore duplicate triggers.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

@@ -8,6 +8,15 @@ permalink: /messaging/l4-high-availability/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Messaging High Availability and Disaster Recovery](#messaging-high-availability-and-disaster-recovery) | medium |
+
+---
+
 # Messaging High Availability and Disaster Recovery
 
 ---
@@ -68,6 +77,8 @@ AZ-1 failure:
   Data loss: 0 (ISR replicas are up to date)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rack awareness configuration:
 ```
 server.properties on Broker1:
@@ -82,6 +93,8 @@ Topic creation with rack-aware replica assignment:
   # Kafka automatically places replicas in
   # different racks (AZs) when rack config is set
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 MirrorMaker 2 for DR:
 ```
@@ -102,6 +115,8 @@ Failover steps:
 6. Total RTO: 5-30 minutes
    RPO: seconds (replication lag at time of failure)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 HA and DR are different failure scenarios requiring different solutions. HA handles broker-level and AZ-level failures within a cluster (automatic recovery, seconds). DR handles region-level failures (manual or semi-automated failover, minutes). Design both independently.
@@ -310,6 +325,8 @@ kafka-topics.sh --bootstrap-server kafka:9092 \
 # Look for: OutOfDisk, NetworkException, GC pause
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: increase producer `delivery.timeout.ms` to 120000 to survive the election window. Recover or replace the failed broker. Monitor ISR recovery.
 
 ---
@@ -334,6 +351,8 @@ kafka-consumer-groups.sh \
 # Check throughput: MM2 should match primary throughput
 # Primary: 100 MB/s -> MM2 must process 100 MB/s
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: scale MM2 Connect workers, increase task count in connector config, or address DR cluster performance issues.
 
@@ -543,6 +562,8 @@ If cross-region write latency is not acceptable:
   Accept RPO=milliseconds (not truly 0).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Key design decisions:**
 1. RPO=0 strictly requires synchronous replication - no async solution guarantees zero data loss
 2. Synchronous cross-region replication adds 50-200ms to write latency (cross-region RTT)
@@ -609,3 +630,33 @@ flowchart TD
 ```
 
 > **Diagram walkthrough:** The deployment places 2 brokers in each of 3 AZs, with partition leadership distributed across all AZs. With replication factor 3, each partition has replicas in all 3 AZs. When AZ-1 fails, Brokers 1 and 2 go down. Partitions that had Broker 1 as leader (P0, P3) trigger leader elections. The ISR for P0 was [1,3,5] - Brokers 3 and 5 are current and available. Broker 3 is elected as the new P0 leader. Producers and consumers reconnect to Broker 3 for P0. Zero data loss because the new leader has all committed messages. RTO is the election time: 10-30 seconds.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

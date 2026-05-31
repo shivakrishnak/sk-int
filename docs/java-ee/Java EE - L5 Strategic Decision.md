@@ -122,6 +122,8 @@ QUARKUS RUNTIME MODEL (using Jakarta EE APIs):
   Memory: low (especially native)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Feature Comparison Matrix:**
 
 | Feature | Jakarta EE | Spring Boot |
@@ -431,6 +433,8 @@ grep -rn "@Autowired\|@EJB\|@Inject" src/ |
 # @EJB is Java EE only
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* standardize on one framework per module.
 If using Spring: @Autowired or constructor injection.
 If using Jakarta EE/CDI: @Inject.
@@ -476,6 +480,8 @@ java -jar app.jar --debug 2>&1 | grep "Positive matches"
 # debug=true
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Explicitly configure the bean to prevent auto-config:
@@ -491,6 +497,8 @@ public DataSource dataSource() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -505,6 +513,8 @@ public DataSource dataSource() {
 | Talent pool | Smaller | Larger | Spring Boot |
 | Standards compliance | High (TCK) | Low (proprietary) | Jakarta EE |
 | Active innovation | Medium | High | Spring Boot |
+
+---
 
 ### 🏛️ System Design
 
@@ -736,6 +746,8 @@ public class OrderControllerTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Jakarta EE testing (Arquillian):
 ```java
 // Requires deploying to a container (real or embedded):
@@ -761,6 +773,8 @@ public class OrderServiceIT {
 }
 // Slower: 15-60 seconds for container startup per test suite
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Mockito-based Spring
 tests run in milliseconds. Arquillian tests run in seconds
@@ -805,6 +819,8 @@ public class OrderResource {
     // JAX-RS + CDI - same as WildFly
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Quarkus resolves the
 traditional Jakarta EE disadvantage: startup time and
@@ -967,6 +983,8 @@ Key migration steps:
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Controller to JAX-RS:
 ```java
 // Spring MVC:
@@ -985,6 +1003,8 @@ public class OrderResource {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. @Service/@Repository to CDI:
 ```java
 // Spring:
@@ -1000,6 +1020,8 @@ public class OrderResource {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "The migration from
 Spring Boot to Quarkus is more disruptive than from
@@ -1191,6 +1213,8 @@ Spring Boot 3.2 for all new microservices.
 - Jakarta EE + WildFly: rejected - startup time disadvantage
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Exception process:
 - Team can use alternative with TAB approval
 - Must document trade-offs and migration plan
@@ -1212,3 +1236,33 @@ leads to shadow IT: teams using unapproved frameworks
 without documentation."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

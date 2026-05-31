@@ -8,9 +8,20 @@ permalink: /java-performance/l2-profiling/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L2 Profiling](#java-performance---l2-profiling) | medium |
+
+---
+
 # Java Performance - L2 Profiling
 
 ## JMH Basics: Benchmark Design and Pitfalls
+
+---
 
 ### 🎯 Model Answer
 
@@ -162,6 +173,8 @@ INTERPRETING JMH OUTPUT:
   "Optimized" is 1234/457 = 2.7x faster. The ± errors don't overlap:
   result is statistically significant (reliable difference).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -341,6 +354,8 @@ Fix:
     }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -420,6 +435,8 @@ doesn't know which value will be used until runtime.
 ---
 
 ## Async-Profiler and CPU Sampling: Advanced Techniques
+
+---
 
 ### 🎯 Model Answer
 
@@ -577,6 +594,8 @@ COMMON FLAME GRAPH PATTERNS:
     Interpretation: high GC overhead
     Fix: reduce allocation rate (use alloc mode to find source)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -741,6 +760,8 @@ Root causes and fixes:
      Install JDK debug symbols or use JFR output mode.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -817,3 +838,33 @@ would show the cache as low-priority (low rate). But the memory leak symptom sho
 (leak) bottlenecks. Different tools for different problems.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

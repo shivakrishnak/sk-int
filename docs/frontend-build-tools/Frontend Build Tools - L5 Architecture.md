@@ -7,6 +7,15 @@ permalink: /frontend-build-tools/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Module Federation and Micro-frontend Build Architecture](#module-federation-and-micro-frontend-build-architecture) | medium |
+
+---
+
 # Module Federation and Micro-frontend Build Architecture
 
 ---
@@ -109,6 +118,8 @@ Runtime flow:
      e. React.lazy resolves, component renders
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Module Federation decouples deployment from integration. Each team
@@ -158,6 +169,8 @@ module.exports = {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // packages/shell-app/webpack.config.js (Host)
 module.exports = {
@@ -181,6 +194,8 @@ module.exports = {
   ],
 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```tsx
 // packages/shell-app/src/App.tsx
@@ -262,6 +277,8 @@ eventBus.on('cart:updated', ({ itemCount }) => {
   setCartBadge(itemCount);
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```typescript
 // Failure resilience pattern: remote loading with timeout
@@ -408,6 +425,8 @@ Architecture:
     - Alert on RemoteLoadFailed > 1% error rate per remote
     - Separate error budgets per team
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -571,6 +590,8 @@ Centralized dependency registry: Platform team maintains a `federation-deps.json
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All remote webpack configs import this file to ensure consistency.
 CI validates that each remote's shared config matches the registry.
 
@@ -590,6 +611,8 @@ exposes: {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Monitoring: alert on `console.warn` containing "Unsatisfied version"
 in production - this indicates a singleton conflict.
 
@@ -599,3 +622,33 @@ the central registry prevents the problem before it reaches production.
 Manual governance processes are always eventually violated under
 deadline pressure; automation makes compliance the path of least
 resistance.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

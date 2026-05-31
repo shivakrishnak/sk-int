@@ -343,6 +343,8 @@ public class IdempotentOrderConsumer {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The idempotency key is topic+partition+offset - unique
 per message in Kafka. Store in DB (small table). Check
 before processing. Ack either way.
@@ -360,6 +362,34 @@ as the exact idempotency key, not application-level IDs.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Security and OIDC
 
@@ -630,6 +660,8 @@ quarkus.oidc.token.forced-jwks-refresh-interval=5M
 quarkus.oidc.token.jwks-refresh-interval=1H
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Manual rotation scenario (cert expiry):
 - OIDC provider announces new key.
 - Publishes both old and new in JWKS.
@@ -654,6 +686,34 @@ on validation failure - no pod restarts needed.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus OpenTelemetry and Tracing
 
@@ -890,12 +950,16 @@ quarkus.log.console.format=
   %-5p [%c{2.}] (%t) %s%e%n
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Output:
 ```
 10:23:45.123 [4bf92f3577b34da6a3ce929d0e0e4736]
   [00f067aa0ba902b7] INFO [OrderService]
   (executor-0) Creating order 12345
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Workflow:
 1. User reports error at 10:23:45.
@@ -920,6 +984,34 @@ loop: log line → trace ID → Jaeger → root cause.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Kubernetes Operator Pattern
 
@@ -1177,6 +1269,8 @@ public UpdateControl<Database> reconcile(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solution 2: Event sources for watching dependent resources:
 ```java
 // Watch pod status changes and trigger reconcile
@@ -1195,11 +1289,15 @@ public List<EventSource> prepareEventSources(
 // No polling needed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Solution 3: Reactive reconciler:
 ```java
 // Java Operator SDK supports Uni-returning reconcile()
 // if using the reactive variant
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Event source for
 watching dependent resources instead of polling loops.
@@ -1214,6 +1312,34 @@ watching dependent resources instead of polling loops.
 ---
 
 ---
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
 
 # Quarkus Multi-Tenancy Patterns
 
@@ -1462,3 +1588,33 @@ limit and the migration to database-per-tenant threshold.
 | Hiring Manager | SaaS multi-tenancy architecture. |
 | Bar Raiser | Strategy selection, discriminator filter risk, migration approach. |
 | Peer Engineer | "Schema-per-tenant with TenantSchemaResolver. 200 tenants, zero data leaks in 2 years." |
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+

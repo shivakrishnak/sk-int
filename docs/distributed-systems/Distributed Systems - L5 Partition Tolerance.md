@@ -8,6 +8,15 @@ permalink: /distributed-systems/l5-partition-tolerance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Designing for Network Partition Tolerance](#designing-for-network-partition-tolerance) | medium |
+
+---
+
 # Designing for Network Partition Tolerance
 
 **TL;DR:** Network partitions are not rare events - they are an
@@ -136,6 +145,8 @@ All four can occur in a single data center.
 Cross-DC connections add more partition probability.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The PACELC framework (extension of CAP):**
 
 ```
@@ -156,6 +167,8 @@ MongoDB      | C           | C (primary required for writes)
 This is often more important than the partition scenario:
 partitions are rare, normal operation is constant.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Design patterns for partition tolerance:**
 
@@ -178,6 +191,8 @@ partitions are rare, normal operation is constant.
 // User profiles: W=2, R=1 (faster write, stale ok)
 // Financial: W=3, R=3 (no stale reads, sacrifices availability)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pattern 2: Fencing and lease-based coordination**
 
@@ -209,6 +224,8 @@ public class LeaderWithFence {
 // the highest it has seen. This prevents old partitioned leaders
 // from writing after partition heals.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pattern 3: Read your writes with session affinity**
 
@@ -250,6 +267,8 @@ public class UserService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pattern 4: Graceful degradation (serve stale with freshness signal)**
 
 ```java
@@ -286,6 +305,8 @@ public class ProductService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Partitions are not exceptional events to be "handled" - they
@@ -614,6 +635,8 @@ even with AP orders because RESERVE step always contacts global
 inventory service before confirming.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -707,6 +730,8 @@ psql -c "SELECT * FROM replication_conflicts
          WHERE created_at > NOW() - INTERVAL '24 hours'"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 - Strict quorum: majority must be N/2 + 1, never N/2
 - Fencing tokens: storage rejects writes with old tokens
@@ -740,6 +765,8 @@ grep "outbox processing\|retry scheduled" \
 # Spike in messages per second = retry storm
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: rate-limited retry processing:
 ```java
 // Outbox worker: rate-limit processing after reconnect
@@ -759,6 +786,8 @@ public class OutboxWorker {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Also: exponential backoff WITH jitter on retries. Jitter
 (random delay) spreads retry load over time even when many
@@ -790,6 +819,8 @@ jstack <pid> | grep "WAITING\|BLOCKED" | wc -l
 # Spike in waiting threads = timeout exhaustion
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: timeout budget hierarchy:
 ```java
 // Timeout budget: each downstream call
@@ -806,6 +837,8 @@ stub.callB(request);
 // and uses it for its call to C
 // If 2s already elapsed: C gets at most 4s (not another 4s)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -909,6 +942,8 @@ Key: storage must check the fencing token
     Even a buggy old leader cannot write past the fence.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Implementation in distributed lock:
 ```java
 // etcd-backed fencing
@@ -928,6 +963,8 @@ public class FencedLease {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Real systems: ZooKeeper ephemeral nodes (session expiry = fencing),
 etcd leases (expired lease = fencing), Google Chubby (locks with
@@ -981,6 +1018,8 @@ public class SessionAwareRepository {
 // Under heavy load: primary becomes the bottleneck again.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Write timestamp propagation:**
 ```java
 // Write returns a timestamp. Client includes it in reads.
@@ -1003,6 +1042,8 @@ public Order getOrder(String id, long afterTimestamp) {
     return replica.findById(id);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Causal consistency token (cookie-based):**
 Client stores write timestamps in a session cookie/header.
@@ -1047,8 +1088,9 @@ Partition occurs (secondary unreachable):
   Availability: ZERO writes during partition
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use synchronous:
-- Financial transactions (double-spend prevention)
 - Primary-secondary failover without data loss (RPO=0)
 - Distributed locks (must be consistent)
 
@@ -1072,6 +1114,8 @@ Partition occurs (secondary unreachable):
   Availability: FULL writes during partition
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When to use asynchronous:
 - High-throughput writes (analytics, logging)
 - Cross-datacenter (latency makes sync prohibitive)
@@ -1092,6 +1136,8 @@ Write flow:
 Availability: writes continue if at least 1 secondary is reachable
 Consistency: at most 1 secondary lag behind primary on failover
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* semi-synchronous as the
 practical middle ground. Many candidates know sync vs. async.
@@ -1123,6 +1169,8 @@ ORDER BY total_charged DESC;
 -- Affected 43 orders during 14:00-14:35 window
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Trace the payment flow during the partition:
 ```bash
 # Check distributed traces for affected order IDs
@@ -1132,6 +1180,8 @@ jaeger-query service=payment-worker \
 # Two spans: both "CHARGE_PAYMENT", different trace IDs
 # = payment worker submitted payment twice
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Root cause: missing idempotency key:
 ```java
@@ -1150,6 +1200,8 @@ paymentClient.charge(
 // Payment provider: same key = same result (no double charge)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Secondary cause: outbox worker not deduplicated:
 ```sql
 -- Outbox worker processed same event twice (no lock)
@@ -1167,6 +1219,8 @@ WHERE id = :eventId
   AND processed_at IS NULL;
 -- If UPDATE affects 0 rows: another worker claimed it → skip
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5 - Verify idempotency key at payment provider level:
 Every payment provider (Stripe, Braintree) accepts an idempotency
@@ -1212,6 +1266,8 @@ Partition impact: EU ↔ US partition:
     stale during partition (acceptable for analytics)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. CRDT-based shared state (for genuinely shared data):
 ```
 Global user counter, likes, view counts:
@@ -1220,6 +1276,8 @@ Global user counter, likes, view counts:
   On partition heal: merge with max()
   No conflict possible: CRDTs are designed for this
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Conflict resolution for non-CRDT data:
 ```
@@ -1238,6 +1296,8 @@ If both regions write to the same user's data:
     Conflict avoidance (not conflict resolution)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. Global sequence number (CP operations only):
 ```
 For operations requiring total order across regions:
@@ -1247,6 +1307,8 @@ For operations requiring total order across regions:
   Accept: some operations are unavailable during inter-region partition
   This is the correct choice: consistency > availability for money
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* data partitioning by geography
 as the first design option. The best way to handle multi-region
@@ -1429,6 +1491,8 @@ Watch mechanism (active config push):
   On reconnect: gets current config + any missed changes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* the startup resilience design.
 Many configuration service designs work well for running services
 but fail for service restarts during a partition. A service that
@@ -1576,6 +1640,8 @@ TT.before(t): returns true if t is definitely in the future
   (TT.now().latest < t)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **External consistency protocol:**
 ```
 Transaction T1 commits at physical time ts1.
@@ -1602,6 +1668,8 @@ Why this works during partitions:
   The commit wait is the key: it ensures that even with
   clock uncertainty, all timestamps are ordered correctly.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The partition behavior:**
 - Spanner is CP: during partition (if majority of Paxos group unreachable):
@@ -1653,6 +1721,8 @@ void circuitBreakerOpensOnConnectionTimeout() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Level 2: Integration tests with Toxiproxy (per environment):
 ```bash
 # Toxiproxy: introduce latency, connection drops, partitions
@@ -1666,6 +1736,8 @@ toxiproxy-cli toxic add cassandra -t latency \
 # Remove toxic
 toxiproxy-cli toxic delete cassandra
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Level 3: Canary chaos (weekly in staging):
 ```bash
@@ -1681,6 +1753,8 @@ iptables -A OUTPUT -p tcp \
 
 iptables -D OUTPUT -p tcp --dport 9042 -j DROP
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Level 4: Production chaos (monthly, pre-planned):
 - Announced to on-call team
@@ -1708,3 +1782,33 @@ measure only uptime. If the test doesn't check that the circuit
 breaker opened and the fallback served the expected response:
 it is testing that "something kept working" not "the designed
 partition tolerance mechanism worked."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

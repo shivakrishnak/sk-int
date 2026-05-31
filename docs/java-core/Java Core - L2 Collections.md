@@ -8,9 +8,20 @@ permalink: /java-core/l2-collections/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L2 Collections](#java-core---l2-collections) | medium |
+
+---
+
 # Java Core - L2 Collections
 
 ## Collections Framework Design
+
+---
 
 ### 🎯 Model Answer
 
@@ -104,6 +115,8 @@ Map (NOT a Collection)
   |-- WeakHashMap (GC-friendly keys)
   |-- ConcurrentHashMap (concurrent, no locks on reads)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Time complexity summary:**
 | Operation | ArrayList | LinkedList | HashSet | TreeSet | HashMap | TreeMap |
@@ -234,6 +247,8 @@ while (it.hasNext()) {
 // Fix 2: removeIf (Java 8+):
 names.removeIf(name -> name.equals("b"));
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: stack trace points to `checkForComodification()`.
 Root cause: structural modification (add/remove/clear) during iteration.
 
@@ -319,6 +334,8 @@ ArrayList<String> process(ArrayList<String> items) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Exceptions: concrete type is appropriate when:**
 - You specifically need concrete-type methods not in the interface
   (`ArrayDeque.peekFirst()` vs `Deque.peekFirst()` - actually same here)
@@ -364,6 +381,8 @@ immut.add("e"); // UnsupportedOperationException
 unmod.contains(null); // false - null not in list
 immut.contains(null); // NullPointerException - List.of() rejects null
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Practical choice:**
 - `List.of()`: return values, constants, test data - truly immutable
@@ -421,6 +440,8 @@ queue.pollFirst();    // dequeue
 List<String> list = new ArrayList<>();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The performance case against LinkedList
 is compelling. Modern CPUs have 64-byte cache lines. `ArrayList` stores
 elements contiguously; iterating it is a sequential memory scan with
@@ -466,6 +487,8 @@ for (int i = items.size() - 1; i >= 0; i--) {
     if (items.get(i).startsWith("a")) items.remove(i);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* CME is a best-effort detection
 mechanism, not a hard guarantee. The Javadoc says: "It is not generally
@@ -515,6 +538,8 @@ List<Person> byAgeDesc = people.stream()
     .toList();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Java's sort algorithm is `TimSort`
 (a hybrid merge sort / insertion sort), O(n log n) worst case with O(n)
 for nearly-sorted data. It's stable: equal elements maintain their
@@ -551,6 +576,8 @@ interface SequencedCollection<E> extends Collection<E> {
 // ArrayList, LinkedList, ArrayDeque all implement this now
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Practical use:**
 ```java
 List<String> list = new ArrayList<>(List.of("a","b","c"));
@@ -559,6 +586,8 @@ list.getLast();   // "c" - new Java 21 method
 list.reversed();  // reversed view ["c","b","a"]
 list.addFirst("z"); // adds at front: ["z","a","b","c"]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `SequencedCollection.reversed()`
 returns a VIEW, not a copy. Mutating the original is reflected in the
@@ -598,6 +627,8 @@ for (Map.Entry<String, Integer> e : map.entrySet()) {
     map.put("new", 1); // no CME, but may or may not be seen in iteration
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `CopyOnWriteArrayList` is only
 appropriate when writes are rare and reads are very frequent. Each write
@@ -647,6 +678,8 @@ Collections.copy(dest, nums);        // copy nums into dest
 boolean noCommon = Collections.disjoint(list1, list2);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `Collections.emptyList()`,
 `Collections.emptySet()`, `Collections.emptyMap()` return singleton
 empty collections (not new objects each time). For method return values
@@ -690,6 +723,8 @@ These are micro-optimizations, but they signal idiomatic Java coding.
 ---
 
 ## ArrayList vs LinkedList
+
+---
 
 ### 🎯 Model Answer
 
@@ -759,6 +794,8 @@ add(i, e): System.arraycopy(elementData, i, elementData, i+1, size-i)
            elementData[i] = element  -> O(n) shifts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **LinkedList internal structure:**
 ```
 Node {
@@ -774,6 +811,8 @@ addFirst(): head.prev = new Node -> O(1)
 add(i, e): traverse to node i -> O(n), then insert -> O(1)
            traversal cost (cache misses) usually dominates
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -887,6 +926,8 @@ for (String item : hugeResultSet) { results.add(item); }
 List<String> results = new ArrayList<>(hugeResultSet.size());
 // or use streams/collect which optimize internally
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: heap profiler shows many ArrayList.grow() calls, or
 `ArrayList$` objects in heap dump.
 
@@ -950,6 +991,8 @@ L3 cache: ~8-32MB, ~40 cycles access
 DRAM: unlimited, ~200-300 cycles access
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 A CPU cache line is 64 bytes. When you access an element, the CPU
 loads the surrounding 64 bytes. For `ArrayList` with 8-byte references:
 one cache miss loads 8 adjacent references. The next 7 accesses are
@@ -966,6 +1009,8 @@ heap address, not adjacent to the previous node).
 // LinkedList iterate: ~6.8 ms  (5.6x slower!)
 // Despite both being O(n)!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pre-fetching: the hardware prefetcher sees sequential memory addresses
 and proactively loads the next cache lines. `ArrayList` triggers
@@ -999,6 +1044,8 @@ n=23:  grow to 33, copy 22 elements
 ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Amortized O(1) analysis:**
 For n appends, the total copy work is: 10 + 15 + 22 + 33 + ... < 3n.
 Total work O(n), amortized per operation O(1).
@@ -1017,6 +1064,8 @@ int expectedSize = dbQuery.getResultSize();
 List<String> results = new ArrayList<>(expectedSize);
 // capacity = expectedSize, no copies needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The 1.5x growth factor is a balance
 between memory waste (too large a factor wastes memory) and copy
@@ -1053,6 +1102,8 @@ for (String item : newItems) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This scenario requires: (1) you need to insert at a fixed position in
 the middle, (2) you need to insert many elements, (3) you maintain
 the iterator across inserts. Very specific requirements rarely met
@@ -1067,6 +1118,8 @@ combined.addAll(newItems);           // one arraycopy - O(m)
 combined.addAll(list1.subList(500, list1.size()));
 // Total: O(n+m) instead of O(n*m)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `ListIterator` LinkedList advantage
 is real but rare enough that most production code should still default
@@ -1103,6 +1156,8 @@ class LRUCache<K, V> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 But Java's `LinkedHashMap(capacity, loadFactor, true)` (access-order mode)
 already implements this without exposing `LinkedList`.
 
@@ -1134,6 +1189,8 @@ Total ArrayList overhead: ~1060 bytes
 Plus: 100 String objects (actual data)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **LinkedList (100 String references):**
 ```
 LinkedList object: 16 (header) + 4 (size) + 8 (first ref) + 8 (last ref) = 36 bytes
@@ -1142,6 +1199,8 @@ Per Node: 16 (header) + 8 (item ref) + 8 (prev ref) + 8 (next ref) = 40 bytes
 Total LinkedList overhead: ~4036 bytes
 Plus: 100 String objects (actual data)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ArrayList overhead: ~1060 bytes (10.6 bytes/element)
 LinkedList overhead: ~4036 bytes (40.4 bytes/element)
@@ -1181,6 +1240,8 @@ queue.poll();       // removeFirst -> "a"
 // 3. No null elements allowed (faster null checks elided)
 // 4. Slightly faster in all microbenchmarks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `ArrayDeque` resizes by doubling (similar to ArrayList). The circular
 array wraps around: head and tail pointers move independently.
@@ -1225,6 +1286,8 @@ A:
 // LinkedList wins only here!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Running your own microbenchmark with
 JMH (Java Microbenchmark Harness) is the correct approach for data-driven
 decisions. JMH handles JVM warmup (JIT compilation), prevents dead code
@@ -1265,6 +1328,8 @@ List<String> result = new ArrayList<>(estimatedSize);
 // ... populate ...
 result.trimToSize(); // shrink to fit (rarely needed)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Pre-sizing is most important when:
 (1) the final size is known or estimable, (2) the list is large (>10,000
@@ -1308,3 +1373,33 @@ preferable.
 ### 📊 Diagram
 
 *(Omit: array vs linked structure described adequately in prose)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

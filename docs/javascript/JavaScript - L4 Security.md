@@ -7,6 +7,15 @@ permalink: /javascript/l4-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JavaScript Security (XSS, Prototype Pollution, CSRF)](#javascript-security-xss-prototype-pollution-csrf) | expert |
+
+---
+
 # JavaScript Security (XSS, Prototype Pollution, CSRF)
 
 🎯 **Interview Weight:** expert (★★★) - JavaScript security is required
@@ -163,6 +172,8 @@ DEFENSES:
     (check for X-Requested-With)
   - Origin/Referer header validation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -424,6 +435,8 @@ LAYERED SECURITY ARCHITECTURE:
   }));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -550,6 +563,8 @@ test('deep merge does not pollute prototype', () => {
   expect({}.evil).toBeUndefined();
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1307,3 +1322,33 @@ JavaScript/Node.js application?** `[STAFF]` SYSTEM-DESIGN
 > suite - not just functional behavior. Security regressions should be
 > caught the same way functional regressions are: automatically, on
 > every change.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

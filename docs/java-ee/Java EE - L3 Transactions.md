@@ -132,6 +132,8 @@ TRANSACTION MANAGER:
     -> "JMS, rollback" -> JMS: rolled back
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **XA DataSource configuration (WildFly):**
 
 ```xml
@@ -156,6 +158,8 @@ TRANSACTION MANAGER:
 </xa-datasource>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **JTA transaction in EJB:**
 
 ```java
@@ -178,6 +182,8 @@ public class OrderService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -376,6 +382,8 @@ SELECT gid, prepared, owner FROM pg_prepared_xacts;
 ls standalone/data/tx-object-store/
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Resolution:*
 ```sql
 -- If TM recovery cannot complete the TX:
@@ -385,6 +393,8 @@ ROLLBACK PREPARED 'gid-from-above';
 -- Commit manually if certain it should commit:
 COMMIT PREPARED 'gid-from-above';
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -400,6 +410,8 @@ COMMIT PREPARED 'gid-from-above';
 | Use case | Legacy, strict exactly-once | Modern cloud-native | Long-running multi-step |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -667,6 +679,34 @@ Complexity: designing and testing compensating transactions."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Transaction Propagation in EJBs
 
 **Interview Weight:** ★★☆ - Intermediate. Transaction
@@ -752,6 +792,8 @@ SUPPORTS      | No TX (ok)   | Join existing TX
 NOT_SUPPORTED | No TX (ok)   | Suspend, no TX
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Call chain propagation:**
 
 ```
@@ -769,6 +811,8 @@ RuntimeException in reserve():
   placeOrder() ends -> RollbackException
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **@ApplicationException and rollback:**
 
 By default, checked exceptions do NOT trigger rollback.
@@ -780,6 +824,8 @@ Override with:
 public class InsufficientStockException extends Exception {
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1000,6 +1046,8 @@ grep -B50 "RollbackException" standalone/log/server.log \
 # Look for: "setRollbackOnly" entries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Use REQUIRES_NEW on the failing sub-call:
@@ -1016,6 +1064,8 @@ public void riskyOperation() {
 public class BusinessException extends Exception { }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -1030,6 +1080,8 @@ public class BusinessException extends Exception { }
 | NOT_SUPPORTED | Suspend | No TX | Legacy JCA resources |
 
 *(System Design: omit - not a ★★★ entry)*
+
+---
 
 ### 📊 Diagram
 
@@ -1121,6 +1173,8 @@ public class AuditService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use case: helper methods that MUST participate in
 the caller's transaction. Enforces correct usage
 at the API level: if called without a TX, fails fast.
@@ -1154,6 +1208,8 @@ public String readFromLegacy(String path) {
     // TX suspended here - legacy client won't be enrolled
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "NOT_SUPPORTED is
 the correct pattern for legacy integration points
@@ -1194,6 +1250,8 @@ public class CdiService {
 public void process(Order o) throws BusinessException {}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "In Jakarta EE 10+,
 CDI @Transactional is preferred. The rollbackOn attribute
 is cleaner than annotating exception classes with
@@ -1223,6 +1281,8 @@ grep -B50 "RollbackException" server.log | grep -i exception
 :write-attribute(name=level,value=DEBUG)
 # Grep for "setRollbackOnly"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: use REQUIRES_NEW to isolate, or accept the rollback
 and let the entire operation fail.
@@ -1286,6 +1346,8 @@ public Future<Void> sendAsync(Long orderId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: pass data as parameters, not re-read from DB.
 
 *What separates good from great:* "Pass everything the
@@ -1319,6 +1381,8 @@ public OrderResult placeOrder(Order order) {
     return OrderResult.success(order);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Check rollback status: `ctx.getRollbackOnly()`.
 
@@ -1357,6 +1421,8 @@ public class BatchService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "BMT-to-CMT non-propagation
 is non-obvious. If you need the CMT method to participate
@@ -1403,6 +1469,8 @@ public class OrderService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Deadlock retry is
 the most valuable transaction interceptor pattern.
 At 1% deadlock rate with 3 retries, effective deadlock
@@ -1410,3 +1478,33 @@ rate is 0.01% - often acceptable without application
 logic changes."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

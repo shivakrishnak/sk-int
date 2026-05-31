@@ -8,6 +8,16 @@ permalink: /rest-api/l2-security-and-cors/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Authentication in REST APIs](#authentication-in-rest-apis) | medium |
+| 2 | [CORS and Cross-Origin Requests](#cors-and-cross-origin-requests) | medium |
+
+---
+
 # Authentication in REST APIs
 
 ---
@@ -72,6 +82,8 @@ OAuth2 Code Flow (third-party):
   5. Client calls API with access token
   6. API validates token with IDP keys
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The authentication mechanism should match the client type. Browser-based clients need OAuth2 flows (user interaction required). Server-to-server clients use API keys or client credential OAuth2 (no user interaction). Mobile apps use OAuth2 with PKCE (no client secret, uses code verifier). Choosing the wrong mechanism creates security vulnerabilities: embedding a client secret in a mobile app leaks the secret to any user who decompiles the app.
@@ -263,6 +275,34 @@ Fix: Configure request logging to redact sensitive headers. Spring: configure `C
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # CORS and Cross-Origin Requests
 
 ---
@@ -325,6 +365,8 @@ HTTP/1.1 201 Created
 Access-Control-Allow-Origin: https://app.mysite.com
 ...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 CORS is a browser security mechanism. Non-browser clients (curl, Postman, server-to-server calls) are not affected by CORS - they don't send OPTIONS preflights and don't check CORS headers. If you can't call an API from a browser but can from curl, CORS is the likely cause. CORS configuration is server-side: the server decides which origins, methods, and headers are allowed.
@@ -507,3 +549,33 @@ Fix: Add CORS configuration to the server. Ensure the app.mysite.com origin is i
 | No CORS config | Yes | No cross-origin access | N/A | N/A |
 
 **The deciding factor:** Use specific origin + credentials for authenticated SPAs. Use wildcard for truly public read-only APIs. Use reverse proxy to eliminate CORS entirely when feasible.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

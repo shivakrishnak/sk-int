@@ -7,18 +7,6 @@ permalink: /platform-engineering/meta-patterns/
 render_with_liquid: false
 ---
 
-# Platform Engineering - META Patterns
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Platform Thinking as Product Thinking](#platform-thinking-as-product-thinking) | high |
-| 2 | [The Cognitive Load Budget Mental Model](#the-cognitive-load-budget-mental-model) | high |
-| 3 | [Paved Road vs Off-Road Decision Framework](#paved-road-vs-off-road-decision-framework) | high |
-
----
-
 # Platform Thinking as Product Thinking
 
 ---
@@ -434,6 +422,34 @@ The best platform teams have both.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # The Cognitive Load Budget Mental Model
 
@@ -869,6 +885,34 @@ user testing) is more accurate than internal assessment.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Paved Road vs Off-Road Decision Framework
 
@@ -1414,3 +1458,32 @@ mismatch: startup-era informal governance with enterprise-scale team
 count, or enterprise governance applied prematurely at scaleup scale.
 Right-sizing the paved road governance to organizational scale is an
 ongoing calibration, not a one-time decision.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+

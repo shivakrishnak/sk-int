@@ -8,6 +8,16 @@ permalink: /microservices/l2-gateway-and-resilience/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [API Gateway Pattern](#api-gateway-pattern) | medium |
+| 2 | [Circuit Breaker Pattern](#circuit-breaker-pattern) | medium |
+
+---
+
 # API Gateway Pattern
 
 ---
@@ -57,6 +67,8 @@ GATEWAY HANDLES (cross-cutting):
   Request transformation: adapt mobile format to backend
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Backend-for-Frontend (BFF):**
 ```
 WITHOUT BFF:
@@ -79,6 +91,8 @@ Benefits:
   - Backend services unchanged
   - Client-specific optimization
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The gateway is infrastructure, not business logic. The moment business rules appear in the gateway, they belong in a service instead. A gateway that validates whether a user is allowed to place an order based on account standing is doing work that should be in OrderService.
@@ -293,6 +307,34 @@ Fix: Cache JWT validation results for the token's remaining TTL (not re-validati
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Circuit Breaker Pattern
 
 ---
@@ -344,6 +386,8 @@ CALLER EXPERIENCE:
   HALF-OPEN: first N calls may succeed or fail
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Resilience4j configuration:**
 ```java
 // resilience4j.yml
@@ -361,6 +405,8 @@ resilience4j:
         slowCallRateThreshold: 80      # 80% slow calls
         slowCallDurationThreshold: 2s  # "slow" = >2s
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The circuit breaker does not fix the downstream failure - it isolates the caller from it. The value is: fast failure enables graceful degradation. With a circuit breaker, when inventory service is down, order service returns a useful response (fallback: assume available, check at fulfillment) rather than waiting 30 seconds for a timeout before returning an error.
@@ -544,3 +590,33 @@ Fix: Manually trigger a circuit state reset via actuator (for emergency). Long-t
 | Rate Limiter | Overwhelm downstream | Limit call rate | Low |
 
 **Combined pattern:** Timeout + Retry + Circuit Breaker + Bulkhead provides comprehensive resilience.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

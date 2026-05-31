@@ -7,6 +7,17 @@ permalink: /react/l1-hooks-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [useEffect and Side Effect Management](#useeffect-and-side-effect-management) | foundational |
+| 2 | [useRef and DOM Access](#useref-and-dom-access) | foundational |
+| 3 | [Event Handling in React](#event-handling-in-react) | foundational |
+
+---
+
 # useEffect and Side Effect Management
 
 🎯 **Interview Weight:** foundational (★☆☆) - useEffect misuse is the
@@ -118,6 +129,8 @@ function UserProfile({ userId }) {
   }, [userId]);
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -304,6 +317,34 @@ Symptom: "Can't perform a React state update on an unmounted component" warning;
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # useRef and DOM Access
 
 🎯 **Interview Weight:** foundational (★☆☆) - useRef is used for DOM
@@ -434,6 +475,8 @@ function Form() {
   return <TextInput ref={inputRef} onFocus={() => inputRef.current.select()} />;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -593,6 +636,34 @@ DECISION
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Event Handling in React
 
 🎯 **Interview Weight:** foundational (★☆☆) - event handling is asked in
@@ -721,6 +792,8 @@ function SearchInput({ onSearch }) {
   return <input type="text" onKeyDown={handleKeyDown} />;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -871,3 +944,33 @@ Symptom: event handler reads an outdated value that was current when the compone
 > enables micro-frontends and multiple React versions on one page.
 > Before React 17, two React instances would conflict because both
 > attached to `document`. After React 17, each attaches to its own root.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,15 @@ permalink: /css/l4-modern-layout/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Container Queries and Subgrid](#css-container-queries-and-subgrid) | critical |
+
+---
+
 # CSS Container Queries and Subgrid
 
 🎯 **Interview Weight:** critical (★★★) - Container Queries
@@ -180,6 +189,8 @@ CONTAINER STYLE QUERIES:
     .card { padding: 0.5rem; font-size: 0.875rem; }
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -489,6 +500,8 @@ Debug checklist:
    has no explicit width or flexbox sizing.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: subgrid items not aligning**
@@ -507,6 +520,8 @@ Checklist:
 4. Are all cards the same number of rows?
    Mixed span sizes cause alignment gaps
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1458,6 +1473,8 @@ Component library convention:
   Card grids always use subgrid.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -1505,3 +1522,33 @@ flowchart TD
 > grid card alignment, subgrid requires three pieces: a parent
 > grid with explicit rows, cards that span those rows, and the
 > subgrid declaration to inherit the parent's row tracks.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

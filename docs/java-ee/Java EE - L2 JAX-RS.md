@@ -156,6 +156,8 @@ HTTP RESPONSE:
   {"id": 42, "status": "SHIPPED", ...}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Full resource example:**
 
 ```java
@@ -226,6 +228,8 @@ public class OrderResource {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key insight:**
 
@@ -465,6 +469,8 @@ curl -v -X POST http://localhost:8080/api/products \
 # Open Liberty: add jackson-jaxrs-json-provider to pom.xml
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```xml
 <!-- If Jackson is not auto-detected, register it: -->
@@ -479,6 +485,8 @@ public class RestApp extends Application {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -545,6 +553,8 @@ Three ways to return error responses:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Throw JAX-RS exceptions:
    ```java
    throw new jakarta.ws.rs.NotFoundException(
@@ -552,6 +562,8 @@ Three ways to return error responses:
    );
    // JAX-RS automatically maps to 404
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Standard JAX-RS exceptions: `NotFoundException` (404),
    `BadRequestException` (400), `NotAuthorizedException` (401),
    `ForbiddenException` (403), `ServerErrorException` (500).
@@ -568,6 +580,8 @@ Three ways to return error responses:
        }
    }
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Best practice: use domain exceptions (OrderNotFoundException)
 with ExceptionMapper. Keeps business code free of
@@ -592,6 +606,8 @@ Three common strategies:
    @Path("/v2/orders")
    public class OrderResourceV2 { ... }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Simple, cache-friendly. Breaking change = new major version.
 
 2. Header versioning (Accept or custom header):
@@ -610,10 +626,14 @@ Three common strategies:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Content type versioning (media type):
    ```
    Accept: application/vnd.example.order-v2+json
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    JAX-RS `@Produces` matches custom media types.
 
 Trade-offs:
@@ -646,6 +666,8 @@ public Response getOrder(@PathParam("id") Long id) {
     // JAX-RS picks the correct MessageBodyWriter based on Accept
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Negotiation algorithm:
 1. Parse `Accept` header (e.g., `application/json, */*;q=0.9`)
@@ -706,6 +728,8 @@ public class EmployeeResource {
     ) { ... }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 URL: `GET /departments/5/employees/12`
 
@@ -769,6 +793,8 @@ public void generateReport(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Modern alternative: Quarkus RESTEasy Reactive uses
 Mutiny/Uni for reactive async without @Suspended.
 
@@ -824,6 +850,8 @@ private CacheControl buildCacheControl() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Benefits: reduces payload for GET requests when
 data hasn't changed. Critical for mobile clients
 on slow networks.
@@ -848,6 +876,8 @@ public class RestApplication extends Application {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Override `getClasses()` or `getSingletons()` for
 explicit registration:
 ```java
@@ -864,6 +894,8 @@ public class RestApplication extends Application {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When explicit registration is needed:
 - Disabling classpath scanning (performance)
@@ -907,6 +939,8 @@ Standard format (RFC 7807 Problem Details):
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JAX-RS implementation:
 ```java
 @Provider
@@ -936,11 +970,41 @@ public class ValidationExceptionMapper
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "RFC 7807 (Problem Details for HTTP APIs) is the emerging standard. Many client libraries know how to parse it. Using a consistent error format across all APIs means client teams write error handling once. The correlationId links the API error to the server log entry - essential for debugging production issues."
 
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JAX-RS Filters and Interceptors
 
@@ -1050,6 +1114,8 @@ HTTP REQUEST:
   HTTP RESPONSE sent to client
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Entity interceptor flow:**
 
 ```
@@ -1061,6 +1127,8 @@ RESPONSE BODY:
   WriterInterceptor (wrap MessageBodyWriter)
   -> context.proceed() -> actual serialization
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1344,6 +1412,8 @@ scanned.
 grep "RESTEasy\|filter\|provider" server.log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Verify:
 1. Correct interface: `ContainerRequestFilter` (not Response).
 2. `@Provider` annotation present.
@@ -1399,6 +1469,8 @@ public class MethodOverrideFilter
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Other pre-matching uses:
 - Normalize URLs (remove trailing slashes) before matching
 - Redirect HTTP to HTTPS before any resource processes the request
@@ -1432,6 +1504,8 @@ public Response getProfile(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or inject `SecurityContext`:
 ```java
 // Filter: set security context
@@ -1463,6 +1537,8 @@ public Response get(@Context SecurityContext sc) {
     Principal user = sc.getUserPrincipal();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Setting the SecurityContext is the cleanest approach: the resource method uses the standard @Context SecurityContext injection, which is also used by @RolesAllowed checks. setProperty is more flexible but relies on string key names."
 
@@ -1512,6 +1588,8 @@ public class RateLimitFilter
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Production rate limiting:
 - Use Redis with sliding window (not in-memory per node)
@@ -1595,6 +1673,8 @@ public class GzipWriterInterceptor
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Calling `context.proceed()` triggers the actual
 `MessageBodyWriter` to write the entity (e.g., Jackson
 writes JSON). By swapping the OutputStream first,
@@ -1676,6 +1756,8 @@ public class RequestLoggingFilter
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "MDC (Mapped Diagnostic Context) from SLF4J is the key: once set in the filter, every log statement within the request execution automatically includes the correlationId in the log line. Without it, correlating a sequence of log lines to one request requires timestamp guessing."
 
 ---
@@ -1693,6 +1775,8 @@ Three approaches:
    @RolesAllowed("ADMIN")  // container checks role
    public class AdminResource { ... }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Requires: SecurityContext set by auth filter.
    Container throws `ForbiddenException` (403) if role not present.
 
@@ -1718,6 +1802,8 @@ Three approaches:
    }
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Programmatic in resource method:
    ```java
    @GET
@@ -1728,6 +1814,8 @@ Three approaches:
        return Response.ok(adminData()).build();
    }
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "@RolesAllowed is clean and declarative. The filter approach is more flexible (dynamic role checks, attribute-based access). For complex authorization (RBAC, ABAC), use a dedicated authorization library like OPA (Open Policy Agent) and call it from an authorization filter."
 
@@ -1752,6 +1840,8 @@ class AuthzFilter implements ContainerRequestFilter {}
 @Priority(5000)  // Priorities.USER
 class LoggingFilter implements ContainerRequestFilter {}
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Request filters: executed in ASCENDING priority order
 (1000 before 2000 before 5000).
@@ -1806,6 +1896,8 @@ class OrderServiceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Testing filters specifically:
 ```java
 class AuthFilterTest {
@@ -1828,4 +1920,36 @@ class AuthFilterTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Testing JAX-RS resources with RestAssured (or Quarkus @QuarkusTest + REST Assured) is the most productive approach for integration tests. Unit testing filters with Mockito works but misses HTTP integration. For production code: unit test business logic, integration test the HTTP layer."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

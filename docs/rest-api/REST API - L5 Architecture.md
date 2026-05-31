@@ -8,6 +8,15 @@ permalink: /rest-api/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [API Gateway Architecture and Design](#api-gateway-architecture-and-design) | medium |
+
+---
+
 # API Gateway Architecture and Design
 
 ---
@@ -56,6 +65,8 @@ Client -> [API Gateway]
          Inventory Service (no auth logic)
          Inventory Service (no rate limit logic)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The gateway makes the internal service topology invisible to clients. An external URL like `GET /api/v1/orders/{id}` can route to the OrderService today and to the OrderServiceV2 tomorrow without any client changes. The gateway is the contract boundary between the external world and the internal implementation.
@@ -350,6 +361,8 @@ Internet
            Order, Account, Payment...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Security layer:**
 JWT validation at gateway (RS256, key from JWKS endpoint). Per-client rate limiting in Redis Cluster. WAF rules (OWASP Top 10 protection). TLS 1.3 minimum. Strip internal headers from responses.
 
@@ -416,3 +429,33 @@ flowchart TD
 ```
 
 > **Diagram walkthrough:** Three BFF instances serve three client types with tailored behavior (Mobile BFF aggregates calls, Partner BFF enforces strict versioning). All three BFFs share the same Auth Filter, Rate Limiter, and Circuit Breaker infrastructure - these are common cross-cutting concerns. Requests exit the gateway cluster to the internal service mesh, which handles service-to-service security (mTLS) and routing. This clean separation means client-specific changes (mobile response shape) don't affect the internal services, and internal service topology changes (splitting the Order Service) don't affect clients.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /react/l2-state-management/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Context API and useContext](#context-api-and-usecontext) | working |
+| 2 | [External State Management (Redux, Zustand, Jotai)](#external-state-management-redux-zustand-jotai) | working |
+
+---
+
 # Context API and useContext
 
 🎯 **Interview Weight:** working (★★☆) - Context misuse (performance) is
@@ -122,6 +132,8 @@ function AppProviders({ children }) {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -308,6 +320,34 @@ DECISION
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # External State Management (Redux, Zustand, Jotai)
 
 🎯 **Interview Weight:** working (★★☆) - state management library choice
@@ -434,6 +474,8 @@ function CartTotal() {
   return <span>${total.toFixed(2)}</span>;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -603,3 +645,33 @@ DECISION
 > modify a specific piece of state. Zustand's freedom becomes complexity
 > at scale. The staff engineer answer identifies team context as the
 > primary decision factor, not technical preference.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

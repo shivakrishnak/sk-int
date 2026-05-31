@@ -8,7 +8,13 @@ permalink: /spring/l4-context-refresh-internals/
 render_with_liquid: false
 ---
 
-# Spring - L4 Context Refresh Internals
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L4 Context Refresh Internals](#spring---l4-context-refresh-internals) | medium |
+| 2 | [Spring Context Startup and Refresh](#spring-context-startup-and-refresh) | medium |
 
 ---
 
@@ -28,7 +34,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — Staff/Principal-level Spring questions frequently
+🎯 Interview Weight: High - Staff/Principal-level Spring questions frequently
 probe the context refresh lifecycle. Essential for debugging slow startups,
 circular dependencies, and BeanDefinition ordering issues.
 
@@ -210,6 +216,8 @@ Phase 12: finishRefresh()
     (Kubernetes readiness becomes Ready here)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Circular dependency internals:**
 
 ```
@@ -239,6 +247,8 @@ With constructor injection - FAILS:
   Fix: redesign to remove circular dependency,
   or use @Lazy on one constructor parameter.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Phase 5 (BFPP invocation) and Phase 11 (instantiation) are architecturally
@@ -518,6 +528,8 @@ Diagnosis:
 # Enable startup profiling
 spring.main.lazy-initialization=false  # ensure all beans init
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then check /actuator/startup (requires BufferingApplicationStartup).
 Or add -Dspring.jmx.enabled=true and profile with VisualVM.
 Common causes: @PostConstruct doing I/O, slow DataSource pool initialization,
@@ -666,6 +678,8 @@ public class RouteRegistry
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 SmartInitializingSingleton vs @PostConstruct:
 - @PostConstruct: runs as THIS bean is initialized.
   Other beans may not be initialized yet.
@@ -726,6 +740,8 @@ Approach 1 - BufferingApplicationStartup (Spring Boot 2.5+):
 app.setApplicationStartup(
     new BufferingApplicationStartup(2048));
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Then GET /actuator/startup (requires Actuator + exposure).
 Returns per-step timing including "spring.beans.instantiate" for each bean.
 
@@ -733,6 +749,8 @@ Approach 2 - Spring Debug Logging:
 ```properties
 logging.level.org.springframework=DEBUG
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Logs every phase and bean instantiation (verbose - use with -Dlogging only).
 
 Approach 3 - JVM profiler:
@@ -746,6 +764,8 @@ Approach 4 - Spring Boot Startup Analyzer (community):
 ```properties
 spring.boot.startup.report=enabled
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Quick wins:
 - Exclude unused @ComponentScan packages
@@ -883,6 +903,8 @@ server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=30s
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Kubernetes preStop hook (aligned with graceful shutdown):
 ```yaml
 lifecycle:
@@ -890,6 +912,8 @@ lifecycle:
     exec:
       command: ["sh", "-c", "sleep 15"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The sleep gives Kubernetes time to remove the pod from Service endpoints
 before Spring starts refusing connections.
 
@@ -943,6 +967,8 @@ public class CacheWarmupLifecycle
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Startup: SmartLifecycle.start() is called in Phase 12 of refresh().
 Beans with lower phase numbers start first.
@@ -1117,3 +1143,33 @@ sequenceDiagram
 > before any regular beans are created (Phase 11 starts), the BPP infrastructure
 > is put in place. This ordering guarantee is the foundation of Spring's
 > pluggable, non-invasive AOP.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

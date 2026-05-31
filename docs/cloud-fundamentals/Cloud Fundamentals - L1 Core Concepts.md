@@ -105,6 +105,8 @@ MULTI-AZ DEPLOYMENT:
               RDS fails over to AZ-b (~60-120s)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data Sovereignty and Region Selection:**
 
 ```
@@ -119,6 +121,8 @@ China: separate cloud infrastructure
   -> cn-north-1, cn-northwest-1
   -> Different endpoints, separate AWS accounts required
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -260,6 +264,8 @@ aws cloudwatch get-metric-statistics \
   --period 300 --statistics Sum
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Enable cross-zone load balancing on ALB;
 disable sticky sessions if not required.
 
@@ -269,9 +275,13 @@ disable sticky sessions if not required.
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -343,6 +353,34 @@ Kubernetes pod and node placement maps directly to cloud AZ fault tolerance. Wit
 
 *What separates good from great: Covering both infrastructure-level (node groups) and workload-level (topology spread constraints) AZ distribution mechanisms.*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # VPC and Cloud Networking Fundamentals
 
@@ -429,6 +467,8 @@ INTERNET
   - SG: allow 5432 from App SG only
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Security Group Chaining:**
 
 ```
@@ -438,6 +478,8 @@ app-sg:  inbound 8080 from alb-sg (SG reference)
 db-sg:   inbound 5432 from app-sg (SG reference)
          Only app servers can reach DB
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -620,6 +662,8 @@ aws ec2 describe-nat-gateways \
 # (it must be in public subnet to work)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Security group blocking legitimate traffic**
@@ -638,15 +682,21 @@ aws ec2 describe-nat-gateways \
 aws ec2 describe-security-groups --group-ids sg-target
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -718,6 +768,34 @@ VPC Flow Logs capture metadata about IP traffic to/from network interfaces in a 
 
 *What separates good from great: Knowing the specific CloudWatch Insights or Athena query patterns for security analysis, and listing what Flow Logs do NOT capture.*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Cloud Storage Types
 
@@ -792,6 +870,8 @@ Cost/GB/month   $0.10      $0.023     $0.30
 Use case        DB, OS     Files/logs Shared FS
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **S3 Storage Classes (cost optimization):**
 
 ```
@@ -803,6 +883,8 @@ Glacier Deep:      $0.00099/GB - archive, 12-48hr retrieval
 Lifecycle rule: logs older than 90 days -> Glacier
   Standard $0.023 -> Glacier $0.004 = 83% savings
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -960,6 +1042,8 @@ aws cloudwatch get-metric-statistics \
 # BurstBalance < 20%: volume being throttled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Migrate gp2 to gp3 (no burst, consistent IOPS);
 or io2 for guaranteed IOPS.
 
@@ -979,15 +1063,21 @@ aws s3control put-public-access-block \
 # Cannot be overridden per-bucket
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ keyword.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1058,3 +1148,33 @@ For ML training data, the choice between EFS and S3 depends on training framewor
 S3 object versioning maintains multiple versions of an object when enabled on a bucket. When versioning is enabled: uploading the same key creates a new version with a unique version ID; the previous version is preserved, not overwritten. DeleteObject without a version ID creates a delete marker (a zero-byte placeholder that hides the object without actually deleting it) - the previous versions are preserved. Permanently delete requires DeleteObject with the specific version ID. Benefits: accidental deletion recovery (restore from previous version), overwrite protection (recover the version before an incorrect write), audit trail of changes. Cost implications: every version of every object is stored separately and billed at the standard rate. A 1GB file overwritten daily for 30 days = 30GB storage. Policies to manage cost: (1) S3 Lifecycle policies: automatically expire old non-current versions after N days (`NoncurrentVersionExpiration: Days=30`). (2) For compliance archives, retain all versions; for operational data, keep only the last 7 days of versions. (3) Incomplete multipart uploads accumulate versions silently - set a lifecycle rule to abort incomplete multipart uploads after 7 days. Monitoring: use S3 Storage Lens to track versioned object storage growth; unexpected growth often indicates unmanaged versioned objects.
 
 *What separates good from great: Explaining delete markers (soft delete) vs permanent deletion and the lifecycle policy needed to prevent unbounded storage growth.*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /nodejs/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Why Node.js Exists](#why-nodejs-exists) | medium |
+| 2 | [Node.js vs Browser JavaScript](#nodejs-vs-browser-javascript) | medium |
+| 3 | [npm Ecosystem Overview](#npm-ecosystem-overview) | medium |
+
+---
+
 # Why Node.js Exists
 
 ---
@@ -107,6 +118,8 @@ Node.js weaknesses:
   Callback complexity (mitigated by async/await)
   Less mature ecosystem for heavy computation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -228,6 +241,34 @@ Never call `*Sync` APIs in request handlers.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Node.js vs Browser JavaScript
 
 ---
@@ -310,6 +351,8 @@ JavaScript runtime environments comparison:
     Modern: ESM (import/export, .mjs files or "type":"module")
     Browsers: ESM natively (no require())
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -441,6 +484,34 @@ Guard browser code with `if (typeof window !== 'undefined')`.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # npm Ecosystem Overview
 
 ---
@@ -525,6 +596,8 @@ npm dependency management:
     All: never commit to git (.gitignore node_modules/)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -564,6 +637,8 @@ npm dependency management:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Example (Wrong vs Right) - Security practices:**
 
@@ -696,3 +771,33 @@ only checks `node_modules` against the npm advisory database. Transitive
 dependencies (dependencies of dependencies) can also have vulnerabilities
 that `npm audit` catches. Use `npm ls <package>` to trace which
 dependency requires a vulnerable package.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

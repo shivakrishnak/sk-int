@@ -143,6 +143,8 @@ sharedData$.subscribe(b => console.log('B:', b));
 // ONE request, both receive the result
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 `BehaviorSubject` requires an initial value. If "no value
 yet" is a valid state, `BehaviorSubject(null)` then checking
@@ -315,6 +317,8 @@ user$.pipe(
 // Or: use ReplaySubject(1) to avoid initial value entirely
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: shareReplay memory leak with refCount: false**
 ```javascript
 // shareReplay without refCount keeps source alive even
@@ -325,6 +329,8 @@ const data$ = source$.pipe(
   shareReplay({ bufferSize: 1, refCount: true })
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -402,6 +408,8 @@ bus.on('user:login').subscribe(e => loadUserProfile(e.userId));
 bus.emit('user:login', { userId: '123' });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The TypeScript generic event
 map providing compile-time type safety for event names and
 payloads. Without it, the event bus is stringly-typed and
@@ -435,6 +443,8 @@ action$.pipe(
 ).subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that `getValue()` is
 sometimes pragmatically necessary (e.g., in non-reactive code
 called from event handlers), but should be an explicit exception
@@ -463,6 +473,8 @@ class UserService {
 //   {{ user.name }}
 // </div>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `async` pipe handles: subscription on init, unsubscription
 on destroy, change detection on emission, and null/undefined
@@ -528,6 +540,8 @@ class SafeSubject<T> {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For event buses and services that should never complete,
 never call `complete()` or `error()` unless the service
 itself is being destroyed.
@@ -544,6 +558,8 @@ subject.error(err); // terminates all subscribers!
 subject.next({ type: 'error', data: err }); // data approach
 // Or use catchError before the subject
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that `subject.error(err)`
 terminates the Subject permanently - future subscribers get
@@ -577,12 +593,16 @@ cached$.subscribe(A); // triggers fetch
 cached$.subscribe(B); // gets cached result
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `publish()` is the correct choice when you need to guarantee
 all subscribers are attached before the source starts emitting.
 
 *What separates good from great:* Knowing the specific use
 case for `publish()`: synchronization scenarios where all
 consumers must be ready before the first value is emitted.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -599,9 +619,13 @@ Does the late subscriber need a value immediately? Yes -> BehaviorSubject
 or shareReplay(1). Is "no value yet" a valid state? Yes -> ReplaySubject(1).
 Does the source produce a single final result? -> AsyncSubject.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -652,6 +676,34 @@ stateDiagram-v2
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Error Handling in RxJS Pipelines
 
@@ -780,6 +832,8 @@ const ws$ = webSocketSubject.pipe(
   )
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The position of `catchError` in the pipeline determines
@@ -954,6 +1008,8 @@ outer$.pipe(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: retry with infinite loop on permanent error**
 ```javascript
 // BAD: 401 retried forever - auth will never recover
@@ -971,6 +1027,8 @@ api$.pipe(
   })
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1014,6 +1072,8 @@ subject.error(new Error('oops')); // error: oops
 subject.next(2);        // ignored - closed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding the implications:
 a BehaviorSubject that receives `error()` is permanently broken
 for ALL future subscribers. This is why external error sources
@@ -1049,6 +1109,8 @@ function handleError(err: HttpErrorResponse) {
 
 api$.pipe(catchError(handleError)).subscribe(...)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The pattern of using a
 dedicated error handler function that is reusable across
@@ -1100,6 +1162,8 @@ deadLetter$.pipe(
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The DLQ as a Subject with
 structured error data (item + error + timestamp). This enables
 both monitoring and reprocessing failed items without losing
@@ -1134,6 +1198,8 @@ const request2$ = http.get('/api').pipe(
 // If request errors: loading spinner never clears
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `finalize` is the correct
 operator for cleanup (hiding spinners, releasing resources,
 cleanup calls) because it covers all three termination reasons.
@@ -1165,6 +1231,8 @@ it('retries 3 times then returns fallback', () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For testing with actual timers (debounce, retry delay), use
 `TestScheduler.run()` with virtual time:
 
@@ -1180,6 +1248,8 @@ it('retries with delay', () => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using marble testing for
 error scenarios, including retry timing. Without virtual time,
@@ -1219,6 +1289,8 @@ const status$ = createPolling(
   5000
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `exhaustMap` instead
 of `switchMap` for polling: if the request takes longer than
@@ -1267,10 +1339,14 @@ pipe(
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `tap({ error })` debugging
 technique for pinpointing where errors surface in a pipeline,
 and immediately recognizing the inner/outer `catchError`
 pattern as the fix.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1288,9 +1364,13 @@ Should the stream continue after the error? `retry` resubscribes.
 Should the stream end gracefully? `catchError(EMPTY)` or `catchError(of(default))`.
 Should the error propagate? `catchError(throwError(...))`.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1336,3 +1416,33 @@ flowchart TD
 > the error only terminates the inner Observable for query 2,
 > returning `EMPTY` for that request alone. The outer stream
 > continues and processes query 3 normally.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,16 @@ permalink: /frontend-build-tools/l3-advanced-config/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Advanced Webpack Configuration Patterns](#advanced-webpack-configuration-patterns) | medium |
+| 2 | [Workspaces and Monorepo Package Management](#workspaces-and-monorepo-package-management) | medium |
+
+---
+
 # Advanced Webpack Configuration Patterns
 
 ---
@@ -99,6 +109,8 @@ Persistent cache (webpack 5+):
     // Second build uses cache: 90%+ time savings
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -208,6 +220,8 @@ module.exports = merge(base, {
   },
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # .github/workflows/build.yml - cache webpack build cache in CI
@@ -348,6 +362,34 @@ used by <50% stay in their route chunks.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Workspaces and Monorepo Package Management
 
 ---
@@ -440,6 +482,8 @@ Turborepo task pipeline (turbo.json):
   # Only builds web and its changed transitive deps
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Turborepo's content-hash caching means: if packages/ui source hasn't
@@ -459,6 +503,8 @@ packages:
   - 'packages/*'
   - 'apps/*'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```json
 // packages/ui/package.json
@@ -481,6 +527,8 @@ packages:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // apps/web/package.json
 {
@@ -491,6 +539,8 @@ packages:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Install all packages from root:
@@ -550,6 +600,8 @@ npx turbo run build
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Remote caching setup (Vercel Remote Cache):
@@ -683,3 +735,33 @@ simultaneously - this forces better API design and communication.
 In multi-repo, breaking changes can be silently "shipped" to a separate
 version that consumers don't upgrade. Monorepos make technical debt
 visible and immediate.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

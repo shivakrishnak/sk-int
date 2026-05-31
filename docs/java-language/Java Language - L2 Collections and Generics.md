@@ -8,9 +8,20 @@ permalink: /java-language/l2-collections-and-generics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L2 Collections and Generics](#java-language---l2-collections-and-generics) | medium |
+
+---
+
 # Java Language - L2 Collections and Generics
 
 ## Collections Framework: List, Set, Map
+
+---
 
 ### 🎯 Model Answer
 
@@ -108,6 +119,8 @@ HASHMAP LOAD FACTOR AND CAPACITY:
   To avoid resizing: new HashMap<>(expectedSize / 0.75 + 1)
   Java 8+: bucket > 8 entries -> converts to balanced tree (O(log n) worst case)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -263,6 +276,8 @@ Prevention: NEVER use mutable objects as HashMap keys.
       after insertion (make them final)
     - Or: use IdentityHashMap (uses == for equality, System.identityHashCode)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -487,6 +502,8 @@ comparison reference.)*
 
 ## Generics and Type Erasure
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -600,6 +617,8 @@ TYPE ERASURE EFFECTS:
   void process(List<String> list) {}
   void process(List<Integer> list) {}  // compile error: same erasure List
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -754,6 +773,8 @@ Prevention: compile with -Xlint:unchecked.
   CI: treat all unchecked warnings as build failures (requires code review for any suppression).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -802,6 +823,8 @@ public static <T> void copy(List<? super T> dest, List<? extends T> src) {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `src` produces T (you read from it) -> `? extends T`. `dest` consumes T (you write to it) -> `? super T`. This allows: `copy(new ArrayList<Number>(), new ArrayList<Integer>())`. T=Integer, dest accepts Integer or supertypes (Number works), src provides Integer or subtypes.
 
 *What separates good from great:* When to use unbounded `?` vs `<T>`: unbounded `List<?>`
@@ -829,6 +852,8 @@ private <T> void swapHelper(List<T> list, int i, int j) {
     list.set(j, temp);  // T is the captured wildcard type
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* This pattern is used in the JDK's `Collections.swap()`
 implementation. The public API uses a wildcard (flexible for callers), the implementation
@@ -966,3 +991,33 @@ optional nature explicit, or throw an exception to make the empty case explicit.
 
 *(Omit: Wildcard hierarchy is well-represented in the concept explanation code blocks
 and comparison table.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

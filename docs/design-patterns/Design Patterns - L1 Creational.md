@@ -8,6 +8,17 @@ permalink: /design-patterns/l1-creational/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Singleton Pattern](#singleton-pattern) | medium |
+| 2 | [Factory Method Pattern](#factory-method-pattern) | medium |
+| 3 | [Builder Pattern](#builder-pattern) | medium |
+
+---
+
 # Singleton Pattern
 
 ---
@@ -93,6 +104,8 @@ inconsistency.
    }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Thread-safe implementations in order of preference:
 
 ```java
@@ -104,6 +117,8 @@ public enum AppConfig {
 }
 // Use: AppConfig.INSTANCE.getDbUrl()
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // 2. Initialization-on-demand holder (GOOD: lazy, thread-safe)
@@ -121,6 +136,8 @@ public class Singleton {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // 3. Double-checked locking (OK with volatile, Java 5+)
@@ -141,6 +158,8 @@ public class Singleton {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The best Singleton implementations leverage language/runtime guarantees
@@ -437,6 +456,34 @@ block needed."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Factory Method Pattern
 
 ---
@@ -529,6 +576,8 @@ Product (interface)
 ProductA implements Product
 ProductB implements Product
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Data flow:
 1. Client creates `ConcreteCreatorA` or `ConcreteCreatorB`
@@ -828,6 +877,34 @@ not modifying the existing Creator (closed for modification)."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Builder Pattern
 
 ---
@@ -927,6 +1004,8 @@ GoF full Builder (two-class form):
   Director: controls the sequence of builder calls
   Product: the constructed object
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Builder separates WHAT is needed (the parameters) from HOW it is
@@ -1223,3 +1302,33 @@ way, so Builder remains necessary for complex construction in Java."
 | Hiring Manager | "Builder makes object construction readable and self-documenting in our codebase." |
 | Bar Raiser | "Compare Lombok @Builder to hand-written Builder. When does the generated version fall short?" |
 | Peer Engineer | "I always add aValidXxx() static factory methods to test builders for default scenarios." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

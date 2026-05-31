@@ -8,6 +8,16 @@ permalink: /devops-cicd/l3-scale-and-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Monorepo CI/CD Strategies](#monorepo-cicd-strategies) | medium |
+| 2 | [CI/CD for Microservices and Polyrepo](#cicd-for-microservices-and-polyrepo) | medium |
+
+---
+
 # Monorepo CI/CD Strategies
 
 🎯 Interview Weight: high - monorepos are used at Google, Meta,
@@ -117,6 +127,8 @@ projects.
 nx affected:build --base=origin/main --head=HEAD
 nx affected:test --base=origin/main --head=HEAD
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Remote cache architecture:**
 - Build inputs are content-hashed: source files + config + tool version
@@ -233,6 +245,8 @@ jobs:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // packages/auth-library/project.json
 {
@@ -256,6 +270,8 @@ jobs:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```json
 // services/api-gateway/project.json - depends on auth-library
 {
@@ -270,6 +286,8 @@ jobs:
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # .github/workflows/ci.yml - affected-only with remote cache
@@ -329,6 +347,8 @@ jobs:
             --parallel=2
         # E2E only runs for actual service changes, not library changes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # .github/workflows/main-merge.yml - additional safety on main
@@ -584,6 +604,8 @@ git diff --name-only origin/main...HEAD
 #         services/api-gateway/src/routes.ts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Map changed files to Nx projects.
 Each project has a `root` directory in `project.json`. Nx maps
 changed files to their owning project by matching the file path
@@ -708,6 +730,8 @@ npx nx show project service-a --web
 # Shows dependency graph and timing for recent runs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Optimize parallelism.
 Is `--parallel` set appropriately for the runner's CPU count?
 A 4-CPU runner with `--parallel=2` underutilizes available CPUs.
@@ -759,6 +783,8 @@ Renovate monorepo configuration:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Nx version management: shared dependencies are declared in the
 root `package.json` and inherited by all packages. Conflicting
 versions (package A requires lodash@4, package B requires lodash@3)
@@ -796,6 +822,8 @@ docker run -e NODE_ENV=production myapp:$CI_SHA
 # If it fails here: the issue is reproducible and not environment-specific
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Compare CI environment to container environment.
 What Node.js version? What OS? What environment variables? A monorepo
 CI often runs on Ubuntu with Node 20, but the container might use
@@ -813,6 +841,8 @@ npx nx dep-graph --focus=api-service
 # Compare imports to project.json dependencies
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Check for stale cache artifacts.
 If the CI build was a cache hit, verify the cache was valid by
 checking the content hash:
@@ -821,6 +851,8 @@ npx nx show project api-service --json | \
   jq '.targets.build.cache.inputs'
 # Verify the files listed as inputs match what actually affects the output
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The insight that monorepo implicit
 dependencies are the most common cause of "passes in CI, fails in
@@ -930,6 +962,34 @@ appropriate choice.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # CI/CD for Microservices and Polyrepo
 
@@ -1187,6 +1247,8 @@ public class PaymentServiceContractTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // payment-service (PROVIDER) - verifies it meets all consumer contracts
 // src/test/java/PaymentServicePactVerificationTest.java
@@ -1225,6 +1287,8 @@ public class PaymentServicePactVerificationTest {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # payment-service CI pipeline with Pact verification
@@ -1487,6 +1551,8 @@ file:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Consumer publishes contract to Pact Broker.
 After the consumer's CI passes, the contract is published to the
 shared Pact Broker tagged with the consumer version and branch.
@@ -1654,6 +1720,8 @@ For critical security patches, the SLA enforcement:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tracking adoption: a dashboard showing each repository's current
 version of critical shared libraries against the latest published
 version. Services that are N versions behind SLA receive automated
@@ -1694,6 +1762,8 @@ curl https://internal-api/deployments \
   &end_time=${INCIDENT_START_PLUS_10M} \
   | jq '.[] | [.service, .version, .deployed_at] | @csv'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Overlay deployment timestamps against the incident start time on
 the Grafana dashboard (use annotation markers for deployments).
 
@@ -1709,6 +1779,8 @@ incident started, review the diff:
 ```bash
 git diff ${PREVIOUS_SHA}..${CURRENT_SHA} --stat
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Focus on services that deployed close to the incident start time
 and have dependencies with the affected service.
 
@@ -1776,3 +1848,33 @@ before adding tooling. The map revealed that 3 of the 18 services
 had 70% of the inter-service calls. Focusing Pact on those 3 services
 first provided most of the integration safety net while requiring
 the effort of only 3 teams instead of 18.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

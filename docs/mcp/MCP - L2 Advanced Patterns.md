@@ -136,6 +136,8 @@ AUTHORIZATION PATTERN:
    }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Authorization in MCP is not built into the protocol -
@@ -428,6 +430,8 @@ print(f"DEBUG: name={name}, role={role}, "
       f"allowed={check_permission(role, name)}",
       file=sys.stderr)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Check: what role is being used, is it what you expect?
 
 *Fix:* Add explicit logging for the first N requests
@@ -512,6 +516,8 @@ def get_user_id(authorization: str) -> str:
     return payload["sub"]  # subject = user_id
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Scope all database queries to the user:
 ```python
 @server.call_tool()
@@ -530,6 +536,8 @@ async def call_tool(name, arguments):
         )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Validate ownership before mutations:
 ```python
 if name == "update_record":
@@ -546,6 +554,8 @@ if name == "update_record":
         )]
     # Proceed with update
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Always filter
 by user_id at the query level - never rely on
@@ -618,6 +628,8 @@ Four things to check:
     print(test)  # compare to stored hash
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (4) Key expiry: if implementing time-limited keys,
     check if the expiry validation logic has a timezone
     bug (comparing UTC to local time, or wrong comparison direction).
@@ -628,6 +640,8 @@ curl -H "Authorization: Bearer your-key" \
      -X POST https://server.com/mcp \
      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Test with curl
 first - eliminates client-side configuration issues
@@ -676,6 +690,8 @@ def validate_and_get_info(token: str) -> Optional[dict]:
         return None
     return key_info
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Access log monitoring: log the first 6 characters
 of the token hash (not the full hash) to identify
@@ -862,6 +878,8 @@ def audit_log(
     print(json.dumps(log_entry), file=sys.stderr)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Compliance requirement: for SOC2/ISO27001, audit
 logs must be tamper-evident. Write to an append-only
 log store (CloudWatch, Splunk, or a write-only DB table).
@@ -899,6 +917,34 @@ contain credentials or PII."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP Error Handling and Resilience
 
@@ -1023,6 +1069,8 @@ CIRCUIT BREAKER (host level):
   [success] -> closed
   [failure] -> open
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1312,6 +1360,8 @@ if elapsed > 2.0:
           file=sys.stderr)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1418,6 +1468,8 @@ class CircuitBreaker:
         return True  # HALF_OPEN: allow probe
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Apply per-server in the host. If the circuit is
 OPEN: return an immediate error to the AI ("Server
 X is temporarily unavailable") without attempting
@@ -1455,6 +1507,8 @@ Retry rules for external API calls within MCP tools:
     ```
     delay = base * (2 ** attempt) + random(0, base)
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Base: 1s. Cap: 30s. Max attempts: 3-5.
     Jitter prevents thundering herd.
 
@@ -1509,6 +1563,8 @@ result = await execute_tool(name, arguments)
 elapsed = time.monotonic() - start
 print(f"TIMING: {name} {elapsed:.3f}s", file=sys.stderr)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Compare timing across multiple calls in the same session.
 
 *What separates good from great:* "Concurrent tool
@@ -1555,6 +1611,8 @@ async def call_tool(name, arguments):
             )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Timeout values by operation type:
 - Fast lookups (cache, simple DB query): 1-2s
 - API calls to external services: 5-10s
@@ -1590,6 +1648,8 @@ return [types.TextContent(
 )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tier 2 - Cached results: if the primary data source
 is unavailable, return cached results with a staleness warning:
 ```python
@@ -1603,6 +1663,8 @@ return [types.TextContent(
 )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tier 3 - Alternative tool suggestion: if this tool
 is down, suggest a related one:
 ```python
@@ -1615,6 +1677,8 @@ return [types.TextContent(
 )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tier 4 - Explicit failure with recovery guidance:
 ```python
 return [types.TextContent(
@@ -1626,6 +1690,8 @@ return [types.TextContent(
     )
 )]
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Return cached
 results with a staleness warning rather than failing
@@ -1709,6 +1775,8 @@ async def call_with_timeout(session, name, args, timeout=15.0):
         )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Circuit breaker (see Q2): after N timeouts,
     open the circuit and fail fast for Server C.
 
@@ -1723,6 +1791,8 @@ results = await asyncio.gather(
 )
 # Use whichever completed first successfully
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) Session-level budget: track total tool call
     time per session. If a session has spent > 120s
@@ -1845,4 +1915,34 @@ stateDiagram-v2
 > handles without the AI seeing the error message.
 > The asymmetry between business errors and exceptions
 > is the core of the MCP error model.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

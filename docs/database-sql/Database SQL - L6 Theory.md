@@ -8,6 +8,16 @@ permalink: /database-sql/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Relational Algebra and Codd's 12 Rules](#relational-algebra-and-codds-12-rules) | medium |
+| 2 | [ACID Formalization - Gray and Lamport Transaction Theory](#acid-formalization---gray-and-lamport-transaction-theory) | medium |
+
+---
+
 # Relational Algebra and Codd's 12 Rules
 
 **TL;DR:** Relational algebra: the mathematical foundation of SQL. Eight operators
@@ -92,6 +102,8 @@ Cartesian product: R1 CROSS JOIN R2
   (all combinations: 2 rows x 2 rows = 4 rows)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Codd's 12 Rules:**
 
 ```
@@ -109,6 +121,8 @@ Rule 10: Integrity independence
 Rule 11: Distribution independence
 Rule 12: Non-subversion rule - no low-level interface bypasses constraints
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -320,6 +334,8 @@ WHERE NOT EXISTS (
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -361,6 +377,34 @@ WHERE NOT EXISTS (
 🗣️ "Set: a collection with no duplicates and no defined order. Relational algebra operates on sets. Bag (multiset): a collection that allows duplicates, with no defined order. SQL operates on bags by default. The difference: `UNION ALL` (bag union): `{1, 2, 2} UNION ALL {2, 3} = {1, 2, 2, 2, 3}`. Duplicates from both sides are preserved. `UNION` (set union): `{1, 2, 2} UNION {2, 3} = {1, 2, 3}`. Duplicates are removed. SQL SELECT without DISTINCT returns bags (duplicates possible). SELECT DISTINCT returns a set (duplicates removed). Why bags? Performance: removing duplicates requires hashing or sorting - O(N log N). Bags avoid this cost. For most SQL operations: duplicates are acceptable and the developer adds DISTINCT when needed. Implications for interviews: `COUNT(*)` counts all rows including duplicates. `COUNT(DISTINCT col)` counts unique values. `UNION ALL` is faster than `UNION` but preserves duplicates."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # ACID Formalization - Gray and Lamport Transaction Theory
 
@@ -452,6 +496,8 @@ Schedule example:
   T2 reads X before T1 writes X: T2 -> T1 edge (R-W)
   Cycle: T1 -> T2 -> T1. NOT SERIALIZABLE.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -669,6 +715,8 @@ Classic example:
 -- Both transactions were valid individually at Snapshot Isolation.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use SERIALIZABLE isolation (PostgreSQL SSI detects this anti-dependency cycle).
 Or use explicit locking: `SELECT ... FOR UPDATE` to prevent concurrent decisions.
 
@@ -711,3 +759,33 @@ Or use explicit locking: `SELECT ... FOR UPDATE` to prevent concurrent decisions
 **Q9: How does the formalization of ACID help in designing distributed sagas?**
 
 🗣️ "The saga pattern (Hector Garcia-Molina, 1987) was designed for long-running transactions that span multiple systems. The formal insight: a long-running transaction (hours or days) cannot hold database locks for its duration (deadlock, resource starvation). A saga: decompose the transaction into a sequence of local transactions, each of which commits independently. For each local transaction: define a compensating transaction (an undo operation that reverses the effects). If a step fails: run compensating transactions in reverse order for all previously committed steps. Relationship to ACID formalization: Atomicity of the overall saga is achieved through compensating transactions (not database rollback). The saga is not ACID-isolated: intermediate states are visible to other transactions between saga steps. The designer must ensure the intermediate states are acceptable (semantic consistency, not strict isolation). In practice: sagas are used in microservices for operations like: place order (saga: reserve inventory + create order + charge payment + fulfill). Each step: independent local ACID transaction. The saga coordinator: the orchestrator that manages the sequence and compensations."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

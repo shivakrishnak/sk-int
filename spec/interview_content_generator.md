@@ -747,7 +747,14 @@ FORMAT:
   ```{language}
   [code block — compiles, idiomatic, with inline comments]
   ```
-  *Why this matters:* [1-3 sentences explaining the key point]
+  > **Code walkthrough:** [REQUIRED — 3-6 sentences covering ALL five
+  > dimensions: (1) WHAT IT SHOWS: concept or behaviour illustrated.
+  > (2) KEY MECHANISM: what the runtime/compiler/library does internally,
+  > step-by-step. (3) WHY IT MATTERS: real-world production consequence.
+  > (4) WHAT BREAKS: exact symptom when misapplied — error message,
+  > silent failure, or performance cliff. (5) TAKEAWAY: one transferable
+  > rule to internalise. A bare code block without this walkthrough is a
+  > spec violation (fails Feynman + Production Reality tests).]
 
 RULES:
   - Replace `{language}` with the topic's primary language using
@@ -1045,23 +1052,34 @@ FORMAT:
   > *(Conditional: included because [reason]. Omit for topics where
   >  prose makes the mechanism clear.)*
 
-  ASCII diagram first (max 59 chars wide):
+  ASCII diagram first (max 59 chars wide; escape hatch: up to 79 chars
+  only if adjacent prose description exists AND content is clearer at
+  that width; >79 chars MUST be split or converted to Mermaid-only):
   ```
   [ASCII diagram — label every component, show data flow and failure path]
   ```
 
-  Mermaid diagram immediately below (DUAL FORMAT — both always together):
+  Mermaid diagram immediately below (DUAL FORMAT — both always together).
+  Precede the Mermaid block with a 1-2 sentence prose description:
   ```mermaid
   [Mermaid diagram reproducing the same information]
   ```
 
-  [4-bullet reading guide: explain each state/transition in prose]
+  > **Diagram walkthrough:** [REQUIRED — 3-5 sentences covering ALL five
+  > dimensions: (1) WHAT IT DEPICTS: name the system, flow, or structure.
+  > (2) HOW TO READ IT: walk left-to-right or top-to-bottom, naming each
+  > key node and arrow explicitly. (3) KEY RELATIONSHIP: most important
+  > dependency, bottleneck, or decision point. (4) EDGE CASE: what happens
+  > on the error/failure path, or why none is depicted. (5) INSIGHT: one
+  > sentence a senior engineer notices that a junior would overlook.
+  > A diagram without this walkthrough is a spec violation.]
 
 RULES:
   - DUAL FORMAT required: ASCII first, then Mermaid, always together
+  - One shared Diagram walkthrough AFTER the Mermaid block for DUAL pairs
+  - Every Mermaid block MUST be preceded by a 1-2 sentence prose description
   - Mermaid type: stateDiagram-v2 for state machines; sequenceDiagram for
     flows; classDiagram for OO structures; graph TD for DAGs
-  - 4-bullet reading guide always follows the Mermaid block
   - Do not include for straightforward API-usage topics
 
 ═══════════════════════════════════════════════════════════════════════════

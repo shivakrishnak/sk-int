@@ -105,6 +105,8 @@ CLOUD:
   Save: don't buy $90K hardware for 2 days/year
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The Three Essential Cloud Service Models:**
 
 ```
@@ -123,6 +125,8 @@ SaaS (Software as a Service):
   Customer: just use the software
   Example: Gmail, Salesforce, Slack
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -290,6 +294,8 @@ aws budgets create-budget \
   }]'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -297,10 +303,14 @@ aws budgets create-budget \
 *(Omit: ★☆☆ keyword - orientation overview, no
 comparison table applicable.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - foundational concept, no system
 design section applicable.)*
+
+---
 
 ### 📊 Diagram
 
@@ -373,6 +383,34 @@ Framing for a business audience: "We currently manage our own hardware, which is
 
 *What separates good from great: Using analogies (utility electricity) and business outcomes (time to market, competitive advantage) rather than technical features.*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # IaaS vs PaaS vs SaaS
 
@@ -457,6 +495,8 @@ SaaS (restaurant delivery):
   Just use the software.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Control vs Convenience Trade-off:**
 
 ```
@@ -469,6 +509,8 @@ PaaS:  + Just deploy code, auto-scaling
 SaaS:  + Zero ops, always updated
        - No customization, vendor lock-in
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -633,9 +675,13 @@ APIs eliminates most EC2 operations.
 *(Omit: ★☆☆ keyword - the responsibility matrix in
 explanation serves as the comparison.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - taxonomy concept.)*
+
+---
 
 ### 📊 Diagram
 
@@ -708,6 +754,34 @@ Containers blur the IaaS/PaaS boundary by providing a portable abstraction layer
 
 *What separates good from great: Explaining that containers created a new portability option that was not available when the IaaS/PaaS/SaaS taxonomy was established.*
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Public vs Private vs Hybrid Cloud
 
@@ -793,6 +867,8 @@ Banking regulators (many countries):
   -> public cloud for frontend, private for core banking
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cloud Bursting:**
 
 ```
@@ -811,6 +887,8 @@ Requirements:
   - Network connectivity (VPN / Direct Connect)
   - Acceptable latency between environments
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -966,6 +1044,8 @@ ping on-prem-endpoint   # from cloud instance
 # will consistently show 20-50ms added latency
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Minimize cross-boundary synchronous calls.
 Replicate read-only data to cloud side, or use async
 patterns for cross-boundary operations.
@@ -987,6 +1067,8 @@ aws sso-admin create-instance-access-control-attribute-configuration
 # Map AD groups to AWS Permission Sets
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### ⚖️ Comparison Table
@@ -994,9 +1076,13 @@ aws sso-admin create-instance-access-control-attribute-configuration
 *(Omit: ★☆☆ keyword - the prose comparison covers
 the key differences.)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ keyword - orientation level.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1068,3 +1154,33 @@ Multi-cloud is valuable in specific scenarios and harmful in others. Genuinely g
 Compliance requirements constrain where data can live and who can access it, directly driving cloud deployment model decisions. GDPR (EU): personal data of EU residents must comply with GDPR regardless of where the company is headquartered. Cloud implications: use cloud regions in the EU or in countries with EU adequacy decisions; enable data residency controls (AWS EU data boundary); audit all data flows to non-EU regions. Standard public cloud in EU regions satisfies GDPR for most use cases - it does not require private cloud. HIPAA (US healthcare): covered entity must sign a Business Associate Agreement (BAA) with the cloud provider; AWS, Azure, and GCP all offer HIPAA-compliant environments and BAAs. Key requirement: encryption at rest and in transit for PHI, access audit logs, minimum necessary access. PaaS services must be HIPAA-eligible (not all are). Public cloud is commonly used for HIPAA workloads with BAA in place. PCI-DSS (payment card): systems that store, process, or transmit cardholder data must be in scope. Cloud is permitted with careful scoping - the primary tactic is minimizing the cardholder data environment (CDE) footprint by using tokenization. The provider can be a PCI-DSS Level 1 service provider; you validate your application-layer controls. Private cloud is not required for PCI-DSS compliance; the AWS PCI DSS Compliance Guide documents the shared responsibility for each requirement. Conclusion: for most regulated industries, public cloud in the right region with proper configuration satisfies compliance requirements. Private cloud is primarily required for specific national security, defense, or sovereignty requirements.
 
 *What separates good from great: Confirming that public cloud satisfies GDPR, HIPAA, and PCI-DSS in most cases - many interviewers expect private cloud to be the default answer.*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

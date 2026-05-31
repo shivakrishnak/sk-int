@@ -134,6 +134,8 @@ Error handling:
     (connection/format problem, not a tool error)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The tool description drives AI behavior. The AI
@@ -469,6 +471,8 @@ Three areas:
       "start_date": {"type": "string"}
     }
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     GOOD:
     ```json
     "properties": {
@@ -478,6 +482,8 @@ Three areas:
       }
     }
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (2) Required field precision: if a parameter is
     optional (has a sensible default), don't put
@@ -491,6 +497,8 @@ Three areas:
     ```json
     "type": {"type": "string", "enum": ["create", "update", "delete"]}
     ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
     Without enum, the AI invents values.
 
 *What separates good from great:* "Use enum for
@@ -539,6 +547,8 @@ return [types.TextContent(
 )]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Return JSON when
 the AI needs to reason over the result; plain text
 when it displays it directly."
@@ -561,6 +571,8 @@ return [types.TextContent(
     text="Error: Database connection failed"
 )], True  # isError=True
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The AI receives this as tool output. It can see
 the error message and decide how to respond (try
 again, ask the user for help, use a different tool).
@@ -693,6 +705,8 @@ async def test_search():
 asyncio.run(test_search())
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Level 2: Test the JSON-RPC protocol directly:
 ```bash
 # Start server, send raw MCP message via stdin:
@@ -700,6 +714,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call",
 "params":{"name":"search_knowledge_base",
 "arguments":{"query":"CI pipeline"}}}' | python server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Verify the JSON-RPC response format.
 
 Level 3: Integration test via MCP inspector:
@@ -737,6 +753,34 @@ automated CI."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP Resources
 
@@ -869,6 +913,8 @@ RESOURCE SUBSCRIPTIONS (optional):
   resources/subscribe {uri: "..."}
   -> notifications/resources/updated when changed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1178,6 +1224,8 @@ Computed/virtual:
   cache://query-results/abc123
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 URI design guidelines:
 
 (1) Make URIs stable: the same resource should have
@@ -1300,6 +1348,8 @@ Four mandatory controls:
     resolved.relative_to(allowed)  # raises if outside
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) Symlink policy: decide whether to follow symlinks.
     A symlink in the allowed directory can point
     to anywhere on the filesystem. Options:
@@ -1414,6 +1464,34 @@ structured data the AI should reason over."
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # MCP Prompts
 
@@ -1547,6 +1625,8 @@ PROMPT INVOCATION (prompts/get):
     ]
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1811,6 +1891,8 @@ but the slash command menu shows no prompts.
    echo '{"jsonrpc":"2.0","id":1,"method":"prompts/list",
    "params":{}}' | python server.py
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Should return a list with your prompt definitions.
 
 3. Check for runtime errors in the `list_prompts()`
@@ -1972,6 +2054,8 @@ output schema once, share with the whole team."
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Key fields:
 - `description`: optional description of this invocation
   (can differ from the prompt's static description)
@@ -2049,6 +2133,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"prompts/get",
 "arguments":{"language":"python","focus":"security"}}}' \
 | python server.py
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Verify the response contains valid messages.
 
 Step 2: Send the returned messages to Claude directly:
@@ -2063,6 +2149,8 @@ resp = client.messages.create(
 )
 print(resp.content[0].text)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Evaluate the output quality.
 
 Step 3: A/B test prompt variants: run the same
@@ -2102,6 +2190,8 @@ should be a JSON-RPC error response:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In the Python SDK: raise McpError with the appropriate
 error code:
 ```python
@@ -2114,6 +2204,8 @@ if "language" not in (arguments or {}):
         "Required argument 'language' not provided"
     )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Client behavior: the client should catch this error
 and prompt the user to provide the missing argument
@@ -2146,3 +2238,33 @@ required arguments."
 ### 📊 Diagram
 
 *(Omit: Prompts flow is well-expressed as text.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

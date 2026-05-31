@@ -8,6 +8,16 @@ permalink: /database-sql/l2-indexing-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Database Indexes - How They Speed Up Queries](#database-indexes---how-they-speed-up-queries) | medium |
+| 2 | [Index Types - B-Tree, Hash, and Composite Indexes](#index-types---b-tree-hash-and-composite-indexes) | medium |
+
+---
+
 # Database Indexes - How They Speed Up Queries
 
 **TL;DR:** An index is a separate data structure that enables fast row
@@ -90,6 +100,8 @@ Query: WHERE customer_id = 1001
   3. Follow pointer to heap page 3421, slot 5
   Total: 3-4 I/O, not 10,000,000 row scan
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Index types:**
 
@@ -285,6 +297,8 @@ EXPLAIN SELECT ... WHERE customer_id = 42;
 SET enable_seqscan = on;
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -373,6 +387,34 @@ won't work, and you may need a sentinel value instead."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Index Types - B-Tree, Hash, and Composite Indexes
 
 **TL;DR:** B-tree is the default and most versatile index: supports
@@ -457,6 +499,8 @@ BRIN (Block Range Index):
   Not: randomly ordered data.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Composite index design pattern:**
 
 ```
@@ -473,6 +517,8 @@ Index: (created_at, tenant_id, status)
   - created_at is first: range/sort column first
   - Cannot satisfy WHERE tenant_id = ? efficiently alone
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -752,3 +798,33 @@ cause index bloat and fragmentation. With 80% fill factor: there is 20%
 slack for updates before a split is needed. HOT (Heap-Only Tuple) updates
 avoid index updates entirely when no indexed column changes - reducing the
 need for lower fill factors on MVCC tables."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

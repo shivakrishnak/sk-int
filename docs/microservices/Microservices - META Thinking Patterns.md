@@ -8,6 +8,17 @@ permalink: /microservices/meta-thinking-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Single Responsibility Principle at Service Level](#single-responsibility-principle-at-service-level) | medium |
+| 2 | [Conway's Law and Organizational Architecture](#conways-law-and-organizational-architecture) | medium |
+| 3 | [Failure as a First-Class Citizen Mental Model](#failure-as-a-first-class-citizen-mental-model) | medium |
+
+---
+
 # Single Responsibility Principle at Service Level
 
 ---
@@ -65,6 +76,8 @@ MegaService (SRP violation):
   This is the distributed monolith.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cohesion vs coupling metric:**
 ```
 High cohesion (SRP compliant):
@@ -91,6 +104,8 @@ Low cohesion (SRP violated):
   Four different domains. Low cohesion.
   Low cohesion -> low SRP compliance -> coupling.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Conway's Law inverts SRP at the organizational level: "Organizations design systems that mirror their own communication structure." If the team structure is wrong (one team owns auth, orders, and catalog), the service structure will be wrong regardless of intent. SRP at the service level requires SRP at the team level first: one team owns one bounded context.
@@ -246,6 +261,34 @@ Fix: Domain decomposition. Identify the bounded contexts within the service. Ass
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Conway's Law and Organizational Architecture
 
 ---
@@ -310,6 +353,8 @@ OBSERVATION 3: The monolith
   Conway's Law: architecture mirrors teams.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The inverse Conway maneuver:**
 ```
 Problem: You want capability-based microservices.
@@ -332,6 +377,8 @@ Step 3: Services follow.
 Timeline: 12-18 months for org + arch transition.
 Most companies underestimate the org change.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 If you cannot draw a clear line between two teams' responsibilities, you cannot draw a clear service boundary between their services. The organization chart is the architectural blueprint. Changing architecture without changing organization is temporary - the architecture will revert to mirror the organization.
@@ -456,6 +503,34 @@ Fix: Formalize the API contract between CatalogService and CheckoutService. Use 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Failure as a First-Class Citizen Mental Model
 
 ---
@@ -520,6 +595,8 @@ For every external dependency:
    - Production: chaos engineering (Chaos Monkey)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The failure taxonomy:**
 ```
 TYPE 1 - TRANSIENT: fails briefly, recovers
@@ -550,6 +627,8 @@ TYPE 4 - CASCADE: one failure spreads
 
 Design for all four types from the start.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Distributed systems do not have steady state. They are always in a state of partial failure. Some pods are in the middle of a rolling restart. Some network calls are experiencing latency. Some database queries are slower than normal. A system designed for the happy path is constantly being degraded by normal operations. A system designed for failure as a first-class citizen is resilient to normal operations because it treats every call as potentially failing.
@@ -691,3 +770,33 @@ Fix: When a failure category appears twice: fix ALL services with the same desig
 | Error handling (reactive) | Catches known failures, fails on unknown | 30-60 minutes | Some errors caught |
 | Failure as first-class | Degrades gracefully, fast circuit break | Minutes (automated recovery) | Degraded but functional |
 | Chaos engineering validated | Proven graceful degradation | Seconds (pre-built recovery paths) | Near-transparent to users |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

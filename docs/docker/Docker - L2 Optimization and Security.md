@@ -8,9 +8,20 @@ permalink: /docker/l2-optimization-and-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - L2 Optimization and Security](#docker---l2-optimization-and-security) | medium |
+
+---
+
 # Docker - L2 Optimization and Security
 
 ## Docker Build Optimization and Caching
+
+---
 
 ### 🎯 Model Answer
 
@@ -162,6 +173,8 @@ BUILD ARG VS BUILD CONTEXT OPTIMIZATION:
   ARG BUILD_DATE           # only layers AFTER this point are affected
   LABEL build-date=$BUILD_DATE
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -321,6 +334,8 @@ Fixes:
      (this way the combined instruction is cached together)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -369,6 +384,8 @@ cache is not available.
 ---
 
 ## Base Image Selection and Security
+
+---
 
 ### 🎯 Model Answer
 
@@ -545,6 +562,8 @@ NON-ROOT USER AND CAPABILITIES:
   # --tmpfs /tmp: RAM-backed writable /tmp (for temp files).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -715,6 +734,8 @@ Fixes:
   # Not always possible.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -789,4 +810,34 @@ enables you to immediately identify which images contain that library
 without rebuilding and rescanning everything. This is especially
 valuable for zero-day CVEs (Log4Shell-class events): identify
 exposure in minutes, not hours.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

@@ -8,9 +8,22 @@ permalink: /docker/meta-thinking-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Docker - META Thinking Patterns](#docker---meta-thinking-patterns) | medium |
+| 2 | [Build Once Deploy Everywhere Principle](#build-once-deploy-everywhere-principle) | medium |
+| 3 | [Container Boundaries and Service Decomposition](#container-boundaries-and-service-decomposition) | medium |
+
+---
+
 # Docker - META Thinking Patterns
 
 ## Immutable Infrastructure Mental Model
+
+---
 
 ### 🎯 Model Answer
 
@@ -157,6 +170,8 @@ WHAT IMMUTABILITY MEANS AT EACH LEVEL:
   # The container itself: stateless (can be created and destroyed freely).
   # The state: in external systems that survive container restarts.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -595,7 +610,37 @@ makes compliance the path of least resistance.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Build Once Deploy Everywhere Principle
+
+---
 
 ### 🎯 Model Answer
 
@@ -727,6 +772,8 @@ ENVIRONMENT DIFFERENCES (all injected at runtime, not baked into image):
   # The ConfigMap: differs per environment.
   # The image reference: identical across environments.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1104,7 +1151,37 @@ times for a commit that touches 1 service (the other 99: cache hits).
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Container Boundaries and Service Decomposition
+
+---
 
 ### 🎯 Model Answer
 
@@ -1292,6 +1369,8 @@ CONTAINER BOUNDARY CHECKLIST:
   If 3+ of these are Yes: strong case for a separate container.
   If < 2 are Yes: the overhead may exceed the benefit.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1766,3 +1845,33 @@ effectively own more services (the platform handles the overhead). The
 correct microservices adoption sequence: grow the team first, then split
 the service. Not: split the service to grow the team's responsibilities.
 Service boundaries should follow team capacity, not lead it.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

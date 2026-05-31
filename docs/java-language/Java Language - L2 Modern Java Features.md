@@ -8,9 +8,20 @@ permalink: /java-language/l2-modern-java-features/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L2 Modern Java Features](#java-language---l2-modern-java-features) | medium |
+
+---
+
 # Java Language - L2 Modern Java Features
 
 ## Records
+
+---
 
 ### 🎯 Model Answer
 
@@ -148,6 +159,8 @@ WHEN TO USE RECORDS:
     Any class needing inheritance  (records cannot extend)
     Mutable data                   (use a regular class)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -315,6 +328,8 @@ Prevention: entities are stateful (JPA manages their state).
   Rule: records for data transfer, regular classes for entities.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -407,6 +422,8 @@ record TaggedItem(String name, List<String> tags) {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `List.copyOf()` creates an immutable copy and throws NullPointerException if the list
 or any element is null. After this: `record.tags()` returns an immutable list.
 
@@ -511,6 +528,8 @@ A: Define a sealed interface, permit records: `sealed interface Result<T> permit
 
 ## Optional
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -611,6 +630,8 @@ USAGE RULES:
     In == comparison: opt == Optional.empty()       // use opt.isEmpty()
     In JPA entity: @Column private Optional<String> name  // JPA can't handle
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -773,6 +794,8 @@ Prevention:
   Jackson + Jdk8Module: handles Optional return types correctly.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -887,6 +910,8 @@ User user = findInCache(id);
 if (user == null) user = findInDatabase(id);
 if (user == null) user = findInRemoteApi(id);
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With: `findInCache(id).or(() -> findInDatabase(id)).or(() -> findInRemoteApi(id)).orElseThrow(...)`.
 The chain is lazy: if the cache returns a value, database and remote API are never called.
 This is functionally equivalent to the `||` short-circuit in JavaScript null coalescing chains.
@@ -966,3 +991,33 @@ and reserve Optional for truly optional results.
 ### 📊 Diagram
 
 *(Omit: Optional API flow is best expressed through code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

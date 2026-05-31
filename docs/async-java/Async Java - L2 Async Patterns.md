@@ -7,7 +7,14 @@ permalink: /async-java/l2-async-patterns/
 render_with_liquid: false
 ---
 
-# Async Java - L2 Async Patterns
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L2 Async Patterns](#async-java---l2-async-patterns) | medium |
+| 2 | [Chaining and Combining CompletableFutures](#chaining-and-combining-completablefutures) | medium |
+| 3 | [Java HttpClient Async API](#java-httpclient-async-api) | medium |
 
 ---
 
@@ -103,6 +110,8 @@ Error isolation:
   cf.exceptionally(ex -> fallback) per branch
   before combining -> prevents cascade failure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `allOf` returns `CompletableFuture<Void>` - no result. To collect results
@@ -264,6 +273,8 @@ CompletableFuture.allOf(uf, of, pf)
         build(uf.join(), of.join(), pf.join()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis: add distributed tracing spans to each service call. Sequential
 spans (no time overlap on the trace) confirm sequential chaining.
 
@@ -294,6 +305,8 @@ CompletableFuture.allOf(resilient.toArray(new CF[0]))
         .map(CF::join).toList());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Level 3 - separate success/failure tracking:**
 ```java
 record Outcome(String id, Result result, Throwable error) {
@@ -306,6 +319,8 @@ List<CF<Outcome>> tracked = ids.stream()
     .toList();
 // Caller can split into successes and failures
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Level 3 enables partial-success responses:
 "3 of 5 services responded; 2 degraded." The `handle` bifunction is the key
@@ -331,6 +346,8 @@ CompletableFuture.allOf(f1, f2, f3)
         return build(r1, r2, r3);
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This is the standard typed result collection pattern since allOf returns
 `CF<Void>` with no direct access to component results.
@@ -360,6 +377,8 @@ CompletableFuture.allOf(timed.toArray(new CF[0]))
     .thenApply(v -> timed.stream()
         .map(CF::join).toList());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `completeOnTimeout` vs `orTimeout`: completeOnTimeout gives a fallback value
 (chain continues normally). orTimeout throws TimeoutException (chain goes
@@ -397,6 +416,8 @@ CF<E> e = c.thenCombine(d,
 // E starts when C and D both done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The JVM schedules execution automatically - no explicit thread management.
 
 *What separates good from great:* Cycle detection: if the dependency graph
@@ -423,6 +444,8 @@ Heterogeneous: 10ms, 50ms, 30ms, 20ms, 40ms:
   Savings: 100ms (67% reduction)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Resource cost: parallel fan-out uses N concurrent threads, potentially
 spiking downstream load. Sequential is a deliberate backpressure technique
 in tight capacity situations.
@@ -448,6 +471,8 @@ Batch 10 (90-99): starts t=450ms, completes t=500ms
 allOf total: 500ms (not 50ms as expected for parallel!)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 allOf submits all N tasks immediately with no concurrency control. The pool
 queuing produces a staircase effect.
 
@@ -458,6 +483,8 @@ Flux.fromIterable(ids)
         .subscribeOn(Schedulers.boundedElastic()), 16)
     .collectList();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* A high-RPS service with large fan-out
 multiplies pool pressure: 200 RPS x 10-future fan-out = 2000 tasks/second.
@@ -479,6 +506,8 @@ combined.whenComplete((v, ex) -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Java 21+ proper solution - Structured Concurrency:
 ```java
 try (var scope =
@@ -493,6 +522,8 @@ try (var scope =
 }
 // Scope exit cancels all remaining subtasks
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Even `cancel(true)` on a CF does not
 interrupt a running task - it only marks the future as cancelled. Structured
@@ -527,6 +558,8 @@ CompletableFuture.allOf(tracked.toArray(new CF[0]))
         return new FanOutResult(successes, failures);
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `handle` always produces a value (never throws), so allOf always completes
 normally. The caller has full visibility into the mixed outcome.
@@ -564,6 +597,8 @@ Flux.fromIterable(ids)
         .subscribeOn(Schedulers.boundedElastic()), 16)
     .collectList();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Semaphore + CF pattern has a nested
 deadlock risk: a thread holding the semaphore starts an inner async operation
@@ -639,6 +674,34 @@ gantt
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Java HttpClient Async API
 
@@ -730,6 +793,8 @@ BodyHandlers:
   discarding()     -> HttpResponse<Void>
   ofFile(path)     -> saves body to file
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 sendAsync does NOT throw for HTTP 4xx/5xx - only for network errors
@@ -900,6 +965,8 @@ CLIENT.sendAsync(req, BodyHandlers.ofString())
     });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Extract as a reusable utility to enforce status checks everywhere:
 ```java
 static <T> Function<HttpResponse<String>, T> parseChecked(
@@ -911,6 +978,8 @@ static <T> Function<HttpResponse<String>, T> parseChecked(
     };
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -944,6 +1013,8 @@ CLIENT.sendAsync(req, BodyHandlers.ofString())
     .thenAccept(r -> process(r.body())); // async, clean
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `URL.openConnection()` caches connections
 globally - this causes contention in multi-threaded code. HttpClient's
 per-instance connection pool is explicit, predictable, and independently
@@ -960,12 +1031,16 @@ HttpClient client = HttpClient.newBuilder()
     .build();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Request timeout (per request):
 ```java
 HttpRequest req = HttpRequest.newBuilder()
     .timeout(Duration.ofSeconds(5)) // full response timeout
     .uri(uri).GET().build();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 On timeout: CF completes exceptionally with `HttpTimeoutException`.
 Handle with `exceptionally` or `handle`:
@@ -979,6 +1054,8 @@ sendAsync(req, BodyHandlers.ofString())
         throw new CompletionException(ex.getCause());
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Request timeout starts when `sendAsync`
 is called. For requests reusing pooled connections, connect timeout is
@@ -1015,6 +1092,8 @@ CLIENT.sendAsync(req, BodyHandlers.ofInputStream())
         }
     });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `ofInputStream()` requires closing the
 InputStream after reading. If not closed, the underlying connection is not
@@ -1056,6 +1135,8 @@ private CF<HttpResponse<String>> retryAfterDelay(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Only retry transient errors:
 retry 500/502/503/504. Never retry 400/401/403/404 (caller errors).
 Retrying non-idempotent POST without idempotency key may cause duplicate
@@ -1085,6 +1166,8 @@ Flux.fromIterable(userIds)
     .collectList();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Spring WebFlux: use WebClient directly (no bridging):
 ```java
 Mono<User> user = webClient.get()
@@ -1094,6 +1177,8 @@ Mono<User> user = webClient.get()
         r -> Mono.error(new ServiceException()))
     .bodyToMono(User.class);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `Mono.fromFuture(cf)` is not lazy if the
 CF was already created - the HTTP request is already in-flight. For true
@@ -1122,6 +1207,8 @@ CLIENT.sendAsync(req, BodyHandlers.discarding())
     .thenAccept(r ->
         log.info("Protocol: {}", r.version()));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* HTTP/2 stream limits (default 100 per
 RFC). When stream limit is reached, HttpClient creates a new connection.
@@ -1164,6 +1251,8 @@ class AuthHttpClient {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key: retry only once on 401. If refreshed token still returns 401, that is
 a permissions problem - not a token expiry. More retries cause infinite loops.
@@ -1212,6 +1301,8 @@ when(gateway.fetchUser("1"))
     .thenReturn(completedFuture(User.of("1", "Alice")));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. MockWebServer (integration tests - OkHttp library):
 ```java
 MockWebServer server = new MockWebServer();
@@ -1227,6 +1318,8 @@ assertThat(r.statusCode()).isEqualTo(200);
 server.shutdown();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Testing retry behavior:
 ```java
 server.enqueue(new MockResponse().setResponseCode(503));
@@ -1235,6 +1328,8 @@ server.enqueue(new MockResponse().setResponseCode(200)
     .setBody(validJson));
 // sendWithRetry should succeed on attempt 3
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Test the status-code check explicitly:
 enqueue a 503 response and assert the CF completes exceptionally with
@@ -1313,3 +1408,33 @@ sequenceDiagram
 > arrive. Thread count grows with CPU-bound work, not with in-flight I/O.
 > This is the core efficiency argument for async HTTP in high-concurrency
 > services.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

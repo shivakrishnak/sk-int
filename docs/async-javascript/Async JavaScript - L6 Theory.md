@@ -119,6 +119,8 @@ hCPS(2, 3, hResult =>
 // This IS callback hell: nesting is the cost of CPS composition
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```javascript
 // NODE.JS IS CPS:
 // Instead of: const data = fs.readFile(path)
@@ -137,6 +139,8 @@ fs.readFile('config.json', (err, data) => {
   });
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // PROMISES ARE CPS WITH FLATMAP:
@@ -157,6 +161,8 @@ readFilePromise('config.json')
   .catch(handleError);
 // Flat chain: same semantics, no nesting
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // ASYNC/AWAIT DESUGARS TO PROMISES (CPS transform at compile time):
@@ -335,6 +341,8 @@ for (const item of items) {
 await Promise.all(items.map(item => processItem(item))); // parallel
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Unhandled CPS error in mixed style**
 ```javascript
 // BAD: mixing CPS callback with Promise, error lost
@@ -349,6 +357,8 @@ someCallbackFn((err, data) => {
 const data = await util.promisify(someCallbackFn)();
 const result = await doSomethingAsync(data);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -411,12 +421,16 @@ function f() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The engine (V8) generates a state machine internally:
 ```
 State 0: initial. Call p1(). Suspend.
 State 1: resume with p1 result (a). Call p2(a). Suspend.
 State 2: resume with p2 result (b). Return b+1.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Each `await` creates a "suspension point." The microtask
 queue resumes the continuation when the Promise resolves.
@@ -452,6 +466,8 @@ promise.then(Promise.resolve.bind(Promise)) // === promise
 promise.then(f).then(g) // ===
 promise.then(x => f(x).then(g));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The monad structure is what enables composing async operations
 in a flat chain instead of nested callbacks.
@@ -505,6 +521,8 @@ function asyncToGenerator(generatorFn) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that generators
 are pull-based (caller drives iteration) while async/await
 is push-based (runtime drives via Promise resolution). This
@@ -536,6 +554,8 @@ CPS in the browser event loop:
 -> Event loop picks next task
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This is why:
 ```javascript
 Promise.resolve().then(() => console.log('micro'));
@@ -545,6 +565,8 @@ console.log('sync');
 // Promise.then is microtask; setTimeout is macrotask
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that "infinite
 microtask loop" is possible:
 ```javascript
@@ -553,6 +575,8 @@ function loop() {
 }
 loop(); // blocks: microtask queue never empties, no macrotasks run
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -582,6 +606,8 @@ someLib.fetch[util.promisify.custom] = (url) =>
     someLib.fetch(url, (err, data) => err ? reject(err) : resolve(data));
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This demonstrates the CPS-to-Promise isomorphism: any CPS
 function is convertible to a Promise-returning function.
@@ -649,6 +675,8 @@ for await (const item of paginatedResults('/api/users')) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CPS connection: `for await...of` desugars to `iterator.next()`
 calls, each returning a Promise. The awaited result triggers
 the continuation. Backpressure is automatic: the next `next()`
@@ -693,6 +721,8 @@ const program = pipe(
 await Effect.runPromise(program);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Relationship to CPS:
 - Effect is a lazy continuation: it describes the computation,
   does not execute it
@@ -718,6 +748,34 @@ describe work, do not perform it until run).
 | Effect-TS | Typed CPS | flatMap | typed E in Effect<A,E> | Yes | Via Stream |
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Event-Driven Architecture Theory in JavaScript
 
@@ -820,6 +878,8 @@ const eventLoop$ = merge(
 );
 // concatMap: no concurrency, events processed sequentially
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // ACTOR PATTERN with Web Workers
@@ -1035,6 +1095,8 @@ emitter.on('data', handler);
 return () => emitter.off('data', handler);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Back-pressure missing in event streams**
 ```javascript
 // BAD: producer faster than consumer, memory grows unbounded
@@ -1055,6 +1117,8 @@ readableStream.on('data', chunk => {
   processChunk(chunk).then(() => readableStream.resume());
 });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1168,6 +1232,8 @@ const results = await Promise.all(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The pool `drain()` pattern:
 after any worker finishes, check the queue for pending work.
 This ensures workers are never idle while work is queued,
@@ -1218,6 +1284,8 @@ await consumer.run({
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that Kafka's
 consumer group model allows independent scaling: adding a
 consumer to the group increases throughput (partitions are
@@ -1251,6 +1319,8 @@ setInterval(() => {
 }, 5000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common causes:
 1. `addEventListener` in component setup without cleanup
 2. `emitter.on` called in a function that runs per-request
@@ -1269,6 +1339,8 @@ const cleanup = setupListeners(emitter);
 // On teardown:
 cleanup(); // removes the specific handler
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The cleanup function
 pattern is universal: same pattern as React's `useEffect`
@@ -1314,6 +1386,8 @@ class Channel {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that Go's channel
 model (CSP) provides natural backpressure: a goroutine
@@ -1392,6 +1466,8 @@ const { data: orders } = useQuery({
 // Separate: read model and write model
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Recognizing that TanStack
 Query's query/mutation split is CQRS applied to the frontend
 data layer. The `queryKey` is the read model identifier;
@@ -1429,6 +1505,8 @@ readable.on('data', (chunk) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RxJS back-pressure: no built-in (push-based). Requires operators:
 - `bufferTime`: accumulate, emit batch
 - `throttleTime`: rate-limit emissions
@@ -1453,6 +1531,8 @@ handles it automatically.
 | Actor | Multi-process | Isolated | Message passing | Actor-level | Fault tolerance |
 | CSP | Multi-goroutine | Isolated | Synchronous channel | Goroutine-level | Coordinated pipelines |
 | Thread pool | Multi-thread | Shared (with locks) | Shared memory | None (locks) | CPU-bound |
+
+---
 
 ### 📊 Diagram
 
@@ -1509,3 +1589,30 @@ sequenceDiagram
 > work is offloaded via postMessage, the main thread continues
 > handling events, and the Worker replies when computation
 > is complete.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

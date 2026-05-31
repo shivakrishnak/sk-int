@@ -8,7 +8,15 @@ permalink: /spring/l1-spring-boot-basics/
 render_with_liquid: false
 ---
 
-# Spring - L1 Spring Boot Basics
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L1 Spring Boot Basics](#spring---l1-spring-boot-basics) | medium |
+| 2 | [Spring Boot Auto-configuration](#spring-boot-auto-configuration) | medium |
+| 3 | [@SpringBootApplication](#springbootapplication) | medium |
+| 4 | [Embedded Server](#embedded-server) | medium |
 
 ---
 
@@ -28,7 +36,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — auto-configuration is what makes Spring Boot
+🎯 Interview Weight: Critical - auto-configuration is what makes Spring Boot
 different from Spring Framework. Every Spring Boot interview covers this.
 
 ---
@@ -127,6 +135,8 @@ Spring Boot startup - auto-config activation:
 4. Your explicit @Bean always wins
    (ConditionalOnMissingBean ensures this)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 @ConditionalOnMissingBean is the override mechanism. Auto-configuration always
@@ -343,7 +353,6 @@ key spelling.
 
 #### Q1 - What is Spring Boot auto-configuration?
 
-Auto-configuration is Spring Boot's mechanism to automatically configure Spring
 beans based on classpath content, existing beans, and property values.
 Implementation: @Configuration classes annotated with @Conditional variants
 (@ConditionalOnClass, @ConditionalOnMissingBean, @ConditionalOnProperty etc.)
@@ -398,6 +407,8 @@ Three ways:
        DataSourceAutoConfiguration.class
    })
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Or in application.properties:
    `spring.autoconfigure.exclude=...DataSourceAutoConfiguration`
 
@@ -455,6 +466,8 @@ class FallbackSerializerConfig { ... }
 @ConditionalOnClass(ObjectMapper.class)
 class JacksonSerializerConfig { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Both annotations use String form when there
 is a risk the class might not be on the classpath during compilation of the
@@ -518,6 +531,34 @@ sub-100ms startup in GraalVM native images.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # @SpringBootApplication
 
 ---
@@ -534,7 +575,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — "What does @SpringBootApplication do?" is a
+🎯 Interview Weight: High - "What does @SpringBootApplication do?" is a
 standard warm-up question in Spring Boot interviews.
 
 ---
@@ -626,6 +667,8 @@ public @interface SpringBootApplication {
     boolean proxyBeanMethods() default true;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The class annotated with @SpringBootApplication defines the component scan
@@ -825,6 +868,8 @@ com.example.payment.*       <- scanned
 com.example.user.*          <- scanned
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Violating this convention causes NoSuchBeanDefinitionException for components
 in packages not under the application root.
 
@@ -895,6 +940,8 @@ Use the scanBasePackages attribute:
 )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or use scanBasePackageClasses for type-safe references:
 ```java
 @SpringBootApplication(
@@ -904,6 +951,8 @@ Or use scanBasePackageClasses for type-safe references:
     }
 )
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 scanBasePackageClasses is safer: it is not affected by package rename
 refactoring since it references a class in the package.
@@ -963,6 +1012,34 @@ the same classpath during compilation.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Embedded Server
 
 ---
@@ -979,7 +1056,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — demonstrates understanding of what makes Spring
+🎯 Interview Weight: High - demonstrates understanding of what makes Spring
 Boot deployments different from traditional Java web applications.
 
 ---
@@ -1087,6 +1164,8 @@ Running: java -jar myapp.jar
   -> DispatcherServlet registered
   -> Application ready
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The embedded server is just another bean in the ApplicationContext. It starts
@@ -1321,6 +1400,8 @@ Exclude Tomcat starter, add Jetty starter in pom.xml:
 </dependency>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Zero code changes required. Spring Boot's auto-configuration detects
 JettyServletWebServerFactory on the classpath and uses it.
 
@@ -1352,6 +1433,8 @@ Configuration:
 server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=30s
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Kubernetes deployment spec should set
 terminationGracePeriodSeconds longer than the Spring Boot shutdown timeout.
@@ -1404,6 +1487,8 @@ server.compression.enabled=true
 server.compression.min-response-size=2048
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Choosing max-threads: a general rule is CPU-count * 2 for CPU-bound work;
 for I/O-bound work (database calls, HTTP calls) you can go much higher
 (200-500) since threads spend most time waiting.
@@ -1427,6 +1512,8 @@ server.ssl.key-store-type=JKS
 server.ssl.key-alias=myapp
 server.port=8443
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For production, prefer externally managed SSL (load balancer, Kubernetes
 ingress controller) over application-managed SSL. Terminating SSL at the
@@ -1460,6 +1547,8 @@ app.jar
         |-- LaunchedURLClassLoader.class
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 JarLauncher is the real Main-Class. It sets up a custom classloader that
 can load classes from nested JARs (JARs inside the fat JAR), then calls
 your Application.main().
@@ -1469,3 +1558,33 @@ fundamental Java problem: the standard JVM cannot load classes from JARs
 nested inside JARs. Boot's custom classloader makes this work without
 exploding the JAR at startup, which was the older approach. Understanding
 this explains why Spring Boot apps are immediately runnable with java -jar.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

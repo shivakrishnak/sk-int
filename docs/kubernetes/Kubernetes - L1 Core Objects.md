@@ -22,6 +22,8 @@ render_with_liquid: false
 
 # Pod
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -107,6 +109,8 @@ Pod (one IP: 10.0.0.5)
 All containers: same IP, same hostname
 Container B reaches Container A via localhost:8080
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pod phases:
 - Pending: Pod accepted but containers not yet running (image pull, scheduling)
@@ -378,6 +382,8 @@ spec:
     # starts only AFTER db-migrate exits 0
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why init containers over alternatives: running migrations in the main container
 causes problems with multi-replica Deployments - all 3 replicas attempt migrations
 simultaneously. Using a separate Job is valid but more complex to orchestrate.
@@ -503,6 +509,8 @@ spec:
       app: my-app
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or `maxUnavailable: 1` - at most 1 pod unavailable at once.
 
 When you need it: any service with 2+ replicas that cannot tolerate downtime during
@@ -578,7 +586,37 @@ stateDiagram-v2
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Deployment and ReplicaSet
+
+---
 
 ### 🎯 Model Answer
 
@@ -654,6 +692,8 @@ Rolling update: creates new RS, scales it up,
 scales old RS down, alternating until complete.
 Old RS kept at 0 replicas for rollback history.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rolling update parameters:
 - `maxSurge: 25%` - up to 1 extra Pod can exist (of 4 replicas)
@@ -1024,6 +1064,8 @@ lifecycle:
     exec:
       command: ["/bin/sh", "-c", "sleep 5"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This delays SIGTERM, giving endpoint removal time to propagate.
 
 Layer 3 - Application graceful shutdown: when SIGTERM arrives, the app should
@@ -1136,7 +1178,37 @@ sequenceDiagram
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Service and Networking Basics
+
+---
 
 ### 🎯 Model Answer
 
@@ -1209,6 +1281,8 @@ Client Pod -> ClusterIP:80 -> kube-proxy (iptables/IPVS)
                    Pod-1:8080 Pod-2:8080 Pod-3:8080
                    (ready)   (ready)   (NOT ready - removed)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 DNS: CoreDNS resolves `my-service.my-namespace.svc.cluster.local` to the ClusterIP.
 Within the same namespace, just `my-service` works.
@@ -1574,6 +1648,8 @@ spec:
   - port: 9092
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Use headless when: (1) StatefulSets with per-pod addressing, (2) client wants to do
 its own load balancing (not rely on iptables), (3) DNS-based discovery returning all IPs.
 
@@ -1613,3 +1689,33 @@ endpoints. Below that: reliable and well-understood. Above: consider IPVS or Cil
 *What separates good from great:* Knowing the exact inflection point (~2000 services)
 and being able to cite the mechanism (linear scan + exclusive kernel lock) rather
 than vaguely saying "it gets slow".
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

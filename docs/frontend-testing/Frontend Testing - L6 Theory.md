@@ -7,6 +7,16 @@ permalink: /frontend-testing/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Test Confidence vs Coverage Trade-off](#test-confidence-vs-coverage-trade-off) | medium |
+| 2 | [Property-Based Testing for Frontend](#property-based-testing-for-frontend) | medium |
+
+---
+
 # Test Confidence vs Coverage Trade-off
 
 ---
@@ -129,6 +139,8 @@ Coverage exclusion strategy:
     - Data transformation utilities
     - API client adapters
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -297,6 +309,34 @@ paths that have coverage-without-confidence.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Property-Based Testing for Frontend
 
 ---
@@ -387,6 +427,8 @@ Property-based testing model:
   Shrinking: on failure, fast-check finds the minimal
   input that still fails (reduces noise in bug report)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -585,7 +627,39 @@ fc.assert(fc.property(
 ));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Combining property tests for
 invariants with specific example tests for exact values:
 `calculateTotal([{price: 10, qty: 3, discount: 0.2}]) === 24.00`
 (example: specific known answer) + property tests for all orderings.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

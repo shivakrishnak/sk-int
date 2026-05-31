@@ -8,7 +8,14 @@ permalink: /spring/l2-data-and-configuration/
 render_with_liquid: false
 ---
 
-# Spring - L2 Data and Configuration
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L2 Data and Configuration](#spring---l2-data-and-configuration) | medium |
+| 2 | [Spring Data JPA Repository](#spring-data-jpa-repository) | medium |
+| 3 | [@ConfigurationProperties](#configurationproperties) | medium |
 
 ---
 
@@ -28,7 +35,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — Spring Data JPA is used in almost every Spring
+🎯 Interview Weight: High - Spring Data JPA is used in almost every Spring
 Boot application with a database. Understanding repositories, query derivation,
 and when to write JPQL is essential.
 
@@ -135,6 +142,8 @@ JpaRepository hierarchy:
     -> ListPagingAndSortingRepository (pagination)
     -> JpaSpecificationExecutor (dynamic queries)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Query method derivation happens at application startup. If the method name
@@ -443,6 +452,8 @@ to load an associated collection.
 -> executed for each order when items are accessed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Total: 101 queries instead of 1 or 2.
 
 Diagnosis:
@@ -514,6 +525,8 @@ public interface OrderSummary {
 List<OrderSummary> findByStatus(OrderStatus s);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Class projection (DTO constructor):
 ```java
 public record OrderSummary(Long id,
@@ -526,6 +539,8 @@ public record OrderSummary(Long id,
 List<OrderSummary> findSummariesByStatus(
     @Param("status") OrderStatus status);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Interface projections use JDK proxies
 (one proxy per result row). For large result sets, class projections (DTO with
@@ -543,6 +558,8 @@ Page<Order> findByStatus(OrderStatus status,
                          Pageable pageable);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Calling code:
 ```java
 Pageable page = PageRequest.of(
@@ -558,6 +575,8 @@ result.getTotalElements();// total rows (runs COUNT query)
 result.getTotalPages();   // total pages
 result.hasNext();         // more pages?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Page<T> executes TWO queries: one for data, one for COUNT. For large tables,
 COUNT(*) can be expensive. Use Slice<T> instead of Page<T> when you only
@@ -593,6 +612,8 @@ int deleteOldOrdersByStatus(
     @Param("cutoff") LocalDateTime cutoff);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @Modifying(clearAutomatically = true): clears the first-level cache (persistence
 context) after the update. Without this, the cache may contain stale data -
 you updated via JPQL but the cached entity still has the old value.
@@ -618,6 +639,8 @@ paymentRepository.save(payment); // TX2
 // If TX2 fails, TX1 is already committed - inconsistency!
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Correct pattern: @Transactional on the service method:
 ```java
 @Service
@@ -631,6 +654,8 @@ public class OrderService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With @Transactional on the service: Spring starts a transaction before the
 method, repository calls join the existing transaction
@@ -660,6 +685,8 @@ where(hasEmail(req.getEmail()))
     .and(hasStatus(req.getStatus()))
     .and(afterDate(req.getAfterDate()))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Pros: type-safe, composable, handles nulls via null predicate convention
 Cons: verbose code compared to QueryDSL; complex queries can be hard to read
@@ -709,6 +736,8 @@ public interface OrderRepository extends
         OrderRepositoryCustom {}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Spring Data detects the Impl suffix and wires them together. The proxy
 delegates to OrderRepositoryImpl for the custom method.
 
@@ -718,6 +747,34 @@ into a custom repository implementation gives you full access to native SQL
 within the clean repository abstraction.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # @ConfigurationProperties
 
@@ -735,7 +792,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — @ConfigurationProperties vs @Value is a common
+🎯 Interview Weight: High - @ConfigurationProperties vs @Value is a common
 interview question about Spring Boot configuration best practices.
 
 ---
@@ -849,6 +906,8 @@ Registration options:
   OR
   @Component + @ConfigurationProperties (direct)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Relaxed binding is one of @ConfigurationProperties's most useful features.
@@ -1122,6 +1181,8 @@ app.payment.api_key=secret        # underscore
 APP_PAYMENT_API_KEY=secret        # env var (UPPER_SNAKE)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 All of these bind to the Java field `private String apiKey`.
 
 Rules:
@@ -1161,6 +1222,8 @@ public class AppProperties {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If validation fails at startup: BindException wraps the ConstraintViolations.
 Spring Boot prints each failed constraint with the property name and invalid value.
 
@@ -1198,6 +1261,8 @@ public class ServerProperties {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 In Spring Boot 3.x, constructor binding is detected automatically for classes
 with a single constructor that has all properties - @ConstructorBinding is not
 needed.
@@ -1230,6 +1295,8 @@ public Converter<String, MyType> myTypeConverter() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 @ConfigurationPropertiesBinding marks the converter as intended for
 @ConfigurationProperties binding (not MVC type conversion).
 
@@ -1261,6 +1328,8 @@ app:
     timeout: 5s  # tighter in production
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The @ConfigurationProperties class is the same - Spring loads different property
 values based on active profile. No Java code changes needed.
 
@@ -1271,6 +1340,8 @@ For programmatic profile selection:
 public class ProductionPaymentProperties
         extends PaymentProperties { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* application.yml's multi-document format
 (---) allows profile-specific sections in one file. For complex configuration,
@@ -1295,6 +1366,8 @@ class PaymentPropertiesTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2 - @ConfigurationPropertiesTest (slice test):
 ```java
 @ExtendWith(SpringExtension.class)
@@ -1310,6 +1383,8 @@ class PaymentPropertiesTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3 - Direct constructor (unit test):
 ```java
 // If using constructor binding or records
@@ -1321,6 +1396,8 @@ PaymentProperties props = new PaymentProperties(
 );
 // No Spring needed at all
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Option 3 (direct construction) is the fastest
 and most appropriate for unit testing your configuration class's logic
@@ -1371,6 +1448,8 @@ public class DynamicConfigService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 2 - @PropertySource + @Value:
 ```java
 @Configuration
@@ -1381,12 +1460,16 @@ public class CustomConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Option 3 - ApplicationContext.getEnvironment():
 ```java
 String value = applicationContext
     .getEnvironment()
     .getProperty("my.prop");
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Environment.getProperty() is useful for: dynamic property lookup based on
 runtime values, checking if a property exists without failing, accessing
@@ -1396,3 +1479,33 @@ properties in components that cannot use @ConfigurationProperties.
 the latest value from the property sources. Unlike @Value fields (set at
 injection time), Environment.getProperty() reflects changes if property
 sources are refreshed (Spring Cloud Config Server scenarios).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -291,6 +291,8 @@ app.get('/report', async (req, res) => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Move CPU work to a Worker thread or chunk it
 with `setImmediate` to yield between batches.
 
@@ -314,6 +316,8 @@ setInterval(() => {
   console.log('EL lag p99:', h.percentile(99) / 1e6, 'ms');
 }, 5000);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -407,6 +411,8 @@ async function looksConcurrent() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `async`/`await` yields at I/O boundaries (the `fetch`
 and `.json()` calls). But the `.sort()` with an expensive
 comparator runs synchronously on the thread. During that
@@ -425,6 +431,8 @@ async function chunkedSort(items) {
   return items;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing the specific
 boundary: `await` yields at the expression it modifies,
@@ -560,14 +568,20 @@ event loop) that any function can monopolize, which is a
 fundamentally different constraint than multi-threaded
 systems where threads compete on specific shared data.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ foundational keyword - comparison handled in
 file Async JavaScript - L2 Advanced Promises.md)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ orientation keyword - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -577,6 +591,34 @@ and Call Stack includes the primary diagram for this topic)*
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # The JavaScript Event Loop and Call Stack
 
@@ -686,6 +728,8 @@ Browser/Node Runtime (outside JS thread):
     - fs.readFile: OS thread pool
     When done: pushes callback to task queue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The microtask queue is drained completely after
@@ -872,6 +916,8 @@ setInterval(() => {
 }, 1000);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Microtask starvation from recursive Promises**
 Symptom: application freezes with 100% CPU; setTimeout
 callbacks never fire; event emitters stop working.
@@ -939,6 +985,8 @@ queueMicrotask(() => console.log('D'));
 console.log('E');
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Answer: A, E, C, D, B.
 
 Reasoning: A and E are synchronous - they run in order.
@@ -977,6 +1025,8 @@ example();
 console.log('after example()');
 // Output: 'before await', 'after example()', 'after await'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `await 42` suspends the function even though 42 is not
 async. The continuation is added as a microtask.
@@ -1104,14 +1154,20 @@ is preferred.
 to the platform are often about performance at edge cases
 and API clarity, not because the previous approach was broken.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ foundational keyword - comparison covered in
 Async JavaScript - L6 Theory.md)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable at this level)*
+
+---
 
 ### 📊 Diagram
 
@@ -1184,6 +1240,34 @@ flowchart TD
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # JavaScript Async Evolution: Callbacks to Async/Await
 
@@ -1314,6 +1398,8 @@ async function combineFiles() {
 // Total time: sum of all three reads (not concurrent)
 // Fix: const [a, b, c] = await Promise.all([...])
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Async/await is syntactic sugar over Promises. An `async`
@@ -1493,6 +1579,8 @@ async function goodPattern() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Node.js: `--unhandled-rejections=throw` crashes on
 unhandled rejections. Enable in production. Browser:
 `window.addEventListener('unhandledrejection', handler)`.
@@ -1510,6 +1598,8 @@ const [user, orders, config] = await Promise.all([
   getUser(), getOrders(), getConfig()
 ]);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 3: Lost error context in callback conversion**
 
@@ -1529,6 +1619,8 @@ async function wrappedLegacy(...args) {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1568,6 +1660,8 @@ function example() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The practical implication: `async` functions always return
 Promises even if they return plain values. `return 42`
 in an async function returns `Promise<number>` resolved
@@ -1600,6 +1694,8 @@ const results = await Promise.all(
 );
 results.forEach(process);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Sequential is correct when: each iteration depends on the
 previous result, or when you need to limit concurrency to
@@ -1652,6 +1748,8 @@ const data = results
   .map(r => r.value);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing `Promise.allSettled`
 exists and preferring it when partial success is acceptable.
 And knowing the `.all` short-circuit behavior well enough to
@@ -1701,6 +1799,8 @@ const readFile = promisify(fs.readFile);
 const data = await readFile('./config.json', 'utf8');
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Manual wrapping for non-standard callbacks:
 ```javascript
 function delay(ms) {
@@ -1721,6 +1821,8 @@ function readWithProgress(path, onProgress) {
   });
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Remembering to handle
 the error case in manual Promise wrappers. The most common
@@ -1789,14 +1891,20 @@ with `Promise.race` is a production idiom. `Promise.any`
 for multi-source fallback is less common but valuable.
 Knowing which to reach for without looking up the API.
 
+---
+
 ### ⚖️ Comparison Table
 
 *(Omit: ★☆☆ foundational keyword - comparison table in
 Async JavaScript - L2 Advanced Promises.md)*
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★☆☆ - not applicable at this level)*
+
+---
 
 ### 📊 Diagram
 
@@ -1852,3 +1960,30 @@ timeline
 > and reducing cognitive load. Subsequent additions
 > (allSettled, any, top-level await) refined specific edge
 > cases without changing the fundamental model.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

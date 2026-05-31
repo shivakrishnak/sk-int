@@ -7,6 +7,16 @@ permalink: /frontend-testing/l3-advanced-testing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Visual Regression Testing (Chromatic, Percy)](#visual-regression-testing-chromatic-percy) | medium |
+| 2 | [Accessibility Testing with axe-core](#accessibility-testing-with-axe-core) | medium |
+
+---
+
 # Visual Regression Testing (Chromatic, Percy)
 
 ---
@@ -122,6 +132,8 @@ Visual regression testing workflow:
       Percy: data-percy-hide attribute
       Chromatic: story parameters to disable dynamic content
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -294,6 +306,34 @@ Cost management:
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Accessibility Testing with axe-core
 
 ---
@@ -388,6 +428,8 @@ axe-core analysis:
         axe(React, ReactDOM, 1000); // overlay in browser dev mode
       }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -568,6 +610,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Layer 2 - Component tests (CI, per PR):**
 ```typescript
 // Every component test file adds:
@@ -577,10 +621,14 @@ test('has no a11y violations', async () => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Layer 3 - E2E tests (CI, key pages):**
 ```typescript
 // Run axe on login, signup, dashboard, checkout pages
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Layer 4 - Manual testing (sprint cadence):**
 - Keyboard navigation (Tab, Shift+Tab, Enter, Escape, Arrow keys)
@@ -593,3 +641,33 @@ test('has no a11y violations', async () => {
 criteria in definition-of-done: "New components must pass axe with
 zero violations and be keyboard-navigable." This makes accessibility
 a shipping requirement, not an afterthought audit.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

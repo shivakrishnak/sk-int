@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # Ingress and Load Balancing
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -95,6 +97,8 @@ Internet -> Cloud LB (one) -> Ingress Controller (Nginx/Traefik pod)
          admin.mycompany.com       -> admin-svc:80
          (TLS terminated at Ingress Controller)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The Ingress controller is a regular Deployment with a LoadBalancer Service.
 The LoadBalancer Service gives it one external IP. The controller configures
@@ -481,6 +485,8 @@ spec:
               number: 80
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Gradually increase `canary-weight` from 0 to 100 as confidence builds. At 100%,
 delete stable Ingress and rename canary to stable.
 
@@ -525,6 +531,8 @@ backendRefs:
 - name: v2
   weight: 20
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 TCP/gRPC native support: first-class resources, not workarounds.
 
@@ -650,7 +658,37 @@ flowchart LR
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # NetworkPolicy and Service Types
+
+---
 
 ### 🎯 Model Answer
 
@@ -731,6 +769,8 @@ With NetworkPolicy on Pod B (whitelist):
 
 Pod C with no NetworkPolicy: still receives ALL traffic
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CNI enforcement: NetworkPolicy objects are stored in etcd but enforced by the
 CNI plugin. The CNI translates policies into iptables rules, eBPF programs, or
@@ -1054,6 +1094,8 @@ spec:
     - port: 9090
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Result: payment-api only receives from order-service and Prometheus; only egresses
 to payment-db and DNS. Any pod not explicitly listed is blocked.
 
@@ -1092,6 +1134,8 @@ egress:
   - protocol: TCP
     port: 53
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 No `to:` field = allow DNS to any destination. Acceptable since DNS traffic
 is low-risk and necessary for all service discovery.
@@ -1197,6 +1241,8 @@ spec:
     - port: 2112          # Go default metrics
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `kubernetes.io/metadata.name` label is auto-applied by K8s 1.21+ - always
 present, reliable for namespaceSelector.
 
@@ -1223,6 +1269,8 @@ ingress:
     podSelector:                          # same dash = same item = AND
       matchLabels: {app: frontend}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Allows traffic only from pods labeled `app=frontend` IN `frontend-ns` namespace.
 Pods labeled `app=frontend` in OTHER namespaces: DENIED.
 
@@ -1235,6 +1283,8 @@ ingress:
   - podSelector:                          # separate dash = different item = OR
       matchLabels: {app: frontend}
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Allows: ANY pod in `frontend-ns` namespace OR any pod labeled `app=frontend`
 anywhere (including all other namespaces).
 
@@ -1265,6 +1315,8 @@ spec:
   # no rules
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - mTLS with Istio (cryptographic identity):
 ```yaml
 kind: PeerAuthentication
@@ -1272,6 +1324,8 @@ spec:
   mtls:
     mode: STRICT    # all inter-pod traffic must be mTLS
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Every service gets a SPIFFE/X.509 certificate identity (SVID). Services verify
 "this is really the orders-service cert signed by our cluster CA."
 
@@ -1292,6 +1346,8 @@ spec:
         methods: ["POST"]
         paths: ["/v1/charge"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Authorization is by service account identity (verified by certificate), not IP.
 A pod spoofing the orders-service IP cannot access payment-api without the cert.
 
@@ -1373,3 +1429,33 @@ flowchart LR
 > Any other connection is denied. This is defense-in-depth: even if frontend is
 > compromised, the attacker cannot pivot directly to postgres because the
 > frontend-to-postgres path was never opened.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

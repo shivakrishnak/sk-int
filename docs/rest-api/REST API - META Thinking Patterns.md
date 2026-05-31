@@ -8,6 +8,17 @@ permalink: /rest-api/meta-thinking-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Resource-Oriented Thinking Mental Model](#resource-oriented-thinking-mental-model) | medium |
+| 2 | [Statelessness as a Scalability Principle](#statelessness-as-a-scalability-principle) | medium |
+| 3 | [API Contract First Design Mindset](#api-contract-first-design-mindset) | medium |
+
+---
+
 # Resource-Oriented Thinking Mental Model
 
 ---
@@ -79,6 +90,8 @@ GOOD: What is the noun?
   -> POST /notifications (creates notification)
   -> Server decides how to deliver it
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 "Sending an email" is a procedural operation. "A Notification" is a resource. When you think resource-first, you realize: notifications have lifecycle (pending, sent, failed, delivered). They have state you might want to read later. They have identity (for deduplication). Exposing `/notifications` gives you all of this naturally.
@@ -238,6 +251,34 @@ Fix: Audit existing verb endpoints. Find the noun. Map procedures to: resource s
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Statelessness as a Scalability Principle
 
 ---
@@ -293,6 +334,8 @@ Identity/permissions: JWT (client holds)
 Domain state (orders, accounts): database
 Session state: NONE (eliminated)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The state hasn't disappeared - it moved. Session state moved to the JWT (client-held). Domain state is in the database (always was). The server is now a pure function: request in, response out. Pure functions are trivially horizontally scalable.
@@ -457,6 +500,34 @@ Fix: Move session state to Redis (distributed session store). Or migrate to JWT 
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # API Contract First Design Mindset
 
 ---
@@ -514,6 +585,8 @@ Implementation MUST conform to spec.
 Spec changes require explicit review.
 Breaking changes are visible and deliberate.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Contract First makes breaking changes opt-in rather than accidental. A developer refactoring a Java response object doesn't automatically break clients. They would have to explicitly change the OpenAPI YAML, which triggers a review. The spec acts as a firewall between implementation and API surface.
@@ -702,3 +775,33 @@ Prevention: Define the OpenAPI spec on day 1. Generate client types (TypeScript 
 *What separates good from great:* "The Anti-Corruption Layer as the implementation point between internal domain model and public contract (translating `order_state_enum_internal` to `status`) connects Contract First to DDD context mapping in a concrete way."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

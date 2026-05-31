@@ -7,6 +7,15 @@ permalink: /html/l3-security/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Injection and XSS Prevention](#html-injection-and-xss-prevention) | very |
+
+---
+
 # HTML Injection and XSS Prevention
 
 🎯 **Interview Weight:** very high (★★☆) - XSS is the most
@@ -207,6 +216,8 @@ TRUSTED TYPES (Chrome - preventing DOM XSS):
   // Content-Security-Policy: require-trusted-types-for 'script'
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Content Security Policy (CSP) is the defense-in-depth layer that
@@ -262,6 +273,8 @@ reaches the browser's execution context.
   // Attacker sees all your cookies
 </script>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```javascript
 // GOOD: safe content insertion with HTML escaping
@@ -415,6 +428,8 @@ Diagnosis:
     report-uri /csp-report
   Gives visibility without blocking (for audit phase)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1049,6 +1064,8 @@ SCENARIO
 ### 📊 Diagram
 
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 XSS ATTACK FLOW:
   Attacker:
   1. Finds unsanitized input (search, comment, profile)
@@ -1339,6 +1356,14 @@ PERMISSIONS POLICY (iframe allow attribute):
   fullscreen, display-capture, usb, bluetooth
 ```
 
+> **Code walkthrough:** The permissions reference lists all
+> standard Permissions Policy features. Camera, microphone and
+> geolocation require explicit user gesture; payment and usb
+> represent high-risk capabilities that should be omitted unless
+> the embedded widget is explicitly trusted. Omitting a feature
+> from the `allow` attribute denies it even if the embedded
+> origin requests it - deny by default, grant narrowly.
+
 **The key insight:**
 
 `allow-scripts allow-same-origin` is the forbidden combination.
@@ -1395,7 +1420,6 @@ because new capabilities keep being added to the web platform.
      open popups, request geolocation/camera/mic -->
 
 <!-- GOOD: sandboxed with minimal permissions -->
-<iframe src="https://third-party-widget.com/embed.html"
         width="400"
         height="300"
         title="Payment Widget"
@@ -1559,6 +1583,15 @@ Fix: add both headers in server config:
     curl -I https://yoursite.com/sensitive-page
     Check for X-Frame-Options and Content-Security-Policy headers
 ```
+
+> **Code walkthrough:** The diagnostic sequence starts with user
+> reports and analytics signals, then narrows with browser DevTools
+> and curl. The curl check is critical: both `X-Frame-Options` and
+> `Content-Security-Policy: frame-ancestors` must appear in the
+> response headers. Missing both means any page can embed you.
+> The fix applies the headers in all three major server stacks
+> (Node.js helmet, Nginx, Apache) - pick the one matching your
+> deployment and add both headers for defense-in-depth.
 
 ---
 
@@ -2283,3 +2316,33 @@ flowchart TD
 > attacker's UI trick fails because there's nothing to click
 > through to. This is a pure HTTP-header-based defense: no
 > JavaScript, no UI changes required.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

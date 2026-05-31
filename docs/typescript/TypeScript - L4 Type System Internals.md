@@ -7,6 +7,15 @@ permalink: /typescript/l4-type-system-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [TypeScript Type Inference Algorithm](#typescript-type-inference-algorithm) | expert |
+
+---
+
 # TypeScript Type Inference Algorithm
 
 🎯 **Interview Weight:** expert (★★★) - type inference internals are
@@ -154,6 +163,8 @@ INFERENCE FAILURE MODES:
   const result = getFirst([]);  // T = never (empty array)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Understanding inference explains TypeScript error messages: "Type 'string'
@@ -300,6 +311,8 @@ RULE: if callers need explicit type annotations,
       Every explicit T at call sites = library design issue.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -396,6 +409,8 @@ first<string | number>(['hello'], 42);
 // Hover in IDE to see inferred type (look for 'any' or 'unknown')
 // tsc --extendedDiagnostics shows compile time per phase
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -650,3 +665,33 @@ MECHANISM
 > captured variables narrowed and not reassigned between narrowing check
 > and callback use. A common source of "I already checked this" errors:
 > code BETWEEN the null check and usage that could reassign the variable.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

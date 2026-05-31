@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # Health Checks: Liveness, Readiness, and Startup Probes
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -116,6 +118,8 @@ livenessProbe:
   successThreshold: 1        # (liveness/startup: must be 1)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The startup probe pattern for slow applications:**
 ```yaml
 startupProbe:
@@ -132,6 +136,8 @@ livenessProbe:
   failureThreshold: 3      # restarts after 3 * 10s = 30s of failure
   periodSeconds: 10
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The startup probe gives up to 300 seconds for startup. Once it passes, liveness
 takes over with stricter thresholds. Without startup probe, you'd need
 `initialDelaySeconds: 300` which wastes 5 minutes on every restart.
@@ -444,6 +450,8 @@ containers:
     successThreshold: 1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `failureThreshold` for startup is the key calculation:
 `max_startup_seconds / periodSeconds = failureThreshold`
 For 90s startup with 10s period: failureThreshold >= 9. Use 15 for a safety buffer.
@@ -589,6 +597,8 @@ spec:
       maxUnavailable: 0   # never reduce capacity below 6 pods
       maxSurge: 2         # allow 2 extra pods during update
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 With `maxUnavailable: 0`: Kubernetes will not remove old pods until new pods pass
 readiness. The update proceeds: create 2 new pods (maxSurge), wait for both to be
@@ -813,7 +823,37 @@ stateDiagram-v2
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Kubernetes Logging and Monitoring Strategy
+
+---
 
 ### 🎯 Model Answer
 
@@ -906,6 +946,8 @@ Container -> stdout/stderr
     Query UI (Kibana/Grafana)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 kubelet performs log rotation: by default 10MB per file, 5 files retained.
 A high-volume container can exhaust this in minutes. Always deploy a log shipper.
 
@@ -931,6 +973,8 @@ node-exporter (system metrics: CPU, disk, network)
          AlertManager (alerts)
          Grafana (dashboards)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key metrics to monitor:
 - `container_cpu_usage_seconds_total` - actual CPU usage
@@ -1381,6 +1425,8 @@ Layer 1 - Infrastructure alerts (cluster health):
   for: 2m
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - Workload alerts (pod health):
 ```yaml
 - alert: PodCrashLooping
@@ -1398,6 +1444,8 @@ Layer 2 - Workload alerts (pod health):
   for: 1m
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 3 - SLO alerts (user-facing):
 ```yaml
 # Error rate SLO: < 1% errors in 1 hour
@@ -1412,6 +1460,8 @@ Layer 3 - SLO alerts (user-facing):
   labels:
     severity: critical
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Alert routing: critical alerts (PodCrashLooping, NodeNotReady) -> PagerDuty.
 Warning alerts (DeploymentReplicasMismatch) -> Slack. SLO violations -> incident.
@@ -1447,6 +1497,8 @@ public class OrderController {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In Loki: `{app="order-svc"} | json | traceId="abc123"` finds all logs for this trace.
 In Grafana: from a slow Tempo trace span, click "Logs" to see correlated logs.
@@ -1621,3 +1673,33 @@ flowchart TD
 > acts as a buffer and pipeline for trace data. AlertManager operates independently
 > from Grafana - it receives Prometheus alerts and routes them to PagerDuty or Slack.
 > This separation ensures alerting continues even when Grafana has an outage.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

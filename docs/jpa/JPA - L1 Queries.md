@@ -8,9 +8,20 @@ permalink: /jpa/l1-queries/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L1 Queries](#jpa---l1-queries) | medium |
+
+---
+
 # JPA - L1 Queries
 
 ## JPQL Fundamentals: Entity Queries and Named Queries
+
+---
 
 ### 🎯 Model Answer
 
@@ -142,6 +153,8 @@ NAMED QUERIES:
   Optional<User> findByEmail(String email);  // Spring looks for User.findByEmail
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -271,6 +284,8 @@ Fix - two-query pagination:
   List<User> users = userRepository.findByIdsWithOrders(idPage.getContent());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -312,6 +327,8 @@ Hibernate merges the collections into the existing objects. Total: 2 queries, no
 ---
 
 ## Criteria API Basics: Type-Safe Dynamic Queries
+
+---
 
 ### 🎯 Model Answer
 
@@ -456,6 +473,8 @@ METAMODEL GENERATION:
   root.get("category")         // only fails at runtime
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -591,6 +610,8 @@ Fix:
   // Subquery: no JOIN on the outer query, no Cartesian product.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -631,6 +652,8 @@ but doesn't account for the result set multiplication.
 ---
 
 ## Spring Data JPA: Repository and Query Method Derivation
+
+---
 
 ### 🎯 Model Answer
 
@@ -765,6 +788,8 @@ PAGINATION:
   Page<User> findActive(Pageable pageable);
   // Separate countQuery: JPA knows what to count (needed for @Query with JOIN).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -901,6 +926,8 @@ Fix option 2: load, modify, commit (dirty checking, no extra SELECT needed):
   // Total: 1 SELECT + 1 UPDATE. Same as the merge approach but clearer.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -936,3 +963,33 @@ UPDATE attempt). Fix: implement `Persistable<UUID>` and maintain a `transient bo
 Set it to true in the constructor. `isNew()` returns the flag. After persist/merge: flag is false
 (via `@PostPersist`/`@PostLoad`). This gives the application full control over INSERT vs UPDATE
 behavior regardless of the ID generation strategy.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

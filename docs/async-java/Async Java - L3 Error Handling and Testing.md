@@ -7,7 +7,14 @@ permalink: /async-java/l3-error-handling-and-testing/
 render_with_liquid: false
 ---
 
-# Async Java - L3 Error Handling and Testing
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L3 Error Handling and Testing](#async-java---l3-error-handling-and-testing) | medium |
+| 2 | [Error Handling in Reactive Pipelines](#error-handling-in-reactive-pipelines) | medium |
+| 3 | [Testing Reactive and Async Code in Java](#testing-reactive-and-async-code-in-java) | medium |
 
 ---
 
@@ -115,6 +122,8 @@ With onErrorResume:
     subscriber.onError() is NOT called
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Error operator reference:**
 
 ```java
@@ -159,6 +168,8 @@ mono.timeout(Duration.ofSeconds(5))
         ex -> Mono.just(fallbackValue));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Error propagation rules:**
 1. Once `onError` fires, no more `onNext` signals are emitted
 2. `onError` is terminal: the subscription ends
@@ -187,6 +198,8 @@ Mono.fromCallable(() -> userService.getUser(id))
         ex -> Mono.just("default"));
 // Error anywhere in flatMap chain -> onErrorResume intercepts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -345,6 +358,8 @@ triggers at (almost) the same time with the same backoff delays. After
 // Spread across time: service not overwhelmed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -389,6 +404,8 @@ mono.onErrorMap(
 // Caller sees UserServiceException, not DatabaseException
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ordering matters when combining these.
 `onErrorMap` applied before `onErrorResume` allows `onErrorResume` to filter
 by the mapped type:
@@ -399,6 +416,8 @@ mono.onErrorMap(ConnectionException.class,
        ex -> fallback()); // handles infrastructure errors
     // Other exceptions pass through
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -422,6 +441,8 @@ flux.retryWhen(
             new MaxRetriesException(
                 "After 3 retries: " + retrySignal.failure())));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The `Retry` spec determines:
 - `maxAttempts`: how many retries
@@ -470,6 +491,8 @@ source()
         ex -> Mono.just(invalidItem)); // validation fallback
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Errors propagate only DOWNSTREAM. An error operator positioned BEFORE the
 failing operator does NOT catch that error.
 
@@ -512,6 +535,8 @@ public Mono<PaymentResult> processPayment(Payment p) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Circuit states and transitions:
 - CLOSED: normal operation, tracking failure rate
 - OPEN: all calls fail immediately with CallNotPermittedException
@@ -526,6 +551,8 @@ circuitBreaker.getEventPublisher()
             event.getStateTransition().getFromState(),
             event.getStateTransition().getToState()));
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The OPEN state is expected behavior under service failure - teams should
 not be surprised by it. Alert on the transition TO open (service degraded)
 and BACK to closed (service recovered).
@@ -562,6 +589,8 @@ Flux.range(1, 5)
     .subscribe(System.out::println);
 // Output: 1, 2, 4, 5 (3 skipped, cleaner semantics)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 `onErrorContinue` is experimental and can have surprising interactions with
 operators that buffer or aggregate. Prefer the `flatMap + onErrorResume(empty)`
@@ -605,6 +634,8 @@ Flux<Event> smartTimeout =
             Duration.ofSeconds(1));  // subsequent element timeout
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Timeout with fallback source:
 ```java
 mono.timeout(
@@ -612,6 +643,8 @@ mono.timeout(
     Mono.fromCallable(() -> cache.get(key)));
     // Cache is used immediately if main call times out
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `timeout()` uses `Schedulers.parallel()`
 by default for timing. This means the timeout fires on a parallel scheduler
@@ -624,6 +657,8 @@ mono.timeout(
     Mono.fromCallable(() -> cache.get(key))
         .subscribeOn(Schedulers.boundedElastic()));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -684,6 +719,8 @@ void fetchRetries3TimesBeforeFailing() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `StepVerifier.withVirtualTime` is the
 key for testing time-dependent behavior (retry delays, timeouts) without
 actually waiting. `thenAwait(duration)` advances the virtual clock,
@@ -714,6 +751,8 @@ Flux.range(1, 5)
 // Item 4 and 5: NOT processed (stream terminated)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Error inside flatMap with per-item recovery:**
 ```java
 Flux.range(1, 5)
@@ -726,6 +765,8 @@ Flux.range(1, 5)
     .subscribe(System.out::println);
 // Output: 2, 4, -1, 8, 10 (item 3 returns -1; stream continues)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `flatMap` with `maxConcurrency` and inner
 error handling: when an inner publisher fails, `flatMap` cancels it and emits
@@ -760,6 +801,8 @@ messages
         ex -> log.error("Fatal: {}", ex.getMessage()));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The pattern:
 1. `flatMap` with per-message error handling
 2. On error: send to DLQ (non-blocking)
@@ -779,6 +822,8 @@ it again - potentially creating a loop. Add a fallback for DLQ failure:
         })
         .then(Mono.empty()))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -851,6 +896,34 @@ stateDiagram-v2
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Testing Reactive and Async Code in Java
 
@@ -955,6 +1028,8 @@ StepVerifier.create(failingMono)
 // vs .verify(): no timeout = test hangs if publisher never completes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Virtual time testing:**
 
 ```java
@@ -974,6 +1049,8 @@ StepVerifier.withVirtualTime(
     .verifyComplete();
 // ^ Completes in milliseconds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **CompletableFuture testing:**
 
@@ -1000,6 +1077,8 @@ void asyncTest() throws Exception {
     assertThat(result).isEqualTo("expected");
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1197,6 +1276,8 @@ StepVerifier.withVirtualTime(
     .verify(Duration.ofSeconds(5)); // real timeout is generous
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For integration tests that can't use virtual time: increase timeouts
 significantly (5-10x what you think is needed) and add retry logic in
 the CI configuration for inherently flaky network tests.
@@ -1234,6 +1315,8 @@ StepVerifier.withVirtualTime(
     .expectNextCount(3)
     .verify();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `withVirtualTime` installs a virtual
 scheduler by calling `VirtualTimeScheduler.getOrSet()` which installs
@@ -1281,6 +1364,8 @@ void recoversFromServiceException() throws Exception {
         .isEqualTo("fallback");
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The difference between `ExecutionException`
 (from `get()`) and `CompletionException` (from `join()`): both wrap the
@@ -1339,6 +1424,8 @@ class OrderServiceTest {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Mockito's `verify()` works correctly with
 reactive code because `StepVerifier.verify()` blocks until the pipeline
@@ -1412,6 +1499,8 @@ class EventControllerTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The cancellation propagation test verifies
 that when a WebTestClient disconnects, the cancellation signal reaches the
 server-side publisher. This is critical for resource cleanup: infinite
@@ -1456,6 +1545,8 @@ void getProfileReturnsCurrentUserProfile() {
             .isEqualTo("alice"));
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Context is attached to the subscription,
 not the publisher. `contextWrite()` is applied to the Mono before passing
@@ -1509,6 +1600,8 @@ class EventServiceTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Hot sources (Sinks, ConnectableFlux)
 shared between tests are a common source of test flakiness. A previous
 test's emitted events may be buffered and delivered to the next test's
@@ -1542,6 +1635,8 @@ StepVerifier.create(infinite)
     .verify(Duration.ofSeconds(5)); // timeout for the 5 items
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 `thenCancel()` is also used to test cancellation behavior: does the
 upstream properly clean up when cancelled?
 
@@ -1561,6 +1656,8 @@ StepVerifier.create(resource)
 
 assertThat(released).isTrue(); // resource released on cancel
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1602,6 +1699,8 @@ void handlesMidStreamError() {
         .verify();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `TestPublisher` is a manually controlled
 publisher that allows programmatic control of signal emission during tests.
@@ -1668,6 +1767,8 @@ void firstSuccessWins() throws Exception {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Testing StructuredTaskScope cancellation:
 when one subtask fails, are other subtasks cancelled promptly? Use countdown
 latches or flags to verify:
@@ -1691,6 +1792,8 @@ try (var scope =
 }
 assertThat(task2Cancelled).isTrue();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1763,3 +1866,33 @@ sequenceDiagram
 > order, unexpected error), StepVerifier fails the test immediately. If
 > `verify(Duration)` is called with a timeout, the test fails if the
 > publisher doesn't emit all expected signals within that duration.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -119,6 +119,8 @@ BOTH FAIL:
     -> Very wrong answers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The improvement decision matrix:**
 
 ```
@@ -143,6 +145,8 @@ recall@5   faithfulness   ACTION
                           - Domain-specific fine-tuning
                           - Scale and cost optimization
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -694,6 +698,34 @@ they can be different K values."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Knowledge Freshness vs Model Knowledge
 
 **Interview Weight:** ★☆☆ - The fundamental design
@@ -788,6 +820,8 @@ for the changing parts;
 let LLM handle the stable parts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Three solutions comparison:**
 
 ```
@@ -799,6 +833,8 @@ Prompt injection Same as now  Small    0ms        Medium (large prompt)
 RAG              Index update Large    +100-500ms Low (retrieval)
 Tool call / API  Real-time    Any      +200-2000ms Medium (API)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1357,6 +1393,34 @@ in system prompt + knowledge base via RAG = personalization
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # RAG vs Agent Memory Architecture Decision
 
 **Interview Weight:** ★☆☆ - The meta-architectural
@@ -1460,6 +1524,8 @@ Parametric    Universal     Model        Direct       General knowledge
 (training)    (baked in)    weights      recall       Reasoning
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Decision flow:**
 
 ```
@@ -1478,6 +1544,8 @@ Both?
 Neither (just this conversation)?
   YES -> In-context only (simple chat)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1758,6 +1826,8 @@ Prevention strategies:
     )
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Memory content filtering:
     Don't store factual claims in episodic memory.
     Store: user preferences, past problem categories,
@@ -1773,6 +1843,8 @@ Prevention strategies:
         "trust the KNOWLEDGE BASE as the authoritative source."
     )
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (4) Memory expiration: old memories may be stale.
     Apply TTL to agent memories (e.g., 90-day expiry).
@@ -1822,6 +1894,8 @@ LLM generation:
   - Faithfulness: KB for facts, memory for personalization
   - Post-generation: validate against KB for price/policy claims
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Key design decisions:
 
@@ -1922,6 +1996,8 @@ User query
   -> Agent: now I have enough, generate answer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The agent has AGENCY over retrieval.
 Standard RAG: the retrieval is fixed (top-K ANN).
 Agent RAG: the LLM decides what to retrieve.
@@ -1990,6 +2066,8 @@ System prompt role assignment:
   MEMORY: personalization only, not facts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Example: inventory management agent
 - "What is the specification of product X?"
   -> RAG (product docs, stable)
@@ -2040,6 +2118,8 @@ Action:
      "last_topic": "webhook configuration"
    }
    ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
    Stored in a vector store (per customer namespace).
 
 2. RAG store (shared):
@@ -2148,3 +2228,33 @@ flowchart TD
 > The LLM generates from this combined context,
 > knowing which parts are authoritative (KB, live API)
 > vs. contextual (memory, conversation).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

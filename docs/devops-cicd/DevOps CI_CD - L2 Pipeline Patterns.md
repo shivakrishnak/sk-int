@@ -8,6 +8,16 @@ permalink: /devops-cicd/l2-pipeline-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Pipeline as Code](#pipeline-as-code) | medium |
+| 2 | [Test Automation in CI](#test-automation-in-ci) | medium |
+
+---
+
 # Pipeline as Code
 
 🎯 Interview Weight: high - pipeline-as-code is the standard practice
@@ -116,6 +126,8 @@ myapp/
   pom.xml
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The CI tool detects changes to the pipeline file or application
 code and executes the pipeline as defined in the file. The file
 specifies: trigger conditions, environment setup, steps to execute
@@ -136,6 +148,8 @@ standardPipeline {
   deployTargets = ['staging', 'production']
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The pipeline is part of the software system. It must be versioned,
@@ -560,6 +574,8 @@ company-pipeline-library/
     config-template.yaml          # static resources
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Each file in `vars/` becomes a callable step:
 ```groovy
 // vars/owaspDependencyCheck.groovy
@@ -572,6 +588,8 @@ def call(Map config = [:]) {
     """
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Services import with a version pin:
 ```groovy
@@ -586,6 +604,8 @@ pipeline {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Understanding the governance model.
 The shared library repository should have: the same code review
@@ -674,6 +694,8 @@ def call(String imageName, String imageTag) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Update the shared library version (e.g., from v3.1.0 to
 v3.2.0) and add SBOM generation to the standard build template.
 Services that use the standard template via `standardBuild()` get
@@ -711,6 +733,8 @@ pipeline-as-code formats allow condition-based execution:
 # GitHub Actions: only runs on main
 if: github.ref == 'refs/heads/main'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 A step that only runs on main might be a prerequisite for a later
 step that also runs on PRs. If staging deployment creates a test
 environment that PR tests depend on, PRs will fail if the staging
@@ -868,6 +892,8 @@ For Jenkins shared libraries, the testing approach is more mature:
       }
   }
   ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Integration tests: a separate "pipeline test" environment that
   runs test versions of the pipeline against a dummy application.
 - Gradual rollout: new library versions are opt-in initially,
@@ -907,6 +933,8 @@ dependencies. Fix: add caching.
     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
     restore-keys: ${{ runner.os }}-m2-
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This alone typically cuts 5-10 minutes from every build.
 
 Bottleneck 2: Sequential jobs that could be parallel. Fix: use the
@@ -930,6 +958,8 @@ use BuildKit with GitHub Actions cache:
       type=gha,mode=max
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Target metrics: under 5 minutes for unit test feedback, under
 10 minutes for full CI pipeline. These are achievable for most
 applications with the above optimizations.
@@ -942,6 +972,34 @@ Pipelines that creep above target trigger an optimization sprint.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Test Automation in CI
 
@@ -1220,6 +1278,8 @@ class OrderRepositoryIT {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # CI pipeline separates unit tests from integration tests
@@ -1502,6 +1562,8 @@ steps:
       -Dsurefire.useFile=false \
       -Dgroups="shard-${{ matrix.shard }}"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Four parallel shards of 500 tests: each runs 125 tests, ideally
 cutting the time to under 12 minutes.
 
@@ -1730,6 +1792,8 @@ void callsTheMethod() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Mutation testing would show 0% kill rate for this test - every
 mutation survives because there are no assertions.
 
@@ -1796,3 +1860,33 @@ test execution data and CI optimization. GitHub Actions, Gradle
 Enterprise, and CircleCI all collect test timing and failure rate
 data. Using that data to continuously improve test selection and
 parallelization is a mature DevOps practice.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

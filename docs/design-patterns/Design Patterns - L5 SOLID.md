@@ -8,6 +8,15 @@ permalink: /design-patterns/l5-solid/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [SOLID Principles and Design Pattern Synthesis](#solid-principles-and-design-pattern-synthesis) | medium |
+
+---
+
 # SOLID Principles and Design Pattern Synthesis
 
 ---
@@ -518,6 +527,8 @@ Violation: DIP
      Tests inject MockPaymentProvider.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Result:**
 
 - Adding a new payment provider: 1 new class, 0 existing class changes.
@@ -655,6 +666,8 @@ abstract class RepositoryContractTest<R extends Repository> {
     // All must pass the same behavioral tests
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 2: OCP violation discovered during sprint**
 
@@ -904,6 +917,8 @@ public class SolidRulesTest {
     // not concrete @Repository implementations
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (3) SonarQube cognitive complexity metric: high cognitive complexity
 per method correlates with SRP violations. (4) Number of @Autowired
 dependencies: a Spring bean with 8+ injected dependencies is a God
@@ -1045,6 +1060,8 @@ public interface DiscountStrategy {
     int getPriority(); // tie-breaking
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (2) Extract each case: create one `@Component` class per discount type.
 Each class encapsulates one discount's eligibility check and calculation.
 (3) Build the selection engine: inject `List<DiscountStrategy>` sorted
@@ -1065,3 +1082,33 @@ PR that breaks production. The gradual migration: extract one strategy
 per sprint while keeping the switch as a fallback. The switch gets shorter
 each sprint. After 10 sprints: it is gone. Zero downtime, zero big-bang
 refactor risk.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

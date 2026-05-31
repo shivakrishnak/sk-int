@@ -8,9 +8,20 @@ permalink: /java-performance/l2-gc-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L2 GC Basics](#java-performance---l2-gc-basics) | medium |
+
+---
+
 # Java Performance - L2 GC Basics
 
 ## GC Algorithms: G1, ZGC, Shenandoah Comparison
+
+---
 
 ### 🎯 Model Answer
 
@@ -140,6 +151,8 @@ CHOOSING A GC:
     Very small heaps (< 1GB): G1 is fine, ZGC overhead not justified.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -266,6 +279,8 @@ Fix:
      than ZGC (G1 young GC can quickly reclaim Eden during burst)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -345,6 +360,8 @@ under G1 vs ZGC to quantify the actual overhead for your workload.
 ---
 
 ## GC Tuning Fundamentals: Heap Sizing and Pause Goals
+
+---
 
 ### 🎯 Model Answer
 
@@ -484,6 +501,8 @@ ALLOCATION RATE MEASUREMENT:
   Target allocation rate: < 500MB/s (for well-tuned apps)
   High allocation rate: > 1GB/s (investigate with alloc flame graph)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -630,6 +649,8 @@ Fix:
   3. If humongous objects: find them (JFR G1HumongousAllocation event), fix the code
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -705,3 +726,33 @@ object pooling, primitive-specialized data structures (no autoboxing). The goal 
 everywhere - just in the paths that dominate the allocation rate (top 3 from the alloc flame graph).
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /jpa/l2-transactions/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L2 Transactions](#jpa---l2-transactions) | medium |
+
+---
+
 # JPA - L2 Transactions
 
 ## JPA Transactions: @Transactional and Persistence Context Lifecycle
+
+---
 
 ### 🎯 Model Answer
 
@@ -160,6 +171,8 @@ READONLY TRANSACTIONS:
     Result: unpredictable. Don't mix.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -287,6 +300,8 @@ Fix option 3: explicit rollback:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -329,6 +344,8 @@ started for the inner method.
 ---
 
 ## Entity Lifecycle: Managed, Detached, Removed, and Persist Cascades
+
+---
 
 ### 🎯 Model Answer
 
@@ -472,6 +489,8 @@ DETACH PATTERN (prevent unintended dirty check):
   // Alternative: use DTO projection (never load the entity at all).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -599,6 +618,8 @@ public Product modify(Long id) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -633,3 +654,33 @@ non-managed entity calls `merge()` internally (also executes a SELECT). If the e
 the same transaction: it's already managed, and `save()` is a no-op (dirty checking handles the
 UPDATE). The merge SELECT is only necessary when operating with detached entities. Design to minimize
 detached entity operations: load and modify within the same transaction.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

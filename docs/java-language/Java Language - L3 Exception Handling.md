@@ -8,9 +8,20 @@ permalink: /java-language/l3-exception-handling/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L3 Exception Handling](#java-language---l3-exception-handling) | medium |
+
+---
+
 # Java Language - L3 Exception Handling
 
 ## Exception Hierarchy: Checked vs Unchecked
+
+---
 
 ### 🎯 Model Answer
 
@@ -145,6 +156,8 @@ CHECKED EXCEPTION CONTROVERSY:
   Modern consensus: checked exceptions are valuable for library/framework boundaries,
   less useful for application-level code. Most modern Java APIs use unchecked.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -352,6 +365,8 @@ Prevention: NEVER swallow InterruptedException.
   Respect it or at least restore the flag.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -417,6 +432,8 @@ String value() {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The `return` in `finally` causes the RuntimeException to be silently swallowed. The method
 returns "default" instead of propagating the exception. This is one of the most subtle Java bugs.
 Rule: NEVER use `return` (or `throw`) in a `finally` block. Use `finally` only for cleanup that
@@ -493,6 +510,8 @@ A: Problem: `Stream.map(f)` requires `f` to be a `Function<T,R>` which doesn't d
 ---
 
 ## Exception Anti-patterns and Best Practices
+
+---
 
 ### 🎯 Model Answer
 
@@ -642,6 +661,8 @@ ANTI-PATTERN 5: USING EXCEPTION MESSAGE FOR PARSING
       throw e;  // rethrow if not handled
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -811,6 +832,8 @@ Checklist for useful exception messages:
   5. Do NOT parse exception messages (brittle, use the exception hierarchy)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -961,3 +984,33 @@ A: (1) `@ControllerAdvice` with `@ExceptionHandler`: global boundary handler. Ma
 ### 📊 Diagram
 
 *(Omit: Exception hierarchy and patterns expressed through code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

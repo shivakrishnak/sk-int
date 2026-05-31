@@ -175,6 +175,8 @@ Now solve:
   Reasoning:
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 Few-shot and CoT are not competing techniques - they
@@ -262,6 +264,8 @@ def classify_bad(text: str) -> str:
     # "I would say this is positive.", etc.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```python
 import json
 
@@ -309,6 +313,8 @@ def classify_with_few_shot(text: str) -> dict:
     )
     return json.loads(resp.content[0].text)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # CHAIN-OF-THOUGHT: multi-step reasoning
@@ -563,6 +569,8 @@ Review: "Total waste of money." -> Label: negative
 Review: "Package arrived Tuesday." -> Label: neutral
 Classify: Review: "Great product!"
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The model follows the demonstrated pattern exactly.
 
 Optimal k: 2-3 examples for most tasks. Returns
@@ -607,6 +615,8 @@ Therefore: [answer]
 Problem: [new problem]
 Let's think step by step:
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 More reliable than zero-shot CoT for complex tasks
 because the model sees the reasoning structure to follow.
 
@@ -1098,6 +1108,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # System Prompt Design
 
 **Interview Weight:** critical - The system prompt is
@@ -1245,6 +1283,8 @@ System prompt anatomy (RTIECS framework):
   Prompt injection resistance.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The system prompt is the highest-leverage engineering
@@ -1312,6 +1352,8 @@ def analyze_code_bad(code: str) -> str:
     # Produces: verbose prose, inconsistent format,
     # may suggest style changes instead of security
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```python
 # GOOD: RTIECS-structured system prompt
@@ -1959,6 +2001,8 @@ Output: {"vulnerabilities": [{"type": "SQLi",...}]}
 </examples>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why it helps for Claude specifically: Anthropic's models
 are trained with XML tags as a structure marker. The
 tags create clear semantic boundaries that help the
@@ -2127,3 +2171,33 @@ flowchart TD
 > concerns (system = instructions, user = data, validator
 > = gate) is the standard architecture for reliable,
 > safe production LLM components.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

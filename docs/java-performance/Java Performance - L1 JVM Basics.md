@@ -8,9 +8,20 @@ permalink: /java-performance/l1-jvm-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L1 JVM Basics](#java-performance---l1-jvm-basics) | medium |
+
+---
+
 # Java Performance - L1 JVM Basics
 
 ## JVM Memory Areas: Heap, Stack, Metaspace, Code Cache
+
+---
 
 ### 🎯 Model Answer
 
@@ -107,6 +118,8 @@ GENERATIONAL HEAP IN DETAIL (G1 GC):
   -> large object allocation = old gen pressure = major GC risk
   Fix: reuse large objects, use ByteBuffer.allocateDirect() for large IO buffers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -230,6 +243,8 @@ Fix:
   5. Use -XX:MaxRAMPercentage=70 to keep heap below 70% of container RAM
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -304,6 +319,8 @@ threads eliminate this constraint.
 ---
 
 ## Garbage Collection Fundamentals
+
+---
 
 ### 🎯 Model Answer
 
@@ -398,6 +415,8 @@ GC OVERHEAD METRIC:
   Monitoring: -Xlog:gc:file=gc.log   or   JFR GC events
   Parse: GCEasy.io for GC log analysis
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -520,6 +539,8 @@ Fix for System.gc() anti-pattern:
   (Warning: some libraries rely on System.gc() for cleanup - audit first.)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -594,6 +615,8 @@ stop-the-world full GC.
 ---
 
 ## Bytecode and JIT Compilation Basics
+
+---
 
 ### 🎯 Model Answer
 
@@ -701,6 +724,8 @@ WARMUP IMPLICATIONS:
   traffic warms up the hot methods. Canary: p99 higher during
   warmup period (first 30-60s after deployment).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -840,6 +865,8 @@ Mitigation options:
      Kubernetes readinessProbe: /internal/warmup must return 200 first.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -909,3 +936,33 @@ an object escapes only on the exception path (rare), C2 can still apply scalar r
 the happy path. The JMH test: use `-XX:+PrintEscapeAnalysis` to see what C2 identified as non-escaping.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

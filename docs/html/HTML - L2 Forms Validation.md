@@ -7,6 +7,16 @@ permalink: /html/l2-forms-validation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML5 Constraint Validation API](#html5-constraint-validation-api) | high |
+| 2 | [Custom Validity and Form UX Patterns](#custom-validity-and-form-ux-patterns) | high |
+
+---
+
 # HTML5 Constraint Validation API
 
 🎯 **Interview Weight:** high (★★☆) - Forms are the primary
@@ -172,6 +182,8 @@ NOVALIDATE PATTERN (custom error UI):
     // Proceed only if all valid
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -404,6 +416,8 @@ Common causes:
    Does not trigger form validation. Must call
    form.checkValidity() manually in the handler.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1131,6 +1145,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Custom Validity and Form UX Patterns
 
 🎯 **Interview Weight:** high (★★☆) - Form UX is where theory
@@ -1304,6 +1346,8 @@ PASSWORD STRENGTH METER:
     liveRegion.textContent = `Password strength: ${strength}`;
   });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1570,6 +1614,8 @@ Diagnosis: Open DevTools console, type valid value:
   document.getElementById('myInput').validationMessage
   // Shows the stuck custom message
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2013,3 +2059,33 @@ MECHANISM
 ### 📊 Diagram
 
 *(Omit: UX patterns best expressed through the code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

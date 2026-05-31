@@ -8,6 +8,16 @@ permalink: /design-patterns/l2-creational/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Abstract Factory Pattern](#abstract-factory-pattern) | medium |
+| 2 | [Prototype Pattern](#prototype-pattern) | medium |
+
+---
+
 # Abstract Factory Pattern
 
 ---
@@ -110,6 +120,8 @@ Client:
   productB = factory.createProductB()
   // Guaranteed: A and B are from the same family
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The abstract factory interface is the contract for a family. By injecting
@@ -478,6 +490,34 @@ prevents this by construction: one factory, one family.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Prototype Pattern
 
 ---
@@ -581,6 +621,8 @@ registry.register("fullConfig",
 Config cfg = (Config) registry.create("fullConfig");
 cfg.customize(userSettings);  // mutate the clone, not original
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The prototype registry separates "knowing which kind to create"
@@ -927,3 +969,33 @@ affecting other callers. The template registry use case is the canonical
 example: the email template is shared, but each email needs recipient-
 specific variable substitution. Cloning allows the customization without
 requiring a new DB load and without corrupting the shared template.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

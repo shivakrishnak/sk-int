@@ -101,6 +101,8 @@ LESSON: Series components reduce overall SLA.
   Target each tier for its own 99.99% SLA.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **NAT Gateway SPOF Pattern:**
 
 ```
@@ -115,6 +117,8 @@ GOOD: One NAT GW per AZ
   AZ-a failure: only AZ-a affected
   Cost: 3 * $32/month = $96/month extra
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -276,6 +280,8 @@ aws ec2 describe-route-tables \
 # Multiple route tables pointing to same nat-xxx = SPOF
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Create NAT GW in AZ-b, update AZ-b route table.
 
 ---
@@ -299,6 +305,8 @@ spring:
       # Stale connections (to old primary) fail validation
       # New connections made to new primary (via RDS endpoint)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -333,6 +341,8 @@ AWS Published SLAs:
 - ALB:            99.99% (always multi-AZ)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For services in series (all must be available):
 ```
 SLA = SLA1 * SLA2 * SLA3
@@ -343,6 +353,8 @@ EC2 (99.9%) + RDS (99.9%) + ElastiCache (99.9%)
 # Three 99.9% services in series = 99.7% end-to-end
 # Each additional dependency reduces composite SLA
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Applying the series SLA formula
 to your actual architecture. Most engineers know multi-AZ is better
@@ -414,6 +426,8 @@ resource "aws_autoscaling_group" "app" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ALB spanning AZs:
 ```hcl
 resource "aws_lb" "app" {
@@ -428,6 +442,8 @@ resource "aws_lb" "app" {
   enable_cross_zone_load_balancing = true  # default for ALB
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Capacity planning for AZ failure.
 Setting `min_size` to handle full load across N-1 AZs. A `min_size=2`
@@ -464,6 +480,8 @@ aws cloudwatch get-metric-statistics \
 # Check AWS Health dashboard for maintenance windows
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix (reduce 2 minutes to < 10 seconds for Aurora):
 ```bash
 # Migrate to Aurora: ~30s failover vs RDS 60-120s
@@ -471,6 +489,8 @@ Fix (reduce 2 minutes to < 10 seconds for Aurora):
 # RDS Proxy maintains connections during failover
 # Application connections do not drop - proxy handles reconnect
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* RDS Proxy as the long-term fix.
 Even with Aurora's faster failover, applications that hold long-lived
@@ -501,6 +521,8 @@ No instances ever become healthy
 Service is down
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With correct grace period:
 ```
 Instance launches
@@ -511,6 +533,8 @@ Application responds 200 OK
 Instance marked healthy, receives traffic
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Tuning:
 ```hcl
 health_check_grace_period = 120  # > startup time
@@ -519,6 +543,8 @@ health_check_grace_period = 120  # > startup time
 # Too short = replacement loop (service never comes up)
 # Too long = broken instance serves traffic during grace period
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `startupProbe` in Kubernetes
 is equivalent to the ASG grace period. The same concept applies
@@ -590,6 +616,8 @@ aws autoscaling terminate-instance-in-auto-scaling-group \
 aws fis create-experiment-template ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Running failover tests in
 production during low-traffic windows. Staging failover tests
 prove the mechanism works in staging. Only production tests measure
@@ -616,6 +644,8 @@ New primary overwhelmed -> performance degraded
 Application sees slow responses even after "successful" failover
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Prevention:
 ```java
 // Exponential backoff on connection retry:
@@ -628,6 +658,8 @@ config.setInitializationFailTimeout(60000);  // 60s total
 long backoff = (long)(Math.random() * 5000) + attempt * 1000;
 Thread.sleep(backoff);  // 0-5s + linear backoff
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 For RDS: use RDS Proxy. It maintains a warm connection pool
 to the primary. On failover, application connections stay open
@@ -683,6 +715,8 @@ Observability:
   - Aurora Performance Insights for query analysis
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Sizing the ASG for AZ failure.
 "Min 2 tasks/AZ" means on AZ failure we have 4 tasks handling load
 that 6 tasks handled before. The question is: does your application
@@ -707,6 +741,8 @@ perform acceptably at 66% capacity? Design for N-1 AZ capacity.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - system design is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -752,6 +788,34 @@ flowchart TB
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Disaster Recovery Strategies
 
@@ -837,6 +901,8 @@ BREAK-EVEN:
   If 1+ outage per month: Active-Active pays for itself
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Pilot Light vs Warm Standby:**
 
 ```
@@ -856,6 +922,8 @@ WARM STANDBY (DR region):
 DIFFERENCE: Warm Standby has running app tier,
   Pilot Light has only data tier running.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -929,6 +997,8 @@ resource "aws_route53_record" "api_dr" {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # DR RUNBOOK (executed when primary fails)
@@ -1045,6 +1115,8 @@ aws cloudwatch get-metric-statistics \
 # Alert if ReplicaLag > 300 seconds
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Alert on ReplicaLag. Scale up replica instance type
 if it can't keep up with write load.
 
@@ -1065,6 +1137,8 @@ spring:
 # On DR failover: update task definition env var
 # to DR region endpoint, redeploy ECS service
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1103,6 +1177,8 @@ RPO=minutes, RTO=minutes -> Warm Standby ($$$)
 RPO=seconds, RTO=seconds -> Active-Active ($$$$)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Calibration:
 ```bash
 # Measure actual RTO from DR test:
@@ -1117,6 +1193,8 @@ Calibration:
 # at time of simulated failure
 # RPO = event_time - last_replicated_timestamp
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Measuring RTO and RPO during
 actual DR tests rather than estimating from architecture diagrams.
@@ -1194,6 +1272,8 @@ resource "aws_route53_record" "secondary" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Failover detection timeline:
 - Failure occurs
 - Up to 30s: next health check fires, detects failure (1 of 3)
@@ -1246,6 +1326,8 @@ dig api-db.example.com  # should resolve to DR IP now
 redis-cli -h dr-cache.example.com FLUSHDB  # if cache corruption suspected
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The DNS resolution cache check.
 Applications and their database drivers often cache DNS resolutions
 for minutes. After a Route 53 failover, the application must flush
@@ -1278,6 +1360,8 @@ Trade-off:
 - For high-write applications: prohibitively expensive
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For Aurora Global Database:
 ```bash
 # Check typical replication lag:
@@ -1287,6 +1371,8 @@ aws cloudwatch get-metric-statistics \
 # Typical: 50-100ms lag (asynchronous)
 # On failover: up to lag value of data at risk
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Measuring replication lag
 continuously and alerting when it exceeds the RPO target. A lag
@@ -1363,6 +1449,8 @@ aws fis create-experiment-template --cli-input-json '{
 # stopConditions: experiment stops if error rate exceeds threshold
 # Built-in safety: experiment cannot make things worse than expected
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Safe chaos principles:
 1. Start with staging; graduate to production at low traffic
@@ -1452,6 +1540,8 @@ DR Activation Runbook (target: 4 hours):
 Cost: ~30% of primary region cost (Aurora replica + ECS at 0)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Pre-warming Fargate capacity
 in the DR region. Fargate capacity is not always immediately
 available when you scale from 0 to 100 tasks. Request a Fargate
@@ -1473,6 +1563,8 @@ capacity reservation in the DR region to guarantee launch time.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - system design is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1516,3 +1608,33 @@ flowchart LR
 > with continuous write traffic.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

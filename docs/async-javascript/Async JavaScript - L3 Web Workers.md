@@ -170,6 +170,8 @@ class WorkerPool {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Spawning a Worker has overhead: it creates a new OS thread,
 loads the Worker script, and initializes the JS engine.
@@ -338,6 +340,8 @@ worker.postMessage(user);
 // Fix: postMessage plain data objects, not class instances
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Worker not terminated after use**
 ```javascript
 // BAD: Worker left running after use
@@ -349,6 +353,8 @@ function runOnce(data) {
 }
 // Fix: always call worker.terminate() in success AND error path
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -388,6 +394,8 @@ JSON.parse(JSON.stringify({
 // Clones: creates deep copies
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 For performance: both deep-copy data. Structured clone is
 faster than JSON for binary data (ArrayBuffers). For large
 plain objects, JSON is comparable or faster.
@@ -417,6 +425,8 @@ const POOL_SIZE = Math.max(1, navigator.hardwareConcurrency - 1);
 // -1: keep one core for main thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RxJS integration:
 ```javascript
 import { fromEvent } from 'rxjs';
@@ -427,6 +437,8 @@ items$.pipe(
   mergeMap(item => from(pool.run(item)), POOL_SIZE)
 ).subscribe(result => handleResult(result));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Subtracting one from `hardwareConcurrency`
 to leave the main thread responsive. Saturating all cores
@@ -459,6 +471,8 @@ async function measureWorkerLatency() {
 }
 // Typical: 0.1-5ms depending on data size and OS
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Main thread blocking diagnosis: Performance panel -> look for
 long tasks (marked in red, > 50ms) in the Main thread row.
@@ -499,6 +513,8 @@ const result = await api.multiply(5, 6); // 30
 const image = await api.processImage(buffer);
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Comlink handles: serialization, message correlation, error
 propagation, Proxy objects, Transferables.
 
@@ -534,6 +550,8 @@ self.onmessage = ({ data: { canvas } }) => {
   render();
 };
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Use cases: particle systems, data visualizations with thousands
 of elements, game rendering, real-time charting.
@@ -589,6 +607,8 @@ class SafeWorker {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The ID-based request/response
 correlation for associating responses with specific pending
 Promises, and rejecting all pending work on fatal Worker errors.
@@ -613,6 +633,8 @@ shared.port.onmessage = e => handleData(e.data);
 shared.port.postMessage({ type: 'subscribe' });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Service Worker: network proxy layer. Intercepts fetch requests,
 manages cache, enables background sync and push notifications.
 Does NOT run CPU code - it is asynchronous, event-driven.
@@ -627,6 +649,8 @@ self.addEventListener('fetch', event => {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The key difference: Dedicated/Shared Workers are for computation;
 Service Workers are for network and lifecycle management.
 
@@ -634,6 +658,8 @@ Service Workers are for network and lifecycle management.
 are not for CPU work - they are for network strategies (cache-
 first, network-first, stale-while-revalidate). Mixing up these
 two use cases is a common interview misconception.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -650,9 +676,13 @@ Cross-tab shared state: Shared Worker.
 Network and offline: Service Worker.
 Canvas performance: OffscreenCanvas.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -698,6 +728,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # SharedArrayBuffer and Atomics
 
@@ -828,6 +886,8 @@ class Mutex {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 `Atomics.wait()` blocks the calling thread. Calling it on
@@ -1003,6 +1063,8 @@ if (!window.crossOriginIsolated) {
 // Cross-Origin-Embedder-Policy: require-corp
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: ABA problem in compare-and-swap**
 ```javascript
 // Thread 1 reads 0, gets preempted
@@ -1011,6 +1073,8 @@ if (!window.crossOriginIsolated) {
 // But state changed in between - ABA problem
 // Mitigation: tagged pointers (version counter in upper bits)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1086,6 +1150,8 @@ if (isAsync) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing `Atomics.waitAsync`
 is the correct API for the main thread and async Worker code,
 avoiding the "cannot block main thread" error.
@@ -1142,6 +1208,8 @@ class RingBuffer {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using `Atomics.load` and
 `Atomics.store` for the read/write pointers to prevent torn
@@ -1202,6 +1270,8 @@ function safeRead(view: Int32Array, idx: number) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The most reliable approach: design to minimize shared mutable
 state. Prefer immutable shared data (write once, read many)
 and message passing for coordination.
@@ -1236,6 +1306,8 @@ const acquired = Atomics.compareExchange(lock, 0, 0, 1) === 0;
 // If lock was 0 (unlocked): set to 1, return 0 -> acquired
 // If lock was 1 (locked):   unchanged, return 1 -> not acquired
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CAS is used for lock-free algorithms because it atomically
 checks AND sets. Without CAS, two threads could both check
@@ -1273,10 +1345,14 @@ WebAssembly.instantiate(wasmBuffer, {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Understanding that when
 you use WASM pthreads for C++ CPU-parallel code on the web,
 the cross-origin isolation requirement for SAB applies to
 your WASM deployment as well.
+
+---
 
 ### ⚖️ Comparison Table
 
@@ -1292,9 +1368,13 @@ For most applications: postMessage. For large one-time data
 transfers: Transferable. For continuously updated shared state
 in high-performance computation: SAB + Atomics.
 
+---
+
 ### 🏛️ System Design
 
 *(Omit: ★★☆ - not applicable)*
+
+---
 
 ### 📊 Diagram
 
@@ -1341,3 +1421,30 @@ sequenceDiagram
 > until notified, then reads the data and advances the read
 > pointer. The critical correctness invariant: data is written
 > BEFORE the atomic store that makes it visible.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*

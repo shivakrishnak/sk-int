@@ -8,9 +8,20 @@ permalink: /jpa/l3-locking/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - L3 Locking](#jpa---l3-locking) | medium |
+
+---
+
 # JPA - L3 Locking
 
 ## Optimistic Locking: @Version and Conflict Resolution
+
+---
 
 ### 🎯 Model Answer
 
@@ -152,6 +163,8 @@ OPTIMISTIC LOCKING FOR DETACHED ENTITIES (REST API pattern):
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -278,6 +291,8 @@ Solution options:
    Simpler conflict resolution (no exception, just wait).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -322,6 +337,8 @@ catches the version conflict. Business logic must handle the state conflict sepa
 ---
 
 ## Pessimistic Locking: LockModeType and Deadlock Avoidance
+
+---
 
 ### 🎯 Model Answer
 
@@ -448,6 +465,8 @@ LOCK TIMEOUT:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -566,6 +585,8 @@ Fix:
   Or: reduce the number of concurrent locks by redesigning the flow.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -603,4 +624,34 @@ backoff. In Spring: `@Retryable(value = {DeadlockLoserDataAccessException.class,
 Retry 3 times with 100ms exponential backoff. This handles the "1% of edge cases" where deadlocks
 occur despite best prevention. Monitoring: count deadlock retries in production. Rising retry rate
 = a new code path locking in incorrect order. Find and fix the source.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

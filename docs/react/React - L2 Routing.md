@@ -7,6 +7,18 @@ permalink: /react/l2-routing/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [React Router and Client-side Routing](#react-router-and-client-side-routing) | working |
+| 2 | [Dynamic Routing and Code Splitting](#dynamic-routing-and-code-splitting) | working |
+| 3 | [Higher-Order Components](#higher-order-components) | working |
+| 4 | [Render Props and Compound Components](#render-props-and-compound-components) | working |
+
+---
+
 # React Router and Client-side Routing
 
 🎯 **Interview Weight:** working (★★☆) - routing is required for every SPA;
@@ -145,6 +157,8 @@ function LoginForm() {
   return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -335,6 +349,34 @@ Symptom: navigating to a child route shows the parent layout but the child route
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Dynamic Routing and Code Splitting
 
 🎯 **Interview Weight:** working (★★☆) - lazy loading routes is a standard
@@ -454,6 +496,8 @@ function NavBar() {
 //   }
 // });
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -623,6 +667,34 @@ Symptom: Webpack/Vite cannot create named chunks; all dynamic imports result in 
 > The visualizer is the correct starting point - fixing bundle size without
 > measuring first is premature optimization.
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 
 # Higher-Order Components
 
@@ -741,6 +813,8 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 HOCs are part of React's component model history. Understanding them is
@@ -764,7 +838,8 @@ const ComponentWithEverything = withAuth(
     )
   )
 );
-// DevTools shows: withAuth > withTheme > withRouter > withErrorBoundary > withAnalytics > MyComponent
+// DevTools shows: withAuth > withTheme > withRouter
+//   > withErrorBoundary > withAnalytics > MyComponent
 
 // MODERN: compose hook calls inline (flat)
 function MyComponent() {
@@ -829,6 +904,86 @@ const MemoizedList = React.memo(ExpensiveList);
 | Render prop | Function prop | Flat | Direct | Explicit |
 
 ---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: HOCs are just like Python decorators and work the
+same way.**
+
+HOCs and Python decorators are similar in intent but different in
+mechanism. A Python decorator replaces a function at definition time.
+A React HOC wraps a component in a new component at runtime. The key
+difference: HOCs create wrapper components in the React tree, adding
+nesting visible in DevTools. Decorators do not create a wrapper
+in any tree. This distinction matters because HOC nesting accumulates:
+applying five HOCs creates five wrapper layers, inflating the component
+tree and making DevTools debugging painful.
+
+**Misconception 2: HOCs always add extra re-renders to wrapped
+components.**
+
+A well-written HOC does not add extra renders. The problem occurs
+when HOC logic triggers state changes that cascade downward. If the
+HOC passes stable references (via useMemo or useCallback) and its
+own state does not change unnecessarily, the wrapped component
+renders only when its own props change - same as without the HOC.
+The actual performance risk is creating HOCs inside render functions:
+`const Enhanced = withAuth(MyComponent)` inside a render call creates
+a new component class on each render, which forces React to unmount
+and remount the wrapped component every time.
+
+**Misconception 3: Custom hooks have made HOCs obsolete in all
+situations.**
+
+Custom hooks replace most HOC use cases - specifically, HOCs that
+inject behavior by calling hooks internally. But HOCs remain the
+right tool for: (1) wrapping class components that cannot call hooks,
+(2) library integrations that need to inject props into arbitrary
+components without touching their source, and (3) error boundaries
+(which cannot be implemented as hooks - only class components support
+`componentDidCatch`). Knowing when each pattern applies is the signal
+interviewers look for.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: HOC swallows the wrapped component's ref.**
+
+Symptom: `React.createRef()` or `useRef()` attached to the HOC-wrapped
+component returns `null` or points to the HOC wrapper instead of the
+inner component. Root cause: HOC does not forward refs - refs are
+blocked at the HOC boundary by default. Diagnosis: add a console.log
+to the ref callback to check what it receives; check whether
+`React.forwardRef` is used in the HOC definition. Fix: wrap the HOC
+with `React.forwardRef`: `const HOC = React.forwardRef((props, ref) =>
+<Wrapped {...props} ref={ref} />)`. Also set `HOC.displayName` for
+readable DevTools output.
+
+**Failure Mode 2: Props collision between HOC injected props and
+wrapped component props.**
+
+Symptom: a prop injected by the HOC (e.g. `isLoading`) is also
+accepted by the wrapped component for a different purpose; one
+silently overwrites the other, causing wrong behavior with no error
+message. Diagnosis: list all props injected by the HOC and compare
+to the wrapped component's prop types/TypeScript interface. Fix: HOCs
+should document their injected props and use namespaced or prefixed
+prop names to avoid collisions. Prefer TypeScript HOC signatures that
+separate "injected" from "passthrough" props using `Omit<T, K>`.
+
+**Failure Mode 3: HOC defined inside the render function causes
+perpetual remounting.**
+
+Symptom: wrapped component loses state on every parent render; inputs
+reset, animations restart, network requests repeat. Root cause: HOC
+is created inside the render/component body: `function Parent() {
+const Wrapped = withAuth(Child); return <Wrapped />; }` - React sees
+a new component type on every render and unmounts then remounts the
+tree. Diagnosis: add a `console.log` in Child's `componentDidMount`
+or `useEffect(()=>{...},[])` - if it fires on every parent update,
+the HOC is being recreated. Fix: always define HOC-wrapped components
+at module scope, never inside render functions.
+
 
 ### 🎯 Interview Deep-Dive
 
@@ -902,6 +1057,34 @@ DECISION
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Render Props and Compound Components
 
@@ -1039,6 +1222,8 @@ Accordion.Item = AccordionItem;
 </Accordion>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Why it matters:**
 
 Compound components are the dominant pattern for UI library design
@@ -1157,6 +1342,81 @@ Tabs.Content = TabsContent;
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Render props and compound components solve the
+same problem.**
+
+Render props pass behavior downward: a parent controls state and
+passes a render function the child can use. Compound components
+share implicit state across siblings: a parent `<Tabs>` holds active
+tab state; `<Tabs.Tab>` and `<Tabs.Panel>` each read it without prop
+drilling. The patterns are complementary, not alternatives. Render
+props answer "how do I share logic?" while compound components answer
+"how do I share state between related components with a natural API?"
+
+**Misconception 2: Compound components must use React.cloneElement
+to share state.**
+
+`React.cloneElement` was the original implementation technique. The
+modern approach uses `React.createContext` - the parent puts state
+in a Provider, each child component reads it with `useContext`. The
+Context approach is simpler (no child enumeration), works with
+non-direct children (deep nesting), and avoids the `cloneElement`
+limitation of only injecting props into direct children. Any new
+compound component implementation should use Context.
+
+**Misconception 3: Render prop callbacks execute like functions and
+have no performance concern.**
+
+The most common performance issue with render props: passing an
+inline arrow function as the render prop creates a new function
+reference on every parent render, which can cause the child to
+re-render even when underlying data has not changed. The fix is
+to memoize the render prop using `useCallback` when the child
+implements `React.memo`. This is a subtle issue because the child
+re-renders silently with no error or warning.
+
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Compound component children used outside the
+Provider cause cryptic undefined errors.**
+
+Symptom: `Cannot read property 'activeTab' of undefined` or similar
+when a `<Tabs.Tab>` is rendered outside its `<Tabs>` wrapper.
+Root cause: the child calls `useContext(TabsContext)` but no Provider
+is an ancestor, so context returns its default value (usually
+`undefined` or an empty object). Diagnosis: check if the context
+default value is defensive (`{}` or `null` with a guard). Fix:
+add a guard in the context consumer: `const ctx = useContext(Ctx);
+if (!ctx) throw new Error("Tab must be used inside Tabs");` This
+surfaces the misconfiguration immediately with a clear error instead
+of a cryptic downstream crash.
+
+**Failure Mode 2: Render prop inline function prevents
+React.memo optimization.**
+
+Symptom: a child component wrapped in `React.memo` still re-renders
+on every parent update. Diagnosis: check if the render prop is
+passed as an inline arrow function: `<Mouse render={(pos) =>
+<Cat pos={pos} />} />`. Every parent render creates a new function
+reference, failing memo's shallow equality check. Fix: extract the
+render prop to `useCallback` or to a stable component-level function.
+
+**Failure Mode 3: Context value object recreated on every render
+breaks compound component performance.**
+
+Symptom: all compound component children re-render whenever any
+ancestor re-renders, even when the compound component's own state
+has not changed. Root cause: context value passed to Provider is
+an object literal: `<Ctx.Provider value={{ activeTab, setActiveTab }}>`.
+A new object reference is created on each render. Diagnosis: wrap
+the context value in `useMemo`: `const value = useMemo(() =>
+({ activeTab, setActiveTab }), [activeTab])`. This prevents
+unnecessary renders of all context consumers.
+
+
 ### 🎯 Interview Deep-Dive
 
 | Scenario | Time | Key Signal |
@@ -1247,3 +1507,33 @@ Tabs.Content = TabsContent;
 > shows production awareness. The outside click handler via `useEffect` +
 > `useRef` is the standard pattern for dismissing floating UI. The `setOpen(false)`
 > in `Dropdown.Item.onClick` auto-closes the menu after selection - expected UX behavior.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

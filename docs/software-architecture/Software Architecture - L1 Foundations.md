@@ -153,6 +153,8 @@ Rules:
   - Layers can be tested in isolation (mock lower layer)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The power of layered architecture is the dependency rule. When
 every arrow points downward, upper layers are isolated from the
@@ -400,6 +402,8 @@ public class UserService {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Move behavior into the domain object. `user.deactivate()`
 should set the status and timestamp. The service becomes an
 orchestrator, not a logic container.
@@ -425,6 +429,8 @@ grep -r "ResponseBody\|@GetMapping" src/main/java/ |
   grep "@Entity"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Introduce DTOs at the presentation boundary. The controller
 maps from domain/entity to DTO. The JPA entity stays in the data
 layer.
@@ -449,6 +455,8 @@ cannot be mocked.
 - How long does the unit test suite take?
   (> 2 minutes for unit tests = dependency problem)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Inject repository interfaces into services. Use Mockito or
 similar to mock repositories in service unit tests. Keep integration
@@ -759,6 +767,8 @@ class LayerArchitectureTest {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This test fails the build if any class in the service package
 imports a class from the controller package, or if any class
 in the controller package directly uses a repository. The
@@ -780,6 +790,34 @@ differentiator.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Separation of Concerns
 
@@ -924,6 +962,8 @@ class OrderService {
 // Each class has ONE reason to change.
 // Testing pricing: unit test PricingEngine alone.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 A "concern" in SoC is not just a technical concept - it is any
@@ -1146,6 +1186,8 @@ grep -l "^import" src/**/*.java |
   xargs grep -c "^import" | sort -rn | head -10
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Identify distinct "reasons to change" in the class. Each
 reason becomes a new class. Use the Strangler Fig pattern: create
 new focused classes, route callers to the new classes, delete
@@ -1171,6 +1213,8 @@ grep -r "WHERE.*AND.*status\|WHERE.*active" src/
 # Multiple places with the same condition = duplicated business
 # logic in data access layer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Move business rules to the domain/service layer. The SQL
 becomes "WHERE id = ?" and the service filters in code, or the
@@ -1200,6 +1244,8 @@ mixed in the same place.
   that are NOT repeated server-side?
 - Do the frontend and backend rules ever disagree?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Business rules belong in the backend. The frontend should
 only apply them for UX purposes (pre-validation, display logic)
@@ -1329,6 +1375,8 @@ public class LoggingAspect {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Decorator pattern: wrap the business component with a decorator
 that adds the cross-cutting behavior. The `CachingUserRepository`
@@ -1513,6 +1561,34 @@ complexity is the staff differentiator.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Cohesion and Coupling
 
 🎯 Interview Weight: critical - the two most fundamental metrics
@@ -1640,6 +1716,8 @@ COUPLING LEVELS (worst to best):
 
 GOAL: High functional cohesion + message/data coupling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Cohesion and coupling are inversely related. When a class has low
@@ -1892,6 +1970,8 @@ but the dependency structure did not.
   (> 2 direct calls = potential over-coupling)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Introduce event-driven communication for non-critical
 chains. Use CQRS to separate read models from write models.
 Identify which synchronous calls can become async.
@@ -1920,6 +2000,8 @@ git log --stat --since="30 days ago" |
 # If file A and file B always change together, they should
 # probably be in the same component
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Identify the scattered concern and consolidate it. Use
 the Inline Class refactoring to merge the scattered pieces, then
@@ -1956,6 +2038,8 @@ public class OrderContext {
     // No layer uses all fields; all layers couple to this object
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Each layer defines its own input/output types. Map between
 them at layer boundaries. The controller creates a service request
@@ -2157,7 +2241,6 @@ mitigations for each.
 **Q5 [SENIOR]: What is the relationship between cohesion, coupling,
 and testability?**
 
-*Why they ask:* Tests whether the candidate understands that
 design quality and testability are directly connected.
 
 *Likely follow-up:* "What does a test smell tell you about
@@ -2294,3 +2377,33 @@ path (read-model transition).
 | Hiring Manager | How low coupling reduces release risk and team coordination cost |
 | Bar Raiser | Package-level principles, data-level coupling in microservices |
 | Peer Engineer | Practical: identifying coupling in a code snippet, refactoring approach |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

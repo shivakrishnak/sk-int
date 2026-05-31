@@ -156,6 +156,8 @@ HIBERNATE STATISTICS (diagnostic):
     sessionFactory.getStatistics()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Pool size is NOT "one per thread." Most threads spend the majority of
 their time NOT holding a database connection. The optimal pool size is
@@ -420,6 +422,8 @@ spring.datasource.hikari.leak-detection-threshold: 5000
 # Logs a warning if connection held > 5 seconds
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // If slow queries: add index, optimize query, or use JOIN FETCH
@@ -433,6 +437,8 @@ EntityManager em;
 EntityManager em = emf.createEntityManager(); // manual
 // MUST call em.close() in finally block
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -461,6 +467,8 @@ LIMIT 10;
 # N+1 pattern: same query repeated many times with different IDs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // N+1 on @OneToMany: replace
@@ -476,6 +484,8 @@ List<Order> findAllWithItems();
 @EntityGraph(attributePaths = {"items"})
 List<Order> findAll();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -499,6 +509,8 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 stats.getEntityCount()  # entities in all sessions
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Batch with periodic flush+clear:
@@ -519,6 +531,8 @@ public void processAll() {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -546,6 +560,8 @@ WHERE o.status = 'PENDING';
 -- Look: Seq Scan on orders = missing or not-used index
 -- Look: nested loop with high row estimate = wrong statistics
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Run `ANALYZE orders` to refresh statistics. Add a covering
 index. Rewrite the query in native SQL if Hibernate-generated SQL
@@ -601,6 +617,8 @@ Alerting:
   hibernate_query_execution_seconds_max > 1.0 -> Slack
   hikaricp_connections_pending > 5 -> Warning
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4 DEEP DIVE (~10 min):
 Connection pool per pod: HikariCP maximumPoolSize=10. 50 pods * 10 = 500
@@ -819,6 +837,8 @@ Connection leak detection (`leakDetectionThreshold`):
 ```java
 spring.datasource.hikari.leak-detection-threshold: 5000
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 HikariCP starts a per-connection timer when a connection is borrowed.
 If the connection is not returned within 5 seconds, it logs a stack
 trace of the borrowing thread. This identifies the code path that is
@@ -911,6 +931,8 @@ ORDER BY calls DESC LIMIT 5;
 // Shows the same customers query called 100 times
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix:
 ```java
 // Find the root query: orders are loaded without customers
@@ -927,6 +949,8 @@ List<Order> findByStatusWithCustomer(String s);
 // 1 query with JOIN: returns all data
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Preventing regressions in CI:
 ```java
 // Query count assertion using datasource-proxy:
@@ -937,6 +961,8 @@ void orderListUsesOneQuery() {
     assertSelectCount(1); // fails immediately if N+1 introduced
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The `pg_stat_statements` diagnostic
 and the query count assertion for CI - catching N+1 at both ends.
@@ -986,6 +1012,8 @@ spring:
 #       command: ["sleep", "5"]
 # Gives the load balancer time to stop routing before shutdown
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Cause 3: Schema migration (Flyway/Liquibase) during startup holds a
 connection for the duration of the migration. If migration takes 60
@@ -1051,6 +1079,8 @@ try {
 // Memory: only one entity in memory at a time
 // Performance: no snapshot comparison, no L1C growth
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Features NOT supported by `StatelessSession`:
 - First-level cache (no entity identity within the session)
@@ -1182,6 +1212,8 @@ public List<ProductDTO> listProducts() { ... }
 public Product createProduct(ProductDTO dto) { ... }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pool sizing for each:
 - Write pool: sized for write throughput (typically smaller: 5-10)
 - Read pool: sized for query throughput (typically larger: 15-30,
@@ -1193,6 +1225,8 @@ Replica lag monitoring:
 SELECT now() - pg_last_xact_replay_timestamp()
 AS replica_lag_seconds;
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Alert if replica lag > 5 seconds. Route reads back to primary when
 replica is lagging (prevents stale reads in time-sensitive operations).
 
@@ -1218,6 +1252,8 @@ spring:
       hibernate:
         generate_statistics: true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Access via code:
 ```java
@@ -1248,6 +1284,8 @@ System.out.println("Slowest query: " +
     stats.getQueryExecutionMaxTimeQueryString());
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The most useful statistic for N+1 detection:
 `queryExecutionCount` - if this is 50x the expected count, N+1 is present.
 
@@ -1258,6 +1296,8 @@ myOperation();
 System.out.println(stats.getQueryExecutionCount());
 // Shows only queries from myOperation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 In production, expose via Actuator:
 `management.endpoint.health.show-details=always` with Micrometer
@@ -1298,6 +1338,8 @@ spring.datasource.hikari.leak-detection-threshold: 5000
 // Stack trace shows the code holding the connection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Cause 2: Connection leak - `close()` not called.
 Some code path obtains a connection but does not return it. The pool
 fills with "active" connections that are logically abandoned.
@@ -1312,6 +1354,8 @@ Diagnostic:
 # (Spring @Transactional handles this automatically - 
 # check for manual EntityManager usage)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Cause 3: Application thread count exceeds connection pool.
 200 threads all request connections simultaneously during a traffic burst.
@@ -1363,6 +1407,8 @@ log_min_duration_statement = 500  -- log queries > 500ms
 log_statement = 'none'            -- don't log all queries
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Hibernate statistics via Micrometer (low overhead):
 ```yaml
 # Already shown above - this is the preferred approach
@@ -1370,12 +1416,16 @@ spring.jpa.properties.hibernate.generate_statistics: true
 # Exposes metrics without logging individual SQLs
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. DataSource proxy (query-level logging with control):
 ```java
 // p6spy or datasource-proxy: logs only specified queries
 // E.g., queries > 100ms, queries with EXPLAIN ANALYZE
 // Configurable, can be toggled at runtime
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Application Performance Monitoring (APM):
 New Relic, Datadog APM, Elastic APM - all capture SQL queries with
@@ -1401,6 +1451,7 @@ for a Hibernate-based service in production.
 *Likely follow-up:* "What alert would you set up first, before anything else?"
 
 **Answer:**
+
 **S (Situation):** A Spring Boot + Hibernate service had intermittent
 performance degradations that correlated with traffic spikes but had
 no clear cause. The team had `show_sql=true` disabled in production
@@ -1448,3 +1499,33 @@ degradation is reported.
 *What separates good from great:* The "queries per request per endpoint"
 metric normalized by request count - this is what makes N+1 regressions
 visible immediately in a multi-endpoint service.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

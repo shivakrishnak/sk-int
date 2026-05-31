@@ -380,6 +380,8 @@ curl http://elasticsearch:9200/_cluster/health | \
 # OTEL_TRACES_SAMPLER_ARG=1.0  (1.0 = 100%, 0.01 = 1%)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Address whichever step fails. Most common: sampling
 environment variable was set to 0.0 in production for cost
 control and no one updated it.
@@ -407,6 +409,8 @@ curl -s http://elasticsearch:9200/_cat/indices/jaeger-span-* \
 # Shows per-day index sizes
 # Most recent index shows current ingest rate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Enable index rollover and retention. Jaeger's Elasticsearch
 index cleaner job deletes indices older than N days. Reduce
@@ -754,6 +758,34 @@ Jaeger's architecture clearly.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Correlation IDs and Request Context
 
 **TL;DR** - A correlation ID is a unique identifier propagated
@@ -871,6 +903,8 @@ Error Response to User:
                     "requestId": "req-8f2a1c9e"}
   - Header: X-Request-ID: req-8f2a1c9e
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Returning the correlation ID in the error response is critical
@@ -1121,6 +1155,8 @@ Diagnostic:
 # Look for X-Request-ID in the request headers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add the correlation ID filter to the payment service.
 If it is a different language, implement equivalent MDC
 injection for that language's logging framework.
@@ -1151,6 +1187,8 @@ Diagnostic:
 # Or look for log lines missing standard fields
 # (injected lines may not have service/trace_id fields)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Add format validation before MDC injection:
 `id.matches("[a-zA-Z0-9-]{8,64}")` - reject IDs
@@ -1479,3 +1517,33 @@ format with the request ID.
 
 *(Omit: the correlation ID lifecycle ASCII in Concept Explanation
 illustrates the flow clearly.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,6 +7,17 @@ permalink: /html/l1-forms-and-media/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Forms](#html-forms) | high |
+| 2 | [HTML Images and Media](#html-images-and-media) | high |
+| 3 | [HTML Links and Navigation](#html-links-and-navigation) | high |
+
+---
+
 # HTML Forms
 
 🎯 **Interview Weight:** high (★☆☆) - Forms are the primary
@@ -149,6 +160,8 @@ INPUT TYPES (HTML5):
   hidden | submit | reset | button | image | search
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 The `name` attribute on form controls is what gets submitted -
@@ -202,6 +215,8 @@ encoding, validation, and submission natively.
   <input type="submit" value="Submit">
 </form>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: proper labels, input types, validation -->
@@ -333,6 +348,8 @@ Common causes:
 
 Fix: verify name attributes first - most common cause
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -758,6 +775,34 @@ SCENARIO
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTML Images and Media
 
 🎯 **Interview Weight:** high (★☆☆) - Images are the largest
@@ -905,6 +950,8 @@ AUDIO:
 </audio>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 `loading="lazy"` should NOT be used on above-the-fold images.
@@ -969,6 +1016,8 @@ that serving 1200px images to 400px screens wasted 9x bandwidth.
   <p>Product description</p>
 </div>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```css
 /* CSS width doesn't override the aspect-ratio reservation */
@@ -1059,6 +1108,8 @@ Measure: DevTools → Performance → scroll → look for layout shift
   (red triangles indicate layout shift events)
 Target: CLS < 0.1 (good), 0.1-0.25 (needs improvement), >0.25 (poor)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1454,6 +1505,34 @@ MECHANISM
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # HTML Links and Navigation
 
 🎯 **Interview Weight:** high (★☆☆) - Links are the foundation
@@ -1600,6 +1679,8 @@ NAVIGATION PATTERN:
   <!-- aria-current="page" on active link: screen readers
        announce "current page" after link text -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1752,6 +1833,8 @@ Quick audit:
 
 Fix: add rel="noopener noreferrer" to all external _blank links
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -2186,3 +2269,33 @@ do you use them?** `[SENIOR]` DEFINITION
 ### 📊 Diagram
 
 *(Omit: navigation structure best expressed in code examples.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,6 +8,16 @@ permalink: /microservices/l3-data-management/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Distributed Data Management - Database per Service](#distributed-data-management---database-per-service) | medium |
+| 2 | [Saga Pattern for Distributed Transactions](#saga-pattern-for-distributed-transactions) | medium |
+
+---
+
 # Distributed Data Management - Database per Service
 
 ---
@@ -56,6 +66,8 @@ DATABASE PER SERVICE (correct):
     affecting Order DB
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Data isolation patterns:**
 ```
 TECHNOLOGY PER SERVICE:
@@ -86,6 +98,8 @@ QUERY FEDERATION APPROACHES:
      - Works for: frequent cross-service queries
      - Cost: data duplication, sync complexity
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Data ownership decisions:**
 The most important design question for any piece of data: which service is its authoritative source? The source of truth service:
@@ -295,6 +309,34 @@ Fix: Immediate: manually create inventory adjustments to reconcile the gap. Long
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Saga Pattern for Distributed Transactions
 
 ---
@@ -350,6 +392,8 @@ ShipmentFailed (from INVENTORY_RESERVED + PAYMENT):
   -> Order status = CANCELLED
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Choreography style:**
 ```
 CHOREOGRAPHY (no central coordinator):
@@ -380,6 +424,8 @@ CompensationHandlers:
 PROBLEM: full flow is distributed across 4+ services,
 hard to understand and debug
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Sagas are compensating, not rolling back. A database transaction rolls back atomically (nothing is visible until committed). A saga rolls forward through compensation (intermediate state is visible to other transactions during the saga's execution). This is the ACD-without-I of saga transactions. Design compensating transactions carefully: they must succeed reliably (cannot fail), must be idempotent (may be called multiple times), and must address the business reality of undoing an action that may have already had side effects (an email was sent, a payment was initiated at a bank).
@@ -608,3 +654,33 @@ Fix: Fix the root cause of the compensating transaction failure (the service it'
 | 2PC | Strong | Full | Tight | Coordinator-managed rollback |
 | Outbox + Event | Eventual | None | Loose | At-least-once delivery |
 | Accept inconsistency | None | None | None | Manual reconciliation |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

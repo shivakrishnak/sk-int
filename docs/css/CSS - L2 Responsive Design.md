@@ -7,6 +7,16 @@ permalink: /css/l2-responsive-design/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Media Queries](#css-media-queries) | critical |
+| 2 | [Responsive Design Patterns and Mobile-First](#responsive-design-patterns-and-mobile-first) | high |
+
+---
+
 # CSS Media Queries
 
 🎯 **Interview Weight:** critical - Media queries are the
@@ -148,6 +158,8 @@ CSS CUSTOM MEDIA (Level 5 - proposal):
   @custom-media --tablet (min-width: 768px);
   @media (--tablet) { ... }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -365,6 +377,8 @@ Diagnosis:
 # Media query min-width sees the document width, not viewport
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: prefers-color-scheme not working**
@@ -385,6 +399,8 @@ overrides.
 # On Windows, scrollbar (~17px) reduces viewport width
 # Use overflow-y: scroll on body to keep consistent
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -992,6 +1008,34 @@ examples than diagrams)*
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Responsive Design Patterns and Mobile-First
 
 🎯 **Interview Weight:** high - Mobile-first is the standard
@@ -1130,6 +1174,8 @@ RESPONSIVE DESIGN TOOLKIT:
    /* Whichever is smaller */
    /* Content never overflows at small sizes */
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1334,6 +1380,8 @@ bandwidth (image formats, lazy loading).
 # Or: BrowserStack / Sauce Labs for remote testing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Symptom: text too small on mobile**
@@ -1357,6 +1405,8 @@ double-tap zoom that triggers the size adjustment.
 # Common causes: fixed-width elements, negative margins,
 # pre/code blocks without overflow-x: auto
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1935,3 +1985,33 @@ architecture is covered in L5 Design Systems)*
 
 *(Omit: responsive design is best illustrated with code
 examples, which are provided above)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

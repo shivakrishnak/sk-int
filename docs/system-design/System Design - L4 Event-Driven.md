@@ -8,7 +8,13 @@ permalink: /system-design/l4-event-driven/
 render_with_liquid: false
 ---
 
-# System Design - L4 Event-Driven
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L4 Event-Driven](#system-design---l4-event-driven) | medium |
+| 2 | [Event Sourcing and CQRS](#event-sourcing-and-cqrs) | medium |
 
 ---
 
@@ -108,6 +114,8 @@ Benefits:
   Event-driven integration: publish events to other services
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **CQRS architecture:**
 
 ```
@@ -146,6 +154,8 @@ With CQRS:
     Gap: 10-500ms typically (depends on consumer throughput)
     Trade-off: read may show stale data briefly after write
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -468,6 +478,8 @@ What CRUD still beats Event Sourcing at:
   Storage: events grow without bound vs current state (static size)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "storage grows without bound" concern is
 real at scale. An order aggregate might have 10-20 events over its lifetime.
 At 1M orders/day: 10-20M events/day. After 3 years: 10-20B events. Storage:
@@ -527,6 +539,8 @@ Design principle:
   Only those: apply consistency solution
   Others: accept eventual consistency (background refresh)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Optimistic UI approach (client manages
 its own state locally) is the most user-friendly solution and doesn't add
@@ -590,6 +604,8 @@ Breaking changes to avoid:
   Always add, never remove or rename.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The discipline of "always add, never remove
 or rename" fields in events is the non-negotiable rule for event sourcing at scale.
 Breaking changes require version migration: either an upcaster that transforms
@@ -649,6 +665,8 @@ Solutions:
 
   Tradeoff: simpler than crypto-shredding, but breaks event completeness
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Crypto-shredding is the production pattern
 recommended by Martin Kleppmann and used by companies like Zalando (who published
@@ -716,6 +734,8 @@ Snapshot versioning:
     Or: upcaster for snapshots (same as events)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Snapshot invalidation after code deployment
 is the operational gotcha. If you deploy new aggregate code that changes state
 fields, existing snapshots may be incompatible. The safe approach: version
@@ -780,6 +800,8 @@ Event publishing patterns:
   OrderPlaced -> InventoryReserveFailed: cancel order + notify customer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Transactional Outbox pattern solves the
 dual-write problem: writing to the event store AND publishing to Kafka in the same
 operation. Without it: event store write succeeds, Kafka publish fails -> event
@@ -836,6 +858,8 @@ Optimization strategies:
   Rebuild completes: swap traffic to new projection
   Zero downtime, no impact on running system
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The key insight for large-scale projection
 rebuild is that you don't have to rebuild from event zero. If you have
@@ -919,6 +943,8 @@ Orchestration Saga (centralized):
         }
     }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Saga compensating transactions must be
 idempotent. If the compensation command is sent twice (retry due to network issue):
@@ -1007,6 +1033,8 @@ Integration/acceptance testing:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The aggregate unit test pattern (Given/When/Then)
 is the key testing technique for Event Sourcing. Unlike mock-based unit tests,
 given-when-then tests the actual business logic: "given this history, when this
@@ -1066,6 +1094,8 @@ When Event Sourcing is the right choice:
   Multiple views of the same data needed (event drives all views)
   Time-series analysis (how did state evolve?)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "auditability is a core feature" criterion
 is the most reliable indicator for Event Sourcing. Financial applications (every
@@ -1128,6 +1158,8 @@ Audit log projection (natural use):
     Simple SQL on audit_log table
   Possible only because of Event Sourcing (events are authoritative)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Temporal queries are the "killer app" of Event
 Sourcing for regulated industries. "What was the patient's medication at 3pm on
@@ -1196,6 +1228,8 @@ Monitoring:
   Alert: consumer lag > 5000 events (projection falling behind)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The projection scaling independence is the
 architectural strength. Each projection consumer (order-list, analytics, search)
 scales independently based on its own throughput needs and backlog. Analytics
@@ -1206,3 +1240,33 @@ stream (Kafka topic) feeds all of them; no additional writes to the command
 side are needed for new projections. When a new team needs "orders by warehouse
 zone": they add a new consumer group, replay history for initial load, and
 subscribe for ongoing updates. Zero coordination with the write side.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

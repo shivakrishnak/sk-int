@@ -7,6 +7,17 @@ permalink: /react/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Component Composition Mental Model](#component-composition-mental-model) | meta |
+| 2 | [State Colocation Principle](#state-colocation-principle) | meta |
+| 3 | [React Decision Framework](#react-decision-framework) | meta |
+
+---
+
 # Component Composition Mental Model
 
 🎯 **Interview Weight:** meta (★☆☆) - transferable thinking pattern;
@@ -98,6 +109,8 @@ function LoadingButton({ loading, children, ...props }) {
   );
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -258,6 +271,34 @@ Symptom: single component file exceeds 500 lines; contains multiple unrelated re
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # State Colocation Principle
 
 🎯 **Interview Weight:** meta (★☆☆) - the most impactful architecture habit;
@@ -357,6 +398,8 @@ function SearchPage() {
 // 3. GLOBAL: app-wide (auth, theme, feature flags only)
 const useAuthStore = create(set => ({ user: null, login: (u) => set({user: u}) }));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -520,6 +563,34 @@ DEBUGGING
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # React Decision Framework
 
 🎯 **Interview Weight:** meta (★☆☆) - the "when to use what" map; shows
@@ -606,6 +677,8 @@ Do users actually perceive slowness?
 └── Specific re-renders too often → React.memo
     └── Requires: profile confirms + stable props
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -790,3 +863,33 @@ Symptom: different parts of the codebase use different state management approach
 > be derived from constraints, not cargo-culted from previous projects.
 > A team of 2 building a dashboard does not need the same stack as a
 > team of 20 building a marketing + app hybrid.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

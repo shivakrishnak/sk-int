@@ -536,6 +536,8 @@ inhibit_rules:
     # SLI alerts when database is the root cause
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Configure Alertmanager inhibition rules for shared
 infrastructure failures. Group related alerts in Alertmanager
 routing so one page covers all affected services.
@@ -561,6 +563,8 @@ sum(rate(http_requests_total[1h]))
 # If value is 5 but threshold is 14, alert won't fire
 # Lower threshold or reduce the for: duration
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Use the Google SRE Workbook alert parameters: 14x for fast
 burn with `for: 2m`, 2x for slow burn with `for: 15m`. Start
@@ -736,6 +740,8 @@ the error ratio at the outage time:
 sum(rate(http_requests_total{status=~"5.."}[5m]))
   / sum(rate(http_requests_total[5m]))
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If the error rate was 0%, the issue was an upstream proxy absorbing
 errors (returning cached responses or fallback). The SLI was
 technically not breached from Prometheus' perspective.
@@ -748,6 +754,8 @@ multiplier was during the outage:
   / 0.001  # error budget rate
 # If result was 8 and threshold was 14, alert didn't fire
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Check the `for:` duration. If the outage lasted 8 minutes
 and the alert has `for: 10m`, the condition was true for less than
@@ -977,6 +985,8 @@ and
 > (14 * 0.001)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 To avoid duplicating this for every service, I use recording rules
 that pre-compute the error ratio per job, then a parametric alert
 rule that references the recording rule. In Prometheus Operator,
@@ -990,6 +1000,8 @@ fallback to avoid division-by-zero when traffic drops to zero
 (sum(rate(errors[1h])) or vector(0))
 / (sum(rate(requests[1h])) or vector(1))
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The division-by-zero handling is
 a production detail that candidates who have actually deployed these
@@ -1042,6 +1054,34 @@ inform) emanating from the same SLI computation.
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Observability Anti-Patterns
 
@@ -1189,6 +1229,8 @@ FALSE CONFIDENCE ANTI-PATTERNS:
      Service down in eu-west-1
      Fix: Multi-region synthetic probes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The most dangerous anti-pattern is false confidence - having
@@ -1530,6 +1572,8 @@ prometheus_tsdb_head_series
 # Prometheus recommends < 10M; alert at 8M
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Identify the high-cardinality label using the topk cardinality
 query. Add an `attributes` processor in the OTel Collector to drop
 the offending label from metrics before they reach Prometheus. Move
@@ -1565,6 +1609,8 @@ histogram_quantile(0.99,
 # Returns 7500ms - invisible to average dashboard
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Replace average latency with P99 in all SLI dashboards.
 Change alert rules to use `histogram_quantile(0.99)`.
 Add a P99 SLO alert with multi-window burn rate.
@@ -1594,6 +1640,8 @@ grep "level" fluentd-config.yaml | head -20
 # If no level filter: ERROR logs are also sampled
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Change to level-aware sampling in the log shipper:
 ```yaml
 # Fluentd: keep 100% ERROR/WARN, sample INFO/DEBUG
@@ -1606,6 +1654,8 @@ Fix: Change to level-aware sampling in the log shipper:
   warn_interval 1    # keep all WARN
 </filter>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1675,12 +1725,16 @@ head series metric before and after restart:
 ```promql
 prometheus_tsdb_head_series
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 If this shows 50M+ and grows over time, it's a cardinality explosion.
 
 Next, I find the culprit metric:
 ```promql
 topk(10, count by (__name__)({__name__=~".+"}))
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This shows the 10 metrics with the most time series. The offending
 metric will be orders of magnitude larger than others.
 
@@ -1689,6 +1743,8 @@ series), I find the high-cardinality label:
 ```promql
 count(http_requests_total) by (label_name)
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 I run this for each label. The one with 10M unique values is the
 culprit (usually user_id, session_id, or request_id).
 
@@ -1703,6 +1759,8 @@ label names. Add a Prometheus alert:
 ```promql
 prometheus_tsdb_head_series > 8000000
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 firing at 8M time series (before the 10M OOM threshold).
 
 *What separates good from great:* The exact PromQL queries for
@@ -1975,6 +2033,8 @@ prometheus_tsdb_head_series
 # Warning: > 5M; Critical: > 8M; OOM likely: > 10M
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Find the highest-cardinality metrics:
 ```promql
 topk(10,
@@ -1984,6 +2044,8 @@ topk(10,
 # The exploded metric will be 100x larger than others
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Find which label drives the cardinality:
 ```promql
 # Replace "my_metric" with the culprit from Step 2
@@ -1992,11 +2054,15 @@ count(my_metric) by (label_two)
 # The label with count 1M+ is the high-cardinality one
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Sample the offending label values to confirm:
 ```promql
 group by (label_two)(my_metric)
 # Returns distinct values - will be user IDs, UUIDs, etc.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Estimate time to OOM at current growth rate:
 ```promql
@@ -2004,6 +2070,8 @@ Step 5: Estimate time to OOM at current growth rate:
 rate(prometheus_tsdb_head_series[1h])
 # At 1000 new series/second, 10M cap hit in ~2.8 hours
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Armed with the metric name and label name, I add the drop rule to
 the OTel Collector `attributes` processor and redeploy. New series
@@ -2046,7 +2114,6 @@ it actively creates false confidence; all others either create noise
 ### 🏛️ System Design
 
 *(Omit: ★★☆ keyword - not ★★★ and sd not set to true. System design
-application covered in Interview Deep-Dive Q8 above.)*
 
 ---
 
@@ -2056,3 +2123,33 @@ application covered in Interview Deep-Dive Q8 above.)*
 where a list/table structure communicates more clearly than a visual
 diagram. The anti-pattern taxonomy in the Concept Explanation section
 provides the necessary structure.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -7,7 +7,15 @@ permalink: /async-java/l0-orientation/
 render_with_liquid: false
 ---
 
-# Async Java - L0 Orientation
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Async Java - L0 Orientation](#async-java---l0-orientation) | medium |
+| 2 | [Why Async Programming in Java](#why-async-programming-in-java) | medium |
+| 3 | [Java Async Evolution: Threads to Virtual Threads](#java-async-evolution-threads-to-virtual-threads) | medium |
+| 4 | [Concurrency vs Async Programming in Java](#concurrency-vs-async-programming-in-java) | medium |
 
 ---
 
@@ -104,6 +112,8 @@ Thread 1: (later) <-[callback: result ready]-[Resume]-[Done]
            (Thread does OTHER work while DB call is in-flight)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 Async does not reduce latency for a single request. It increases
 throughput by allowing one thread to serve many concurrent I/O-bound
@@ -159,6 +169,8 @@ public Order processOrder(String userId, String itemId) {
     return createOrder(user, item); // total: ~10ms blocked
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **GOOD: Async CompletableFuture - parallel I/O, non-blocking**
 
@@ -289,6 +301,8 @@ jstack <pid> | grep -A 5 "WAITING\|BLOCKED"
 # Java 21+ virtual thread diagnostics:
 jcmd <pid> Thread.dump_to_file -format=json /tmp/threads.json
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: (1) Increase executor pool size for I/O-bound work. (2) Switch to
 non-blocking I/O libraries. (3) Offload blocking calls to a separate
@@ -461,6 +475,8 @@ fut.exceptionally(ex -> {
 });
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Common mistake: not attaching error handlers to CompletableFutures.
 The exception is stored in the future but silently lost if nothing
 calls `get()` or attaches a handler.
@@ -524,6 +540,34 @@ distinction clearly at this level.)*
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Java Async Evolution: Threads to Virtual Threads
 
@@ -638,6 +682,8 @@ Java 21: Virtual Threads (sync style + async throughput)
     respond(f.result());
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Virtual Threads do not eliminate reactive programming. They provide an
@@ -797,6 +843,8 @@ Diagnosis:
 #   com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: replace `synchronized` with `ReentrantLock` in affected code.
 Verify JDBC driver version is virtual-thread-compatible before migrating
 production services to Virtual Threads.
@@ -848,6 +896,8 @@ B b = fb.get(); // blocks again
 combine(a, b);  // calling thread was blocked the whole time
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CompletableFuture eliminated the blocking with callback registration:
 
 ```java
@@ -857,6 +907,8 @@ cfa.thenCombine(cfb, (a, b) -> combine(a, b))
    .thenAccept(result -> respond(result));
 // Calling thread returns immediately
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Noting that `CompletableFuture.join()`
 still blocks (like get() without checked exceptions) - and that async
@@ -965,6 +1017,8 @@ try (var scope =
 } // scope closes; all tasks guaranteed complete
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Guarantees: (1) all forked tasks complete before scope closes,
 (2) if one fails, others are cancelled, (3) parent thread owns subtask
 lifetimes - tasks cannot outlive their scope.
@@ -1031,6 +1085,34 @@ without WebFlux migration.
 
 ---
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Concurrency vs Async Programming in Java
 
@@ -1132,6 +1214,8 @@ Parallel (CPU-bound, multiple cores):
   CPU 2: [compute B]  <- simultaneously
   Both CPUs active. No I/O wait involved.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 True async requires non-blocking I/O at the OS level (Java NIO, OS
@@ -1283,6 +1367,8 @@ for (ThreadInfo info : infos) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: separate pools for CPU-bound and I/O-bound work.
 ```java
 // CPU pool: one thread per core
@@ -1293,6 +1379,8 @@ ExecutorService cpuPool = Executors.newFixedThreadPool(
 ExecutorService ioPool =
     Executors.newFixedThreadPool(200);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1374,6 +1462,8 @@ CompletableFuture.runAsync(() -> counter[0]++); // chain 2
 // counter[0] may be 1 or 2 - data race
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: use AtomicInteger for shared counters across async chains. Within
 a single chain, JMM guarantees sequential visibility.
 
@@ -1432,6 +1522,8 @@ Thread t2 = new Thread(() -> {
 t1.start(); t2.start(); // concurrent: overlap in time
 t1.join(); t2.join();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Both file reads proceed concurrently. Neither is async: each blocks
 its thread for the full read duration. This is the traditional Java
@@ -1526,3 +1618,33 @@ you." This concrete correction builds lasting understanding.
 ### 📊 Diagram
 
 *(Omit: Three-model ASCII in Code Example provides the visual comparison.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

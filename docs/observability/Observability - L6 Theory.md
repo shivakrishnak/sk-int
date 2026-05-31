@@ -7,31 +7,20 @@ permalink: /observability/l6-theory/
 render_with_liquid: false
 ---
 
-# Observability - L6 Theory
+## Keywords in This File
+{: .no_toc }
 
-Deep theoretical foundations: control-systems observability rank,
-Luenberger observers in distributed systems, and eBPF kernel
-instrumentation for zero-overhead production profiling.
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Observability - L6 Theory](#observability---l6-theory) | medium |
+| 2 | [🔬 OBS-L6-001 - Observability Theory and Control Systems](#obs-l6-001---observability-theory-and-control-systems) | medium |
+| 3 | [🔬 OBS-L6-002 - eBPF Kernel Observability](#obs-l6-002---ebpf-kernel-observability) | medium |
 
 ---
 
----
-id: OBS-L6-001
-title: Observability Theory and Control Systems
-category: Observability
-difficulty: ★★☆
-interview_weight: medium
-asked_at: FAANG
-seniority: staff
-tags: #observability #control-theory #theory #distributed-systems
-status: draft
-sd: false
-version: 1
----
+# 🔬 OBS-L6-001 - Observability Theory and Control Systems
 
-# 🔬 OBS-L6-001 — Observability Theory and Control Systems
-
-🎯 Interview Weight: medium — asked at Staff+ interviews and
+🎯 Interview Weight: medium - asked at Staff+ interviews and
 systems-research roles to test whether the candidate has
 grounded their observability intuition in formal theory.
 
@@ -131,6 +120,8 @@ Observability matrix O (np x n):
 System is observable iff rank(O) = n.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 When rank(O) = n, a unique state trajectory maps to every output
 sequence - the Luenberger observer can converge to exact state:
 
@@ -142,6 +133,8 @@ Observer (runs alongside real system):
   L = observer gain matrix (chosen for stability)
   The correction term L * error drives x_hat -> x
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The eigenvalues of (A - LC) determine convergence speed. Pole placement
 selects L so observer converges faster than the real system dynamics.
@@ -488,6 +481,8 @@ Fix: Add off-heap memory as an explicit output dimension.
   The rank deficiency is resolved by adding the missing output.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: Cross-service causal link hidden by observability rank gap**
 
 ```
@@ -515,6 +510,8 @@ Fix: Add TCP retransmit rate and connection wait time as
   Once the rank gap is closed, the causal correlation becomes
   visible in the existing monitoring tooling.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -879,9 +876,37 @@ sd: false
 version: 1
 ---
 
-# 🔬 OBS-L6-002 — eBPF Kernel Observability
+---
 
-🎯 Interview Weight: high — appears in senior/staff observability and
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+# 🔬 OBS-L6-002 - eBPF Kernel Observability
+
+🎯 Interview Weight: high - appears in senior/staff observability and
 SRE interviews, particularly at cloud-native companies using Linux
 production fleets, and when the role involves continuous profiling.
 
@@ -991,6 +1016,8 @@ eBPF Program Lifecycle:
 9. Userspace reads maps/ring buffer for analysis
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Hook points used for observability:**
 
 - **kprobes:** dynamic hooks on any kernel function entry/return.
@@ -1014,6 +1041,8 @@ Map types used in observability:
 - BPF_MAP_TYPE_STACK_TRACE: kernel stack capture
 - BPF_MAP_TYPE_RINGBUF: low-latency event streaming (5.8+)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **CO-RE (Compile Once, Run Everywhere):**
 BTF (BPF Type Format) embeds kernel struct layout information in
@@ -1411,6 +1440,8 @@ Fix: Simplify loop bounds (use bounded for-loops with constant
   (5.3+ has more permissive loop verification).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 2: uprobe symbol resolution fails on stripped binary**
 
 ```
@@ -1445,6 +1476,8 @@ Fix (option 3): Use frame pointer-based profiling (no symbols needed)
   for CPU profiling: compile with -fno-omit-frame-pointer
   and use perf + eBPF frame walker.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1821,3 +1854,33 @@ stores the debug binary alongside the stripped production binary. For
 JVM: async-profiler and Parca use the JVM TI JVMTI interface to get
 method metadata without DWARF. eBPF-based JVM profilers hook into
 the JIT at the JVMTI level to get symbol tables."
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

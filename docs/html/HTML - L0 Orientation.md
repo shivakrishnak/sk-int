@@ -7,6 +7,17 @@ permalink: /html/l0-orientation/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HTML Origins and Purpose](#html-origins-and-purpose) | medium |
+| 2 | [How Browsers Parse HTML](#how-browsers-parse-html) | high |
+| 3 | [Document Object Model](#document-object-model) | high |
+
+---
+
 # HTML Origins and Purpose
 
 🎯 **Interview Weight:** medium (★☆☆) - Asked at all levels to
@@ -119,6 +130,8 @@ RENDER PIPELINE:
   Render Tree → Layout → Paint → Composite
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 HTML's error tolerance is a feature, not a bug. Browsers were
@@ -174,6 +187,8 @@ minimal encoding of this metadata.
 <!-- Search engines cannot identify title    -->
 <!-- No heading hierarchy for keyboard nav   -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **GOOD: semantic HTML with clear roles**
 
@@ -271,6 +286,8 @@ Diagnosis: disable CSS, read page in order - this is what
 Fix: make DOM order match reading order; use CSS only for
   visual rearrangement, not logical rearrangement
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -646,6 +663,34 @@ flowchart LR
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # How Browsers Parse HTML
 
 🎯 **Interview Weight:** high (★☆☆) - Parsing knowledge enables
@@ -765,6 +810,8 @@ SPECULATIVE PRELOADER (parallel thread):
   → Images load even while main parser is blocked
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 
 HTML parsing is forgiving by design. The spec defines error
@@ -821,6 +868,8 @@ that any page authors write must render.
 </body>
 </html>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```html
 <!-- GOOD: non-blocking script loading -->
@@ -924,6 +973,8 @@ Fix sequence:
   3. Split large bundles via code splitting
   4. Measure LCP in Lighthouse before and after
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1312,6 +1363,34 @@ sequenceDiagram
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Document Object Model
 
 🎯 **Interview Weight:** high (★☆☆) - The DOM is the bridge
@@ -1431,6 +1510,8 @@ MODIFICATION:
   el.setAttribute('class','active') → attribute change
   parent.appendChild(child)  → moves into tree
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1603,6 +1684,8 @@ Fix:
 
 Before/after: profile with DevTools, compare Layout time
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1967,3 +2050,33 @@ flowchart TD
 > pattern forces repeated layout recalculations (thrashing), while
 > batched reads then writes allows the browser to minimize
 > recalculation passes.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

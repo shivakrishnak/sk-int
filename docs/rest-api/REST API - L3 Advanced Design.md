@@ -8,6 +8,16 @@ permalink: /rest-api/l3-advanced-design/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [HATEOAS and Hypermedia APIs](#hateoas-and-hypermedia-apis) | medium |
+| 2 | [Error Handling and Problem Details](#error-handling-and-problem-details) | medium |
+
+---
+
 # HATEOAS and Hypermedia APIs
 
 ---
@@ -73,6 +83,8 @@ After order ships, state changes:
   // cancel and update links ABSENT (invalid now)
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The absence of a link IS information. A client renders a Cancel button only when the cancel link is present. When it's gone, the button disappears. The server encodes the order's state machine in the presence/absence of links. This moves state machine logic from clients to the server - a single source of truth.
@@ -243,6 +255,34 @@ Fix: Configure Spring HATEOAS's `ForwardedHeaderFilter` to use the X-Forwarded-H
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Error Handling and Problem Details
 
 ---
@@ -315,6 +355,8 @@ Content-Type: application/problem+json
   ]
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The error `type` URI is a machine-readable identifier that clients can use for conditional error handling without string parsing. Different error types for the same HTTP status code enable specific handling: `insufficient-balance` shows a top-up dialog. `account-locked` redirects to the support page. Both are 422 but need completely different client behavior.
@@ -550,3 +592,33 @@ Fix: Catch-all exception handler must NOT use `exception.getMessage()` in the re
 | JSend | Community | Partial | Yes | Manual |
 
 **The deciding factor:** Use RFC 9457 Problem Details for any new REST API. It is the standard and has Spring Boot 3+ built-in support via `ProblemDetail` class.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

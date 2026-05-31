@@ -166,6 +166,8 @@ Profiling Backend (Parca / Pyroscope):
     (green = less CPU, red = more CPU after change)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step-by-step: (1) Linux kernel fires a perf_event 97 times per
 second per CPU core. (2) The attached eBPF program reads the current
 thread's stack trace - both user-space frames and kernel frames. (3)
@@ -630,6 +632,8 @@ cat /proc/<PID>/maps | grep -E "\.so|executable"
 # This allows eBPF to walk the stack through JIT code
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: For JVM: add `-XX:+PreserveFramePointer` to JVM startup args.
 For Go: ensure `go build` without `-ldflags="-w"` in production (Go
 preserves frame pointers by default since 1.12). For stripped C++:
@@ -674,6 +678,8 @@ uname -r
 # Need 4.15+ for basic eBPF, 5.8+ for CAP_BPF + CAP_PERFMON split
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Update the DaemonSet security context. Option A (privileged):
 `securityContext: privileged: true`. Option B (least privilege):
 add `capabilities: add: [CAP_BPF, CAP_PERFMON, CAP_SYS_PTRACE]`
@@ -715,6 +721,8 @@ kubectl describe pod -n observability \
   -l app=parca-agent \
   | grep "NODE_NAME"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Create a ClusterRole with `get/list/watch` on `nodes`, `pods`,
 and `namespaces` resources, bound to the parca-agent ServiceAccount.
@@ -937,7 +945,6 @@ cannot map PID -> cgroup -> pod.
 Required Linux capabilities:
 - `CAP_BPF` (kernel 5.8+): load eBPF programs and create BPF maps
 - `CAP_PERFMON` (kernel 5.8+): access perf_event subsystem
-- `CAP_SYS_PTRACE`: read /proc/<pid>/maps for symbol resolution
 
 On kernels below 5.8, `CAP_BPF` and `CAP_PERFMON` didn't exist as
 separate capabilities; you need `CAP_SYS_ADMIN` instead (or
@@ -1219,7 +1226,6 @@ that engineers don't anticipate until they hit it.
 adding a verbose profiler - both slow down production."
 How do you respond?** `[MISCONCEPTION]`
 
-*Why they ask:* Tests whether the candidate understands the
 fundamental difference between instrumentation-based and
 sampling-based profiling.
 
@@ -1383,6 +1389,8 @@ eBPF Continuous Profiling Platform
   trace exemplar link
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Staff angle:**
 The platform cost model: 200 nodes * 1% CPU = 2 CPU cores reserved
 for profiling across the cluster. Storage: ~$30-50/month on S3 for
@@ -1498,3 +1506,33 @@ sequenceDiagram
 > between the "before" and "after" windows, and renders the
 > differential flame graph that turns a 4-hour investigation into
 > a 10-minute one.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

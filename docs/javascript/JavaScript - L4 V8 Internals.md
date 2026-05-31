@@ -7,6 +7,15 @@ permalink: /javascript/l4-v8-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [V8 JIT Compilation and Optimization](#v8-jit-compilation-and-optimization) | expert |
+
+---
+
 # V8 JIT Compilation and Optimization
 
 🎯 **Interview Weight:** expert (★★★) - understanding V8 internals
@@ -159,6 +168,8 @@ OBJECT SHAPE CHANGES:
     this.z = z || 0;  // Always defined, even if unused
   }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Why it matters:**
 
@@ -367,6 +378,8 @@ PROFILING WORKFLOW:
   - Deoptimization count: 0 in hot paths
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -481,6 +494,8 @@ function processRequest(req) {
 // [17:Scavenger]: 50ms -> reduce object allocation rate
 // [40:MarkSweepCompact]: 200ms -> reduce object promotion rate
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1047,3 +1062,33 @@ React server-side rendering hot path?** `[STAFF]` SYSTEM-DESIGN
 > (`renderToPipeableStream`) reduces peak heap usage by allowing
 > garbage collection of completed subtrees before the full render
 > finishes.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

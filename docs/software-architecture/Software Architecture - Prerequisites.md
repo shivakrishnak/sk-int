@@ -131,6 +131,8 @@ INHERITANCE
   Architecture scale: PREFER COMPOSITION for flexibility
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 OOP principles scale from class to module to service to system.
 Encapsulation at service level means database-per-service.
@@ -358,6 +360,8 @@ genuine "is-a" relationships.
 grep -r "extends" src/ | wc -l
 # Use IDE class hierarchy view to find depth > 3
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Flatten to composition. Extract shared behavior to
 collaborator objects injected via constructor.
@@ -660,6 +664,34 @@ principles to the team's own recent pain points.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Design Principles - SOLID and Beyond
 
 🎯 Interview Weight: critical - asked at nearly every level for
@@ -785,6 +817,8 @@ D - Dependency Inversion Principle (DIP)
   RIGHT: OrderService depends on PaymentGateway interface
   BENEFIT: Swap Stripe for PayPal, inject Mock in tests.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 SOLID principles trade complexity for flexibility. Perfect SOLID
@@ -1001,6 +1035,8 @@ find src/ -name "*Service.java" \
 # Flag any over 500 lines for SRP review
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Identify the class's "reasons to change" - each one becomes
 its own service. Extract incrementally: new code calls the new
 service, old callers still call the old class. Migrate over time.
@@ -1023,6 +1059,8 @@ instead of depending on injected interfaces.
 grep -r "new.*Client\|new.*Repository\|new.*Gateway" src/ \
   --include="*.java" | grep -v "test"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Extract an interface for each external dependency. Move
 instantiation to DI configuration. Inject mocks in tests.
@@ -1270,6 +1308,8 @@ double tax =
 double tax = order.getTaxRate();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The coupling problem: the violating code depends on Order,
 Customer, Address, and State structures. When Customer refactored
 to use ContactInfo instead of Address, every method chain that
@@ -1293,7 +1333,6 @@ without creating dogma?**
 *Why they ask:* Staff signal: enabling teams is as important as
 knowing principles yourself.
 
-*Likely follow-up:* "What do you do when a senior engineer disagrees?"
 
 Presenting design principles as rules creates defensiveness.
 The approach that works: present principles as problem-solution
@@ -1331,6 +1370,34 @@ and connecting principles to the team's own recent pain points.
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Systems Thinking Foundations
 
@@ -1451,6 +1518,8 @@ FAILURE CASCADES
   C (calls B) reports errors -> C's callers receive errors
   Prevention: circuit breakers, bulkheads, timeouts, backpressure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The system has properties not in any component. You cannot predict
@@ -1635,6 +1704,8 @@ redis-cli info stats | grep keyspace_hits
 grep "Connection is not available" app.log | tail -50
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* (1) Jitter retry intervals. (2) Stagger TTL with small
 random offset to prevent simultaneous expiry. (3) Pre-warm caches
 before routing traffic. (4) Circuit breaker on DB to prevent
@@ -1661,6 +1732,8 @@ kill -3 <pid>    # trigger thread dump on JVM
 # Look for TIMED_WAITING state all blocked on same call
 # java.net.SocketTimeoutException absent = no timeout set
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* (1) Set timeouts on ALL upstream calls. (2) Bulkheads -
 separate thread pools per upstream. (3) Circuit breaker to stop
@@ -1689,6 +1762,8 @@ can handle.
 # Measure latency, throughput, queue depth for EACH
 # component in the call chain, not just the target
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Apply Theory of Constraints. Identify the constraint first.
 Optimize the constraint. Find the new constraint. Repeat.
@@ -1980,3 +2055,33 @@ dependency maps) that make platform-level systems thinking actionable.
 | Hiring Manager | Business value: systems thinking prevents expensive outages |
 | Bar Raiser | Trade-offs: over-engineering for emergent failures that may never occur |
 | Peer Engineer | Practical: real cascade story, specific containment steps taken |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

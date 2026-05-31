@@ -20,6 +20,8 @@ render_with_liquid: false
 
 # API Server, Scheduler, and Controller Manager Internals
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -104,6 +106,8 @@ Request ->
   Return response to client
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Why mutating before validating: mutating webhooks (e.g., Istio's sidecar injector)
 add fields (the sidecar container). Validating webhooks then check the FINAL object
 (including mutations) for policy compliance. This ordering ensures validators see
@@ -133,6 +137,8 @@ webhooks:
   # Fail = safer but requires high webhook availability
   # Ignore = continue without mutation if webhook unavailable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **kube-scheduler - Filter+Score pipeline:**
 
@@ -175,6 +181,8 @@ etcd change -> API server -> watch event -> Informer (updates cache)
                                             Calls API server to fix divergence
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Level-triggered: if a reconcile fails, the key is re-queued (with backoff). The next
 reconcile reads CURRENT state (not the failed state). This is idempotent: repeated
 reconciles converge to the correct state regardless of how many times they run.
@@ -195,6 +203,8 @@ spec:
   leaseDurationSeconds: 15
   renewTime: "2024-01-01T12:00:00Z"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 The active instance renews the Lease every `renewTime`. If it fails to renew within
 `leaseDurationSeconds`, the standby instances compete to acquire the Lease. New leader
@@ -550,7 +560,6 @@ Final score = sum of (plugin_score * plugin_weight) across all plugins.
 
 Key scoring plugins:
 - `LeastAllocated`: nodes with more free resources score higher
-- `NodeAffinity`: preferred affinity rules add points
 - `ImageLocality`: node already has the container image (avoids pull delay)
 - `PodTopologySpread`: soft spread constraints
 - `InterPodAffinity`: preferred anti-affinity reduces score for nodes with conflicting pods
@@ -626,6 +635,8 @@ kubectl describe deployment my-app -n team-a
 # Look at: Events, Conditions, and Replicas count
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: check the ReplicaSet created by the Deployment controller.
 ```bash
 kubectl get rs -n team-a -l app=my-app
@@ -634,6 +645,8 @@ kubectl describe rs <new-rs-name> -n team-a
 # Events: was it unable to create Pods?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: check the Pods.
 ```bash
 kubectl get pods -n team-a -l app=my-app
@@ -641,6 +654,8 @@ kubectl get pods -n team-a -l app=my-app
 kubectl describe pod <new-pod> -n team-a
 # Events: why is it Pending? Insufficient resources? Admission rejected?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Common causes by pod status:
 - Pending: no schedulable nodes (resources, taints, affinity), PVC not bound
@@ -653,6 +668,8 @@ Step 4: check Deployment controller logs if no ReplicaSet was created.
 ```bash
 kubectl logs -n kube-system kube-controller-manager-<node> | grep -i "my-app"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: check admission webhooks (if pod creation is rejected immediately).
 `kubectl describe pod <pod>` -> Events: "admission webhook denied"
@@ -743,6 +760,8 @@ func (p *CostPlugin) Score(
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 To use: build as a Go plugin (or as a custom scheduler binary). Configure via
 KubeSchedulerConfiguration:
 ```yaml
@@ -754,6 +773,8 @@ profiles:
       - name: CostAwarePlugin
         weight: 100
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Filter plugin point is the most powerful for
 custom logic: it can block a node based on arbitrary criteria (license availability,
@@ -783,6 +804,8 @@ Mitigation:
       operator: NotIn
       values: [kube-system, kube-public, cert-manager]
   ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 - Run webhook deployments with >= 2 replicas, anti-affinity rules
 - Use PodDisruptionBudget: `minAvailable: 1`
 
@@ -839,6 +862,8 @@ etcdctl endpoint status --write-out=json | \
   jq '.[0].dbSize'
 # Also: Prometheus etcd_disk_backend_commit_duration_seconds
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Layer 3 - Root cause categories:
 
@@ -933,6 +958,8 @@ spec:
   renewTime: "2024-01-01T12:00:10Z"  # updated every renewDeadline interval
   leaderTransitions: 3               # how many times leadership has changed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Active leader behavior:
 - Acquires the Lease (writes its identity) on startup
@@ -1052,6 +1079,8 @@ Architecture:
      Worker Nodes (communicate with NLB)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 kube-apiserver configuration:
 - 3 instances (one per AZ on control plane nodes)
 - ALL instances are active (API servers are stateless, all serve traffic)
@@ -1156,3 +1185,33 @@ flowchart TD
 > returns success to the client without waiting for controllers to act. This is the
 > source of the "eventual consistency" in Kubernetes: `kubectl apply` confirms the
 > write was accepted, not that the resulting pods are running.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

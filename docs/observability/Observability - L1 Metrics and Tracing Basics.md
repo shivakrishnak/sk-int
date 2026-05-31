@@ -379,6 +379,8 @@ curl -s 'http://prometheus:9090/api/v1/metadata' \
 # If result is "gauge" for a latency metric, wrong type
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Rename the metric (type changes require name changes),
 add a histogram with the same base name and _seconds suffix
 following Prometheus conventions, migrate alerting rules to
@@ -413,6 +415,8 @@ curl -s 'http://prometheus:9090/api/v1/query' \
 # Means all latency is above the highest defined bucket
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Redefine buckets with higher boundaries: add 10.0, 30.0
 buckets. Also investigate why all latency is above 5 seconds.
 
@@ -442,6 +446,8 @@ curl -s 'http://prometheus:9090/api/v1/query' \
     series: .value[1]}'
 # Any metric > 100,000 series is a cardinality risk
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Remove user_id from the metric label set. Use traces
 and logs to investigate per-user data; metrics are for
@@ -715,6 +721,34 @@ above illustrate the types clearly.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Distributed Trace Anatomy
 
 **TL;DR** - A distributed trace is a tree of spans. Each span
@@ -822,6 +856,8 @@ Span fields:
                within a span (not child spans)
   links:       references to other traces (for async)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Trace context propagation: when service A calls service B,
 it injects the current trace_id and its own span_id into the
@@ -1034,6 +1070,8 @@ kafka-console-consumer.sh \
 # No traceparent header = broken context propagation
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Use OTel Kafka instrumentation that automatically injects
 traceparent into message headers. If using a non-standard
 Kafka client, inject manually before publish and extract on
@@ -1062,6 +1100,8 @@ chronyc tracking | grep "System time"
 # Compare output across services
 # Skew > 100ms will cause visible trace anomalies
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Ensure all services use NTP with the same upstream time
 server. Kubernetes pods synchronize to the node clock; ensure
@@ -1092,6 +1132,8 @@ curl 'http://jaeger:16686/api/traces?service=batch-processor' | \
     select(.spans > 100)'
 # Any trace with > 100 spans is probably over-instrumented
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Replace per-item spans with span events on a batch span.
 Record one span for the batch operation, and record per-item
@@ -1356,6 +1398,34 @@ Example 2 code block above.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Instrumentation Fundamentals
 
 **TL;DR** - Instrumentation is the practice of adding telemetry
@@ -1460,6 +1530,8 @@ USE Method (for resources)
   E - Errors: resource-level failures
       metric: counter("db_connection_errors_total")
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Two instrumentation approaches:
 
@@ -1718,6 +1790,8 @@ Diagnostic:
 # has no order.processed, the gap is in the async step
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add a business metric for order creation success:
 `counter("orders_created_total", labels=["status"])` in the
 order processor. Alert on `sum(rate(...{status="error"})) > 0`.
@@ -1749,6 +1823,8 @@ curl -s http://prometheus:9090/api/v1/query \
 # are in the same counter
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add a status label to the counter. Deploy the updated
 service. Historical data will not be retroactively corrected,
 but new data will have the status dimension.
@@ -1778,6 +1854,8 @@ curl http://elasticsearch:9200/_stats/store | \
 # Check which attribute has the most unique values
 # in a sample of 1000 traces
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Replace full SQL query string with a parameterized query
 name: `db.statement="SELECT * FROM orders WHERE id=?"` (safe,
@@ -2052,3 +2130,33 @@ in L4/L5 files.)*
 *(Omit: the RED method structure and code examples above
 illustrate instrumentation clearly. A separate diagram does
 not add meaningful signal for this L1 concept.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

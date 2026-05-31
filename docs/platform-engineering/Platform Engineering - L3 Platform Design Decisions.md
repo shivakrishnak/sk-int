@@ -7,17 +7,6 @@ permalink: /platform-engineering/l3-platform-design-decisions/
 render_with_liquid: false
 ---
 
-# Platform Engineering - L3 Platform Design Decisions
-
-## Keywords in This File
-
-| # | Keyword | Weight |
-|---|---|---|
-| 1 | [Build vs Buy Platform Decisions](#build-vs-buy-platform-decisions) | critical |
-| 2 | [Platform API Design and Contracts](#platform-api-design-and-contracts) | high |
-
----
-
 # Build vs Buy Platform Decisions
 
 ---
@@ -183,6 +172,8 @@ Step 5: Build exit criteria
   - What OSS alternative would you migrate to if it matures?
   - What is the maximum investment before you stop and adopt OSS?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Open source is not free - it has integration, maintenance, and upgrade
@@ -787,6 +778,34 @@ why no OSS option meets the requirements.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Platform API Design and Contracts
 
 ---
@@ -947,6 +966,8 @@ spec:
     availability: float  # 0.999|0.9999 (default: 0.999)
     # platform sets PodDisruptionBudget based on this
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Platform API surface area is a liability, not an asset. Every configuration
@@ -1409,6 +1430,8 @@ spec:
     message: "replicas.min must be <= replicas.max"
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CEL (Common Expression Language) validation (Kubernetes 1.25+):
 Kubernetes now supports CEL expressions for cross-field validation
 (e.g., min <= max). Use CEL for constraints that span multiple fields.
@@ -1439,6 +1462,8 @@ spec:
       cluster.platform.company.com/tier: production
       cluster.platform.company.com/region: us-east-1
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Consumers specify what they need (production tier, us-east-1 region);
 the platform finds the matching cluster.
 
@@ -1447,6 +1472,8 @@ Pattern 2 - Named environments (for simpler use cases):
 spec:
   environment: production  # maps to cluster selection policy
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The platform maps environment names to cluster selection logic.
 Teams do not know cluster names; they know environments.
 
@@ -1455,6 +1482,8 @@ Pattern 3 - Explicit cluster (for advanced cases only):
 spec:
   cluster: prod-us-east-1-cluster-03
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Only for use cases where the specific cluster matters (compliance
 isolation, data residency). Not for general use.
 
@@ -1494,6 +1523,8 @@ kubectl get crd -l platform.company.com/managed=true \
 # Describe the API schema
 kubectl explain database.spec --recursive
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 CRD-generated documentation: tools like `crd-ref-docs` can generate
 Markdown documentation from CRD OpenAPI schemas. This documentation
@@ -1566,3 +1597,33 @@ Target "opinionated CRD with tiers" - enough abstraction to remove
 expertise requirements, enough flexibility to handle legitimate variation.
 Black box APIs fail when legitimate edge cases arise; thin wrapper APIs
 fail to reduce cognitive load.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

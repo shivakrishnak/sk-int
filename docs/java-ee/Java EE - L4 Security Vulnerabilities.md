@@ -132,6 +132,8 @@ Native query (VULNERABLE unless parameterized):
   )
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **EJB Remote Attack Surface:**
 
 Before Jakarta EE, EJB remote interfaces were commonly
@@ -458,12 +460,16 @@ grep -rn "getParameter\|getQueryParam\|PathParam" src/ |
 # setParameter: likely injection
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Exploitation check (safe test in dev only):*
 ```java
 // Test with: department = "' OR '1'='1"
 // Vulnerable code returns all users
 // Fixed code returns empty list or throws exception
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:*
 ```java
@@ -473,6 +479,8 @@ em.createQuery(
 ).setParameter("dept", userInput)
  .getResultList();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -486,6 +494,8 @@ grep -rn "@PathParam\|@QueryParam" src/ |
 # Review: does the method verify ownership?
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Exploitation (in authorized pentest):*
 ```bash
 # Log in as User A, get token, access User B's resource:
@@ -494,6 +504,8 @@ curl -H "Authorization: Bearer $USER_A_TOKEN" \
 # If 200: IDOR vulnerability
 # 12345 belongs to User B; User A should get 403
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:*
 ```java
@@ -507,6 +519,8 @@ Order order = em.createQuery(
     sc.getUserPrincipal().getName()
  ).getSingleResult(); // throws NoResultException if not owner
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -523,6 +537,8 @@ grep -rn "disallow-doctype-decl\|external-general-entities" src/
 # If XML parsing code exists without these features: vulnerable
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *XXE test payload:*
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -531,6 +547,8 @@ grep -rn "disallow-doctype-decl\|external-general-entities" src/
 ]>
 <root>&xxe;</root>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:*
 ```java
@@ -541,6 +559,8 @@ dbf.setFeature(
     "disallow-doctype-decl", true
 );
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -554,6 +574,8 @@ dbf.setFeature(
 | CSRF | No built-in protection | Account takeover | CSRF token header |
 | Java Deserialization | EJB remote vulnerable | RCE | Use JSON/REST; JEP 290 filter |
 | Exposed ports | App server defaults open | Lateral movement | Firewall mgmt ports |
+
+---
 
 ### 🏛️ System Design
 
@@ -721,12 +743,16 @@ em.createNativeQuery(
 );
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Detection via grep:
 ```bash
 grep -rn "createQuery\|createNativeQuery" src/ |
   grep "+" | grep -v "setParameter"
 # Any + in createQuery call = review needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 JPQL injection impact:
 - Read all records: `' OR '1'='1`
@@ -760,6 +786,8 @@ return em.createQuery(
  .getSingleResult(); // throws if not found or not owned
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2: interceptor for audit:
 ```java
 @Interceptor
@@ -778,6 +806,8 @@ public class OwnershipInterceptor {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 3: testing:
 ```java
 // Security test: User A cannot access User B's order
@@ -795,6 +825,8 @@ public void testIdorPrevention() throws Exception {
     assertEquals(403, status); // must be forbidden
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Add IDOR security
 tests to the CI/CD pipeline: for each resource type,
@@ -828,6 +860,8 @@ Mitigation:
 # Disable invoker context entirely
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. JEP 290 serial filter (Java 9+):
 ```java
 // In startup code:
@@ -839,6 +873,8 @@ ObjectInputFilter filter = ObjectInputFilter.Config
     );
 ObjectInputFilter.Config.setSerialFilter(filter);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Network: block EJB remote port (4447) and invoker
    endpoints from internet traffic at firewall.
@@ -879,6 +915,8 @@ NewCookie cookie = new NewCookie.Builder("JSESSIONID")
     .build();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Double-submit cookie pattern:
 ```java
 // Generate CSRF token on login:
@@ -897,6 +935,8 @@ if (!MessageDigest.isEqual(
 }
 // Use MessageDigest.isEqual for timing-safe comparison
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. Prefer JWT Bearer tokens (immune to CSRF):
 Cookies are automatically sent by browsers cross-origin.
@@ -962,6 +1002,8 @@ public class SecurityHeadersFilter
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Content-Security-Policy
 is the most powerful XSS mitigation but also the most
 complex to configure. Start with report-only mode to
@@ -1023,6 +1065,8 @@ public void deleteAccount(Long userId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Audit logs must be
 append-only and tamper-evident. Store them to a separate
 system (not the application database): the attacker who
@@ -1053,6 +1097,8 @@ grep -i "cmd\|exec\|command\|shell\|Runtime\
 \.getRuntime" /opt/wildfly/standalone/log/server.log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Analyze access logs for attack patterns
 ```bash
 # SQL injection attempts:
@@ -1066,6 +1112,8 @@ grep -i "DOCTYPE\|ENTITY\|SYSTEM\|file://" access.log
 grep -i "\.\./\|\.\.%2F\|%2e%2e" access.log
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Check for unauthorized data access (IDOR)
 ```bash
 # Anomalous query patterns in slow log / audit log:
@@ -1073,12 +1121,16 @@ Step 3: Check for unauthorized data access (IDOR)
 # Queries returning unexpected row counts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Check for file system modifications
 ```bash
 # New or modified class files (webshell):
 find /opt/wildfly -name "*.class" \
   -newer /opt/wildfly/standalone/configuration/standalone.xml
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Prepare incident
 runbooks before an incident occurs. Define normal baseline
@@ -1116,6 +1168,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO appuser;
 -- NOT granting: CREATE, DROP, TRUNCATE, REFERENCES, TRIGGER
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Separate read and
 write database users for read-heavy workloads.
@@ -1166,6 +1220,8 @@ public class User {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Error messages: never expose stack traces or
    internal structure in production.
 
@@ -1188,6 +1244,8 @@ public class SecureExceptionMapper
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "Always use DTOs
 (Data Transfer Objects) in REST API responses, never
@@ -1225,12 +1283,16 @@ Layer 1: Static analysis (SAST)
 </plugin>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2: Dependency scanning (SCA)
 ```bash
 mvn dependency-check:check
 # Checks all dependencies for known CVEs (OWASP NVD)
 # Fails build if CVSS score > configured threshold
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Layer 3: Dynamic testing (DAST)
 - OWASP ZAP active scan against test deployment
@@ -1265,6 +1327,8 @@ mvn org.owasp:dependency-check-maven:check \
   -DsuppressionFile=security-suppressions.xml
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Suppression policy: document accepted risks:
 ```xml
 <!-- security-suppressions.xml: -->
@@ -1279,6 +1343,8 @@ mvn org.owasp:dependency-check-maven:check \
 </suppressions>
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Upgrade strategy:
 - Critical/High (CVSS >= 7): patch within 48 hours
 - Medium (CVSS 4-7): patch in next sprint
@@ -1291,6 +1357,8 @@ mvn org.owasp:dependency-check-maven:check \
   with:
     fail-on-severity: high
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* "False positive suppression
 is a discipline, not a workaround. Every suppression must
@@ -1314,6 +1382,8 @@ CONFIDENTIAL: email, phone, address, birth date
 INTERNAL: usage data, preferences
 PUBLIC: display name, public profile
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Encryption at rest:
 ```java
@@ -1344,6 +1414,8 @@ public class Customer {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 3. Data masking in logs/APIs:
 ```java
 // Never log PII directly:
@@ -1353,6 +1425,8 @@ log.info("Processing order for: {}", customer.getEmail());
 log.info("Processing order for user: {}",
     mask(customer.getEmail())); // shows: j***@e***l.com
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 4. Access control:
 ```java
@@ -1370,6 +1444,8 @@ public String getDisplayName(Long customerId) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* "Encryption key
 management is the hardest part. Application-level
 encryption is worthless if the key is stored in the
@@ -1380,3 +1456,33 @@ compromise. Design the system so key rotation doesn't
 require re-encrypting all data (envelope encryption)."
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

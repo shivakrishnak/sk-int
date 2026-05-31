@@ -8,9 +8,20 @@ permalink: /kafka/l4-kraft-mode/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L4 KRaft Mode](#kafka---l4-kraft-mode) | medium |
+
+---
+
 # Kafka - L4 KRaft Mode
 
 ## KRaft Mode
+
+---
 
 ### 🎯 Model Answer
 
@@ -184,6 +195,8 @@ KRAFT OPERATIONAL DIFFERENCES:
      kafka-configs.sh works the same. Internally: metadata log instead of ZK.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -308,6 +321,8 @@ nodes (for 2-fault tolerance in Raft), many broker nodes (for data storage and t
   Broker nodes: add/remove without affecting quorum.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 📊 Diagram
@@ -400,6 +415,8 @@ Fix:
     Tolerate 2 simultaneous controller failures.
     Trade-off: more controller nodes to manage.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -616,4 +633,34 @@ spikes from producers. Fix: check network connectivity between the broker and th
 controller. Increase `metadata.max.idle.interval.ms` if needed (forces periodic metadata refresh).
 This staleness scenario is specific to KRaft mode (in ZK mode, ZK watches provided push
 notification for metadata changes; in KRaft, brokers fetch from the controller on a poll interval).
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

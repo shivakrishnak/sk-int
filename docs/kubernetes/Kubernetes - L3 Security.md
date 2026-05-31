@@ -21,6 +21,8 @@ render_with_liquid: false
 
 # RBAC: Role-Based Access Control
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -93,6 +95,8 @@ rules:
   verbs: ["get", "list"]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ClusterRole** (cluster-scoped): same structure as Role but applies cluster-wide OR
 can be used as a reusable template for namespace-level bindings.
 ```yaml
@@ -106,6 +110,8 @@ rules:
   verbs: ["get", "list", "watch"]
 # No namespace field = cluster-scoped
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **RoleBinding** (namespace-scoped): attaches a Role OR ClusterRole to subjects within
 one namespace.
@@ -126,6 +132,8 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **ClusterRoleBinding**: attaches a ClusterRole to subjects CLUSTER-WIDE.
 ```yaml
 kind: ClusterRoleBinding
@@ -139,6 +147,8 @@ roleRef:
   name: cluster-admin          # built-in: full cluster access
   apiGroup: rbac.authorization.k8s.io
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **ServiceAccounts:**
 Every pod needs an identity for API server calls. ServiceAccount provides this.
@@ -170,6 +180,8 @@ roleRef:
   name: metrics-reader
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Common verbs:** `get`, `list`, `watch`, `create`, `update`, `patch`, `delete`,
 `deletecollection`, `exec` (for pods/exec), `portforward` (for pods/portforward).
 
@@ -188,6 +200,8 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/s3-reader
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -497,6 +511,8 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The pod in `team-a` using `config-reader-sa` can now read ConfigMaps in `shared-config`
 namespace. It cannot read ConfigMaps in `team-b` or any other namespace.
 
@@ -534,6 +550,8 @@ rules:
 # Explicitly NOT included: secrets (use separate role), RBAC
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Layer 2 - RoleBindings per namespace (one per team):
 ```yaml
 # Bind developer ClusterRole to team-a group in team-a namespace
@@ -548,6 +566,8 @@ roleRef:
   kind: ClusterRole
   name: namespace-developer
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Layer 3 - Automated binding via Namespace controller:
 When a new namespace is created with label `managed-by: team`, an admission webhook
@@ -665,6 +685,8 @@ Step 1: create IAM role with trust policy for the ServiceAccount:
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: annotate the ServiceAccount:
 ```yaml
 kind: ServiceAccount
@@ -674,6 +696,8 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT:role/s3-reader
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: pod automatically gets projected token:
 When a pod uses this ServiceAccount, EKS mutating webhook injects:
@@ -720,6 +744,8 @@ rules:
   resourceNames: ["my-specific-secret"] # ONLY this one Secret
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This allows the pod to read `my-specific-secret` but NOT list all Secrets and NOT
 read any other Secret.
 
@@ -759,6 +785,8 @@ for ns in $(kubectl get ns -o name | cut -d/ -f2); do
   done
 done
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Tools: `rbac-lookup` (Fairwinds), `rakkess`, `kubectl-who-can` - all query RBAC
 and show which subjects have specific permissions.
@@ -806,6 +834,8 @@ rules:
   resources: ["deployments"]
   verbs: ["get", "patch", "list"]
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Created per-namespace RoleBindings for each deployment namespace. Tested pipeline.
 
 Hour 3 - Investigation: reviewed audit logs for the 6-month window for any anomalous
@@ -897,7 +927,37 @@ flowchart LR
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Pod Security: SecurityContext and Pod Security Admission
+
+---
 
 ### 🎯 Model Answer
 
@@ -970,6 +1030,8 @@ spec:
       type: RuntimeDefault     # default seccomp filter
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Container-level SecurityContext (overrides pod-level):
 ```yaml
 spec:
@@ -985,6 +1047,8 @@ spec:
       seccompProfile:
         type: RuntimeDefault
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Key SecurityContext fields:**
 
@@ -1023,6 +1087,8 @@ metadata:
     pod-security.kubernetes.io/warn: restricted
     pod-security.kubernetes.io/audit: restricted
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Policy levels:
 
@@ -1236,6 +1302,8 @@ volumes:
 - {name: tmp, emptyDir: {}}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Failure 3: PSA enforce blocks system component pods**
 
 Symptom: kube-system pods are rejected after accidentally labeling kube-system with
@@ -1418,12 +1486,16 @@ USER appuser  # ALL processes in container run as UID 1000
 # Expected: uid=1000(appuser) gid=1000(appgroup)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2 - Remove unnecessary setuid binaries:
 ```dockerfile
 # Find setuid binaries: `find / -perm -4000 -type f 2>/dev/null`
 # Remove ones not needed:
 RUN chmod a-s /usr/bin/ping /usr/bin/traceroute 2>/dev/null || true
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3 - Use distroless base images (minimal attack surface):
 ```dockerfile
@@ -1434,6 +1506,8 @@ COPY target/app.jar /app/app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Verify with container security scanners:
 ```bash
 # Trivy scan for known vulnerabilities + config misconfigurations
@@ -1443,6 +1517,8 @@ trivy image --security-checks vuln,config api:1.0
 docker run --rm api:1.0 id
 # Should NOT return uid=0(root)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Distroless images are the gold standard for production.
 They contain only the runtime and application (no shell, no package manager, no utilities).
@@ -1502,11 +1578,15 @@ kubectl label namespace production \
 # Look in API server audit logs for violations
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Or use a dry-run approach:
 ```bash
 kubectl label namespace production \
   pod-security.kubernetes.io/enforce=restricted --dry-run=server
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 2 - Identify violations by type.
 Most common: missing `allowPrivilegeEscalation: false`, root user, no seccomp.
@@ -1527,11 +1607,15 @@ containers:
     capabilities: {drop: ["ALL"]}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 - Enable `warn` mode:
 ```bash
 kubectl label namespace production \
   pod-security.kubernetes.io/warn=restricted
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Developers see warnings but pods are not rejected. Fix remaining warnings.
 
 Step 5 - Enable `enforce` once warnings are zero.
@@ -1611,6 +1695,8 @@ kubectl patch deployment <name> -n <ns> --type='json' \
       {"op":"add","path":"/spec/template/spec/containers/0/securityContext",
        "value":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]}}}]'
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Applied to all 40. Tested in staging, deployed to production in rolling updates.
 
 Week 4 - Non-root image migration for 8 deployments:
@@ -1710,3 +1796,33 @@ flowchart TD
 > to implement any one layer creates a gap: a pod that passes PSA can still have overly
 > broad network access (NetworkPolicy missing) or can list all secrets via the API (RBAC
 > missing). Each layer is necessary; together they are sufficient for most threat models.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

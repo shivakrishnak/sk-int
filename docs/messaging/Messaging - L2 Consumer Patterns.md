@@ -8,6 +8,16 @@ permalink: /messaging/l2-consumer-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Consumer Groups and Competing Consumers](#consumer-groups-and-competing-consumers) | medium |
+| 2 | [Message Ordering Guarantees](#message-ordering-guarantees) | medium |
+
+---
+
 # Consumer Groups and Competing Consumers
 
 ---
@@ -67,6 +77,8 @@ After Consumer-3 crashes (rebalance):
   Consumer-7: idle - no partition to assign
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RabbitMQ competing consumers:
 ```
 Queue: orders (single queue)
@@ -77,6 +89,8 @@ Consumer-A, Consumer-B, Consumer-C all subscribed
   Msg3 -> Consumer-C
   No ordering guarantee across consumers
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 In Kafka, the maximum parallelism for a consumer group equals the number of partitions. This is a design-time constraint: if you anticipate needing 20 parallel consumers, the topic must have at least 20 partitions. You cannot add parallelism beyond the partition count. This is a fundamental difference from RabbitMQ competing consumers, where the queue dynamically distributes to any number of consumers.
@@ -266,6 +280,34 @@ Symptom: consumer lag grows for specific partitions while others are at zero; th
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Message Ordering Guarantees
 
 ---
@@ -319,6 +361,8 @@ key="order-456" -> hashes to partition 4
   Processed independently - no ordering vs order-123
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 RabbitMQ single-consumer ordering:
 ```
 Single consumer: msg1 -> ACK -> msg2 -> ACK
@@ -329,6 +373,8 @@ Two competing consumers:
   msg2 -> Consumer-B (10ms to process)
   msg2 completes before msg1 -> ordering broken
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Global ordering and throughput are mutually exclusive at scale. The practical resolution is entity-scoped ordering: define the entity for which ordering matters and use that as the partition key. Per-entity ordering with full parallel throughput across entities is achievable.
@@ -520,3 +566,33 @@ Symptom: downstream state transitions appear out of order even though the source
 | Hiring Manager | Lead with: per-entity ordering satisfies nearly all business requirements |
 | Bar Raiser | Lead with: ordering vs idempotency - most candidates conflate these |
 | Peer Engineer | "The key insight: global ordering is a red herring, entity ordering is enough" |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

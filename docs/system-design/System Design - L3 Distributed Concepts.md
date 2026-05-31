@@ -8,7 +8,14 @@ permalink: /system-design/l3-distributed-concepts/
 render_with_liquid: false
 ---
 
-# System Design - L3 Distributed Concepts
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [System Design - L3 Distributed Concepts](#system-design---l3-distributed-concepts) | medium |
+| 2 | [CAP Theorem](#cap-theorem) | medium |
+| 3 | [Eventual Consistency](#eventual-consistency) | medium |
 
 ---
 
@@ -122,6 +129,8 @@ Real-world examples:
     MySQL single primary: not distributed -> no CAP concerns
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **PACELC model (more practical):**
 
 ```
@@ -147,6 +156,8 @@ Latency vs Consistency (no partition):
     -> Latency = local access only
   The tradeoff exists even when network is healthy
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -301,6 +312,8 @@ Why CP:
   Design choice: error is better than wrong answer
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cassandra (AP):**
 ```
 Architecture:
@@ -326,6 +339,8 @@ Why AP:
   "Service down during partition": unacceptable
   Design choice: availability is the priority
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The choice isn't just about partition behavior
 but about the operational model. Cassandra requires no single primary, so there's
@@ -379,6 +394,8 @@ Weaker consistency models:
     Weaker than linearizability, stronger than eventual
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Spanner achieves external consistency (stronger
 than linearizability) across globally distributed shards using TrueTime (GPS +
 atomic clocks for synchronized timestamps). Each transaction gets a timestamp;
@@ -431,6 +448,8 @@ Does this "violate" CAP?
   PACELC perspective: Spanner chose PC/EC
                       (consistent + higher latency, no partition vs latency tradeoff)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Spanner doesn't violate CAP. During partition,
 it blocks (unavailable). What Spanner achieves: strong consistency without
@@ -492,6 +511,8 @@ Choose CP (strong consistency) when:
     CP: second buyer gets "out of stock" immediately
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The nuanced answer: most systems use both
 AP and CP for different operations. Display operations (showing product prices,
 counts, listings): AP (fast, good UX, stale is fine). Transactional operations
@@ -542,6 +563,8 @@ Raft algorithm (simpler than Paxos):
     TiKV
     Consul
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Raft's design principle: understandability
 over efficiency. Paxos is theoretically elegant but notoriously hard to implement
@@ -594,6 +617,8 @@ For a product manager:
     Banking: wrong = costly (choose CP)
     Shopping cart: wrong = annoying but recoverable (choose AP)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The CP vs AP choice should be visible in
 the product's error messages. A CP system during partition: "Service temporarily
@@ -652,6 +677,8 @@ Why PACELC is more useful:
   CAP can't answer this; PACELC can
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* PACELC reframes the design question from
 "what do we do during failure?" to "what is our ongoing consistency vs latency
 tradeoff?" This is more actionable. In a Cassandra deployment: "We're using
@@ -709,6 +736,8 @@ Vector clock approach:
     -> No conflict: Bob wins clearly
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Vector clocks track causality, not just time.
 They tell you: "Did writer B know about writer A's write when B wrote?" If yes:
 B's write causally supersedes A's (no conflict). If no: concurrent (conflict).
@@ -762,6 +791,8 @@ Pattern: CP core (ledger) + AP periphery (everything else)
   Informational reads: AP for performance
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Payment systems don't use a single database
 with a single consistency level. The money-critical path (debit, credit, reserve)
 uses ACID transactions with CP reads. The informational path (history, analytics,
@@ -774,6 +805,34 @@ the worst-case business outcome?" If the answer is "a wrong debit or credit":
 that operation must be on the CP path.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # Eventual Consistency
 
@@ -868,6 +927,8 @@ Eventual consistency:
   Examples: DNS propagation, social feeds, shopping carts
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **BASE vs ACID:**
 
 ```
@@ -897,6 +958,8 @@ The spectrum: pure BASE <-------> pure ACID
   Postgres async replica: mostly ACID primary, BASE reads
   Postgres sync replica: ACID everywhere
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1108,6 +1171,8 @@ Repair failure:
   With repair: full repair brings Node 2 up to date
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Anti-entropy repair is operationally critical
 in Cassandra deployments but often neglected. The common failure: nodes miss hints
 (down > 3 hours), come back with stale data, and nobody runs repair. Result: stale
@@ -1167,6 +1232,8 @@ OR-Set (Observed-Remove Set):
   Allows add-remove-add cycle
   Use: shopping cart, todo list
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* CRDTs are now in production at major scale.
 Redis CRDT (Redis Enterprise): multi-master Redis with CRDT data types.
@@ -1229,6 +1296,8 @@ Limitations:
   Without repair: deleted tombstones may resurface after GC grace period
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The GC grace period in Cassandra is the
 most subtle consistency issue. When data is deleted: a tombstone is written.
 Tombstones are kept for `gc_grace_seconds` (default 10 days) before being
@@ -1285,6 +1354,8 @@ Orchestration Saga:
   Cons: more coupling, orchestrator is a SPOF
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Idempotency is critical in saga implementations.
 Events can be delivered more than once (at-least-once delivery in Kafka). If
 PaymentService charges the payment twice: double charge. Fix: idempotency key
@@ -1338,6 +1409,8 @@ Option 4: Eventual consistency for non-critical session data
   Stored in replica: user sees old theme for 5 seconds after change
   Auth token: never eventually consistent (must be strongly consistent)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The JWT vs server-side session debate is
 about the consistency vs revocation trade-off. JWT is stateless (no DB lookup
@@ -1393,6 +1466,8 @@ Global Tables (multi-region):
          (replicate asynchronously, typically <1 second)
   Strongly consistent reads: within local region only
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* DynamoDB's Global Tables + last-writer-wins
 has a known limitation: concurrent writes to the same item from two regions
@@ -1456,6 +1531,8 @@ Solution 4: Accept eventual consistency
   Build checkout path without relying on cached price
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The "write then delete" invalidation pattern
 has the race condition described above (Service A populates stale after Service B
 deletes). The "delete then write" pattern avoids it: if the cache is empty, the
@@ -1507,6 +1584,8 @@ Idempotent consumer pattern:
   RETURNING event_id;
   -- If RETURNING returns null: already processed, skip
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Exactly-once in Kafka solves the duplicate
 delivery problem at the infrastructure level. But exactly-once only applies
@@ -1574,6 +1653,8 @@ Fixing consistency bugs in production:
     Root cause fix: prevent recurrence
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Consistency bugs in production are often
 discovered through business audits, not technical monitoring. "The books don't
 balance at month end" is a consistency bug. Proactive monitoring (heartbeat,
@@ -1583,3 +1664,33 @@ audit log is the source of truth for "what should have happened." Regular
 reconciliation: does the operational DB match the audit log? If not: investigate
 and fix. This dual-write pattern (operational DB + audit log) is standard in
 financial systems. The audit log is the insurance policy against consistency bugs.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

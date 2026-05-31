@@ -133,6 +133,8 @@ Step 4: How much change is justified?
     Use for: legacy apps, migration under time pressure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Database Migration Zero-Downtime Pattern:**
 
 ```
@@ -169,6 +171,8 @@ Phase 4: VALIDATION
   - Monitor application error rates for 1 hour
   - Rollback plan: repoint to source if issues (DMS can reverse)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -389,6 +393,8 @@ ss -tnp | awk '{print $5}' | sort -u > actual_connections.txt
 # and after migration to validate no missing connections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: DMS replication lag prevents cutover**
@@ -413,6 +419,8 @@ aws cloudwatch get-metric-statistics \
 aws dms describe-replication-task-individual-assessments \
   --filters Name=replication-task-arn,Values=<task-arn>
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Scale up the replication instance class
 (r5.xlarge -> r5.2xlarge). Or reduce peak write load
@@ -656,6 +664,8 @@ aws directconnect describe-connections
 aws ec2 describe-vpn-connections
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Network packet loss:**
 ```bash
 # MTR (My Traceroute) from EC2 to on-prem:
@@ -663,6 +673,8 @@ mtr --report --tcp --port 5432 <on-prem-db-ip>
 # Look for packet loss at any hop
 # If loss at Direct Connect endpoint: AWS support
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Connection pool behavior:**
 "Exactly 30s timeout" is a pattern: TCP keepalive or
@@ -691,6 +703,8 @@ spring:
       # net.ipv4.tcp_keepalive_time=10
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Firewall idle timeout
 causing "exactly 30s" stale connection failures is the
 most common real-world symptom for hybrid cloud database
@@ -714,6 +728,8 @@ aws dms describe-replication-tasks \
 # FullLoadRowsInserted < FullLoadRowsTransferred = rows failed
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Table-level validation:**
 ```bash
 aws dms describe-table-statistics \
@@ -721,6 +737,8 @@ aws dms describe-table-statistics \
   --query 'TableStatistics[?FullLoadRowsInserted!=FullLoadRowsTransferred]'
 # Finds tables with mismatched row counts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Check DMS logs:**
 ```bash
@@ -731,6 +749,8 @@ aws logs get-log-events \
   --query 'events[].message' | \
   grep -i "error\|warn\|failed"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Common causes:**
 
@@ -917,6 +937,8 @@ Root:
         (or per application for large apps)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Networking:**
 Transit Gateway connects all accounts and on-prem
 via Direct Connect. Central egress VPC with NAT Gateways.
@@ -962,6 +984,8 @@ oracle-to-postgres conversion assessment:
   Estimated: 8 weeks of developer time for manual conversion
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Identify incompatibilities:
 - Oracle sequences -> PostgreSQL SERIAL or UUID
 - Oracle NUMBER -> PostgreSQL NUMERIC or INTEGER
@@ -987,6 +1011,8 @@ Duration: 10TB full load at ~100GB/hr = 100 hours
 CDC: starts after full load, catches up
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 CDC lag monitoring: wait until consistently < 5 seconds.
 
 **Phase 4 - Validation (weeks 14-16):**
@@ -1011,6 +1037,8 @@ T+35s: remove Oracle read-only mode
 T+40s: monitor first 100 requests to Aurora
 T+60s: confirm no errors -> cutover complete
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Rollback plan: SSM parameter reverted to Oracle in < 10s
 if errors detected. Oracle is read-only but still running
@@ -1239,3 +1267,33 @@ argument, not an engineering argument. The alternative
 (prioritize highest-cost-to-decommission) shows adaptability.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

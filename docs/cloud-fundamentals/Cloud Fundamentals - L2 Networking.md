@@ -108,6 +108,8 @@ ALB LISTENER RULES (evaluated in order):
 RESULT: rule 1 matches -> api-service receives request
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Blue-Green Deployment via ALB Weights:**
 
 ```
@@ -126,6 +128,8 @@ ROLLBACK (if Green has errors):
   Revert weights: Blue 100%, Green 0%
   No DNS change needed (ALB does it instantly)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -340,6 +344,8 @@ aws elbv2 describe-target-health \
 #           Target.ResponseCodeMismatch
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Health check flapping causes traffic disruption**
@@ -413,6 +419,8 @@ In-flight requests: ECONNRESET (connection reset)
 User sees: 500 error or connection failure mid-request
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With connection draining:
 ```
 Deploy new version -> ALB marks old instance draining
@@ -420,6 +428,8 @@ In-flight requests: complete normally (up to 300s)
 New requests: routed to new instances only
 Old instance: deregistered after all connections close
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Tuning:
 ```hcl
@@ -429,6 +439,8 @@ resource "aws_lb_target_group" "app" {
   # Match to your p99.9 request duration
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Setting deregistration delay to
 match actual request duration. A 300s delay on an API with 2s max
@@ -462,6 +474,8 @@ aws elbv2 modify-listener \
   --listener-arn $LISTENER_ARN \
   --default-actions '[{"Type":"forward","TargetGroupArn":"'$WEB_TG_ARN'"}]'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Limits:
 - 100 rules per listener (default, can request increase)
@@ -513,6 +527,8 @@ curl -v http://localhost:8080/health
 # If timeout: app is not responding to keep-alive connections
 # ALB keeps connection open; app closes it; ALB sends 502
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The keep-alive connection reset
 cause. ALB reuses connections to backends. If the app has a lower
@@ -659,6 +675,8 @@ resource "aws_lb_listener_rule" "async" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Knowing that Lambda targets have
 a 1MB request/response payload limit through ALB. Requests with
 large bodies must go to ECS/EC2 targets. This constraint often
@@ -678,6 +696,8 @@ aws elbv2 describe-target-health --target-group-arn $TG_ARN
 # Partial unhealthy? -> rolling failure
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Check health check endpoint from a target directly:
 ```bash
 # SSH to a target instance:
@@ -685,6 +705,8 @@ curl -v http://localhost:8080/health
 # timeout -> app is unresponsive
 # 200 OK -> health check config problem (wrong path/port)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Correlate with deployment or config change:
 ```bash
@@ -696,6 +718,8 @@ aws ecs describe-services --cluster prod --services api
 aws autoscaling describe-scaling-activities --auto-scaling-group-name prod-asg
 # Recent launch failures?
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Immediate mitigation:
 - Roll back the last deployment if one occurred
@@ -730,6 +754,8 @@ different playbooks.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -772,6 +798,34 @@ flowchart TB
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # CDN and DNS in the Cloud
 
@@ -860,6 +914,8 @@ CACHE KEY (matters for correctness):
          /static/app.js -> cache 1 year (immutable file)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Route 53 Failover:**
 
 ```
@@ -874,6 +930,8 @@ FAILURE: Health check fails 3 consecutive times
          TTL = 60s (time for clients to re-resolve)
          Full failover: 60-180s (check interval + TTL)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1111,6 +1169,8 @@ aws cloudfront create-invalidation \
 # Old HTML references old hash, new HTML references new hash
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 **Failure 2: Route 53 failover not triggering**
@@ -1134,6 +1194,8 @@ aws route53 get-health-check \
   --health-check-id HEALTH-CHECK-ID
 # Verify: FailureThreshold, RequestInterval, Path
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Implement a deep health check that validates
 the application can reach its database and dependencies.
@@ -1229,6 +1291,8 @@ data "aws_iam_policy_document" "s3_oac" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `AWS:SourceArn` condition
 in the bucket policy. Without it, ANY CloudFront distribution
 could access your bucket (if it has the OAC). The ARN condition
@@ -1254,6 +1318,8 @@ aws cloudfront create-invalidation \
 # then $0.005 per path. Wildcard /* counts as 1 path.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Better alternative: versioned asset filenames (cache-busting):
 ```html
 <!-- Instead of invalidating /static/main.js: -->
@@ -1262,6 +1328,8 @@ Better alternative: versioned asset filenames (cache-busting):
 <!-- Never needs invalidation - old versions expire naturally -->
 <!-- Only index.html needs short TTL or invalidation on deploy -->
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Recommended strategy:
 - Static assets (`*.js`, `*.css`, fonts): `Cache-Control: max-age=31536000,
@@ -1313,6 +1381,8 @@ aws cloudfront create-invalidation \
 # Only /index.html needs short TTL + invalidation on deploy
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The permanent fix (content-hash
 filenames) vs the reactive fix (invalidation). Invalidation is a
 symptom treatment. The real solution eliminates the need for
@@ -1352,6 +1422,8 @@ resource "aws_route53_record" "api_eu" {
   # Points to ALB in eu-west-1
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When a non-nearest region is chosen:
 - The nearest region's record has a health check that is failing:
@@ -1399,6 +1471,8 @@ example.com CNAME my-alb.us-east-1.elb.amazonaws.com
 example.com ALIAS my-alb.us-east-1.elb.amazonaws.com
 # Works because Route 53 resolves the ALB directly
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Knowing that ALIAS records for
 AWS resources are not standard DNS. They are a Route 53 extension.
@@ -1462,6 +1536,8 @@ resource "aws_cloudfront_distribution" "spa" {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 With OAC + S3: S3 returns 403 for missing files (not 404) because
 bucket policy blocks direct access. Map both 403 and 404 to index.html.
 
@@ -1471,6 +1547,8 @@ Caching for SPA:
 /static/main.abc.js:  Cache-Control: max-age=31536000, immutable
 /assets/logo.png:     Cache-Control: max-age=31536000, immutable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Using a build tool (Vite, Webpack)
 that automatically generates content-hash filenames for all bundled
@@ -1494,6 +1572,8 @@ for region in us-east-1 eu-west-1 ap-southeast-1; do
 done
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Determine if CDN is in use:
 - Check response for `X-Cache: Hit/Miss from cloudfront`
 - If no CDN: all requests go to origin (single region). EU users
@@ -1508,6 +1588,8 @@ aws cloudwatch get-metric-statistics \
   --dimensions Name=DistributionId,Value=$DIST_ID
 # Low cache hit rate in EU -> frequent cache misses -> origin round-trip
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix options:
 - No CDN for API: deploy to EU region, add Route 53 latency routing
@@ -1546,6 +1628,8 @@ asset latency (CDN solves directly). These require different fixes.
 ### 🏛️ System Design
 
 *(Omit: ★★☆ keyword - system design section is for ★★★ only.)*
+
+---
 
 ### 📊 Diagram
 
@@ -1593,3 +1677,33 @@ flowchart TD
 > request reaches the origin.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

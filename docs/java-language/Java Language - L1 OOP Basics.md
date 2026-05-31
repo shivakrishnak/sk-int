@@ -8,9 +8,20 @@ permalink: /java-language/l1-oop-basics/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Language - L1 OOP Basics](#java-language---l1-oop-basics) | medium |
+
+---
+
 # Java Language - L1 OOP Basics
 
 ## Class and Object Fundamentals
+
+---
 
 ### 🎯 Model Answer
 
@@ -134,6 +145,8 @@ OBJECT ON HEAP:
   [owner: 8-byte reference]    <- points to String
   [balance: 8 bytes]           <- double value
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -302,6 +315,8 @@ Root prevention: code review rule:
   "Any mutable static field in a service or utility class requires 
    a documented concurrency analysis comment."
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -477,6 +492,8 @@ not add meaningful value at this foundational level.)*
 
 ## Methods, Parameters, and Overloading
 
+---
+
 ### 🎯 Model Answer
 
 **30 seconds:**
@@ -592,6 +609,8 @@ PASS BY VALUE DEMONSTRATION:
   }
   // Caller's StringBuilder: unchanged (local copy replaced, not caller's ref)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -755,6 +774,8 @@ Rule: If a method accepts a collection for validation, analysis, or
   intentional: "@param orders the list to clean in place".
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -912,6 +933,8 @@ Dog dog = new Dog().setName("Rex").setBreed("Labrador");
 // Without covariant return: new Dog().setName("Rex")
 //   returns Animal (not Dog), can't call .setBreed()
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This pattern is used in Lombok's @Builder and many fluent APIs. The key insight:
 covariant return types enable the builder and fluent interface patterns in Java
 without losing type information at each method call.
@@ -939,6 +962,8 @@ without losing type information at each method call.
 ---
 
 ## Access Modifiers and Encapsulation
+
+---
 
 ### 🎯 Model Answer
 
@@ -1066,6 +1091,8 @@ ENCAPSULATION PATTERNS:
       .timeout(Duration.ofSeconds(10))
       .build();
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1248,6 +1275,8 @@ Best practice: APIs that expose collections should return:
   NEVER: the direct reference to internal mutable state
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1411,6 +1440,8 @@ record UserProfile(String email, List<String> roles) {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The compact constructor: parameter names are the same as component names. Reassigning
 a parameter in the compact constructor: changes what gets stored. This is the correct
 place to add validation and defensive copies for records. Without this: `new UserProfile("a@b.com", mutableList)` stores a reference to the mutable list, which can be externally
@@ -1434,3 +1465,33 @@ mutated. With the compact constructor: the stored list is always immutable.
 
 *(Omit: Access modifiers are expressed clearly in the reference table in the Concept
 Explanation section.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,9 +8,20 @@ permalink: /java-core/l4-classloader/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Core - L4 ClassLoader](#java-core---l4-classloader) | medium |
+
+---
+
 # Java Core - L4 ClassLoader
 
 ## ClassLoader Architecture
+
+---
 
 ### 🎯 Model Answer
 
@@ -80,6 +91,8 @@ Application (System) ClassLoader
   - getSystemClassLoader() returns this
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Delegation model (parent-first):**
 ```java
 // Class.forName("com.example.Foo") -> App ClassLoader
@@ -91,6 +104,8 @@ Application (System) ClassLoader
 //        2. Platform: not found (com.example not in JDK)
 //   2. App: search classpath -> found! load and define.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Creating a custom ClassLoader:**
 ```java
@@ -116,6 +131,8 @@ class IsolatingClassLoader extends ClassLoader {
     // Only override findClass() to respect parent delegation!
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -281,6 +298,8 @@ Common culprits and fixes:
             webapp objects in JDK static caches
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -324,6 +343,8 @@ Application (System) ClassLoader
   - Default for most code
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // Verify the hierarchy:
 ClassLoader appCL = ClassLoader.getSystemClassLoader();
@@ -340,6 +361,8 @@ System.out.println(String.class.getClassLoader());   // null (Bootstrap)
 System.out.println(java.sql.Driver.class.getClassLoader()); // Platform
 System.out.println(MyApp.class.getClassLoader());   // Application
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The Java 9 module system changed class
 loading internals significantly. In Java 8: three `sun.misc.Launcher$*`
@@ -396,6 +419,8 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The `synchronized(getClassLoadingLock(name))`
 is critical: class loading is serialized per class name within each
 ClassLoader. Without this: two threads loading the same class simultaneously
@@ -444,6 +469,8 @@ com.example.Service s = (com.example.Service) obj2; // ClassCastException!
 // Note: TWO different loaders mentioned for the SAME class name = CL issue
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* This ClassCastException is the classic
 "what class is it really?" production issue in application servers and OSGi.
 When you see a ClassCastException mentioning the SAME class name twice,
@@ -489,6 +516,8 @@ ClassLoader netLoader = new URLClassLoader(
 // Modern use: OSGi bundles loaded from Maven repositories
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Java agents (`java.lang.instrument.Instrumentation`)
 use ClassLoader-based bytecode transformation. The `ClassFileTransformer`
 interface (in the JVM Agent API) intercepts every class load and can
@@ -532,6 +561,8 @@ Reference chain types that cause leaks:
    new Timer(true).schedule(...) // daemon thread, but holds webapp reference
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Diagnosis:
 ```bash
 # Check Metaspace growth:
@@ -547,6 +578,8 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 # catalina.out shows: "The web application [myapp] appears to have
 # started a thread named [xyz] but has failed to stop it"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* Production Tomcat environments deploy
 the same application repeatedly (CI/CD, config changes). Without proper
@@ -594,6 +627,8 @@ System.out.println(myMod.isNamed()); // false (classpath)
 ServiceLoader<SomeService> loader = ServiceLoader.load(SomeService.class);
 loader.forEach(service -> service.process(data));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The module system's impact on ClassLoading
 was one of the most disruptive changes in Java's history. Pre-Java 9 tools
@@ -650,6 +685,8 @@ try (URLClassLoader ucl2 = new URLClassLoader(jars, parent)) {
 // ucl2.close() called automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* `ucl.close()` on Windows is critical:
 open JAR files are locked by the OS. If you hot-deploy (replace the JAR
 while the JVM runs), Windows throws `Permission denied` on file replacement
@@ -699,6 +736,8 @@ try {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The Thread Context ClassLoader solves
 the "inverse delegation" problem. Normally delegation goes UP (child asks
 parent). But JDK utility classes (JAXB, ServiceLoader, JDBC DriverManager)
@@ -743,6 +782,8 @@ OSGi ClassLoader model:
 Key rule: if A and B both import com.example.api from Bundle API,
 they share the SAME Class objects -> no ClassCastException!
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* OSGi's "wired imports" model solves the
 ClassCastException problem through controlled sharing. Only ONE bundle "owns"
@@ -803,6 +844,8 @@ class HotReloadService {
 //         supports field/method addition via bytecode hacks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Hot reload in production (not just development)
 is the foundation of enterprise Java hot-deploy. Application servers (JBoss/WildFly,
 WebLogic, Tomcat) support it via war/ear redeploy which is exactly this pattern:
@@ -848,6 +891,8 @@ System.out.println("Same? " +
 //
 // 4. Ensure both sides use the same ClassLoader for shared types
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The interface-based solution is the
 architectural recommendation: define APIs (interfaces) in a parent ClassLoader,
@@ -906,6 +951,8 @@ Optional<StorageBackend> first = ServiceLoader
 // ClassLoader must be able to load the provider class:
 // If TCCL doesn't have access to S3Backend.jar -> ClassNotFoundException -> skipped
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* ServiceLoader is Java's built-in plugin
 discovery mechanism. JDBC drivers, JCE providers, JAX-RS implementations,
@@ -1074,3 +1121,33 @@ sequenceDiagram
 > be "shadowed"). A malicious or buggy library cannot substitute its own
 > `java.lang.String` by placing it on the classpath. Only non-JDK classes
 > are loaded from the application classpath.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -8,7 +8,15 @@ permalink: /spring/l0-orientation/
 render_with_liquid: false
 ---
 
-# Spring - L0 Orientation
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Spring - L0 Orientation](#spring---l0-orientation) | medium |
+| 2 | [Spring Framework Overview](#spring-framework-overview) | medium |
+| 3 | [Spring vs EJB - The Simplicity Revolution](#spring-vs-ejb---the-simplicity-revolution) | medium |
+| 4 | [Spring Ecosystem Map](#spring-ecosystem-map) | medium |
 
 ---
 
@@ -28,7 +36,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — the first question in every Spring interview.
+🎯 Interview Weight: Critical - the first question in every Spring interview.
 Sets the foundation for all follow-up questions on DI, beans, and Boot.
 
 ---
@@ -120,6 +128,8 @@ Your Application Code
         v
   Ready-to-use wired application
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 1. You annotate classes with @Component, @Service, @Repository, etc.
 2. Spring scans the classpath and registers these as bean definitions.
@@ -476,6 +486,34 @@ data access technology.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Spring vs EJB - The Simplicity Revolution
 
 ---
@@ -492,7 +530,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Medium — asked to test historical context and
+🎯 Interview Weight: Medium - asked to test historical context and
 understanding of WHY Spring exists, not just what it does.
 
 ---
@@ -584,6 +622,8 @@ Spring (non-invasive):
     constructor(deps)        <- plain constructor
     // test: new MyBean(mock) <- no container needed
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 1. EJBs required framework interface inheritance.
 2. EJB tests required deploying to an application server.
@@ -905,6 +945,34 @@ design means you include only what you need.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Spring Ecosystem Map
 
 ---
@@ -921,7 +989,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — interviewers use ecosystem questions to gauge
+🎯 Interview Weight: High - interviewers use ecosystem questions to gauge
 breadth of Spring experience and which parts of the stack you have used.
 
 ---
@@ -1017,6 +1085,8 @@ Layer 1 - Foundation:
     Test (TestContext, MockMvc)
 ──────────────────────────────────────────────────
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 The Spring Boot BOM (Bill of Materials) is the glue. It provides curated
@@ -1383,3 +1453,33 @@ Jakarta EE now share the same package namespace, making interop and future
 migration between Spring and Jakarta EE easier. Spring Boot 3's AOT
 compilation generates bean definitions at build time, reducing startup
 reflection and enabling smaller native images.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

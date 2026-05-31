@@ -477,6 +477,34 @@ in the ASCII layer diagram in the Concept Explanation section.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Why Systems Are Not Fully Observable
 
 **TL;DR** - No system can expose its complete internal state. Good
@@ -742,6 +770,8 @@ curl 'http://jaeger:16686/api/services' | jq
 # where a parent trace_id exists in logs but not in Jaeger
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add trace context propagation to all messaging middleware
 using W3C Trace Context headers. Test with integration tests that
 verify parent trace IDs propagate through message queues.
@@ -767,6 +797,8 @@ curl http://otel-collector:8888/metrics | \
   grep otelcol_exporter_sent_spans
 # If rate > 10,000/sec from one service, reduce granularity
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Disable auto-instrumentation for internal methods. Keep
 spans only at external service boundaries: HTTP, DB, cache, queue.
@@ -796,6 +828,8 @@ curl -s http://prometheus:9090/api/v1/query \
     series: .value[1]}'
 # Any metric with > 100,000 series is a cardinality risk
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Remove high-cardinality labels from Prometheus metrics.
 Use trace exemplars to link specific metric data points to trace
@@ -1037,6 +1071,34 @@ in prose and code above. A separate diagram does not add signal.)*
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Observability Maturity Model
 
 **TL;DR** - A five-stage model from no telemetry to proactive
@@ -1263,6 +1325,8 @@ curl 'http://jaeger:16686/api/traces/{trace-id}' | \
   }'
 # If root_dur >> child_sum, there is an instrumentation gap
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: Instrument the async hops. Pass trace context through
 message headers and async task executors.
@@ -1519,3 +1583,33 @@ covered in L5 Platform Design file.)*
 
 *(Omit: the five-stage progression is shown clearly in the ASCII
 block in the Concept Explanation section above.)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

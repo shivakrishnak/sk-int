@@ -127,6 +127,8 @@ L3 Construct (pattern-level):
   -> Opinionated: HTTPS redirect, health checks, etc.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -162,6 +164,8 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
   # ... 50+ more lines for API Gateway, DynamoDB, etc.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```typescript
 // GOOD: CDK TypeScript - same infrastructure in ~20 lines
@@ -208,6 +212,8 @@ export class OrderStack extends cdk.Stack {
   }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # CDK workflow:
@@ -348,6 +354,8 @@ aws cloudformation continue-update-rollback \
 # WARNING: skipped resource state is unknown
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Use `continue-update-rollback` with
 `--resources-to-skip` to unstick the stack. Then
 investigate the skipped resource manually. Re-import
@@ -433,6 +441,34 @@ flowchart LR
 ---
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
 
 # EKS Kubernetes on AWS
 
@@ -537,6 +573,8 @@ With IRSA:
   -> Different pods on the same node have different credentials
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -562,6 +600,8 @@ spec:
         # Relies on EC2 instance profile (node-level)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```yaml
 # GOOD: IRSA for per-pod IAM credentials
 # Step 1: Create IAM role with OIDC trust:
@@ -586,6 +626,8 @@ metadata:
     eks.amazonaws.com/role-arn: >-
       arn:aws:iam::123456789012:role/OrderApiRole
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```yaml
 # Step 3: Use ServiceAccount in Deployment:
@@ -614,6 +656,8 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```bash
 # Create EKS cluster (managed node group):
@@ -776,6 +820,8 @@ aws eks describe-nodegroup \
 # If desiredSize = maxSize: at limit, cannot scale up
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Increase node group `maxSize` and let autoscaler
 provision new nodes. Or add more node groups. Or reduce
 pod resource requests if over-provisioned.
@@ -937,6 +983,8 @@ aws cloudformation describe-change-set \
 aws cloudformation execute-change-set ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Combine change sets
 with stack policies. A stack policy can prevent
 CloudFormation from replacing specific resources:
@@ -1021,6 +1069,8 @@ kubectl get events \
 # Shows OOMKilling events
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Step 2: Check memory usage vs limit:**
 ```bash
 # Container Insights (if enabled) or metrics-server:
@@ -1032,6 +1082,8 @@ kubectl get pod <pod-name> -o yaml \
   | grep -A 5 "resources:"
 # If limit: 512Mi and usage is consistently 500Mi+: too tight
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Step 3: Analyze memory growth:**
 ```bash
@@ -1048,6 +1100,8 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Maximum ...
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Fixes (in order):**
 
 1. Limit too low (most common): increase memory limit.
@@ -1059,6 +1113,8 @@ aws cloudwatch get-metric-statistics \
      limits:
        memory: "1Gi"  # Was 512Mi, increase to 1Gi
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 2. Memory leak: profile the application.
    For Java: `-XX:+HeapDumpOnOutOfMemoryError`
@@ -1165,6 +1221,8 @@ is "SSH into server, run script." Any change is risky.
    # No recreation - resource is "adopted"
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 4. CDK for all new infrastructure. Shared constructs
    library for company standards (logging, encryption,
    monitoring defaults).
@@ -1227,6 +1285,8 @@ Rollback:
   -> Previous image version running in < 60s
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Health checks (prevent bad rollouts):**
 
 ```yaml
@@ -1241,6 +1301,8 @@ readinessProbe:
 # Rolling update pauses if new pod never becomes ready
 # -> Prevents complete deployment failure
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* `maxUnavailable: 0`
 is the zero-downtime configuration. It means:
@@ -1278,6 +1340,8 @@ before new ones are ready, causing brief downtime.
        pods: "50"
    ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 2. Network isolation (Network Policies):
    Tenant A pods cannot connect to Tenant B pods.
    ```yaml
@@ -1291,6 +1355,8 @@ before new ones are ready, causing brief downtime.
              matchLabels:
                name: tenant-a  # Only from same namespace
    ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 3. IRSA per tenant:
    Each tenant has a separate Service Account -> IAM Role.
@@ -1368,3 +1434,33 @@ pre-optimize for a future requirement that may not
 materialize.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

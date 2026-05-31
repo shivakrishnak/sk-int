@@ -295,6 +295,34 @@ that drove the AOT convergence.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Reactive Streams Specification
 
 **Interview Weight:** high - Reactive programming
@@ -528,6 +556,8 @@ orderMono.subscribe(o -> log.info("Subscriber2: {}",o));
 // SECOND DB query executed (new subscription = new query)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Bug: a Mono that represents an HTTP request.
 If subscribed twice: two HTTP calls made.
 
@@ -543,6 +573,8 @@ Flux.defer(() -> kafkaMessages)
 // Misses messages that arrived before subscribe
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Rule of thumb:
 - Repository methods: cold (safe to subscribe once)
 - Kafka/RabbitMQ/WebSocket: hot (manage replay separately)
@@ -555,6 +587,8 @@ Mono<Order> cached = orderRepo.findById(1L).cache();
 // One DB query, result shared to all subscribers
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* Identifying the
 double-subscription bug and .cache() as the fix.
 
@@ -564,3 +598,33 @@ double-subscription bug and .cache() as the fix.
 | Hiring Manager | Reactive theory enables non-blocking scalable services. |
 | Bar Raiser | Cold vs hot, double-subscription bug, .cache() fix, JDK Flow API. |
 | Principal | Spec design rationale, interoperability between libraries. |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

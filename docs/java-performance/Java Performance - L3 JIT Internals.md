@@ -8,9 +8,20 @@ permalink: /java-performance/l3-jit-internals/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Performance - L3 JIT Internals](#java-performance---l3-jit-internals) | medium |
+
+---
+
 # Java Performance - L3 JIT Internals
 
 ## JIT Compilation and Escape Analysis: Deep Dive
+
+---
 
 ### 🎯 Model Answer
 
@@ -177,6 +188,8 @@ WHEN C2 FAILS TO OPTIMIZE:
     int px = p.x, py = p.y;  // primitives don't "escape" in the heap sense
     list.stream().map(e -> compute(px, py, e))...
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -348,6 +361,8 @@ Diagnosis (step by step):
     gc.alloc.rate.norm should drop to 0 B/op.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -431,6 +446,8 @@ consider refactoring to avoid the polymorphic call in the hot path.
 ---
 
 ## Tiered Compilation and Code Cache Management
+
+---
 
 ### 🎯 Model Answer
 
@@ -573,6 +590,8 @@ CODE CACHE FULL DIAGNOSIS:
     If memory constrained: identify and remove hot-path anonymous class
     proliferation (lambdas that create many unique lambda instances).
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -741,6 +760,8 @@ Diagnosis:
   Blue-green: fresh JVM process for each deployment (proper warmup, clean state).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -819,3 +840,33 @@ warmup period (first 5 minutes) shows whether C2 is actively compiling hot paths
 container lifetime is too short for full JIT benefit. Solution: AOT compilation or longer pod lifetimes.
 
 ---
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

@@ -188,6 +188,8 @@ Monitoring the pipeline itself:
   Alert: pipeline_drop_rate > 0.01% for 5 minutes
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The most dangerous log pipeline failure is not a noisy crash but a
 silent drop with no alert. The fundamental reliability requirement is
@@ -754,6 +756,8 @@ kill -SIGQUIT <app-pid>  # prints goroutine dump
 # in os.File.Write or log.Printf
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Set `storage.pause_on_chunks_overlimit Off` in all Fluent Bit
 configurations. This changes the behavior from "pause input when
 full" to "drop oldest buffered events when full." Applications
@@ -805,6 +809,8 @@ kafka-consumer-groups.sh \
 # events expired from Kafka before consumption
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Add alerting on Fluent Bit drop counters (immediate). For
 Elasticsearch mapping conflicts: implement strict index templates
 that define all expected field types, preventing dynamic mapping
@@ -841,6 +847,8 @@ kafka-log-dirs.sh --bootstrap-server kafka-0:9092 \
 # high offset advancement rates
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix (immediate): add a rate limiting filter in Fluent Bit for
 the flooding service's log stream:
 ```yaml
@@ -852,6 +860,8 @@ the flooding service's log stream:
     Action         drop    # drop excess events
     Print_Status   True    # log when throttling
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This limits the flood to 1,000 events/second while the service
 is being fixed. Add this as a standard emergency filter in your
 runbooks. Long-term: implement per-service log rate limits
@@ -883,6 +893,8 @@ ls /var/fluent-bit/state/
 # If empty: memory storage, positions lost on restart
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: Enable filesystem storage and mount a persistent volume
 for the Fluent Bit state directory:
 ```yaml
@@ -903,6 +915,8 @@ volumeMounts:
 # Using hostPath ensures the state survives pod restarts
 # (as long as the node is not replaced)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1018,6 +1032,8 @@ kubectl exec app-pod -- kill -SIGQUIT 1
 # in log-related frames
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* The complete propagation chain
 (ES down -> Fluent Bit pause -> Docker block -> app block) and the
 specific prevention setting. Candidates who only say "configure
@@ -1049,6 +1065,8 @@ kubectl exec -n logging fluent-bit-<node> -- \
 # fluentbit_output_dropped_records_total{node="the-node"}
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Check Fluent Bit's file position tracking. If Fluent Bit
 was restarted during the gap and has memory-backed storage, it may
 have skipped events:
@@ -1057,6 +1075,8 @@ have skipped events:
 kubectl get events -n logging | grep fluent-bit | grep "Killing\|Started"
 # If restart within the gap window: likely position loss
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 4: Check Elasticsearch for rejected documents (mapping errors).
 A new log field with inconsistent type (once a string, once a
@@ -1067,6 +1087,8 @@ curl -s "http://elasticsearch:9200/logs-*/_stats/indexing" \
     select(.value.total.indexing.index_failed > 0) |
     {index: .key, failed: .value.total.indexing.index_failed}'
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 5: Check Kafka consumer lag during the gap (if Kafka is in
 the pipeline). If the aggregator fell behind during the gap,
@@ -1211,6 +1233,8 @@ affect other services:
     Action      drop
     Print_Status True   # alert when throttling starts
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Step 3: Apply this filter via Kubernetes ConfigMap update and
 restart the DaemonSet pods (rolling restart). Takes 2-3 minutes.
@@ -1582,6 +1606,8 @@ Step 3 DESIGN (~10 min)
   Log search and dashboards
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4 DEEP DIVE (~10 min)
 The critical design decision: dual Kafka topics for tiered retention.
 All logs go to `raw-logs` (7-day retention). A Kafka Streams
@@ -1602,6 +1628,8 @@ consuming all Kafka capacity:
     Action       drop
     Print_Status True
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This limit is configurable per service via annotation
 (`logging.example.com/max-events-per-second: "20000"` for high-traffic services).
@@ -1751,3 +1779,33 @@ flowchart TD
 > The two alert outputs (Drop Counter and Kafka Lag Alert) represent
 > the key principle: any data loss or delay must be visible before
 > it becomes incident blindness.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

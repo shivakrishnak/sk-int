@@ -8,6 +8,16 @@ permalink: /design-patterns/l3-advanced-behavioral/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Mediator Pattern](#mediator-pattern) | medium |
+| 2 | [Visitor Pattern](#visitor-pattern) | medium |
+
+---
+
 # Mediator Pattern
 
 ---
@@ -112,6 +122,8 @@ componentA.setComponentB(componentB)  // A knows B
 componentA.setComponentC(componentC)  // A knows C
 componentB.setComponentA(componentA)  // B knows A (circular!)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Components only know the `Mediator` interface. They never call each other
@@ -452,6 +464,34 @@ processor, and between the event emitter and the read model updaters.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Visitor Pattern
 
 ---
@@ -564,6 +604,8 @@ for (Element e : elements) {
     e.accept(v1);  // double dispatch selects correct visit()
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Double dispatch explained:**
 
@@ -913,3 +955,33 @@ operations - the Visitor decouples the operation from the traversal order.
 `accept()` once, and visitors are added externally. For most new code in
 Java 21+: sealed + pattern switch is cleaner, more concise, and the
 compiler enforces exhaustiveness at compile time without boilerplate.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

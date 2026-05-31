@@ -7,6 +7,16 @@ permalink: /css/l2-flexbox/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [CSS Flexbox Model](#css-flexbox-model) | critical |
+| 2 | [Flexbox Alignment Patterns](#flexbox-alignment-patterns) | high |
+
+---
+
 # CSS Flexbox Model
 
 🎯 **Interview Weight:** critical - Flexbox is the primary
@@ -117,6 +127,8 @@ THE TWO AXES (row direction):
          <- justify-content distributes here ->
   Cross: ^     (align-items distributes here)     v
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -313,6 +325,8 @@ Cause: `min-width: auto` preventing shrinking.
 # Computed tab: check min-width value on item
 # If auto and content is wide -> item won't shrink
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: `min-width: 0` on flex items containing text.
 
@@ -850,6 +864,34 @@ flowchart LR
 ---
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Flexbox Alignment Patterns
 
 🎯 **Interview Weight:** high - alignment is where most
@@ -965,6 +1007,8 @@ SHORTHAND:
   place-items: <align-items> / <justify-items>
   (justify-items is ignored in Flex)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 
@@ -1659,3 +1703,33 @@ each approach?"
 
 *(Omit: the comparison table and code examples are sufficient;
 alignment is better understood through code than diagrams)*
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

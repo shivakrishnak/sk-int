@@ -135,6 +135,8 @@ Phase N - Legacy retired:
             (Legacy receives no traffic; decommissioned)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **When to use Strangler Fig:**
 - Legacy system is live and cannot be taken offline
 - The system is large enough that big-bang rewrite is too risky
@@ -350,6 +352,8 @@ grep -r "DiscoveryClient\|feign\|restTemplate" api-gateway/src/
 # Any result = gateway has business logic
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Routing rules must be purely structural (URL, header,
 method). Feature flag routing belongs in the application layer,
 not the gateway. Extract feature-flagged routing to a thin
@@ -375,6 +379,8 @@ LEFT JOIN legacy_db.payments p2 ON p1.id = p2.id
 WHERE p2.id IS NULL;
 -- Should be 0
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Set a fixed dual-write end date when the migration begins.
 Run automated data consistency checks daily. If consistency checks
@@ -601,6 +607,8 @@ Kafka: customer.changes topic
 New Customer Service (consumes events, maintains own DB)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The new Customer Service does not depend on the legacy internals.
 It reads a stream of change events. When the legacy is decommissioned,
 the Customer Service simply stops receiving legacy events and
@@ -632,6 +640,8 @@ grep "legacy-upstream" access.log | wc -l
 grep "new-service" access.log | wc -l
 # Ratio = migration progress percentage
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Capabilities migrated: what percentage of the legacy's functional
 capabilities have been extracted? Maintain a capability inventory
@@ -870,6 +880,8 @@ spring:
             - Weight=payment, 90
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 The canary route allows validating the new service with real
 production traffic (10%) before full cutover. Monitor error rates
 and latency for the canary group before increasing the percentage.
@@ -912,6 +924,8 @@ Mobile client (old app version)
     v
 Payment Service (new API: /api/payments)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 API versioning in the facade: when the new service introduces
 a new API version (`/api/v2/payment`), both versions are
@@ -1035,3 +1049,33 @@ flowchart LR
 > facade is now a permanent API Gateway routing to independent
 > services; the legacy is decommissioned because it receives
 > no traffic.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

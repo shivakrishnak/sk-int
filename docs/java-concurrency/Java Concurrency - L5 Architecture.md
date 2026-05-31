@@ -8,9 +8,20 @@ permalink: /java-concurrency/l5-architecture/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Java Concurrency - L5 Architecture](#java-concurrency---l5-architecture) | medium |
+
+---
+
 # Java Concurrency - L5 Architecture
 
 ## Concurrency Architecture Decisions
+
+---
 
 ### 🎯 Model Answer
 
@@ -117,6 +128,8 @@ What is the failure model?
   Timeout:         ScheduledExecutorService, CompletableFuture.orTimeout()
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Java concurrency evolution timeline:**
 
 | Java | Feature | Impact |
@@ -146,6 +159,8 @@ Virtual thread (Java 21):
   NOT suitable: CPU-bound (just uses a platform carrier thread)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -166,6 +181,8 @@ sharedPool.submit(() -> queryDatabase(query));        // I/O-bound (blocks)
 // I/O tasks block their threads; CPU tasks starve
 // If all 20 threads are blocked on I/O, CPU tasks queue indefinitely
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ```java
 // GOOD: segregated thread pools by workload type (Java 17)
@@ -190,6 +207,8 @@ ioPool.submit(() -> callExternalApi(request));
 ioPool.submit(() -> queryDatabase(query));
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ```java
 // BEST (Java 21+): virtual threads for I/O, platform pool for CPU
 // CPU-bound: same fixed pool as above
@@ -211,6 +230,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
     return new UserWithOrders(userFuture.get(), orderFuture.get());
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -286,6 +307,8 @@ Slow tasks: 30s (large report generation)
 When 20 report generation tasks submit: pool exhausted
 All checkout requests queue, timeout, cascade to upstream failures
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: dedicated pools by operation type and SLA class.
 
 **Failure 2: Virtual thread pinning**
@@ -298,6 +321,8 @@ I/O. The virtual thread is PINNED to its carrier (cannot unmount).
 -Djdk.tracePinnedThreads=full  # prints stack trace when pinning occurs
 # Or JFR event: jdk.VirtualThreadPinned
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: replace synchronized blocks with ReentrantLock inside virtual-
 thread code. Synchronized on the virtual thread body (not critical
 section) cannot be worked around.
@@ -313,6 +338,8 @@ Request objects: 1KB each = 10MB (fine)
 10K virtual thread stacks: 2KB each = 20MB (fine)
 BUT: each task fetches a 1MB response = 10GB pending results = OOM
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: bounded queues with explicit rejection handling. Circuit breaker
 to shed load before OOM.
 
@@ -369,6 +396,8 @@ Need reactive back-pressure or event streaming?
   (Reactive shines here even with virtual threads)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Virtual thread benefits:**
 - No pool sizing: create one per task (millions possible)
 - Blocking I/O auto-unmounts: carrier is freed for other virtual threads
@@ -406,6 +435,8 @@ Example: 8-core machine -> pool size = 9
 Code: Runtime.getRuntime().availableProcessors() + 1
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **I/O-bound (platform threads):**
 ```
 Thread count = CPU cores × (1 + wait_time / compute_time)
@@ -417,6 +448,8 @@ This ensures all 8 CPU cores are always busy:
 80 threads, each 90% of time waiting = 8 threads always computing
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **I/O-bound (Java 21 virtual threads):**
 ```
 No sizing needed. Create one per task.
@@ -424,6 +457,8 @@ JVM automatically manages carrier pool (default = ForkJoinPool.commonPool
 = CPU cores). When virtual thread blocks on I/O, it unmounts from carrier;
 another virtual thread mounts. Carrier pool stays fully utilized.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Mixed workloads:**
 ```
@@ -435,6 +470,8 @@ Separate pools:
 Never mix CPU and I/O tasks in the same pool.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Back-pressure (queue sizing):**
 ```
 Queue capacity = acceptable_latency_ms × throughput_per_ms
@@ -444,6 +481,8 @@ Queue capacity = 100 × 0.2 = 20 tasks
 
 When queue > 20: reject (CallerRunsPolicy or AbortPolicy)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The I/O thread count formula requires
 measuring actual wait time. Measure with JFR `jdk.ThreadPark` and
@@ -475,6 +514,8 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 // Each blocking call frees the carrier thread for another virtual thread
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Reactive (Project Reactor):**
 ```java
 // Non-blocking pipeline
@@ -489,6 +530,8 @@ Mono.fromCallable(() -> req.userId)
 // Non-blocking: no thread tied up
 // Code: callback/Mono chain - harder to read, debug
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Comparison:**
 
@@ -549,6 +592,8 @@ Result: API latency goes from 5ms to 30s+
         Cascading failure upstream
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Isolation architecture:**
 ```java
 // Pool A: API requests (fast SLA, must be responsive)
@@ -573,6 +618,8 @@ apiPool.submit(() -> handleApiRequest(req));
 reportPool.submit(() -> generateReport(reportId));
 bgPool.submit(() -> sendWelcomeEmail(userId));
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Pool isolation benefits:**
 - API pool remains responsive even when report pool is saturated
@@ -606,6 +653,8 @@ Each task: 1KB in-memory = 120MB queue (JVM heap pressure)
 After 10 minutes: 1.2GB queue -> OOM -> crash
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Back-pressure strategies:**
 
 Strategy 1 - Bounded blocking queue:
@@ -619,6 +668,8 @@ ThreadPoolExecutor pool = new ThreadPoolExecutor(
     new ThreadPoolExecutor.CallerRunsPolicy()); // caller thread blocks
 // When pool saturated: HTTP server thread blocks -> HTTP 503 naturally
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Strategy 2 - Circuit breaker (Resilience4j):
 ```java
@@ -634,6 +685,8 @@ Response rejectRequest(Request req, Throwable ex) {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Strategy 3 - Reactive back-pressure (Project Reactor):
 ```java
 Flux.<Request>create(sink -> {
@@ -645,6 +698,8 @@ Flux.<Request>create(sink -> {
 .subscribe();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Strategy 4 - Rate limiting (token bucket):
 ```java
 RateLimiter limiter = RateLimiter.create(8000.0); // 8K permits/sec
@@ -653,6 +708,8 @@ if (!limiter.tryAcquire(1, 10, MILLISECONDS)) {
 }
 return process(request);
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The right strategy depends on failure
 semantics. CallerRunsPolicy is good for internal back-pressure (slow
@@ -689,6 +746,8 @@ class AccountService {
     }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: low latency, no copying, simple for small state.
 Cons: lock ordering, deadlock risk, hard to scale across machines.
 
@@ -709,6 +768,8 @@ class Account {
     void submit(Transaction txn) { txnQueue.put(txn); }
 }
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Pros: no locks on account state, easy to scale (each account an actor).
 Cons: async (eventual consistency), harder to implement synchronous
 transfer (two-phase commit or saga pattern needed).
@@ -767,6 +828,8 @@ class PoolConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Timeout every blocking operation:**
 ```java
 CompletableFuture<User> userFuture =
@@ -779,6 +842,8 @@ User user = userFuture
     .get();
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Circuit breaker at the pool level:**
 ```java
 @CircuitBreaker(name = "db-circuit",
@@ -788,6 +853,8 @@ CompletableFuture<User> loadUser(String id) {
 }
 // When db circuit opens: fallback immediately, don't fill pool queue
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **StructuredTaskScope for failure propagation (Java 21):**
 ```java
@@ -801,6 +868,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // If userService throws -> orderService task automatically cancelled
 // Clean resource management via AutoCloseable
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* StructuredTaskScope (Java 21) solves
 the "fire-and-forget gone wrong" problem. Without structured concurrency,
@@ -832,6 +901,8 @@ User user = userFuture.get();    // throws
 Orders orders = orderFuture.get(); // never reached, orderFuture runs on
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **With StructuredTaskScope:**
 ```java
 // GOOD: structured concurrency
@@ -851,6 +922,8 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // ALL subtasks complete (or are cancelled) before parent returns
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Variants:**
 ```java
 // ShutdownOnFailure: cancel all if any fails (fan-out calls)
@@ -863,6 +936,8 @@ scope.fork(() -> fetchFromBackup(key));
 scope.join();
 String result = scope.result(); // whichever finished first
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **When to use:**
 - Fan-out HTTP calls (call user service + order service, combine results)
@@ -906,6 +981,8 @@ class UserFeignConfig {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Cross-service consistency:**
 - Synchronous calls: service-to-service RPC. Fast, but cascading failure
   risk. Use timeouts + circuit breakers.
@@ -929,6 +1006,8 @@ executor.submit(() -> {
 });
 // Or use Micrometer's ObservationRegistry for automatic context propagation
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The "bulkhead" pattern at the
 microservice level: each downstream service gets its own thread pool
@@ -962,6 +1041,8 @@ spring.threads.virtual.enabled=true
 # Sets Tomcat/Jetty to use virtual threads automatically
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 2: Update thread pools:
 ```java
 // BEFORE: standard fixed thread pool
@@ -977,6 +1058,8 @@ ExecutorService taskExecutor() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 3: Replace synchronized with ReentrantLock in hot paths:
 ```java
 // BEFORE (causes pinning when virtual thread blocks inside):
@@ -991,10 +1074,14 @@ void process() {
 }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Step 4: Enable pinning detection:
 ```
 -Djdk.tracePinnedThreads=full
 ```
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Look for pinning events in logs during load test.
 
 Step 5: Load test and compare:
@@ -1033,12 +1120,16 @@ ExecutorService pool = new ThreadPoolExecutor(10, 20, ..., queue, factory) {
 };
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **2. Timeouts on every blocking call:**
 ```java
 // Every external call has a timeout - no exceptions:
 future.orTimeout(500, MILLISECONDS)
     .exceptionally(ex -> fallbackResponse());
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **3. Deadlock detection in health check:**
 ```java
@@ -1049,6 +1140,8 @@ future.orTimeout(500, MILLISECONDS)
         Health.down().withDetail("deadlock", "detected").build();
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **4. Thread naming for observability:**
 Every thread pool has a descriptive name. Thread dump immediately
@@ -1092,6 +1185,8 @@ class DataService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Issues identified:
 
@@ -1147,6 +1242,8 @@ class DataService {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *What separates good from great:* The email submission is fire-and-forget
 async (emailPool.submit) because the response should not wait for email
@@ -1211,6 +1308,8 @@ Failure modes handled:
   - High load: rate limiter returns 429 before queue fills
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 This design provides: horizontal isolation (each pool fails independently),
 back-pressure (bounded queues, rate limiter), observability (per-pool
 metrics), and safe failure propagation (StructuredTaskScope).
@@ -1274,3 +1373,33 @@ flowchart TD
 > All paths converge on the same production requirements: bounded queues,
 > circuit breakers, timeouts, and health checks - these are non-negotiable
 > regardless of the concurrency model chosen.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

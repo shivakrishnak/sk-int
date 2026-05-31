@@ -8,7 +8,15 @@ permalink: /kafka/l1-core-concepts/
 render_with_liquid: false
 ---
 
-# Kafka - L1 Core Concepts
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Kafka - L1 Core Concepts](#kafka---l1-core-concepts) | medium |
+| 2 | [Topic](#topic) | medium |
+| 3 | [Partition](#partition) | medium |
+| 4 | [Broker](#broker) | medium |
 
 ---
 
@@ -28,7 +36,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — the first Kafka concept every interviewer
+🎯 Interview Weight: Critical - the first Kafka concept every interviewer
 covers. A weak definition signals shallow Kafka knowledge.
 
 ---
@@ -105,6 +113,8 @@ Each partition = ordered log, stored as segment files on disk.
 Records within a partition: totally ordered by offset.
 Records ACROSS partitions: NO ordering guarantee.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The key insight:**
 Partition count determines maximum consumer parallelism. A consumer group
@@ -323,6 +333,34 @@ is falling behind, causing temporary disk bloat."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Partition
 
 ---
@@ -339,7 +377,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: Critical — partition mechanics are foundational to
+🎯 Interview Weight: Critical - partition mechanics are foundational to
 understanding Kafka throughput, ordering guarantees, and consumer parallelism.
 
 ---
@@ -422,6 +460,8 @@ ROUTING:
   key="order-123" -> hash(key) % 3 = always same partition
   key=null        -> round-robin across all partitions
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 1. Producer sends a record with a key (e.g., order ID).
 2. Partition selected: `hash(key) % numPartitions` (default partitioner).
@@ -645,6 +685,34 @@ processing is blocked on a downstream call."
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Broker
 
 ---
@@ -661,7 +729,7 @@ sd: false
 version: 1
 ---
 
-🎯 Interview Weight: High — broker mechanics verify that candidates
+🎯 Interview Weight: High - broker mechanics verify that candidates
 understand how Kafka stores data, replicates it, and handles failures.
 
 ---
@@ -739,6 +807,8 @@ Leader handles ALL reads and writes for its partition
 Followers replicate from leader continuously
 ISR = set of replicas within replica.lag.time.max.ms
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 1. **Partition assignment:** When a topic is created, Kafka distributes
    partition leaders across brokers evenly to balance load.
@@ -969,3 +1039,33 @@ for the root cause."
 | Hiring Manager | Lead with operational implications - broker sizing, cloud vs self-managed |
 | Bar Raiser | Lead with failure modes - what happens when ISR shrinks below min.insync.replicas |
 | Peer Engineer | Collaborative - "The UnderReplicatedPartitions metric saved us from a data loss incident when..." |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

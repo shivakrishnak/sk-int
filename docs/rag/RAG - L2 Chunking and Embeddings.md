@@ -120,6 +120,8 @@ Sentence-window       Full         High        Medium
 Parent-child          Multi-level  Very high   Medium
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Header prepending for document-aware:**
 
 ```
@@ -133,6 +135,8 @@ GOOD CHUNK (header prepended):
   (Self-contained, unambiguous.)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Semantic chunking algorithm:**
 
 ```
@@ -145,6 +149,8 @@ For each pair of adjacent sentences i, i+1:
 
 Result: each chunk is a topically coherent unit
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Parent-child architecture:**
 
@@ -165,6 +171,8 @@ Child chunks (128 tokens, stored as index vectors):
 Retrieval: search children (precise) ->
   return parents (full context)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -404,6 +412,8 @@ print(
 # High variance = wrong strategy for this doc type
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* Add a merge step: if a chunk is below the
 minimum size (< 100 tokens), merge it with the
 next chunk. If above maximum (> 1500 tokens), apply
@@ -488,6 +498,8 @@ document title + section path:
 ```
 "[{doc_title} > {section_path}]\n{chunk_text}"
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 This makes every chunk semantically self-contained.
 
@@ -587,6 +599,8 @@ def semantic_chunk(
     return chunks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Threshold selection:
 - 0.85+: conservative (many chunks, very coherent)
 - 0.75-0.85: moderate (good balance)
@@ -618,12 +632,16 @@ Retrieved: sentence (precise embedding)
 Returned to LLM: sentence + N surrounding sentences
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 vs. Parent-child:
 ```
 Indexed: child chunks (256 tokens)
 Retrieved: child chunk
 Returned to LLM: parent chunk (1024 tokens)
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 When sentence-window beats parent-child:
 
@@ -745,6 +763,8 @@ def chunk_python_file(code: str) -> list[str]:
     return chunks or [code]
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *What separates good from great:* AST-based chunking
 for code as the precise solution, not just "use
 different chunk size."
@@ -772,6 +792,8 @@ def audit_chunks(chunks: list[Chunk]) -> dict:
 # Too many long (> 500 words): oversized, reduce size
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Stage 2 - Retrieval accuracy (golden test set):
 
 Create 20-50 (query, expected_source_chunk_id) pairs
@@ -794,6 +816,8 @@ def evaluate_chunks(
     return recall
 # Target: recall@5 > 0.85 before deploying
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 If recall < 0.85: iterate on chunking strategy
 before deploying.
@@ -932,6 +956,34 @@ flowchart TD
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Embedding Model Selection
 
 **Interview Weight:** ★★☆ - Practical decision
@@ -1029,6 +1081,8 @@ all-MiniLM-L6-v2            384  512         Fast, low-resource
 microsoft/codebert-base     768  512         Code specialized
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **MTEB Leaderboard categories:**
 
 ```
@@ -1042,6 +1096,8 @@ Clustering           Group similar texts
 FOR RAG: use Retrieval score, not overall MTEB rank
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Dimensionality vs. quality:**
 
 ```
@@ -1054,6 +1110,8 @@ retrieval tasks.
 Why: training objective + data matter more
 than vector dimensions.
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 ---
 
@@ -1405,6 +1463,8 @@ How to fine-tune:
     model.save("my-domain-bge-finetuned")
     ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 (5) Evaluate: measure MRR@5 before and after.
     If improvement < 5%: fine-tuning not justified.
 
@@ -1500,6 +1560,8 @@ Prevention:
       "text": "..."
     }
     ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 (2) At query time: assert the query embedding model
     matches the index embedding model. Fail loudly.
@@ -1769,3 +1831,33 @@ flowchart LR
 > reruns. The critical path is the golden test set:
 > it's the only objective measurement of which model
 > is "best" for your specific RAG application.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

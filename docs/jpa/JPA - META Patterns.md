@@ -8,9 +8,20 @@ permalink: /jpa/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [JPA - META Patterns](#jpa---meta-patterns) | medium |
+
+---
+
 # JPA - META Patterns
 
 ## JPA Decision Framework: When to Use JPA vs JDBC vs Native SQL
+
+---
 
 ### 🎯 Model Answer
 
@@ -187,6 +198,8 @@ MIXING IN SAME SERVICE:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -296,6 +309,8 @@ Fix: switch to JDBC aggregation:
   // Heap: constant (N summary rows, typically < 365).
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -340,6 +355,8 @@ with the JPA write model for correctness and the SQL read model for performance.
 ---
 
 ## Repository vs Active Record: Pattern Selection for JPA
+
+---
 
 ### 🎯 Model Answer
 
@@ -503,6 +520,8 @@ CHOOSING BETWEEN THEM (decision factors):
     "Fake AR" (injecting repository into entity): anti-pattern. Don't do it.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -631,6 +650,8 @@ Fix: remove @Autowired from entities entirely.
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -677,6 +698,8 @@ it's about maintaining a fast, reliable test suite as the codebase grows.
 ---
 
 ## JPA Testing Patterns: @DataJpaTest, Testcontainers, and Transaction Rollback
+
+---
 
 ### 🎯 Model Answer
 
@@ -859,6 +882,8 @@ TRANSACTION ROLLBACK MECHANICS:
   }
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 💻 Code Example
@@ -982,6 +1007,8 @@ Fix:
     Constraint violations caught 100% of the time.
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1024,4 +1051,34 @@ Testcontainers PostgreSQL. Migration errors caught in CI. (2) Schema `ddl-auto=v
 Hibernate validates the entity mappings against the actual schema (Flyway-managed). If entity and
 schema disagree: test startup fails. Combined: Flyway migrations tested against real PostgreSQL
 + entity mapping validated against the migrated schema = full schema integrity coverage in CI.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
 

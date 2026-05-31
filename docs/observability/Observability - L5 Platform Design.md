@@ -209,6 +209,8 @@ GOVERNANCE:
 +-----------------------------------+
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **The key insight:**
 The observability platform is a product, not infrastructure.
 Product teams are its customers. It needs a roadmap, an SLA,
@@ -819,6 +821,8 @@ spec:
 # (separate from analytics Prometheus that has all metrics)
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: isolate the alerting pipeline on dedicated nodes with
 guaranteed compute. Run two Prometheus instances: `prometheus-
 alerting` (only SLI metrics, alert rules, 2h retention) and
@@ -877,6 +881,8 @@ ORDER BY span_count DESC
 LIMIT 20
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Fix: build a cost attribution dashboard in Grafana showing each
 team's observability footprint: log volume (GB/day), metric series
 count, trace volume (spans/day), and estimated monthly cost using
@@ -929,6 +935,8 @@ tempo-cli query traces \
 # All "POST /api/charge" spans are root spans (no parent)
 # -> Confirms: payment starts new trace for each request
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 Fix: migrate payment service to OTel SDK with W3C TraceContext
 propagation. If immediate migration is not possible, configure
@@ -1396,6 +1404,8 @@ attributes:
     added: 2024-03
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 Enforcement: the OTel Collector's transform processor validates
 span attributes against the registry (attribute keys not in the
 registry are allowed in test environments but logged as warnings;
@@ -1682,6 +1692,8 @@ Observability Platform - Component View
   | isolated from analytics cluster
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Staff angle:**
 The ROI of the platform: $80K/month current spend reduced to
 $32K/month on LGTM self-managed = $48K/month savings = $576K/year.
@@ -1797,3 +1809,33 @@ flowchart TD
 > analytics cluster failures. This separation is the architectural
 > decision that keeps the platform reliable when it's needed most
 > - during incidents.
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+

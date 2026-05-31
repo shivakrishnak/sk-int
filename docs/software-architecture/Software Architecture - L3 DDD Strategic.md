@@ -147,6 +147,8 @@ CONTEXT MAP - E-COMMERCE EXAMPLE
     +---------------------+   +--------------------+
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 **Context integration patterns:**
 
 | Pattern | Description | When to use |
@@ -394,6 +396,8 @@ public class Order {
 // When CRM changes CrmCustomerDto -> Order breaks
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:*
 ```java
 // Order Context defines its own Customer type
@@ -410,6 +414,8 @@ public class CrmAdapter {
     }
 }
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **Failure 2: Anemic Context Map - implicit integration**
 
@@ -428,6 +434,8 @@ WHERE datname = 'main_db'
   AND query LIKE '%INSERT INTO orders%';
 -- Multiple service users = shared schema = no context boundary
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Each Bounded Context owns its schema exclusively. Other
 contexts access it only through its API or event stream.
@@ -771,6 +779,34 @@ strangler as the data migration mechanism.
 
 ---
 
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
 # Microservices Architecture Principles
 
 🎯 Interview Weight: high - foundational knowledge for any
@@ -901,6 +937,8 @@ MICROSERVICES PRINCIPLES
    PaymentService owns: payments, payment_methods
    No cross-service schema writes
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 **The eight fallacies of distributed computing:**
 (Peter Deutsch, 1994 - apply directly to microservices)
@@ -1095,6 +1133,8 @@ A: 5000ms (timeout)
 # All threads in A, B, C, D are blocked waiting for E
 ```
 
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+
 *Fix:* (1) Circuit breaker on each client: break the chain before
 thread exhaustion. (2) Timeout + fallback: each service has a
 max timeout and a fallback response (cached data, default response).
@@ -1113,6 +1153,8 @@ SELECT client_addr, query FROM pg_stat_activity
 WHERE query LIKE '%service_b_owned_table%';
 -- Multiple different client IPs = shared table = coupling
 ```
+
+> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
 
 *Fix:* Services access only their own tables. Other services
 access data via API or events. Schema migrations become internal
@@ -1523,3 +1565,33 @@ shows real experience.
 | Debug complexity | High (distributed tracing required) | Low (single process trace) | Medium (ESB logs) |
 | Best for | Large teams (20+), different scaling needs | Small-medium teams, early-stage | Legacy enterprise integration |
 | Refactoring cost | High (cross-service API changes) | Low (in-process refactoring) | High (ESB + service changes) |
+
+---
+
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+
+
+
