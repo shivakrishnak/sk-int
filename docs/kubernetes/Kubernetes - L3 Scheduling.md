@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L3 Scheduling"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /kubernetes/l3-scheduling/
 render_with_liquid: false

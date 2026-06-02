@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L3 Cloud Native"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /micronaut/l3-cloud-native/
 render_with_liquid: false

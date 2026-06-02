@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L4 Thread Dump Analysis"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /java-concurrency/l4-thread-dump-analysis/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L1 Core Concepts"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /spring/l1-core-concepts/
 render_with_liquid: false

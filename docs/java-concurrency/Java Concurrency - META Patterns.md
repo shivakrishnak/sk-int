@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - META Patterns"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /java-concurrency/meta-patterns/
 render_with_liquid: false

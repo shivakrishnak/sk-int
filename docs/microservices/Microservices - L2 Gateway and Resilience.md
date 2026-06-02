@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L2 Gateway and Resilience"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /microservices/l2-gateway-and-resilience/
 render_with_liquid: false

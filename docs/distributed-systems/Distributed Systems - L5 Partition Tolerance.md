@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L5 Partition Tolerance"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 19
 permalink: /distributed-systems/l5-partition-tolerance/
 render_with_liquid: false

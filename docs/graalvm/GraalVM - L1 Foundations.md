@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L1 Foundations"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /graalvm/l1-foundations/
 render_with_liquid: false

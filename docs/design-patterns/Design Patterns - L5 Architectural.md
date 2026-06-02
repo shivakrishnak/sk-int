@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L5 Architectural"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /design-patterns/l5-architectural/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L1 Networking and Storage"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /docker/l1-networking-and-storage/
 render_with_liquid: false

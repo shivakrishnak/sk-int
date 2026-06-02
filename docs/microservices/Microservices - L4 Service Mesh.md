@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L4 Service Mesh"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /microservices/l4-service-mesh/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L3 Consumer Internals"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /kafka/l3-consumer-internals/
 render_with_liquid: false

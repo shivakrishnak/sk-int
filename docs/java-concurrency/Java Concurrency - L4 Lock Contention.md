@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L4 Lock Contention"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /java-concurrency/l4-lock-contention/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L4 SQL Injection"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 19
 permalink: /database-sql/l4-sql-injection/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L5 Performance Strategy"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /java-performance/l5-performance-strategy/
 render_with_liquid: false

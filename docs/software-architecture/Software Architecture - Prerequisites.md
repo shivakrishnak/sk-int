@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - Prerequisites"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /software-architecture/prerequisites/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L2 Replication and Sharding"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /distributed-systems/l2-replication-and-sharding/
 render_with_liquid: false

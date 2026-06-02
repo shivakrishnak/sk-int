@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L0 Orientation"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /spring/l0-orientation/
 render_with_liquid: false

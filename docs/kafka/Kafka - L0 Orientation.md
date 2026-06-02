@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L0 Orientation"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /kafka/l0-orientation/
 render_with_liquid: false

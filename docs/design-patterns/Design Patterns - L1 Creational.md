@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L1 Creational"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /design-patterns/l1-creational/
 render_with_liquid: false

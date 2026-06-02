@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - META Thinking Patterns"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /devops-cicd/meta-thinking-patterns/
 render_with_liquid: false

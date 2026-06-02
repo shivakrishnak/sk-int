@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L5 Architecture"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /graalvm/l5-architecture/
 render_with_liquid: false

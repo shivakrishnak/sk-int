@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L3 JIT and Deopt"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-jvm/l3-jit-and-deopt/
 render_with_liquid: false

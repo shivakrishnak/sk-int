@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L4 Performance Diagnostics"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /docker/l4-performance-diagnostics/
 render_with_liquid: false

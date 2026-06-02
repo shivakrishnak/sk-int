@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L3 Capacity Planning"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /sre/l3-capacity-planning/
 render_with_liquid: false

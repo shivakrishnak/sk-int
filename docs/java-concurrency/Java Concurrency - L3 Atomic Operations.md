@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L3 Atomic Operations"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /java-concurrency/l3-atomic-operations/
 render_with_liquid: false

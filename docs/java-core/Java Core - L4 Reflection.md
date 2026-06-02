@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L4 Reflection"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /java-core/l4-reflection/
 render_with_liquid: false

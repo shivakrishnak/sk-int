@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L1 Joins and Aggregates"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /database-sql/l1-joins-aggregates/
 render_with_liquid: false

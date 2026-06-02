@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L4 Build Failures and Debugging"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /docker/l4-build-failures-and-debugging/
 render_with_liquid: false

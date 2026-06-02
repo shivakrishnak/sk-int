@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L2 Modern Java Features"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-language/l2-modern-java-features/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L1 Configuration"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /kubernetes/l1-configuration/
 render_with_liquid: false

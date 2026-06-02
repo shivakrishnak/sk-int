@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L2 Caching"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /hibernate/l2-caching/
 render_with_liquid: false

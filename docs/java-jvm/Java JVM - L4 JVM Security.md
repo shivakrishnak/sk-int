@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L4 JVM Security"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /java-jvm/l4-jvm-security/
 render_with_liquid: false

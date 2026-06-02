@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L6 Theory"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /graalvm/l6-theory/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L2 OOP Patterns"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-language/l2-oop-patterns/
 render_with_liquid: false

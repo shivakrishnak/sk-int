@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L5 Microservices Architecture"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /spring/l5-microservices-architecture/
 render_with_liquid: false

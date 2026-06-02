@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L2 State and Chain"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /design-patterns/l2-state-and-chain/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L4 Quality Attributes"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /software-architecture/l4-quality-attributes/
 render_with_liquid: false

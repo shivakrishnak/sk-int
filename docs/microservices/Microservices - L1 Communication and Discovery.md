@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L1 Communication and Discovery"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /microservices/l1-communication-and-discovery/
 render_with_liquid: false

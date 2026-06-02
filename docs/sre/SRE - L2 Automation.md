@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L2 Automation"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /sre/l2-automation/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L3 Image Strategy and Anti-patterns"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /docker/l3-image-strategy-and-anti-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "JPA - L5 Migration"
 parent: "JPA"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /jpa/l5-migration/
 render_with_liquid: false

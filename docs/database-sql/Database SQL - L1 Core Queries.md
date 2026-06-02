@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L1 Core Queries"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /database-sql/l1-core-queries/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L5 Architecture"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /micronaut/l5-architecture/
 render_with_liquid: false

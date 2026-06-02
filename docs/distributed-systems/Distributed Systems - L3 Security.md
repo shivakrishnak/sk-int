@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L3 Security"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /distributed-systems/l3-security/
 render_with_liquid: false

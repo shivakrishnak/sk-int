@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L4 On-Call Engineering"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /sre/l4-on-call-engineering/
 render_with_liquid: false

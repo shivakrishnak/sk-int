@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L5 Production Operations"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /kubernetes/l5-production-operations/
 render_with_liquid: false

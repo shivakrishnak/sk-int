@@ -2,7 +2,6 @@
 layout: default
 title: "Quarkus - L4 Production Depth"
 parent: "Quarkus"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /quarkus/l4-production-depth/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L5 Global Scale"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /messaging/l5-global-scale/
 render_with_liquid: false

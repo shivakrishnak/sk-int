@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L4 Pipeline Performance"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /devops-cicd/l4-pipeline-performance/
 render_with_liquid: false

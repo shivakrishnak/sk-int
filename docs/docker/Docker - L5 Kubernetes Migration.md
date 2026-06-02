@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L5 Kubernetes Migration"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /docker/l5-kubernetes-migration/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "JPA - L3 Locking"
 parent: "JPA"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /jpa/l3-locking/
 render_with_liquid: false

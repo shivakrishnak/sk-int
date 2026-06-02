@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L4 Deadlock Diagnosis"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /java-concurrency/l4-deadlock-diagnosis/
 render_with_liquid: false

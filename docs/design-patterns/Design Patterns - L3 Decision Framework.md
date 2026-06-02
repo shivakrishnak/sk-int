@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L3 Decision Framework"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /design-patterns/l3-decision-framework/
 render_with_liquid: false

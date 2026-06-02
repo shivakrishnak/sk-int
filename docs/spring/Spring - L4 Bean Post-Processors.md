@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L4 Bean Post-Processors"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /spring/l4-bean-post-processors/
 render_with_liquid: false

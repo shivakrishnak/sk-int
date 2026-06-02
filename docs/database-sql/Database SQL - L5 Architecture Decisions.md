@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L5 Architecture Decisions"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 22
 permalink: /database-sql/l5-architecture-decisions/
 render_with_liquid: false

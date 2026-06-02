@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L6 Theory"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /rest-api/l6-theory/
 render_with_liquid: false

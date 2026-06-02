@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L0 Orientation"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /kubernetes/l0-orientation/
 render_with_liquid: false

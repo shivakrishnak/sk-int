@@ -2,7 +2,6 @@
 layout: default
 title: "Quarkus - META Patterns"
 parent: "Quarkus"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /quarkus/meta-patterns/
 render_with_liquid: false

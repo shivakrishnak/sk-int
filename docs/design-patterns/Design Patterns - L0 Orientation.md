@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L0 Orientation"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /design-patterns/l0-orientation/
 render_with_liquid: false

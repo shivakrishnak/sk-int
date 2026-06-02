@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L1 Foundations"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /software-architecture/l1-foundations/
 render_with_liquid: false

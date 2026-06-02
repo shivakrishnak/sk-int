@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L2 Workloads"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /kubernetes/l2-workloads/
 render_with_liquid: false

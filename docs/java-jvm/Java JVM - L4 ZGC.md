@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L4 ZGC"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-jvm/l4-zgc/
 render_with_liquid: false

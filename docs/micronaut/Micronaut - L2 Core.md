@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L2 Core"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /micronaut/l2-core/
 render_with_liquid: false

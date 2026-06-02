@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L2 Injection and MVC"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /spring/l2-injection-and-mvc/
 render_with_liquid: false

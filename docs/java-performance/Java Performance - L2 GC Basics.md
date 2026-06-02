@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L2 GC Basics"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-performance/l2-gc-basics/
 render_with_liquid: false

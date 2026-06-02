@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L0 Orientation"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /devops-cicd/l0-orientation/
 render_with_liquid: false

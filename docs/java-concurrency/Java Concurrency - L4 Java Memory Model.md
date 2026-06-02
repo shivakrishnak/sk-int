@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L4 Java Memory Model"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-concurrency/l4-java-memory-model/
 render_with_liquid: false

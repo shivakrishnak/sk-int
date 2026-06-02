@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L3 Exception Handling"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-language/l3-exception-handling/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L4 Anti-patterns"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /messaging/l4-anti-patterns/
 render_with_liquid: false

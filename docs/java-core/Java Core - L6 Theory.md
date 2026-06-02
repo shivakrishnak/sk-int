@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L6 Theory"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /java-core/l6-theory/
 render_with_liquid: false

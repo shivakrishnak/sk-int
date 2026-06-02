@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L3 Advanced Behavioral"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /design-patterns/l3-advanced-behavioral/
 render_with_liquid: false

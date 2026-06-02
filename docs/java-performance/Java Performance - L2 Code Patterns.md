@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L2 Code Patterns"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /java-performance/l2-code-patterns/
 render_with_liquid: false

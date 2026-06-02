@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L2 Transactions Basics"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /database-sql/l2-transactions-basics/
 render_with_liquid: false

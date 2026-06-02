@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L2 GC Mechanics"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-jvm/l2-gc-mechanics/
 render_with_liquid: false

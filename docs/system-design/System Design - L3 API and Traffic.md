@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L3 API and Traffic"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /system-design/l3-api-and-traffic/
 render_with_liquid: false

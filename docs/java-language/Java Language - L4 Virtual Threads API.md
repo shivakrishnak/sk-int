@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L4 Virtual Threads API"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /java-language/l4-virtual-threads-api/
 render_with_liquid: false

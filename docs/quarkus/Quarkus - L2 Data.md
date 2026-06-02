@@ -2,7 +2,6 @@
 layout: default
 title: "Quarkus - L2 Data"
 parent: "Quarkus"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /quarkus/l2-data/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L5 Multi-Cluster Architecture"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /kubernetes/l5-multi-cluster/
 render_with_liquid: false

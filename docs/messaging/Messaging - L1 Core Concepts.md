@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L1 Core Concepts"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /messaging/l1-core-concepts/
 render_with_liquid: false

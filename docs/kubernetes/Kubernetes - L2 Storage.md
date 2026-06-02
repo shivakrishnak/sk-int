@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L2 Storage"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /kubernetes/l2-storage/
 render_with_liquid: false

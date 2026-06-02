@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L5 Architecture"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /rest-api/l5-architecture/
 render_with_liquid: false

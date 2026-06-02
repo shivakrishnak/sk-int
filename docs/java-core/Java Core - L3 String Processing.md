@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L3 String Processing"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /java-core/l3-string-processing/
 render_with_liquid: false

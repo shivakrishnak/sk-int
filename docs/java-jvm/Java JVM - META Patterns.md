@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - META Patterns"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 18
 permalink: /java-jvm/meta-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - META Patterns"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /sre/meta-patterns/
 render_with_liquid: false

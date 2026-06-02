@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L2 Generics"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-core/l2-generics/
 render_with_liquid: false

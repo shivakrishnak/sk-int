@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L4 Annotation Processing"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /java-language/l4-annotation-processing/
 render_with_liquid: false

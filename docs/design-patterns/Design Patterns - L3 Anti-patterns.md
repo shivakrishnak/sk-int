@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L3 Anti-patterns"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /design-patterns/l3-anti-patterns/
 render_with_liquid: false

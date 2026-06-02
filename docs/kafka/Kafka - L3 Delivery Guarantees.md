@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L3 Delivery Guarantees"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /kafka/l3-delivery-guarantees/
 render_with_liquid: false

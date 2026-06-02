@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L4 Security Patterns"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /design-patterns/l4-security-patterns/
 render_with_liquid: false

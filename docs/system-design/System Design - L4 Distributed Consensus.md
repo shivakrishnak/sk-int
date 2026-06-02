@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L4 Distributed Consensus"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /system-design/l4-distributed-consensus/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "JPA - L3 Schema"
 parent: "JPA"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /jpa/l3-schema/
 render_with_liquid: false

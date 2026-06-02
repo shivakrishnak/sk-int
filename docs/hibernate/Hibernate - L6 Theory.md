@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L6 Theory"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /hibernate/l6-theory/
 render_with_liquid: false

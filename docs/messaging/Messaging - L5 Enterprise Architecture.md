@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L5 Enterprise Architecture"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /messaging/l5-enterprise-architecture/
 render_with_liquid: false

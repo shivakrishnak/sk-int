@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - META Patterns"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 18
 permalink: /design-patterns/meta-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L3 Security and Resources"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /docker/l3-security-and-resources/
 render_with_liquid: false

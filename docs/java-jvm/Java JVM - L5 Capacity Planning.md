@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L5 Capacity Planning"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /java-jvm/l5-capacity-planning/
 render_with_liquid: false

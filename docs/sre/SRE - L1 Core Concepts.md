@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L1 Core Concepts"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /sre/l1-core-concepts/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L5 Language Version Strategy"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /java-language/l5-language-version-strategy/
 render_with_liquid: false

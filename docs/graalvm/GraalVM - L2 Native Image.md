@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L2 Native Image"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /graalvm/l2-native-image/
 render_with_liquid: false

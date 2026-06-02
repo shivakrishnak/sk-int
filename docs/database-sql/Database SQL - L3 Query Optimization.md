@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L3 Query Optimization"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /database-sql/l3-query-optimization/
 render_with_liquid: false

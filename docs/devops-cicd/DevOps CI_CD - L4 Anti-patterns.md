@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L4 Anti-patterns"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /devops-cicd/l4-anti-patterns/
 render_with_liquid: false

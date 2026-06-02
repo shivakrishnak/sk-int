@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L4 Failure Detection"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 18
 permalink: /distributed-systems/l4-failure-detection/
 render_with_liquid: false

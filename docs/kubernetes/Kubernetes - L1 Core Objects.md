@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L1 Core Objects"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /kubernetes/l1-core-objects/
 render_with_liquid: false

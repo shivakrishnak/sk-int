@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L3 Data"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /micronaut/l3-data/
 render_with_liquid: false

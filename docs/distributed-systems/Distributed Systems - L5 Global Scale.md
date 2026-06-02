@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L5 Global Scale"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 20
 permalink: /distributed-systems/l5-global-scale/
 render_with_liquid: false

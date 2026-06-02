@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L2 Clean Architecture"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /software-architecture/l2-clean-architecture/
 render_with_liquid: false

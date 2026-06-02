@@ -2,7 +2,6 @@
 layout: default
 title: "JPA - L6 Theory"
 parent: "JPA"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /jpa/l6-theory/
 render_with_liquid: false

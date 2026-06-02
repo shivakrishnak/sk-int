@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L2 Data Patterns"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /system-design/l2-data-patterns/
 render_with_liquid: false

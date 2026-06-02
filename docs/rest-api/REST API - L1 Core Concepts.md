@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L1 Core Concepts"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /rest-api/l1-core-concepts/
 render_with_liquid: false

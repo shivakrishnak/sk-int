@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L5 Deployment Architecture"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /java-jvm/l5-deployment-architecture/
 render_with_liquid: false

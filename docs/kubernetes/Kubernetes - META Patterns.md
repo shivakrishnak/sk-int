@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - META Patterns"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /kubernetes/meta-patterns/
 render_with_liquid: false

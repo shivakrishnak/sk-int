@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L4 KRaft Mode"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /kafka/l4-kraft-mode/
 render_with_liquid: false

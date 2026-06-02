@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L4 etcd"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /kubernetes/l4-etcd/
 render_with_liquid: false

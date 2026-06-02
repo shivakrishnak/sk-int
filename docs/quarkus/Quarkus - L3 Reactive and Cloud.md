@@ -2,7 +2,6 @@
 layout: default
 title: "Quarkus - L3 Reactive and Cloud"
 parent: "Quarkus"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /quarkus/l3-reactive-and-cloud/
 render_with_liquid: false

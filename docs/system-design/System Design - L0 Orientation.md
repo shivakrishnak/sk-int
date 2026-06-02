@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L0 Orientation"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /system-design/l0-orientation/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L2 Transactions"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /hibernate/l2-transactions/
 render_with_liquid: false

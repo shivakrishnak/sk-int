@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L3 Integration"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /graalvm/l3-integration/
 render_with_liquid: false

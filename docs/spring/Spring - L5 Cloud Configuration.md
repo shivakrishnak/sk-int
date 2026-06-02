@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L5 Cloud Configuration"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /spring/l5-cloud-configuration/
 render_with_liquid: false

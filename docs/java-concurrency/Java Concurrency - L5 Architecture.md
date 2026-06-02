@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L5 Architecture"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /java-concurrency/l5-architecture/
 render_with_liquid: false

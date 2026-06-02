@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L2 Deployment Patterns"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /devops-cicd/l2-deployment-patterns/
 render_with_liquid: false

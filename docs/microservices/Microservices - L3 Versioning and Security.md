@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L3 Versioning and Security"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /microservices/l3-versioning-and-security/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L1 Fundamentals"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /system-design/l1-fundamentals/
 render_with_liquid: false

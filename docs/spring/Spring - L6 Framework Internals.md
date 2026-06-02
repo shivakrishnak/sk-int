@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L6 Framework Internals"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /spring/l6-framework-internals/
 render_with_liquid: false

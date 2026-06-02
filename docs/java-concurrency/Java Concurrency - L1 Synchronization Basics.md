@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L1 Synchronization Basics"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-concurrency/l1-synchronization-basics/
 render_with_liquid: false

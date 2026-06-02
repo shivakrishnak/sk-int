@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - META Thinking Patterns"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /system-design/meta-thinking-patterns/
 render_with_liquid: false

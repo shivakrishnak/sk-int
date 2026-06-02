@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L4 OAuth2 and JWT Security"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /spring/l4-oauth2-and-jwt-security/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L0 Orientation"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /java-concurrency/l0-orientation/
 render_with_liquid: false

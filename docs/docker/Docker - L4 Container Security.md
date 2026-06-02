@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L4 Container Security"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /docker/l4-container-security/
 render_with_liquid: false

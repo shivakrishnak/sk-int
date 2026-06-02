@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L4 Diagnostics"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /hibernate/l4-diagnostics/
 render_with_liquid: false

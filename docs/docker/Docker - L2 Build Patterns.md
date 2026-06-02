@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L2 Build Patterns"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /docker/l2-build-patterns/
 render_with_liquid: false

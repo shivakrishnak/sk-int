@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L4 WAL and Durability"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /database-sql/l4-wal-durability/
 render_with_liquid: false

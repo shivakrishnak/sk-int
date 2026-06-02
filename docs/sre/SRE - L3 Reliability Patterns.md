@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L3 Reliability Patterns"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /sre/l3-reliability-patterns/
 render_with_liquid: false

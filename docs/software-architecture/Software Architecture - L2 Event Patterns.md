@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L2 Event Patterns"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /software-architecture/l2-event-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L3 Networking and Storage Deep Dive"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /docker/l3-networking-and-storage-deep-dive/
 render_with_liquid: false

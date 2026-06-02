@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L3 Integration"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /software-architecture/l3-integration/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L4 Rollback Strategies"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /devops-cicd/l4-rollback-strategies/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L4 Fitness Functions"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /software-architecture/l4-fitness-functions/
 render_with_liquid: false

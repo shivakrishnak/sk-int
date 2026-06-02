@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L3 Advanced Design"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /rest-api/l3-advanced-design/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L1 Fundamentals"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-jvm/l1-fundamentals/
 render_with_liquid: false

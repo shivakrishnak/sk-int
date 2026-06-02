@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L2 Indexing Basics"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /database-sql/l2-indexing-basics/
 render_with_liquid: false

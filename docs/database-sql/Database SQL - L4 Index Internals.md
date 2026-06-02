@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L4 Index Internals"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /database-sql/l4-index-internals/
 render_with_liquid: false

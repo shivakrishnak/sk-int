@@ -2,7 +2,6 @@
 layout: default
 title: "GraalVM - L2 Polyglot"
 parent: "GraalVM"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /graalvm/l2-polyglot/
 render_with_liquid: false

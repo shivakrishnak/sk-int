@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L3 Scale and Architecture"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /devops-cicd/l3-scale-and-architecture/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L3 Data Management"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /microservices/l3-data-management/
 render_with_liquid: false

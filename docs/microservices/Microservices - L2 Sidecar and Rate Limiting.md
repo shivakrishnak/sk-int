@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L2 Sidecar and Rate Limiting"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /microservices/l2-sidecar-and-rate-limiting/
 render_with_liquid: false

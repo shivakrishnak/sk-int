@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L1 Core Concepts"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /distributed-systems/l1-core-concepts/
 render_with_liquid: false

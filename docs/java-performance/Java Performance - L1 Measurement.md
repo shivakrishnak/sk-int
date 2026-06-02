@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L1 Measurement"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-performance/l1-measurement/
 render_with_liquid: false

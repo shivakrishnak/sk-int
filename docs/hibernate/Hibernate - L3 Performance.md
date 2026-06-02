@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L3 Performance"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /hibernate/l3-performance/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L2 Consumer Patterns"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /messaging/l2-consumer-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L3 Schema Design"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /database-sql/l3-schema-design/
 render_with_liquid: false

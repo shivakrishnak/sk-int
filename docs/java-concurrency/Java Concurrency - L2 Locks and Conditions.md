@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L2 Locks and Conditions"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-concurrency/l2-locks-and-conditions/
 render_with_liquid: false

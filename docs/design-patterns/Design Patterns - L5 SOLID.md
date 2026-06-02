@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L5 SOLID"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /design-patterns/l5-solid/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L2 Profiling"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /java-performance/l2-profiling/
 render_with_liquid: false

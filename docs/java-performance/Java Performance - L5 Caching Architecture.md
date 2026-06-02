@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L5 Caching Architecture"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /java-performance/l5-caching-architecture/
 render_with_liquid: false

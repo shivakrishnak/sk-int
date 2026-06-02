@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L4 Plugin Architecture"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /design-patterns/l4-plugin-architecture/
 render_with_liquid: false

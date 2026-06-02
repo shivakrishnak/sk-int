@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L5 Enterprise Scale"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /devops-cicd/l5-enterprise-scale/
 render_with_liquid: false

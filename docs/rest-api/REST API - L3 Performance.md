@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L3 Performance"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /rest-api/l3-performance/
 render_with_liquid: false

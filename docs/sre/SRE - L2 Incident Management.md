@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L2 Incident Management"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /sre/l2-incident-management/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L4 Escape Analysis"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /java-jvm/l4-escape-analysis/
 render_with_liquid: false

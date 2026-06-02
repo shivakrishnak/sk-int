@@ -2,7 +2,6 @@
 layout: default
 title: "REST API - L1 Request and Response"
 parent: "REST API"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /rest-api/l1-request-and-response/
 render_with_liquid: false

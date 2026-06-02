@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L2 Infrastructure and Monitoring"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /devops-cicd/l2-infrastructure-monitoring/
 render_with_liquid: false

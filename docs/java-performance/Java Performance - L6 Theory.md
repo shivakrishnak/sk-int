@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L6 Theory"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /java-performance/l6-theory/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - META Patterns"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /micronaut/meta-patterns/
 render_with_liquid: false

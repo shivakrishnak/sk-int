@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L3 Security"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /kubernetes/l3-security/
 render_with_liquid: false

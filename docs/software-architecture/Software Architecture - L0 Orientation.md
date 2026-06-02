@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L0 Orientation"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /software-architecture/l0-orientation/
 render_with_liquid: false

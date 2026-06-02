@@ -2,7 +2,6 @@
 layout: default
 title: "Java JVM - L4 JVM Crashes"
 parent: "Java JVM"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /java-jvm/l4-jvm-crashes/
 render_with_liquid: false

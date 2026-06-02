@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L3 Advanced SQL"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /database-sql/l3-advanced-sql/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L4 Supply Chain Security"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /devops-cicd/l4-supply-chain-security/
 render_with_liquid: false

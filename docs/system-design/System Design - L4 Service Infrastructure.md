@@ -2,7 +2,6 @@
 layout: default
 title: "System Design - L4 Service Infrastructure"
 parent: "System Design"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /system-design/l4-service-infrastructure/
 render_with_liquid: false

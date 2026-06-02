@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L4 Production Depth"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /micronaut/l4-production-depth/
 render_with_liquid: false

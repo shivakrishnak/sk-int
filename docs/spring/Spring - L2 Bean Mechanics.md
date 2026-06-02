@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - L2 Bean Mechanics"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /spring/l2-bean-mechanics/
 render_with_liquid: false

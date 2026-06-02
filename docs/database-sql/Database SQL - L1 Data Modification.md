@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L1 Data Modification"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /database-sql/l1-data-modification/
 render_with_liquid: false

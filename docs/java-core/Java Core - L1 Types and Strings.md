@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L1 Types and Strings"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-core/l1-types-and-strings/
 render_with_liquid: false

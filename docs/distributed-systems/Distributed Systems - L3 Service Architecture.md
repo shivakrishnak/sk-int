@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L3 Service Architecture"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /distributed-systems/l3-service-architecture/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L4 Distributed Debugging"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /microservices/l4-distributed-debugging/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L4 Consumer Lag Monitoring"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /kafka/l4-consumer-lag-monitoring/
 render_with_liquid: false

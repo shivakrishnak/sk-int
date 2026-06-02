@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L6 Theory"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /kafka/l6-theory/
 render_with_liquid: false

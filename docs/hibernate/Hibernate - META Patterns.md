@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - META Patterns"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /hibernate/meta-patterns/
 render_with_liquid: false

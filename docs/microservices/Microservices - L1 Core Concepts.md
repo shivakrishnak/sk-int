@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L1 Core Concepts"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /microservices/l1-core-concepts/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - META Thinking Patterns"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /docker/meta-thinking-patterns/
 render_with_liquid: false

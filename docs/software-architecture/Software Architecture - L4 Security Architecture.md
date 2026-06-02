@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L4 Security Architecture"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /software-architecture/l4-security-architecture/
 render_with_liquid: false

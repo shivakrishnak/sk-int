@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - META Thinking Patterns"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 16
 permalink: /microservices/meta-thinking-patterns/
 render_with_liquid: false

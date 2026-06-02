@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L2 Error Handling Patterns"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /messaging/l2-error-handling-patterns/
 render_with_liquid: false

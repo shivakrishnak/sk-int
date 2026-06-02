@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L3 Observability and Anti-patterns"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 9
 permalink: /microservices/l3-observability-and-anti-patterns/
 render_with_liquid: false

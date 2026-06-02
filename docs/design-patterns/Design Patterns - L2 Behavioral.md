@@ -2,7 +2,6 @@
 layout: default
 title: "Design Patterns - L2 Behavioral"
 parent: "Design Patterns"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /design-patterns/l2-behavioral/
 render_with_liquid: false

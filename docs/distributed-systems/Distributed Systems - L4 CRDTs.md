@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L4 CRDTs"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /distributed-systems/l4-crdts/
 render_with_liquid: false

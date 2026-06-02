@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L2 Executor Framework"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 4
 permalink: /java-concurrency/l2-executor-framework/
 render_with_liquid: false

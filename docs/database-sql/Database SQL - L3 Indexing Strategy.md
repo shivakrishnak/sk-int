@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L3 Indexing Strategy"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /database-sql/l3-indexing-strategy/
 render_with_liquid: false

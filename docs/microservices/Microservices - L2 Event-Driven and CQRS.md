@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L2 Event-Driven and CQRS"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /microservices/l2-event-driven-and-cqrs/
 render_with_liquid: false

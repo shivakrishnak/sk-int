@@ -2,7 +2,6 @@
 layout: default
 title: "Kafka - L5 Security Architecture"
 parent: "Kafka"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /kafka/l5-security-architecture/
 render_with_liquid: false

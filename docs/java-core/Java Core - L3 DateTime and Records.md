@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L3 DateTime and Records"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 10
 permalink: /java-core/l3-datetime-and-records/
 render_with_liquid: false

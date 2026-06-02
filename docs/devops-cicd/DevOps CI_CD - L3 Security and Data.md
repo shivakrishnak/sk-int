@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L3 Security and Data"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /devops-cicd/l3-security-and-data/
 render_with_liquid: false

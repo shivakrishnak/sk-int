@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L5 Platform Engineering"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 14
 permalink: /devops-cicd/l5-platform-engineering/
 render_with_liquid: false

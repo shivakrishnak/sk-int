@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L4 Production Diagnostics"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 18
 permalink: /database-sql/l4-production-diagnostics/
 render_with_liquid: false

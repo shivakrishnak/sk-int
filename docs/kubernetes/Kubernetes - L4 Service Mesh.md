@@ -2,7 +2,6 @@
 layout: default
 title: "Kubernetes - L4 Service Mesh"
 parent: "Kubernetes"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /kubernetes/l4-service-mesh/
 render_with_liquid: false

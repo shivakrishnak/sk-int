@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L4 MVCC Internals"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /database-sql/l4-mvcc-internals/
 render_with_liquid: false

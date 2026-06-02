@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - L2 Lambdas and Streams"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-core/l2-lambdas-and-streams/
 render_with_liquid: false

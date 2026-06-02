@@ -2,7 +2,6 @@
 layout: default
 title: "Docker - L4 Anti-patterns at Scale"
 parent: "Docker"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /docker/l4-anti-patterns-at-scale/
 render_with_liquid: false

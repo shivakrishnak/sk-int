@@ -2,7 +2,6 @@
 layout: default
 title: "Messaging - L2 Broker Selection"
 parent: "Messaging"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /messaging/l2-broker-selection/
 render_with_liquid: false

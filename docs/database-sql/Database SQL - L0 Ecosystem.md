@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L0 Ecosystem"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /database-sql/l0-ecosystem/
 render_with_liquid: false

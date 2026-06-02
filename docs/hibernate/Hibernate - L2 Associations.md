@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L2 Associations"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /hibernate/l2-associations/
 render_with_liquid: false

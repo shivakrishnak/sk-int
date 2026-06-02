@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L2 Domain Patterns"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 6
 permalink: /software-architecture/l2-domain-patterns/
 render_with_liquid: false

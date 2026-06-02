@@ -2,7 +2,6 @@
 layout: default
 title: "Micronaut - L2 HTTP"
 parent: "Micronaut"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /micronaut/l2-http/
 render_with_liquid: false

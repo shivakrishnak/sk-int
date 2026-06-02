@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L1 Core Types"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 2
 permalink: /java-language/l1-core-types/
 render_with_liquid: false

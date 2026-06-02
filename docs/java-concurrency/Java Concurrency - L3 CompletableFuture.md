@@ -2,7 +2,6 @@
 layout: default
 title: "Java Concurrency - L3 CompletableFuture"
 parent: "Java Concurrency"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-concurrency/l3-completablefuture/
 render_with_liquid: false

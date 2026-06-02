@@ -2,7 +2,6 @@
 layout: default
 title: "Java Language - L1 OOP Basics"
 parent: "Java Language"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /java-language/l1-oop-basics/
 render_with_liquid: false

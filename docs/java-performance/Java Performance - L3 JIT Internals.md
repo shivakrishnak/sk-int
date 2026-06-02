@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L3 JIT Internals"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 7
 permalink: /java-performance/l3-jit-internals/
 render_with_liquid: false

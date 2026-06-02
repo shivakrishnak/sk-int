@@ -2,7 +2,6 @@
 layout: default
 title: "JPA - L5 Architecture"
 parent: "JPA"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /jpa/l5-architecture/
 render_with_liquid: false

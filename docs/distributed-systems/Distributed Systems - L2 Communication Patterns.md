@@ -2,7 +2,6 @@
 layout: default
 title: "Distributed Systems - L2 Communication Patterns"
 parent: "Distributed Systems"
-grand_parent: "SK Interview"
 nav_order: 5
 permalink: /distributed-systems/l2-communication-patterns/
 render_with_liquid: false

@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - Prerequisites"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /sre/prerequisites/
 render_with_liquid: false

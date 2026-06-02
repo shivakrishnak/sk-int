@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L4 Fault Tolerance"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 13
 permalink: /microservices/l4-fault-tolerance/
 render_with_liquid: false

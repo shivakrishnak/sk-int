@@ -2,7 +2,6 @@
 layout: default
 title: "DevOps CI/CD - L1 Pipeline Fundamentals"
 parent: "DevOps CI/CD"
-grand_parent: "SK Interview"
 nav_order: 3
 permalink: /devops-cicd/l1-pipeline-fundamentals/
 render_with_liquid: false

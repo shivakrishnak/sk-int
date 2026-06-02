@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L3 Concurrency Control"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /database-sql/l3-concurrency-control/
 render_with_liquid: false

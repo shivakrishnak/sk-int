@@ -2,7 +2,6 @@
 layout: default
 title: "Spring - META Patterns"
 parent: "Spring"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /spring/meta-patterns/
 render_with_liquid: false

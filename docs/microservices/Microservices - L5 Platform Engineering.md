@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L5 Platform Engineering"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /microservices/l5-platform-engineering/
 render_with_liquid: false

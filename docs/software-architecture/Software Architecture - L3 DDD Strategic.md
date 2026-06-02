@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L3 DDD Strategic"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 8
 permalink: /software-architecture/l3-ddd-strategic/
 render_with_liquid: false

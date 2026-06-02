@@ -2,7 +2,6 @@
 layout: default
 title: "Java Performance - L4 JIT Advanced"
 parent: "Java Performance"
-grand_parent: "SK Interview"
 nav_order: 11
 permalink: /java-performance/l4-jit-advanced/
 render_with_liquid: false

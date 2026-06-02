@@ -2,7 +2,6 @@
 layout: default
 title: "Java Core - META Patterns"
 parent: "Java Core"
-grand_parent: "SK Interview"
 nav_order: 17
 permalink: /java-core/meta-patterns/
 render_with_liquid: false

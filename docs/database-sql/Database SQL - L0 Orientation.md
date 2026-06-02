@@ -2,7 +2,6 @@
 layout: default
 title: "Database SQL - L0 Orientation"
 parent: "Database SQL"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /database-sql/l0-orientation/
 render_with_liquid: false

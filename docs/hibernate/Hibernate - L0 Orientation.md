@@ -2,7 +2,6 @@
 layout: default
 title: "Hibernate - L0 Orientation"
 parent: "Hibernate"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /hibernate/l0-orientation/
 render_with_liquid: false

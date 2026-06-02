@@ -2,7 +2,6 @@
 layout: default
 title: "SRE - L4 Error Budget Policy"
 parent: "SRE"
-grand_parent: "SK Interview"
 nav_order: 12
 permalink: /sre/l4-error-budget-policy/
 render_with_liquid: false

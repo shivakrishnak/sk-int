@@ -2,7 +2,6 @@
 layout: default
 title: "Microservices - L0 Orientation"
 parent: "Microservices"
-grand_parent: "SK Interview"
 nav_order: 1
 permalink: /microservices/l0-orientation/
 render_with_liquid: false

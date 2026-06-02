@@ -2,7 +2,6 @@
 layout: default
 title: "Software Architecture - L5 Governance"
 parent: "Software Architecture"
-grand_parent: "SK Interview"
 nav_order: 15
 permalink: /software-architecture/l5-governance/
 render_with_liquid: false
